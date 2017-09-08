@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Towary</h1>
+    <ul>
+    {% for ware in object_list %}
+        <li>{{ ware.name }} - {{ ware.index }}</li>
+    {% empty %}
+        <li>Brak towarów.</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
