@@ -99,3 +99,10 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# custom
+apps/*/migrations/
+*.sqlite3
+data/
+.vscode/
+KlimaKar/settings_local.py
