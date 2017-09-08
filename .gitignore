@@ -106,3 +106,4 @@ apps/*/migrations/
 data/
 .vscode/
 KlimaKar/settings_local.py
+

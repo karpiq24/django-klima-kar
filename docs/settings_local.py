@@ -1,5 +1,9 @@
+# -*- coding: utf-8 -*-
+import os
+
 # A boolean that turns on/off debug mode.
 DEBUG = False
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # A list of all the people who get code error notifications.
 # When DEBUG=False and a view raises an exception, Django will email these
@@ -31,3 +35,4 @@ STATIC_ROOT = '/var/www/wsgi/static/KlimaKar'
 # Example command to generate secret key in bash:
 # tr -dc A-Za-z0-9 < /dev/urandom | head -c 50 | xargs
 SECRET_KEY = ''
+
