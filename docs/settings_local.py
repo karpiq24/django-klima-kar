@@ -35,4 +35,3 @@ STATIC_ROOT = '/var/www/wsgi/static/KlimaKar'
 # Example command to generate secret key in bash:
 # tr -dc A-Za-z0-9 < /dev/urandom | head -c 50 | xargs
 SECRET_KEY = ''
-
