@@ -30,12 +30,14 @@ class Command(BaseCommand):
                         date=self.getData(
                             invoice, "data").split('T', 1)[0],
                         number=self.getData(invoice, "nr_faktury"),
-                        supplier=supplier)
+                        supplier=supplier,
+                        total_value=self.getData(invoice, "wartosc"))
                     i.save()
 
                     items = invoice.getElementsByTagName(
                         "przedmioty")[0].getElementsByTagName("rzecz")
 
+                    total_value = 0
                     for item in items:
                         ware = Ware.objects.get(
                             index=self.getData(item, "indeks"))
@@ -45,6 +47,9 @@ class Command(BaseCommand):
                             quantity=self.getData(item, "ile"),
                             price=self.getData(item, "cena"))
                         x.save()
+                        total_value += int(x.quantity) * float(x.price)
+                        i.total_value = total_value
+                        i.save()
 
                     print(i.number + " added to database.")
 

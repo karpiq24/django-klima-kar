@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_tables2',
+    'django_filters',
+
     'KlimaKar',
     'apps.warehouse'
 ]
@@ -126,6 +129,15 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static/'),
 )
+
+def FILTERS_VERBOSE_LOOKUPS():
+    from django_filters.conf import DEFAULTS
+
+    verbose_lookups = DEFAULTS['VERBOSE_LOOKUPS'].copy()
+    verbose_lookups.update({
+        'icontains': ''
+    })
+    return verbose_lookups
 
 try:
     from KlimaKar.settings_local import * # flake8: noqa

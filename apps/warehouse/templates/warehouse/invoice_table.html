@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+    <h1>Faktury</h1>
+    <form method='GET'>
+        {{ filter.form }}
+        <input type='submit' value='Filtruj' />
+        <a href='{{ request.path }}' >Wyczyść filtry</a>
+    </form>
+    {% render_table table %}
+{% endblock %}
