@@ -128,6 +128,6 @@ STATICFILES_DIRS = (
 )
 
 try:
-    from KlimaKar.settings_local import *
+    from KlimaKar.settings_local import * # flake8: noqa
 except ImportError as e:
     pass

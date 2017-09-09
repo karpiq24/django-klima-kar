@@ -23,8 +23,15 @@ class Invoice(models.Model):
     date = models.DateField(verbose_name=('Data'))
     number = models.CharField(max_length=127, verbose_name=('Numer faktury'))
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT, verbose_name=('Dostawca'))
-    total_value = models.DecimalField(max_digits=10, decimal_places=2,
-                                      verbose_name=('Łączna wartość'))
+    items = models.ManyToManyField(Ware, through='InvoiceItem')
+
+    @property
+    def total_value(self):
+        total = 0
+        for item in self.items:
+            total += item.quantity * item.price
+        return total
+    total_value.fget.short_description = "Łączna wartość"
 
     def __str__(self):
         return self.number

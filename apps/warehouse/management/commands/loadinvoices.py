@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand
 from apps.warehouse.models import Invoice, InvoiceItem, Supplier, Ware
 
 import xml.dom.minidom
-import datetime
 
 
 class Command(BaseCommand):
@@ -31,8 +30,7 @@ class Command(BaseCommand):
                         date=self.getData(
                             invoice, "data").split('T', 1)[0],
                         number=self.getData(invoice, "nr_faktury"),
-                        supplier=supplier,
-                        total_value=self.getData(invoice, "wartosc"))
+                        supplier=supplier)
                     i.save()
 
                     items = invoice.getElementsByTagName(
