@@ -2,11 +2,26 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
-    <h1>Dostawcy</h1>
-    <form method='GET'>
-        {{ filter.form }}
-        <input type='submit' value='Filtruj' />
-        <a href='{{ request.path }}' >Wyczyść filtry</a>
-    </form>
-    {% render_table table %}
+<h1>Dostawcy</h1>
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-heading" data-toggle="collapse" data-target="#filters">
+            <h4 class="panel-title">
+                Filtry
+            </h4>
+            </div>
+            <div id="filters" class="panel-collapse collapse">
+            <div class="panel-body filter">
+                <form method='GET'>
+                    {{ filter.form }}
+                    <button type="submit" class="btn btn-default">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Filtruj
+                    </button>
+                    <a href='{{ request.path }}' >Wyczyść filtry</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% render_table table %}
 {% endblock %}
