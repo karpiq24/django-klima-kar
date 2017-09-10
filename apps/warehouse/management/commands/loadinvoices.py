@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand
 from apps.warehouse.models import Invoice, InvoiceItem, Supplier, Ware
 
 import xml.dom.minidom
-import datetime
 
 
 class Command(BaseCommand):
@@ -38,6 +37,7 @@ class Command(BaseCommand):
                     items = invoice.getElementsByTagName(
                         "przedmioty")[0].getElementsByTagName("rzecz")
 
+                    total_value = 0
                     for item in items:
                         ware = Ware.objects.get(
                             index=self.getData(item, "indeks"))
@@ -47,6 +47,9 @@ class Command(BaseCommand):
                             quantity=self.getData(item, "ile"),
                             price=self.getData(item, "cena"))
                         x.save()
+                        total_value += int(x.quantity) * float(x.price)
+                        i.total_value = total_value
+                        i.save()
 
                     print(i.number + " added to database.")
 

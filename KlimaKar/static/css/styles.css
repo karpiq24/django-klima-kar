@@ -1,0 +1,6 @@
+.filter input, select{
+    margin-bottom: 10px;
+}
+.panel-heading {
+    cursor: pointer;
+}
