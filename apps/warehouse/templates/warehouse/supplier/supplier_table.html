@@ -2,7 +2,7 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
-<h1>Faktury</h1>
+<h1>Dostawcy</h1>
 <div class="panel-group">
     <div class="panel panel-default">
         <div class="panel-heading" data-toggle="collapse" data-target="#filters">
@@ -10,7 +10,7 @@
                 Filtry
             </h4>
             </div>
-            <div id="filters" class="panel-collapse collapse">
+            <div id="filters" class="panel-collapse collapse in">
             <div class="panel-body filter">
                 <form method='GET'>
                     {{ filter.form }}
@@ -23,15 +23,19 @@
         </div>
     </div>
 </div>
+
+<div class="action-buttons">
+    <a class="btn btn-success" href="{% url 'warehouse:supplier_create' %}">Nowy dostawca</a>
+</div>
+
 {% render_table table %}
+
 {% endblock %}
 
 {% block scripts %}
 <script>
-    $(function () {
-        $('.date-input').datetimepicker({
-            format:'YYYY-MM-DD'
-        });
+    $(function() {
+      $('#myNavbar #menu-suppliers').addClass('active');
     });
 </script>
 {% endblock %}

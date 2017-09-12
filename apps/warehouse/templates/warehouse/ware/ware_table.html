@@ -10,7 +10,7 @@
                 Filtry
             </h4>
             </div>
-            <div id="filters" class="panel-collapse collapse">
+            <div id="filters" class="panel-collapse collapse in">
             <div class="panel-body filter">
                 <form method='GET'>
                     {{ filter.form }}
@@ -23,5 +23,18 @@
         </div>
     </div>
 </div>
+
+<div class="action-buttons">
+    <a class="btn btn-success" href="{% url 'warehouse:ware_create' %}">Nowy towar</a>
+</div>
+
 {% render_table table %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function() {
+      $('#myNavbar #menu-wares').addClass('active');
+    });
+</script>
 {% endblock %}

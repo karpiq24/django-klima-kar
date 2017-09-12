@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input class="btn btn-primary" type="submit" value="Zapisz" />
+    <a class="btn btn-default" href="javascript:history.back()">Powrót</a>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('#myNavbar #menu-wares').addClass('active');
+    });
+</script>
+{% endblock %}

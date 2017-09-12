@@ -1,6 +1,13 @@
 .filter input, select{
     margin-bottom: 10px;
 }
-.panel-heading {
+.panel-heading{
     cursor: pointer;
+}
+.affix + .container-fluid {
+    padding-top: 50px;
+}
+.action-buttons{
+    margin-bottom: 20px;
+    float: right;
 }
