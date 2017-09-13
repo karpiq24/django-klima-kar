@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^wares/create$', views.WareCreateView.as_view(), name='ware_create'),
     url(r'^wares/(?P<pk>[-\w]+)/detail$', views.WareDetailView.as_view(), name='ware_detail'),
     url(r'^wares/(?P<pk>[-\w]+)/update$', views.WareUpdateView.as_view(), name='ware_update'),
+    url(r'^get_ware_data$', views.GetWareData.as_view(), name='get_ware_data'),
 
     url(r'^invoices$', views.InvoiceTableView.as_view(), name='invoices'),
     url(r'^invoices/create$', views.InvoiceCreateView.as_view(), name='invoice_create'),
