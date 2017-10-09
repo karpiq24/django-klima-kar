@@ -9,9 +9,9 @@ from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 class WareTable(tables.Table):
     index = tables.Column(attrs={'th': {'width': '20%'}})
     name = tables.Column(attrs={'th': {'width': '30%'}})
-    description = tables.Column(attrs={'th': {'width': '45%'}})
+    description = tables.Column(attrs={'th': {'width': '38%'}})
     stock = tables.Column(attrs={'th': {'width': '5%'}})
-    actions = tables.TemplateColumn(attrs={'th': {'width': '5%'}}, verbose_name="Akcje",
+    actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
                                     template_name='warehouse/ware/ware_actions.html',
                                     orderable=False)
 
@@ -22,11 +22,11 @@ class WareTable(tables.Table):
 
 
 class InvoiceTable(tables.Table):
-    supplier = tables.Column(attrs={'th': {'width': '30%'}}, verbose_name="Dostawca")
+    supplier = tables.Column(attrs={'th': {'width': '28%'}}, verbose_name="Dostawca")
     number = tables.Column(attrs={'th': {'width': '30%'}}, verbose_name="Numer faktury")
     date = tables.Column(attrs={'th': {'width': '20%'}}, verbose_name="Data")
     total_value = tables.Column(attrs={'th': {'width': '15%'}}, verbose_name="Łączna wartość")
-    actions = tables.TemplateColumn(attrs={'th': {'width': '5%'}}, verbose_name="Akcje",
+    actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
                                     template_name='warehouse/invoice/invoice_actions.html',
                                     orderable=False)
 
@@ -40,7 +40,7 @@ class InvoiceTable(tables.Table):
 
 
 class SupplierTable(tables.Table):
-    actions = tables.TemplateColumn(attrs={'th': {'width': '5%'}}, verbose_name="Akcje",
+    actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
                                     template_name='warehouse/supplier/supplier_actions.html',
                                     orderable=False)
 
@@ -51,12 +51,12 @@ class SupplierTable(tables.Table):
 
 
 class InvoiceItemTable(tables.Table):
-    index = tables.Column(attrs={'th': {'width': '30%'}}, accessor='ware.index')
-    name = tables.Column(attrs={'th': {'width': '40%'}}, accessor='ware.name')
+    index = tables.Column(attrs={'th': {'width': '28%'}}, accessor='ware.index')
+    name = tables.Column(attrs={'th': {'width': '35%'}}, accessor='ware.name')
     quantity = tables.Column(attrs={'th': {'width': '10%'}})
     price = tables.Column(attrs={'th': {'width': '10%'}}, verbose_name="Cena netto")
     total = tables.Column(attrs={'th': {'width': '10%'}}, empty_values=(), verbose_name="Razem")
-    actions = tables.TemplateColumn(attrs={'th': {'width': '5%'}}, verbose_name="Akcje",
+    actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
                                     template_name='warehouse/invoice/invoiceitem_actions.html',
                                     orderable=False)
 

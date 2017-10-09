@@ -4,12 +4,24 @@
 {% block content %}
 <h1>Szczegóły faktury</h1>
 
-<dl class="dl-horizontal">
-    <dt>Dostawca</dt><dd>{{ object.supplier }}</dd>
-    <dt>Numer</dt><dd>{{ object.number }}</dd>
-    <dt>Data</dt><dd>{{ object.date|date }}</dd>
-    <dt>Łączna wartość</dt><dd>{{ object.total_value }} zł</dd>    
-</dl>
+<table class="table table-bordered detail-table">
+    <tr>
+        <td class="detail-label">Dostawca</td>
+        <td>{{ object.supplier }}</td>
+    </tr>
+    <tr>
+        <td class="detail-label">Numer</td>
+        <td>{{ object.number }}</td>
+    </tr>
+    <tr>
+        <td class="detail-label">Data</td>
+        <td>{{ object.date|date }}</td>
+    </tr>
+    <tr>
+        <td class="detail-label">Łączna wartość</td>
+        <td>{{ object.total_value }} zł</td>
+    </tr>
+</table>
 
 <h4>Towary</h4>
 {% render_table item_table %}
@@ -21,7 +33,7 @@
 {% block scripts %}
 <script>
     $(function () {
-        $('#myNavbar #menu-invoices').addClass('active');
+        $('.sidenav #nav-invoices').children(':first').addClass('active');
     });
 </script>
 {% endblock %}

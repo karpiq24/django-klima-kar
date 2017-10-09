@@ -16,11 +16,12 @@
                 <th width="5%" class="actions">Akcje</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="formsets">
+            {{ item_formset.management_form }}
             {% for item_form in item_formset %}
                 {{ item_form.id }}
-                <tr class="item-formset">
-                    <td>
+                <tr class="item-formset hidden">
+                    <td class="item-index">
                         {{ item_form.ware }}
                         {% if item_form.ware.errors %}
                             {% for error in item_form.ware.errors %}
@@ -46,7 +47,12 @@
                         {% endif %}
                     </td>
                     <td class="item-total-value"></td>
-                    <td>{{ item_form.DELETE }}</td>
+                    <td>
+                        <a href="#" title="Usuń">
+                            <i class="fa fa-trash fa-lg remove_ware_formset" style="cursor: pointer;"></i>
+                        </a>
+                    </td>
+                    <td class="item-DELETE hidden">{{ item_form.DELETE }}</td>
                 </tr>
                 {% if item_form.non_form_errors %}
                     {% for error in item_form.non_form_errors %}
@@ -54,9 +60,20 @@
                     {% endfor %}
                 {% endif %}
             {% endfor %}
+            <tfoot>
+                <td colspan="3">
+                    <button type="button" class="btn btn-success btn-sm" id="add_ware_formset">
+                        <span class="glyphicon glyphicon-plus"></span> Dodaj towar
+                    </button>
+                </td>
+                <td colspan="1">
+                    Razem:
+                </td>
+                <td colspan="2" id="invoice-total">
+                </td>
+            </tfoot>
         </tbody>
     </table>
-    {{ item_formset.management_form }}
     <input class="btn btn-primary" type="submit" value="Zapisz" />
     <a class="btn btn-default" href="javascript:history.back()">Powrót</a>
 </form>
@@ -65,27 +82,40 @@
 {% block scripts %}
 <script>
     var GET_WARE_DATA = "{% url 'warehouse:get_ware_data' %}";
+
+    function RecalculateTotals() {
+        var invoice_total = 0;
+        $('.item-formset').each(function() {
+            if (!$(this).hasClass('hidden')){
+                var price = $(this).find(".item-price").children(":first").val()
+                var quantity = $(this).find(".item-quantity").children(":first").val()
+                var total = parseFloat((quantity * price).toFixed(2));
+                $(this).find(".item-total-value").text(total + " zł");
+                invoice_total = parseFloat(parseFloat((invoice_total + total)).toFixed(2));
+            }
+        });
+        $('#invoice-total').text(invoice_total + " zł");
+    }
+
     $(function () {
-        $('#myNavbar #menu-invoices').addClass('active');
+        $('.sidenav #nav-invoices').children(':first').addClass('active');
         $('.date-input').datetimepicker({
             format:'YYYY-MM-DD'
         });
 
-        $('.item-formset').formset({
-            addText: 'Dodaj towar',
-            deleteText: 'Usuń'
-        });
-
-        $('.item-formset').each(function( index ) {
+        $('.item-formset').each(function() {
             var index = $(this).find(".field-index option:selected").text()
             var me = $(this)
             var price = $(me).find(".item-price").children(":first").val()
             var quantity = $(me).find(".item-quantity").children(":first").val()
-            var total = (quantity * price).toFixed(2);
-            $(me).find(".item-total-value").text(total + " zł");
+
+            if (price != '' || quantity != 1) {
+                $(me).removeClass('hidden')
+            }
             if (index == '---------') {
                 return;
             }
+            $(me).removeClass('hidden')
             $.ajax({
                 url: GET_WARE_DATA,
                 data: {
@@ -97,10 +127,15 @@
                 }
             });
         });
+        $('#formsets tr:first').removeClass('hidden');
 
         $(".field-index").change(function () {
             var index = $("option:selected", this).text();
             var parent = $(this).parent();
+            if (index == '---------') {
+                $(parent).siblings(".item-name").text('')
+                return;
+            }
             $.ajax({
                 url: GET_WARE_DATA,
                 data: {
@@ -110,24 +145,40 @@
                 success: function (result) {
                     $(parent).siblings(".item-name").text(result['ware']['name']);
                     $(parent).siblings(".item-price").children(":first").val(result['ware']['last_price']);
+                    RecalculateTotals();
                 }
             });
         });
 
+        $("#add_ware_formset").click(function(){
+            var formset = $('#formsets').children('.hidden').first();
+            $(formset).find(".item-DELETE").children('input').prop('checked', false);
+            $(formset).removeClass('hidden');
+            $(formset).insertAfter($("#formsets tr:not('.hidden'):last"));
+        });
+
+        $(".remove_ware_formset").click(function(){
+            var parent = $(this).parents(".item-formset");
+            $(parent).addClass('hidden');
+            $(parent).find(".field-index").val('---------').change();
+            $(parent).find(".field-price").val('');
+            $(parent).find(".item-name").text('');
+            $(parent).find(".field-quantity").val('1');
+            $(parent).find(".item-total-value").text('0 zł');
+            $(parent).find(".item-DELETE").children('input').prop('checked', true);
+            RecalculateTotals();
+        });
+
         $(".field-quantity").change(function () {
-            var parent = $(this).parent();
-            var quantity = $(this).val()
-            var price = $(parent).siblings(".item-price").children(":first").val()
-            var total = (quantity * price).toFixed(2);
-            $(parent).siblings(".item-total-value").text(total + " zł");
+            RecalculateTotals();
         });
 
         $(".field-price").change(function () {
-            var parent = $(this).parent();
-            var quantity = $(parent).siblings(".item-quantity").children(":first").val()
-            var price = $(this).val()
-            var total = (quantity * price).toFixed(2);
-            $(parent).siblings(".item-total-value").text(total + " zł");
+            RecalculateTotals();
+        });
+        RecalculateTotals();
+        $(".js-basic-multiple").select2({
+            language: "pl"
         });
     });
 </script>

@@ -1,5 +1,7 @@
-.filter input, select{
-    margin-bottom: 10px;
+.filter p{
+    width: 32%; 
+    display:inline-block; 
+    margin-left:5px
 }
 .panel-heading{
     cursor: pointer;
@@ -10,4 +12,40 @@
 .action-buttons{
     margin-bottom: 20px;
     float: right;
+}
+span.select2-selection.select2-selection--single {
+	height: 35px;
+	padding: 8px 12px;
+	font-size: 14px;
+    line-height: 1.42857143;
+}
+span.select2-selection__rendered {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.select2-container {
+    width: 100% !important;
+}
+.select2-results__option {
+    color: black;
+}
+.table > tbody > tr > td {
+    vertical-align: middle;
+}
+.table > tfoot > tr > td {
+    vertical-align: middle;
+    font-weight: bold;
+    border:none;
+}
+.detail-table {
+	width: 50%;
+}
+.detail-label {
+	font-weight: bold;
+}
+.pagination .cardinality {
+	margin-left: 10px;
+	display:inline-block;
+	padding-top: 7px;
 }

@@ -3,9 +3,11 @@ from django.db import IntegrityError, transaction
 from django.forms.formsets import formset_factory
 from django.http import JsonResponse, HttpResponseRedirect
 from django.views.generic import DetailView, UpdateView, CreateView, View
+from django.db.models import Q
 
 from django_tables2 import SingleTableView
 from django_tables2 import RequestConfig
+from dal import autocomplete
 
 from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 from apps.warehouse.tables import WareTable, InvoiceTable, SupplierTable, InvoiceItemTable
@@ -102,7 +104,7 @@ class InvoiceUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(InvoiceUpdateView, self).get_context_data(**kwargs)
-        InvoiceItemFormSet = formset_factory(InvoiceItemModelForm, formset=BaseInvoiceItemFormSet)
+        InvoiceItemFormSet = formset_factory(InvoiceItemModelForm, extra=100, can_delete=True)
         items = InvoiceItem.objects.filter(invoice=self.object)
         item_data = [{'ware': i.ware, 'quantity': i.quantity, 'price': i.price} for i in items]
         if self.request.POST:
@@ -110,6 +112,7 @@ class InvoiceUpdateView(UpdateView):
         else:
             item_formset = InvoiceItemFormSet(initial=item_data)
         context['item_formset'] = item_formset
+        context['title'] = "Edycja faktury"
         return context
 
     def form_valid(self, form):
@@ -120,6 +123,8 @@ class InvoiceUpdateView(UpdateView):
             self.object = form.save()
             new_items = []
             for item_form in item_formset:
+                if item_form.cleaned_data.get('DELETE', True):
+                    continue
                 ware = item_form.cleaned_data.get('ware')
                 price = item_form.cleaned_data.get('price')
                 quantity = item_form.cleaned_data.get('quantity')
@@ -153,7 +158,7 @@ class InvoiceCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(InvoiceCreateView, self).get_context_data(**kwargs)
-        InvoiceItemFormSet = formset_factory(InvoiceItemModelForm, formset=BaseInvoiceItemFormSet)
+        InvoiceItemFormSet = formset_factory(InvoiceItemModelForm, formset=BaseInvoiceItemFormSet, extra=100)
         items = InvoiceItem.objects.filter(invoice=self.object)
         item_data = [{'ware': i.ware, 'quantity': i.quantity, 'price': i.price} for i in items]
         if self.request.POST:
@@ -161,6 +166,7 @@ class InvoiceCreateView(CreateView):
         else:
             item_formset = InvoiceItemFormSet(initial=item_data)
         context['item_formset'] = item_formset
+        context['title'] = "Nowa faktura"
         return context
 
     def form_valid(self, form):
@@ -256,3 +262,29 @@ class GetWareData(View):
             return JsonResponse({'status': 'ok',
                                  'ware': response})
         return JsonResponse({'status': 'error', 'ware': []})
+
+
+class WareAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Ware.objects.all()
+        if self.q:
+            qs = qs.filter(Q(index__icontains=self.q) | Q(index_slug__icontains=self.q))
+        return qs
+
+
+class WareNameAutocomplete(autocomplete.Select2ListView):
+    the_list = list(Ware.objects.values_list('name', flat=True).distinct())
+
+    def get_list(self):
+        return self.the_list
+
+    def create(self, text):
+        return text
+
+
+class SupplierAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Supplier.objects.all()
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+        return qs

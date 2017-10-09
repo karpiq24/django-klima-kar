@@ -4,9 +4,12 @@
 {% block content %}
 <h1>Szczegóły dostawcy</h1>
 
-<dl class="dl-horizontal">
-    <dt>Nazwa</dt><dd>{{ object.name }}</dd>
-</dl>
+<table class="table table-bordered detail-table">
+    <tr>
+        <td class="detail-label">Nazwa</td>
+        <td>{{ object.name }}</td>
+    </tr>
+</table>
 
 <h4>Faktury tego dostawcy</h4>
 {% render_table table %}
@@ -18,7 +21,7 @@
 {% block scripts %}
 <script>
     $(function () {
-        $('#myNavbar #menu-suppliers').addClass('active');
+        $('.sidenav #nav-suppliers').children(':first').addClass('active');
     });
 </script>
 {% endblock %}

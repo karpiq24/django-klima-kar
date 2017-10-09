@@ -18,13 +18,15 @@ class Command(BaseCommand):
                 wares = collection.getElementsByTagName("towar")
 
                 for ware in wares:
+                    index = self.getData(ware, "indeks")
                     try:
                         w = Ware.objects.get(
-                            index=self.getData(ware, "indeks"))
+                            index=index)
                         print(w.index + " already exists.")
                     except Ware.DoesNotExist:
                         w = Ware(
-                            index=self.getData(ware, "indeks"),
+                            index=index,
+                            index_slug=''.join(e for e in index if e.isalnum()).lower(),
                             name=self.getData(ware, "nazwa"),
                             description=self.getData(ware, "uwagi"),
                             stock=self.getData(ware, "stan"),

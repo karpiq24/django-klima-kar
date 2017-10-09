@@ -4,6 +4,7 @@ from django.db import models
 
 class Ware(models.Model):
     index = models.CharField(max_length=63, unique=True, verbose_name=('Indeks'))
+    index_slug = models.CharField(max_length=63, verbose_name=('Slug indeks'))
     name = models.CharField(max_length=255, verbose_name=('Nazwa'))
     description = models.TextField(blank=True, null=True, verbose_name=('Opis'))
     stock = models.PositiveIntegerField(default=0, verbose_name=('Stan'))
@@ -14,6 +15,10 @@ class Ware(models.Model):
 
     def __str__(self):
         return self.index
+
+    def save(self, *args, **kwargs):
+        self.index_slug = ''.join(e for e in self.index if e.isalnum()).lower()
+        super(Ware, self).save(*args, **kwargs)
 
 
 class Supplier(models.Model):

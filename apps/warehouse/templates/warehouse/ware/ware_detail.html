@@ -4,12 +4,24 @@
 {% block content %}
 <h1>Szczegóły towaru</h1>
 
-<dl class="dl-horizontal">
-    <dt>Indeks</dt><dd>{{ object.index }}</dd>
-    <dt>Nazwa</dt><dd>{{ object.name }}</dd>
-    <dt>Stan</dt><dd>{{ object.stock }}</dd>
-    <dt>Opis</dt><dd>{{ object.description }}</dd>    
-</dl>
+<table class="table table-bordered detail-table">
+    <tr>
+        <td class="detail-label">Indeks</td>
+        <td>{{ object.index }}</td>
+    </tr>
+    <tr>
+        <td class="detail-label">Nazwa</td>
+        <td>{{ object.name }}</td>
+    </tr>
+    <tr>
+        <td class="detail-label">Stan</td>
+        <td>{{ object.stock }}</td>
+    </tr>
+    <tr>
+        <td class="detail-label">Opis</td>
+        <td>{{ object.description }}</td>
+    </tr>
+</table>
 
 <h4>Faktury zawierające towar</h4>
 {% render_table table %}
@@ -21,7 +33,7 @@
 {% block scripts %}
 <script>
     $(function () {
-        $('#myNavbar #menu-wares').addClass('active');
+        $('.sidenav #nav-wares').children(':first').addClass('active');
     });
 </script>
 {% endblock %}

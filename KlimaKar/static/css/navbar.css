@@ -1,0 +1,101 @@
+ul.sidenav {
+  list-style-type: none;
+  margin: 0;
+  margin-top: 48px;
+  padding: 0;
+  width: 15%;
+  background-color: #3D3B3D;
+  position: fixed;
+  z-index: 998;
+  height: 100%;
+  overflow: auto;
+}
+
+ul.sidenav li a {
+  display: block;
+  color: rgb(255, 255, 255);
+  padding: 8px 16px;
+  text-decoration: none;
+  border-bottom: solid 1px rgb(85, 85, 85);
+}
+
+ul.sidenav li a span {
+  margin-right: 10px;
+}
+
+ul.sidenav li a.active {
+  background-color: #3E77AD;
+  color: white;
+}
+
+ul.sidenav li a:hover:not(.active) {
+  background-color: #3E77AD;
+  color: white;
+}
+
+div.content {
+  margin-left: 15%;
+  padding: 1px 16px;
+}
+div.content-full {
+  margin-left: 0% !important;
+}
+
+@media screen and (max-width: 900px) {
+  ul.sidenav {
+      width: 100%;
+      height: auto;
+      position: relative;
+  }
+  ul.sidenav li a {
+      float: left;
+      padding: 15px;
+  }
+  div.content {margin-left: 0;}
+}
+
+@media screen and (max-width: 400px) {
+  ul.sidenav li a {
+      text-align: center;
+      float: none;
+  }
+}
+
+
+ul.topnav {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #1F1D1F;
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  width: 100%;
+}
+
+ul.topnav li {
+  float: left;
+}
+
+ul.topnav li a {
+  display: block;
+  color: #ffffff;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+ul.topnav li a:hover:not(.active) {
+  background-color: #111;
+}
+
+ul.topnav .active {
+  font-weight: bold;
+}
+
+.spacer
+{
+    width: 100%;
+    height: 35px;
+}

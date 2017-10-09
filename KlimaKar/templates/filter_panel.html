@@ -1,0 +1,27 @@
+<div class="panel-group">
+    <div class="panel panel-default">
+        <div class="panel-heading" data-toggle="collapse" data-target="#filters">
+            <h4 class="panel-title">
+                Filtry
+            </h4>
+        </div>
+        <div id="filters" class="panel-collapse collapse in">
+            <form method='GET'>
+                <div class="panel-body filter">
+                    {% for field in  filter.form %}
+                        <p>
+                            {{ field.label_tag }}
+                            {{ field }}
+                        </p>
+                    {% endfor %}
+                </div>
+                <div class="panel-footer">
+                    <button type="submit" class="btn btn-default">
+                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span> Filtruj
+                    </button>
+                    <a href='{{ request.path }}' >Wyczyść filtry</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

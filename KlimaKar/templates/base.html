@@ -1,45 +1,44 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
   <title>Klima-Kar</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/bootstrap.min.css' %}">
-  <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/styles.css' %}">
+  <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/font-awesome.min.css' %}">
   <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/bootstrap-datetimepicker.min.css' %}">
+  <link rel="stylesheet" type="text/css" media="screen" href="{% static 'autocomplete_light/vendor/select2/dist/css/select2.min.css' %}">
+  <link rel="stylesheet" type="text/css" media="screen" href="{% static 'autocomplete_light/select2.css' %}">
+  <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/headings.css' %}">
+  <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/styles.css' %}">
   {% block styles %}
   {% endblock %}
 </head>
 <body>
 
-<nav class="navbar navbar-inverse navbar-fixed-top" data-spy="affix">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>                        
-      </button>
-      <a class="navbar-brand" href="{% url 'home' %}">Klima-Kar</a>
-    </div>
-    <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav">
-        <li id="menu-wares"><a href="{% url 'warehouse:wares' %}">Towary</a></li>
-        <li id="menu-invoices"><a href="{% url 'warehouse:invoices' %}">Faktury</a></li>
-        <li id="menu-suppliers"><a href="{% url 'warehouse:suppliers' %}">Dostawcy</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
+<ul class="topnav">
+  <li><a class="active" href="{% url 'home' %}">Klima-Kar</a></li>
+  <li>
+    <a href="#" title="Menu" class="toggle_menu">
+      <i class="fa fa-bars fa-lg" style="cursor: pointer;"></i>
+    </a>
+  </li>
+  <li style="float:right">
+    <a href="#" title="Wyloguj">
+      <i class="fa fa-sign-out fa-lg" style="cursor: pointer;"></i> Wyloguj
+    </a>
+  </li>
+</ul>
+{% include 'menu.html' %}
+<div class="spacer">
+  &nbsp;
+</div>
 <div class="container-fluid text-center">    
-  <div class="row content">
-    <div class="col-sm-offset-2 col-sm-8 text-left"> 
+  <div class="content">
+    <div class="col-sm-12 text-left"> 
       {% block content %}
       {% endblock %}
     </div>
@@ -51,10 +50,25 @@
 <script src="{% static 'js/moment.min.js' %}"></script>
 <script src="{% static 'js/moment-pl.js' %}"></script>
 <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
-<script src="{% static 'js/jquery.formset.js' %}"></script>
+<script src="{% static 'autocomplete_light/vendor/select2/dist/js/select2.full.min.js' %}"></script>
+<script src="{% static 'autocomplete_light/vendor/select2/dist/js/i18n/pl.js' %}"></script>
+<script src="{% static 'autocomplete_light/vendor/select2/dist/js/select2.min.js' %}"></script>
+<script src="{% static 'autocomplete_light/jquery.init.js' %}"></script>
+<script src="{% static 'autocomplete_light/autocomplete.init.js' %}"></script>
+<script src="{% static 'autocomplete_light/select2.js' %}"></script>
 <script>
-  $(function() {
-    $("#myNavbar li").removeClass("active")
+  var isHidden = localStorage.getItem("isHidden");
+  if (isHidden == 'true'){
+    $('.sidenav').addClass('hidden');
+    $('.content').addClass('content-full');
+  }
+  $(function () {
+    $(".toggle_menu").click(function(){
+        $('.sidenav').toggleClass('hidden');
+        $('.content').toggleClass('content-full');
+        var isHidden = $('.sidenav').hasClass('hidden')
+        localStorage.setItem('isHidden', isHidden);
+    });
   });
 </script>
 {% block scripts %}
