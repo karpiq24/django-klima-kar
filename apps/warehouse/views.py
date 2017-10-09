@@ -13,7 +13,7 @@ from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 from apps.warehouse.tables import WareTable, InvoiceTable, SupplierTable, InvoiceItemTable
 from apps.warehouse.filters import WareFilter, InvoiceFilter, SupplierFilter
 from apps.warehouse.forms import (
-    WareModelForm, InvoiceModelForm, SupplierModelForm, BaseInvoiceItemFormSet, InvoiceItemModelForm)
+    WareModelForm, InvoiceModelForm, SupplierModelForm, InvoiceItemModelForm)
 
 
 class FilteredSingleTableView(SingleTableView):
@@ -104,7 +104,7 @@ class InvoiceUpdateView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(InvoiceUpdateView, self).get_context_data(**kwargs)
-        InvoiceItemFormSet = formset_factory(InvoiceItemModelForm, extra=100, can_delete=True)
+        InvoiceItemFormSet = formset_factory(InvoiceItemModelForm, extra=10, can_delete=True)
         items = InvoiceItem.objects.filter(invoice=self.object)
         item_data = [{'ware': i.ware, 'quantity': i.quantity, 'price': i.price} for i in items]
         if self.request.POST:
@@ -158,13 +158,12 @@ class InvoiceCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(InvoiceCreateView, self).get_context_data(**kwargs)
-        InvoiceItemFormSet = formset_factory(InvoiceItemModelForm, formset=BaseInvoiceItemFormSet, extra=100)
-        items = InvoiceItem.objects.filter(invoice=self.object)
-        item_data = [{'ware': i.ware, 'quantity': i.quantity, 'price': i.price} for i in items]
+        InvoiceItemFormSet = formset_factory(InvoiceItemModelForm, extra=10)
+
         if self.request.POST:
             item_formset = InvoiceItemFormSet(self.request.POST)
         else:
-            item_formset = InvoiceItemFormSet(initial=item_data)
+            item_formset = InvoiceItemFormSet()
         context['item_formset'] = item_formset
         context['title'] = "Nowa faktura"
         return context
