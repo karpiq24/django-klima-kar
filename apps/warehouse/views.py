@@ -272,10 +272,8 @@ class WareAutocomplete(autocomplete.Select2QuerySetView):
 
 
 class WareNameAutocomplete(autocomplete.Select2ListView):
-    the_list = list(Ware.objects.values_list('name', flat=True).distinct())
-
     def get_list(self):
-        return self.the_list
+        return list(Ware.objects.values_list('name', flat=True).distinct())
 
     def create(self, text):
         return text
