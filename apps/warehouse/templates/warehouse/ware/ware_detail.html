@@ -2,32 +2,39 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
-<h1>Szczegóły towaru</h1>
-
-<table class="table table-bordered detail-table">
-    <tr>
-        <td class="detail-label">Indeks</td>
-        <td>{{ object.index }}</td>
-    </tr>
-    <tr>
-        <td class="detail-label">Nazwa</td>
-        <td>{{ object.name }}</td>
-    </tr>
-    <tr>
-        <td class="detail-label">Stan</td>
-        <td>{{ object.stock }}</td>
-    </tr>
-    <tr>
-        <td class="detail-label">Opis</td>
-        <td>{{ object.description }}</td>
-    </tr>
-</table>
-
-<h4>Faktury zawierające towar</h4>
-{% render_table table %}
-
-<a class="btn btn-warning" href="{% url 'warehouse:ware_update' object.pk %}">Edycja</a>
-<a class="btn btn-default" href="javascript:history.back()">Powrót</a>
+<div class="col-xs-12">
+    <h1>Szczegóły towaru</h1>
+</div>
+<div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+    <table class="table table-bordered">
+        <tr>
+            <td class="detail-label">Indeks</td>
+            <td>{{ object.index }}</td>
+        </tr>
+        <tr>
+            <td class="detail-label">Nazwa</td>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <td class="detail-label">Stan</td>
+            <td>{{ object.stock }}</td>
+        </tr>
+        <tr>
+            <td class="detail-label">Opis</td>
+            <td>{{ object.description }}</td>
+        </tr>
+    </table>
+</div>
+<div class="col-xs-12">
+    <h4>Faktury zawierające towar</h4>
+</div>
+<div class="col-xs-12 table-responsive">
+    {% render_table table %}
+</div>
+<div class="col-xs-12">
+    <a class="btn btn-warning" href="{% url 'warehouse:ware_update' object.pk %}">Edycja</a>
+    <a class="btn btn-default" href="javascript:history.back()">Powrót</a>
+</div>
 {% endblock %}
 
 {% block scripts %}

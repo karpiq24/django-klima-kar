@@ -41,7 +41,7 @@ div.content-full {
   margin-left: 0% !important;
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 992px) {
   ul.sidenav {
       width: 100%;
       height: auto;
@@ -50,11 +50,13 @@ div.content-full {
   ul.sidenav li a {
       float: left;
       padding: 15px;
+      border-right: solid 1px rgb(85, 85, 85);
+      border-bottom: none;
   }
   div.content {margin-left: 0;}
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 768px) {
   ul.sidenav li a {
       text-align: center;
       float: none;

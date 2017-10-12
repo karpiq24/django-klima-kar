@@ -2,32 +2,39 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
-<h1>Szczegóły faktury</h1>
-
-<table class="table table-bordered detail-table">
-    <tr>
-        <td class="detail-label">Dostawca</td>
-        <td>{{ object.supplier }}</td>
-    </tr>
-    <tr>
-        <td class="detail-label">Numer</td>
-        <td>{{ object.number }}</td>
-    </tr>
-    <tr>
-        <td class="detail-label">Data</td>
-        <td>{{ object.date|date }}</td>
-    </tr>
-    <tr>
-        <td class="detail-label">Łączna wartość</td>
-        <td>{{ object.total_value }} zł</td>
-    </tr>
-</table>
-
-<h4>Towary</h4>
-{% render_table item_table %}
-
-<a class="btn btn-warning" href="{% url 'warehouse:invoice_update' object.pk %}">Edycja</a>
-<a class="btn btn-default" href="javascript:history.back()">Powrót</a>
+<div class="col-xs-12">
+    <h1>Szczegóły faktury</h1>
+</div>
+<div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+    <table class="table table-bordered">
+        <tr>
+            <td class="detail-label">Dostawca</td>
+            <td>{{ object.supplier }}</td>
+        </tr>
+        <tr>
+            <td class="detail-label">Numer</td>
+            <td>{{ object.number }}</td>
+        </tr>
+        <tr>
+            <td class="detail-label">Data</td>
+            <td>{{ object.date|date }}</td>
+        </tr>
+        <tr>
+            <td class="detail-label">Łączna wartość</td>
+            <td>{{ object.total_value }} zł</td>
+        </tr>
+    </table>
+</div>
+<div class="col-xs-12">
+    <h4>Towary</h4>
+</div>
+<div class="col-xs-12 table-responsive">
+    {% render_table item_table %}
+</div>
+<div class="col-xs-12">
+    <a class="btn btn-warning" href="{% url 'warehouse:invoice_update' object.pk %}">Edycja</a>
+    <a class="btn btn-default" href="javascript:history.back()">Powrót</a>
+</div>
 {% endblock %}
 
 {% block scripts %}

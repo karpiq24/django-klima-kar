@@ -1,82 +1,90 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>{{ title }}</h1>
-<form action="" method="post">{% csrf_token %}
-    {{ form.as_p }}
-    
-    <table class="table table-striped table-hover table-bordered table-responsive">
-        <thead>
-            <tr>
-                <th width="25%" class="index orderable">Indeks</th>
-                <th width="30%" class="name orderable">Nazwa</th>
-                <th width="10%" class="orderable quantity">Ilość</th>
-                <th width="15%" class="orderable price">Cena netto</th>
-                <th width="15%" class="orderable total">Razem</th>
-                <th width="5%" class="actions">Akcje</th>
-            </tr>
-        </thead>
-        <tbody id="formsets">
-            {{ item_formset.management_form }}
-            {% for item_form in item_formset %}
-                {{ item_form.id }}
-                <tr class="item-formset hidden">
-                    <td class="item-index">
-                        {{ item_form.ware }}
-                        {% if item_form.ware.errors %}
-                            {% for error in item_form.ware.errors %}
+<div class="col-xs-12">
+    <h1>{{ title }}</h1>
+</div>
+    <form action="" method="post">{% csrf_token %}
+        <div class="col-xs-12">
+            {{ form.as_p }}
+        </div>
+        
+        <div class="col-xs-12 table-responsive">
+            <table class="table table-striped table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th width="25%" class="index orderable">Indeks</th>
+                        <th width="30%" class="name orderable">Nazwa</th>
+                        <th width="10%" class="orderable quantity">Ilość</th>
+                        <th width="15%" class="orderable price">Cena netto</th>
+                        <th width="15%" class="orderable total">Razem</th>
+                        <th width="5%" class="actions">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody id="formsets">
+                    {{ item_formset.management_form }}
+                    {% for item_form in item_formset %}
+                        {{ item_form.id }}
+                        <tr class="item-formset hidden">
+                            <td class="item-index">
+                                {{ item_form.ware }}
+                                {% if item_form.ware.errors %}
+                                    {% for error in item_form.ware.errors %}
+                                        {{ error|escape }}
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
+                            <td class="item-name"></td>
+                            <td class="item-quantity">
+                                {{ item_form.quantity }}
+                                {% if item_form.quantity.errors %}
+                                    {% for error in item_form.quantity.errors %}
+                                        {{ error|escape }}
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
+                            <td class="item-price">
+                                {{ item_form.price }}
+                                {% if item_form.price.errors %}
+                                    {% for error in item_form.price.errors %}
+                                        {{ error|escape }}
+                                    {% endfor %}
+                                {% endif %}
+                            </td>
+                            <td class="item-total-value"></td>
+                            <td>
+                                <a href="#" title="Usuń">
+                                    <i class="fa fa-trash fa-lg remove_ware_formset" style="cursor: pointer;"></i>
+                                </a>
+                            </td>
+                            <td class="item-DELETE hidden">{{ item_form.DELETE }}</td>
+                        </tr>
+                        {% if item_form.non_form_errors %}
+                            {% for error in item_form.non_form_errors %}
                                 {{ error|escape }}
                             {% endfor %}
                         {% endif %}
-                    </td>
-                    <td class="item-name"></td>
-                    <td class="item-quantity">
-                        {{ item_form.quantity }}
-                        {% if item_form.quantity.errors %}
-                            {% for error in item_form.quantity.errors %}
-                                {{ error|escape }}
-                            {% endfor %}
-                        {% endif %}
-                    </td>
-                    <td class="item-price">
-                        {{ item_form.price }}
-                        {% if item_form.price.errors %}
-                            {% for error in item_form.price.errors %}
-                                {{ error|escape }}
-                            {% endfor %}
-                        {% endif %}
-                    </td>
-                    <td class="item-total-value"></td>
-                    <td>
-                        <a href="#" title="Usuń">
-                            <i class="fa fa-trash fa-lg remove_ware_formset" style="cursor: pointer;"></i>
-                        </a>
-                    </td>
-                    <td class="item-DELETE hidden">{{ item_form.DELETE }}</td>
-                </tr>
-                {% if item_form.non_form_errors %}
-                    {% for error in item_form.non_form_errors %}
-                        {{ error|escape }}
                     {% endfor %}
-                {% endif %}
-            {% endfor %}
-            <tfoot>
-                <td colspan="3">
-                    <button type="button" class="btn btn-success btn-sm" id="add_ware_formset">
-                        <span class="glyphicon glyphicon-plus"></span> Dodaj towar
-                    </button>
-                </td>
-                <td colspan="1">
-                    Razem:
-                </td>
-                <td colspan="2" id="invoice-total">
-                </td>
-            </tfoot>
-        </tbody>
-    </table>
-    <input class="btn btn-primary" type="submit" value="Zapisz" />
-    <a class="btn btn-default" href="javascript:history.back()">Powrót</a>
-</form>
+                    <tfoot>
+                        <td colspan="3">
+                            <button type="button" class="btn btn-success btn-sm" id="add_ware_formset">
+                                <span class="glyphicon glyphicon-plus"></span> Dodaj towar
+                            </button>
+                        </td>
+                        <td colspan="1">
+                            Razem:
+                        </td>
+                        <td colspan="2" id="invoice-total">
+                        </td>
+                    </tfoot>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-xs-12">
+            <input class="btn btn-primary" type="submit" value="Zapisz" />
+            <a class="btn btn-default" href="javascript:history.back()">Powrót</a>
+        </div>
+    </form>
 {% endblock %}
 
 {% block scripts %}
