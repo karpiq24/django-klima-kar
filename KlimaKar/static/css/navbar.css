@@ -60,6 +60,7 @@ div.content-full {
   ul.sidenav li a {
       text-align: center;
       float: none;
+      border-bottom: solid 1px rgb(85, 85, 85);
   }
 }
 
