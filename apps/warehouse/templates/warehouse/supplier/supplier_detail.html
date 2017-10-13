@@ -2,24 +2,24 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
-<div class="col-xs-12">
+<div>
     <h1>Szczegóły dostawcy</h1>
 </div>
-<div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
-    <table class="table table-bordered">
-        <tr>
-            <td class="detail-label">Nazwa</td>
-            <td>{{ object.name }}</td>
-        </tr>
-    </table>
+<div class="row">
+    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+        <table class="table table-bordered">
+            <tr>
+                <td class="detail-label">Nazwa</td>
+                <td>{{ object.name }}</td>
+            </tr>
+        </table>
+    </div>
 </div>
-<div class="col-xs-12">
+<div>
     <h4>Faktury tego dostawcy</h4>
 </div>
-<div class="col-xs-12 table-responsive">
-    {% render_table table %}
-</div>
-<div class="col-xs-12">
+{% render_table table "tables2/table.html" %}
+<div>
     <a class="btn btn-warning" href="{% url 'warehouse:supplier_update' object.pk %}">Edycja</a>
     <a class="btn btn-default" href="javascript:history.back()">Powrót</a>
 </div>

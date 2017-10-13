@@ -2,16 +2,14 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
-<div class="col-xs-12">
+<div>
     <h1>Towary</h1>
 </div>
 {% include "filter_panel.html" %}
-<div class="col-xs-12 action-buttons text-right">
+<div class="action-buttons text-right">
     <a class="btn btn-success" href="{% url 'warehouse:ware_create' %}">Nowy towar</a>
 </div>
-<div class="col-xs-12 table-responsive">
-    {% render_table table %}
-</div>
+{% render_table table "tables2/table.html" %}
 {% endblock %}
 
 {% block scripts %}
