@@ -21,7 +21,6 @@ span.select2-selection__rendered {
 }
 .select2-container {
     width: 100% !important;
-    min-width: 0 !important;
 }
 .select2-results__option {
     color: black;
