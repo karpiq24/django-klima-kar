@@ -1,3 +1,4 @@
+# flake8: noqa
 from django.conf.urls import url
 from apps.warehouse import views
 
@@ -5,6 +6,7 @@ app_name = 'warehouse'
 urlpatterns = [
     url(r'^wares$', views.WareTableView.as_view(), name='wares'),
     url(r'^wares/create$', views.WareCreateView.as_view(), name='ware_create'),
+    url(r'^wares/create_ajax$', views.WareCreateAjaxView.as_view(), name='ware_create_ajax'),
     url(r'^wares/(?P<pk>[-\w]+)/detail$', views.WareDetailView.as_view(), name='ware_detail'),
     url(r'^wares/(?P<pk>[-\w]+)/update$', views.WareUpdateView.as_view(), name='ware_update'),
     url(r'^get_ware_data$', views.GetWareData.as_view(), name='get_ware_data'),
@@ -21,5 +23,5 @@ urlpatterns = [
     url(r'^suppliers/create$', views.SupplierCreateView.as_view(), name='supplier_create'),
     url(r'^suppliers/(?P<pk>[-\w]+)/detail$', views.SupplierDetailView.as_view(), name='supplier_detail'),
     url(r'^suppliers/(?P<pk>[-\w]+)/update$', views.SupplierUpdateView.as_view(), name='supplier_update'),
-    url(r'^supplier_autocomplete$', views.SupplierAutocomplete.as_view(), name='supplier_autocomplete'),
+    url(r'^supplier_autocomplete$', views.SupplierAutocomplete.as_view(create_field='name'), name='supplier_autocomplete'),
 ]

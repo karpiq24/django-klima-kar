@@ -16,7 +16,7 @@
         <table class="table table-striped table-hover table-bordered">
             <thead>
                 <tr>
-                    <th class="index orderable">Indeks</th>
+                    <th class="index orderable">Towar</th>
                     <th class="name orderable">Nazwa</th>
                     <th class="orderable quantity">Ilość</th>
                     <th class="orderable price">Cena netto</th>
@@ -70,8 +70,11 @@
                 {% endfor %}
                 <tfoot>
                     <td colspan="3">
-                        <button type="button" class="btn btn-success btn-sm" id="add_ware_formset">
-                            <span class="glyphicon glyphicon-plus"></span> Dodaj towar
+                        <button type="button" class="btn btn-info btn-sm" id="add_ware_formset">
+                            <span class="fa fa-cart-plus fa-lg"></span> Kolejny towar
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm" id="add_new_ware">
+                            <span class="fa fa-plus fa-lg"></span> Dodaj nowy towar
                         </button>
                     </td>
                     <td colspan="1">
@@ -93,6 +96,7 @@
 {% block scripts %}
 <script>
     var GET_WARE_DATA = "{% url 'warehouse:get_ware_data' %}";
+    var CREATE_WARE = "{% url 'warehouse:ware_create_ajax' %}";
 
     function RecalculateTotals() {
         var invoice_total = 0;
@@ -190,6 +194,20 @@
         RecalculateTotals();
         $(".js-basic-multiple").select2({
             language: "pl"
+        });
+
+        $('#add_new_ware').click(function() {
+            $.ajax({
+                url: CREATE_WARE,
+                type: 'get',
+                dataType: 'json',
+                beforeSend: function () {
+                    $("#modal-generic").modal("show");
+                },
+                success: function (data) {
+                    $("#modal-generic .modal-content").html(data.html_form);
+                }
+            });
         });
     });
 </script>

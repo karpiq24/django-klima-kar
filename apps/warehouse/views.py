@@ -9,6 +9,7 @@ from django_tables2 import SingleTableView
 from django_tables2 import RequestConfig
 from dal import autocomplete
 
+from KlimaKar.views import AjaxCreateView
 from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 from apps.warehouse.tables import WareTable, InvoiceTable, SupplierTable, InvoiceItemTable
 from apps.warehouse.filters import WareFilter, InvoiceFilter, SupplierFilter
@@ -247,6 +248,13 @@ class SupplierCreateView(CreateView):
 
     def get_success_url(self, **kwargs):
         return reverse("warehouse:suppliers_detail", kwargs={'pk': self.object.pk})
+
+
+class WareCreateAjaxView(AjaxCreateView):
+    model = Ware
+    form_class = WareModelForm
+    title = "Nowy towar"
+    url = 'warehouse:ware_create_ajax'
 
 
 class GetWareData(View):
