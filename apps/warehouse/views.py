@@ -247,7 +247,7 @@ class SupplierCreateView(CreateView):
         return context
 
     def get_success_url(self, **kwargs):
-        return reverse("warehouse:suppliers_detail", kwargs={'pk': self.object.pk})
+        return reverse("warehouse:supplier_detail", kwargs={'pk': self.object.pk})
 
 
 class WareCreateAjaxView(AjaxCreateView):

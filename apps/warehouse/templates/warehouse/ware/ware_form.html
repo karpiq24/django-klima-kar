@@ -13,7 +13,7 @@
     </div>
     <div>
         <input class="btn btn-primary" type="submit" value="Zapisz" />
-        <a class="btn btn-default" href="javascript:history.back()">Powrót</a>
+        <a class="btn btn-default" href="{% url 'warehouse:ware_detail' object.pk %}">Powrót</a>
     </div>
 </form>
 {% endblock %}

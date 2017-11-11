@@ -17,11 +17,11 @@ span.select2-selection__rendered {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 100% !important;
+    width: 95% !important;
 }
 .select2-container {
     width: 100% !important;
-    min-width: 150px !important;
+    min-width: 120px !important;
 }
 .select2-results__option {
     color: black;

@@ -19,6 +19,7 @@ class WareTable(tables.Table):
         model = Ware
         attrs = {'class': 'table table-striped table-hover table-bordered table-responsive'}
         fields = ['index', 'name', 'description', 'stock']
+        order_by = 'index'
 
 
 class InvoiceTable(tables.Table):
@@ -37,6 +38,7 @@ class InvoiceTable(tables.Table):
         model = Invoice
         attrs = {'class': 'table table-striped table-hover table-bordered table-responsive'}
         fields = ['supplier', 'number', 'date', 'total_value']
+        order_by = '-date'
 
 
 class SupplierTable(tables.Table):
@@ -48,6 +50,7 @@ class SupplierTable(tables.Table):
         model = Supplier
         attrs = {'class': 'table table-striped table-hover table-bordered table-responsive'}
         fields = ['name']
+        order_by = 'name'
 
 
 class InvoiceItemTable(tables.Table):

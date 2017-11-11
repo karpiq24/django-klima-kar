@@ -12,6 +12,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Example: [('John', 'john@example.com'), ('Mary', 'mary@example.com')]
 ADMINS = []
 
+EMAIL_HOST = ''
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
