@@ -13,7 +13,11 @@
     </div>
     <div>
         <input class="btn btn-primary" type="submit" value="Zapisz" />
-        <a class="btn btn-default" href="{% url 'warehouse:supplier_detail' object.pk %}">Powrót</a>
+        {% if object %}
+            <a class="btn btn-default" href="{% url 'warehouse:supplier_detail' object.pk %}">Powrót</a>
+        {% else %}
+            <a class="btn btn-default" href="{% url 'warehouse:suppliers' %}">Powrót</a>
+        {% endif %}
     </div>
 </form>
 {% endblock %}
