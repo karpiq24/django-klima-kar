@@ -21,26 +21,29 @@
 
 <ul class="topnav">
   <li><a class="active" href="{% url 'home' %}">Klima-Kar</a></li>
-  <li>
-    <a href="#" title="Menu" class="toggle_menu">
-      <i class="fa fa-bars fa-lg" style="cursor: pointer;"></i>
-    </a>
-  </li>
-  <li style="float:right">
-    <a href="#" title="Wyloguj">
-      <i class="fa fa-sign-out fa-lg" style="cursor: pointer;"></i> Wyloguj
-    </a>
-  </li>
+  {% if user.is_authenticated %}
+    <li>
+      <a href="#" title="Menu" class="toggle_menu">
+        <i class="fa fa-bars fa-lg" style="cursor: pointer;"></i>
+      </a>
+    </li>
+    <li style="float:right">
+      <a href="{% url 'logout' %}" title="Wyloguj">
+        <i class="fa fa-sign-out fa-lg" style="cursor: pointer;"></i> Wyloguj
+      </a>
+    </li>
+  {% endif %}
 </ul>
-{% include 'menu.html' %}
+{% if user.is_authenticated %}
+  {% include 'menu.html' %}
+{% endif %}
 <div class="spacer">
   &nbsp;
 </div>
 <div class="container-fluid text-center">    
-  <div class="content text-left">
+  <div class="content text-left {% if not user.is_authenticated %}content-full{% endif %}">
     {% block content %}
     {% endblock %}
-
     <div class="modal fade" id="modal-generic">
       <div class="modal-dialog">
           <div class="modal-content">
