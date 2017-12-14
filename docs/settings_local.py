@@ -43,3 +43,8 @@ STATIC_ROOT = '/var/www/wsgi/static/KlimaKar'
 SECRET_KEY = ''
 
 AUTH_PASSWORD_VALIDATORS = []
+
+# Inter Cars API
+IC_API_URL = 'https://katalog.intercars.com.pl/api/v2/External/'
+IC_TOKEN = ''
+IC_CLIENT_NUMBER = ''

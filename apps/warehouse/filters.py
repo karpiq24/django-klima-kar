@@ -5,6 +5,7 @@ import django_filters
 from dal import autocomplete
 
 from apps.warehouse.models import Ware, Invoice, Supplier
+from apps.warehouse.dictionaries import STOCK_CHOICES
 
 
 class WareFilter(django_filters.FilterSet):
@@ -12,13 +13,21 @@ class WareFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput(attrs={'class': 'form-control'}))
     description = django_filters.CharFilter(lookup_expr='icontains',
                                             widget=forms.TextInput(attrs={'class': 'form-control'}))
+    stock = django_filters.ChoiceFilter(choices=STOCK_CHOICES, method='stock_filter',
+                                        widget=forms.Select(attrs={'class': 'form-control'}))
 
     class Meta:
         model = Ware
-        fields = ['index', 'name', 'description']
+        fields = ['index', 'name', 'description', 'stock']
 
     def index_filter(self, queryset, name, value):
         return queryset.filter(Q(index__icontains=value) | Q(index_slug__icontains=value))
+
+    def stock_filter(self, queryset, name, value):
+        if value == '1':
+            return queryset.filter(stock__gte=1)
+        elif value == '2':
+            return queryset.filter(stock__lte=0)
 
 
 class InvoiceFilter(django_filters.FilterSet):
