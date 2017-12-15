@@ -18,15 +18,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             start_date = dateutil.parser.parse(options['date'])
+            print("Loading invoices from date: {}".format(options['date']))
         except ValueError:
-            print("Invalid date format.")
+            print("Invalid date format.\n")
             return
 
         if not IC_CLIENT_NUMBER:
-            print("Inter Cars client number is not specified.")
+            print("Inter Cars client number is not specified.\n")
             return
         if not IC_TOKEN:
-            print("Inter Cars client number is not specified.")
+            print("Inter Cars client number is not specified.\n")
             return
 
         today = datetime.datetime.today()
@@ -40,7 +41,7 @@ class Command(BaseCommand):
             new_wares += new_objects[1]
             current_date = end_date + datetime.timedelta(1)
         print("Added {} new invoices.". format(new_invoices))
-        print("Added {} new wares.". format(new_wares))
+        print("Added {} new wares.\n". format(new_wares))
 
     def get_invoices(self, current_date, end_date):
         url = IC_API_URL + 'GetInvoices'
