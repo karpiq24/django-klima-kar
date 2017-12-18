@@ -5,3 +5,4 @@ django-autocomplete-light==3.2.10
 six==1.11.0
 python-dateutil==2.6.1
 requests==2.18.4
+dropbox==8.5.0

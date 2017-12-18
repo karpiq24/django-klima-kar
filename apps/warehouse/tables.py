@@ -20,6 +20,7 @@ class WareTable(tables.Table):
         attrs = {'class': 'table table-striped table-hover table-bordered table-responsive'}
         fields = ['index', 'name', 'description', 'stock']
         order_by = 'index'
+        empty_text = 'Brak towarów'
 
 
 class InvoiceTable(tables.Table):
@@ -39,6 +40,7 @@ class InvoiceTable(tables.Table):
         attrs = {'class': 'table table-striped table-hover table-bordered table-responsive'}
         fields = ['supplier', 'number', 'date', 'total_value']
         order_by = '-date'
+        empty_text = 'Brak faktur'
 
 
 class SupplierTable(tables.Table):
@@ -51,6 +53,7 @@ class SupplierTable(tables.Table):
         attrs = {'class': 'table table-striped table-hover table-bordered table-responsive'}
         fields = ['name']
         order_by = 'name'
+        empty_text = 'Brak dostawców'
 
 
 class InvoiceItemTable(tables.Table):
@@ -67,6 +70,7 @@ class InvoiceItemTable(tables.Table):
         model = InvoiceItem
         attrs = {'class': 'table table-striped table-hover table-bordered table-responsive'}
         fields = ['index', 'name', 'quantity', 'price', 'total']
+        empty_text = 'Brak towarów'
 
     def render_price(self, value):
         return "{} zł".format(value)

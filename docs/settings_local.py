@@ -48,3 +48,6 @@ AUTH_PASSWORD_VALIDATORS = []
 IC_API_URL = 'https://katalog.intercars.com.pl/api/v2/External/'
 IC_TOKEN = ''
 IC_CLIENT_NUMBER = ''
+
+# Dropbox
+DROPBOX_TOKEN = ''
