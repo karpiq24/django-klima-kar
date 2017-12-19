@@ -9,7 +9,7 @@ from django_tables2 import SingleTableView
 from django_tables2 import RequestConfig
 from dal import autocomplete
 
-from KlimaKar.views import AjaxCreateView
+from KlimaKar.views import AjaxCreateView, CustomSelect2QuerySetView
 from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 from apps.warehouse.tables import WareTable, InvoiceTable, SupplierTable, InvoiceItemTable
 from apps.warehouse.filters import WareFilter, InvoiceFilter, SupplierFilter
@@ -271,7 +271,7 @@ class GetWareData(View):
         return JsonResponse({'status': 'error', 'ware': []})
 
 
-class WareAutocomplete(autocomplete.Select2QuerySetView):
+class WareAutocomplete(CustomSelect2QuerySetView):
     def get_queryset(self):
         qs = Ware.objects.all()
         if self.q:
@@ -287,7 +287,7 @@ class WareNameAutocomplete(autocomplete.Select2ListView):
         return text
 
 
-class SupplierAutocomplete(autocomplete.Select2QuerySetView):
+class SupplierAutocomplete(CustomSelect2QuerySetView):
     def get_queryset(self):
         qs = Supplier.objects.all()
         if self.q:

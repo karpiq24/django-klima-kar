@@ -1,7 +1,12 @@
+import six
+
 from django.views.generic import TemplateView, CreateView
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.core.exceptions import ImproperlyConfigured
+
+from dal import autocomplete
 
 from KlimaKar.mixins import AjaxableResponseMixin
 
@@ -35,3 +40,38 @@ class AjaxCreateView(AjaxableResponseMixin, CreateView):
 
     def get_success_url(self, **kwargs):
         return None
+
+
+class CustomSelect2QuerySetView(autocomplete.Select2QuerySetView):
+    def get_create_option(self, context, q):
+        create_option = []
+        display_create_option = False
+        if self.create_field and q:
+            page_obj = context.get('page_obj', None)
+            if ((page_obj is None or page_obj.number == 1)
+                    and not self.get_queryset().filter(**{self.create_field: q}).exists()):
+                display_create_option = True
+
+        if display_create_option:
+            create_option = [{
+                'id': q,
+                'text': ('Dodaj "%(new_value)s"') % {'new_value': q},
+                'create_id': True,
+            }]
+        return create_option
+
+    def post(self, request):
+        if not self.create_field:
+            raise ImproperlyConfigured('Missing "create_field"')
+
+        text = request.POST.get('text', None)
+
+        if text is None:
+            return HttpResponseBadRequest()
+
+        result = self.create_object(text)
+
+        return JsonResponse({
+            'id': result.pk,
+            'text': six.text_type(result),
+        })
