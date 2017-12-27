@@ -1,7 +1,14 @@
+# -*- coding: utf-8 -*-
+
 import io
+import csv
 import datetime
 
 from xlsxwriter import Workbook
+
+from django.db.models import Q
+
+from apps.warehouse.models import Ware
 
 
 def export_wares(queryset):
@@ -58,3 +65,21 @@ def export_wares(queryset):
     workbook.close()
     output.seek(0)
     return output
+
+
+def restore_wares_stock(file_path):
+    with open(file_path, encoding="utf8") as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        for row in reader:
+            index = row[1].strip()
+            index = ''.join(e for e in index if e.isalnum()).lower()
+            stock = int(row[3].strip())
+            if index:
+                try:
+                    ware = Ware.objects.get(Q(index__iexact=index) | Q(index_slug__iexact=index))
+                    ware.stock = stock
+                    ware.save()
+                except Ware.DoesNotExist:
+                    print("{} does not exist.".format(index))
+                except Ware.MultipleObjectsReturned:
+                    print("Multiple objects returned for index: {}".format(index))
