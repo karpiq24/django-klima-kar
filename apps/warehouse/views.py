@@ -1,7 +1,7 @@
 from django.urls import reverse
 from django.db import IntegrityError, transaction
 from django.forms.formsets import formset_factory
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.views.generic import DetailView, UpdateView, CreateView, View
 from django.db.models import Q
 
@@ -15,6 +15,7 @@ from apps.warehouse.tables import WareTable, InvoiceTable, SupplierTable, Invoic
 from apps.warehouse.filters import WareFilter, InvoiceFilter, SupplierFilter
 from apps.warehouse.forms import (
     WareModelForm, InvoiceModelForm, SupplierModelForm, InvoiceItemModelForm)
+from apps.warehouse.functions import export_wares
 
 
 class FilteredSingleTableView(SingleTableView):
@@ -28,7 +29,20 @@ class FilteredSingleTableView(SingleTableView):
     def get_context_data(self, **kwargs):
         context = super(FilteredSingleTableView, self).get_context_data(**kwargs)
         context['filter'] = self.filter
+        key = "{}_params".format(self.filter_class)
+        self.request.session[key] = self.request.GET
         return context
+
+    def get(self, request, *args, **kwargs):
+        if 'export' in request.path:
+            key = "{}_params".format(self.filter_class)
+            queryset = self.filter_class(request.session[key], queryset=self.model.objects.all()).qs
+            output = export_wares(queryset)
+            response = HttpResponse(output.read(),
+                                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            response['Content-Disposition'] = "attachment; filename=eksport_towarów.xlsx"
+            return response
+        return super(FilteredSingleTableView, self).get(request, *args, **kwargs)
 
 
 class WareTableView(FilteredSingleTableView):

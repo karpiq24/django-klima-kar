@@ -5,6 +5,7 @@ from apps.warehouse import views
 app_name = 'warehouse'
 urlpatterns = [
     url(r'^wares$', views.WareTableView.as_view(), name='wares'),
+    url(r'^wares/export$', views.WareTableView.as_view(), name='wares_export'),
     url(r'^wares/create$', views.WareCreateView.as_view(), name='ware_create'),
     url(r'^wares/create_ajax$', views.WareCreateAjaxView.as_view(), name='ware_create_ajax'),
     url(r'^wares/(?P<pk>[-\w]+)/detail$', views.WareDetailView.as_view(), name='ware_detail'),

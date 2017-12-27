@@ -8,6 +8,7 @@
 {% include "filter_panel.html" %}
 <div class="action-buttons text-right">
     <a class="btn btn-success" href="{% url 'warehouse:ware_create' %}">Nowy towar</a>
+    <a class="btn btn-info" href="{% url 'warehouse:wares_export' %}">Eksport towarów</a>
 </div>
 {% render_table table "tables2/table.html" %}
 {% endblock %}
