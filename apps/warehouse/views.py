@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.urls import reverse
 from django.db import IntegrityError, transaction
 from django.forms.formsets import formset_factory
