@@ -4,7 +4,7 @@ from django.db.models import Q
 import django_filters
 from dal import autocomplete
 
-from apps.warehouse.models import Ware, Invoice, Supplier
+from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 from apps.warehouse.dictionaries import STOCK_CHOICES
 
 
@@ -15,6 +15,10 @@ class WareFilter(django_filters.FilterSet):
                                             widget=forms.TextInput(attrs={'class': 'form-control'}))
     stock = django_filters.ChoiceFilter(choices=STOCK_CHOICES, method='stock_filter',
                                         widget=forms.Select(attrs={'class': 'form-control'}))
+    date__gte = django_filters.DateFilter(method='date_from_filter', label="Data zakupu od",
+                                          widget=forms.DateInput(attrs={'class': 'date-input form-control'}))
+    date__lte = django_filters.DateFilter(method='date_to_filter', label="Data zakupu do",
+                                          widget=forms.DateInput(attrs={'class': 'date-input form-control'}))
 
     class Meta:
         model = Ware
@@ -22,6 +26,14 @@ class WareFilter(django_filters.FilterSet):
 
     def index_filter(self, queryset, name, value):
         return queryset.filter(Q(index__icontains=value) | Q(index_slug__icontains=value))
+
+    def date_from_filter(self, queryset, name, value):
+        to_exclude = InvoiceItem.objects.filter(invoice__date__lt=value).values_list('ware__id', flat=True)
+        return queryset.exclude(pk__in=to_exclude).exclude(invoiceitem=None)
+
+    def date_to_filter(self, queryset, name, value):
+        to_exclude = InvoiceItem.objects.filter(invoice__date__gt=value).values_list('ware__id', flat=True)
+        return queryset.exclude(pk__in=to_exclude).exclude(invoiceitem=None)
 
     def stock_filter(self, queryset, name, value):
         if value == '1':

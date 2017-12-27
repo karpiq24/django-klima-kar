@@ -17,6 +17,9 @@
 <script>
     $(function() {
         $('.sidenav #nav-wares').children(':first').addClass('active');
+        $('.date-input').datetimepicker({
+            format:'YYYY-MM-DD'
+        });
     });
 </script>
 {% endblock %}
