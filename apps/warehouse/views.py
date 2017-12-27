@@ -42,7 +42,7 @@ class FilteredSingleTableView(SingleTableView):
             output = export_wares(queryset)
             response = HttpResponse(output.read(),
                                     content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-            response['Content-Disposition'] = "attachment; filename=eksport_towarów.xlsx"
+            response['Content-Disposition'] = "attachment; filename=eksport_towarow.xlsx"
             return response
         return super(FilteredSingleTableView, self).get(request, *args, **kwargs)
 
