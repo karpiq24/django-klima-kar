@@ -36,7 +36,7 @@ class InvoiceModelForm(BootstrapModelForm):
     supplier = forms.ModelChoiceField(
         label="Dostawca",
         queryset=Supplier.objects.all(),
-        widget=autocomplete.ModelSelect2(url='warehouse:supplier_autocomplete')
+        widget=autocomplete.ModelSelect2(url='warehouse:supplier_autocomplete_create')
     )
 
     def __init__(self, *args, **kwargs):

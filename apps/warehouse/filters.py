@@ -15,6 +15,9 @@ class WareFilter(django_filters.FilterSet):
                                             widget=forms.TextInput(attrs={'class': 'form-control'}))
     stock = django_filters.ChoiceFilter(choices=STOCK_CHOICES, method='stock_filter',
                                         widget=forms.Select(attrs={'class': 'form-control'}))
+    supplier = django_filters.ModelChoiceFilter(method='supplier_filter', queryset=Supplier.objects.all(),
+                                                widget=autocomplete.ModelSelect2(url='warehouse:supplier_autocomplete',
+                                                attrs={'class': 'form-control'}), label="Zakup od dostawcy")
     date__gte = django_filters.DateFilter(method='date_from_filter', label="Data zakupu od",
                                           widget=forms.DateInput(attrs={'class': 'date-input form-control'}))
     date__lte = django_filters.DateFilter(method='date_to_filter', label="Data zakupu do",
@@ -33,6 +36,10 @@ class WareFilter(django_filters.FilterSet):
 
     def date_to_filter(self, queryset, name, value):
         to_include = InvoiceItem.objects.filter(invoice__date__lte=value).values_list('ware__id', flat=True)
+        return queryset.filter(pk__in=to_include).exclude(invoiceitem=None)
+
+    def supplier_filter(self, queryset, name, value):
+        to_include = InvoiceItem.objects.filter(invoice__supplier=value).values_list('ware__id', flat=True)
         return queryset.filter(pk__in=to_include).exclude(invoiceitem=None)
 
     def stock_filter(self, queryset, name, value):

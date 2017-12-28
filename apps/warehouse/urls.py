@@ -24,5 +24,6 @@ urlpatterns = [
     url(r'^suppliers/create$', views.SupplierCreateView.as_view(), name='supplier_create'),
     url(r'^suppliers/(?P<pk>[-\w]+)/detail$', views.SupplierDetailView.as_view(), name='supplier_detail'),
     url(r'^suppliers/(?P<pk>[-\w]+)/update$', views.SupplierUpdateView.as_view(), name='supplier_update'),
-    url(r'^supplier_autocomplete$', views.SupplierAutocomplete.as_view(create_field='name'), name='supplier_autocomplete'),
+    url(r'^supplier_autocomplete$', views.SupplierAutocomplete.as_view(), name='supplier_autocomplete'),
+    url(r'^supplier_autocomplete_create$', views.SupplierAutocomplete.as_view(create_field='name'), name='supplier_autocomplete_create'),
 ]

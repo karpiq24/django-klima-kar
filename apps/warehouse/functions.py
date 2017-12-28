@@ -44,7 +44,7 @@ def export_wares(queryset):
     row = 3
     col = 0
 
-    for ware in queryset:
+    for ware in queryset.order_by('index'):
         worksheet.write(row, col, row - 2, border)
         worksheet.write(row, col + 1, ware.index, border)
         worksheet.write(row, col + 2, ware.name, border)
@@ -57,7 +57,7 @@ def export_wares(queryset):
         row += 1
 
     worksheet.write(row + 1, 4, 'SUMA', bold)
-    worksheet.write(row + 1, 5, '=SUM(F1:F{})'.format(row), bold_money)
+    worksheet.write(row + 1, 5, '=SUM(F4:F{})'.format(row), bold_money)
 
     worksheet.write(row + 3, 1, 'Remanent zakończono na pozycji {}.'.format(row - 3))
     worksheet.write(row + 4, 1, 'Wartość słownie: ')
