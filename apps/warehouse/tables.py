@@ -1,4 +1,4 @@
-from django.db.models import F, Sum
+from django.db.models import F, Sum, Max
 from django.db.models.fields import FloatField
 
 import django_tables2 as tables
@@ -8,17 +8,26 @@ from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 
 class WareTable(tables.Table):
     index = tables.Column(attrs={'th': {'width': '20%'}})
-    name = tables.Column(attrs={'th': {'width': '30%'}})
-    description = tables.Column(attrs={'th': {'width': '38%'}})
+    name = tables.Column(attrs={'th': {'width': '25%'}})
+    description = tables.Column(attrs={'th': {'width': '30%'}})
     stock = tables.Column(attrs={'th': {'width': '5%'}})
+    last_price = tables.Column(attrs={'th': {'width': '13%'}}, verbose_name="Ostatnia cena")
     actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
                                     template_name='warehouse/ware/ware_actions.html',
                                     orderable=False)
 
+    def render_last_price(self, value):
+        return "{} zł".format(value)
+
+    def order_last_price(self, queryset, is_descending):
+        queryset = queryset.annotate(
+            max_price=Max('invoiceitem__price')).order_by(('-' if is_descending else '') + 'max_price')
+        return (queryset, True)
+
     class Meta:
         model = Ware
         attrs = {'class': 'table table-striped table-hover table-bordered table-responsive'}
-        fields = ['index', 'name', 'description', 'stock']
+        fields = ['index', 'name', 'description', 'last_price', 'stock']
         order_by = 'index'
         empty_text = 'Brak towarów'
 
