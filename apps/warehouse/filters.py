@@ -28,12 +28,12 @@ class WareFilter(django_filters.FilterSet):
         return queryset.filter(Q(index__icontains=value) | Q(index_slug__icontains=value))
 
     def date_from_filter(self, queryset, name, value):
-        to_exclude = InvoiceItem.objects.filter(invoice__date__lt=value).values_list('ware__id', flat=True)
-        return queryset.exclude(pk__in=to_exclude).exclude(invoiceitem=None)
+        to_include = InvoiceItem.objects.filter(invoice__date__gte=value).values_list('ware__id', flat=True)
+        return queryset.filter(pk__in=to_include).exclude(invoiceitem=None)
 
     def date_to_filter(self, queryset, name, value):
-        to_exclude = InvoiceItem.objects.filter(invoice__date__gt=value).values_list('ware__id', flat=True)
-        return queryset.exclude(pk__in=to_exclude).exclude(invoiceitem=None)
+        to_include = InvoiceItem.objects.filter(invoice__date__lte=value).values_list('ware__id', flat=True)
+        return queryset.filter(pk__in=to_include).exclude(invoiceitem=None)
 
     def stock_filter(self, queryset, name, value):
         if value == '1':

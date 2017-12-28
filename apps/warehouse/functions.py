@@ -83,3 +83,17 @@ def restore_wares_stock(file_path):
                     print("{} does not exist.".format(index))
                 except Ware.MultipleObjectsReturned:
                     print("Multiple objects returned for index: {}".format(index))
+
+
+def restore_wares_stock_clean_file(file_path):
+    with open(file_path, encoding="utf8") as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        for row in reader:
+            index = row[0]
+            stock = int(row[1])
+            try:
+                ware = Ware.objects.get(index=index)
+                ware.stock = stock
+                ware.save()
+            except Ware.DoesNotExist:
+                print("{} does not exist.".format(index))
