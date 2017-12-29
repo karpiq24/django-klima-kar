@@ -28,7 +28,7 @@ class WareFilter(django_filters.FilterSet):
         fields = ['index', 'name', 'description', 'stock']
 
     def index_filter(self, queryset, name, value):
-        return queryset.filter(Q(index__icontains=value) | Q(index_slug__icontains=value))
+        return queryset.filter(Q(index__icontains=value) | Q(index_slug__icontains=Ware.slugify(value)))
 
     def date_from_filter(self, queryset, name, value):
         to_include = InvoiceItem.objects.filter(invoice__date__gte=value).values_list('ware__id', flat=True)

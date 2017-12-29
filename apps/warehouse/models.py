@@ -17,11 +17,15 @@ class Ware(models.Model):
         else:
             return None
 
+    @staticmethod
+    def slugify(value):
+        return ''.join(e for e in value if e.isalnum()).lower()
+
     def __str__(self):
         return self.index
 
     def save(self, *args, **kwargs):
-        self.index_slug = ''.join(e for e in self.index if e.isalnum()).lower()
+        self.index_slug = self.slugify(self.index)
         super(Ware, self).save(*args, **kwargs)
 
 

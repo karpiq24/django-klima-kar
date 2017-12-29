@@ -72,7 +72,7 @@ def restore_wares_stock(file_path):
         reader = csv.reader(csvfile, delimiter=',')
         for row in reader:
             index = row[1].strip()
-            index = ''.join(e for e in index if e.isalnum()).lower()
+            index = Ware.slugify(index)
             stock = int(row[3].strip())
             if index:
                 try:
