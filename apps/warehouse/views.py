@@ -276,9 +276,15 @@ class WareCreateAjaxView(AjaxCreateView):
 class GetWareData(View):
     def get(self, *args, **kwargs):
         ware_index = self.request.GET.get('index', None)
+        ware_pk = self.request.GET.get('pk', None)
+        ware = None
         if ware_index:
             ware = Ware.objects.get(index=ware_index)
+        elif ware_pk:
+            ware = Ware.objects.get(pk=ware_pk)
+        if ware:
             response = {
+                'index': ware.index,
                 'name': ware.name,
                 'last_price': ware.last_price
             }

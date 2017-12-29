@@ -20,11 +20,13 @@ class AjaxCreateView(AjaxableResponseMixin, CreateView):
     form_class = None
     title = None
     url = None
+    identifier = 1
 
     def get_context_data(self, **kwargs):
         context = super(AjaxCreateView, self).get_context_data(**kwargs)
         context['title'] = self.title
         context['url'] = reverse(self.url)
+        context['identifier'] = self.identifier
         return context
 
     def get(self, *args, **kwargs):

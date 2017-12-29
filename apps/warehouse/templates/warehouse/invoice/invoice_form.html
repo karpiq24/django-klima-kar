@@ -116,6 +116,34 @@
         $('#invoice-total').text(invoice_total + " zł");
     }
 
+    function customSuccessCreate(data, identifier) {
+        if (identifier == '1') {
+            var $option = $("<option selected></option>").val(data['pk']).text('---------');
+            var $sel2 = $("#formsets tr:not('.hidden'):last").find(".field-index");
+            if (!$sel2.val() == "") {
+                var formset = $('#formsets').children('.hidden').first();
+                $(formset).find(".item-DELETE").children('input').prop('checked', false);
+                $(formset).removeClass('hidden');
+                $(formset).insertAfter($("#formsets tr:not('.hidden'):last"));
+                $sel2 = $("#formsets tr:not('.hidden'):last").find(".field-index");
+            }
+            $sel2.append($option).trigger('change');
+
+            $.ajax({
+                url: GET_WARE_DATA,
+                data: {
+                    'pk': data['pk']
+                },
+                dataType: 'json',
+                success: function (result) {
+                    $option.text(result['ware']['index']);
+                    $option.removeData();
+                    $sel2.trigger('change');
+                }
+            });
+        }
+    };
+
     $(function () {
         $('.sidenav #nav-invoices').children(':first').addClass('active');
         $('.date-input').datetimepicker({
@@ -131,7 +159,7 @@
             if (price != '' || quantity != 1) {
                 $(me).removeClass('hidden')
             }
-            if (index == '---------') {
+            if (index == '---------' || index == "") {
                 return;
             }
             $(me).removeClass('hidden')
@@ -174,6 +202,7 @@
             $(formset).find(".item-DELETE").children('input').prop('checked', false);
             $(formset).removeClass('hidden');
             $(formset).insertAfter($("#formsets tr:not('.hidden'):last"));
+            $(formset).find(".field-index").select2('open');
         });
 
         $(".remove_ware_formset").click(function(){
