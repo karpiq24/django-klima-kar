@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django_filters',
 
     'KlimaKar',
-    'apps.warehouse'
+    'apps.warehouse',
+    'apps.stats'
 ]
 
 MIDDLEWARE = [

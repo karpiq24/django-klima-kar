@@ -3,8 +3,9 @@ ul.sidenav {
   margin: 0;
   margin-top: 48px;
   padding: 0;
-  width: 15%;
-  background-color: #3D3B3D;
+  width: 150px;
+  background-color: #191c21;
+  color: #abb;
   position: fixed;
   z-index: 998;
   height: 100%;
@@ -13,7 +14,7 @@ ul.sidenav {
 
 ul.sidenav li a {
   display: block;
-  color: rgb(255, 255, 255);
+  color: #abb;
   padding: 8px 16px;
   text-decoration: none;
   border-bottom: solid 1px rgb(85, 85, 85);
@@ -24,19 +25,18 @@ ul.sidenav li a span {
 }
 
 ul.sidenav li a.active {
-  background-color: #3E77AD;
-  color: white;
+  color: #3E77AD;
 }
 
 ul.sidenav li a:hover:not(.active) {
-  background-color: #3E77AD;
   color: white;
 }
 
 div.content {
-  margin-left: 15%;
+  margin-left: 150px;
   padding: 1px 16px;
 }
+
 div.content-full {
   margin-left: 0% !important;
 }
@@ -64,13 +64,12 @@ div.content-full {
   }
 }
 
-
 ul.topnav {
   list-style-type: none;
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #1F1D1F;
+  background-color: #00a0df;
   position: fixed;
   z-index: 999;
   top: 0;
@@ -81,16 +80,21 @@ ul.topnav li {
   float: left;
 }
 
+ul.topnav li span {
+  display: block;
+  color: #ffffff;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-style: italic;
+}
+
 ul.topnav li a {
   display: block;
   color: #ffffff;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-}
-
-ul.topnav li a:hover:not(.active) {
-  background-color: #111;
 }
 
 ul.topnav .active {
@@ -100,5 +104,5 @@ ul.topnav .active {
 .spacer
 {
     width: 100%;
-    height: 35px;
+    height: 30px;
 }

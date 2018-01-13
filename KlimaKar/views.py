@@ -12,7 +12,29 @@ from KlimaKar.mixins import AjaxableResponseMixin
 
 
 class HomeView(TemplateView):
-    template_name = "base.html"
+    template_name = "stats/dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(HomeView, self).get_context_data(**kwargs)
+        charts = []
+        charts.append({
+            'title': 'Łączna wartość zakupów u dostawców',
+            'url': reverse('stats:supplier_all_invoices_value')
+        })
+        charts.append({
+            'title': 'Najczęściej kupowane towary',
+            'url': reverse('stats:ware_purchase_quantity')
+        })
+        charts.append({
+            'title': 'Łączna wartość zakupów od początku',
+            'url': reverse('stats:invoices_value_all')
+        })
+        charts.append({
+            'title': 'Łączna wartość zakupów w ostatnim roku',
+            'url': reverse('stats:invoices_value_last_year')
+        })
+        context['charts'] = charts
+        return context
 
 
 class AjaxCreateView(AjaxableResponseMixin, CreateView):

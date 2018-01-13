@@ -1,3 +1,8 @@
+body {
+    font-family: "Lato", "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+}
+
 .panel-heading{
     cursor: pointer;
 }
@@ -41,4 +46,16 @@ span.select2-selection__rendered {
 	margin-left: 10px;
 	display:inline-block;
 	padding-top: 7px;
+}
+
+.chart-div {
+    margin-bottom: 25px;
+}
+
+.left-line {
+    border-left: 1px dotted #dbd8cf;
+}
+
+.right-line {
+    border-right: 1px dotted #dbd8cf;
 }

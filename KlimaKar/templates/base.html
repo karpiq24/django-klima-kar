@@ -21,14 +21,10 @@
 <body>
 
 <ul class="topnav">
-  <li><a class="active" href="{% url 'home' %}">Klima-Kar</a></li>
+  <li><a class="active right-line" href="{% url 'home' %}">Klima-Kar</a></li>
+  <li><span>komfortowy klimat w zasięgu ręki</span></li>
   {% if user.is_authenticated %}
-    <li>
-      <a href="#" title="Menu" class="toggle_menu">
-        <i class="fa fa-bars fa-lg" style="cursor: pointer;"></i>
-      </a>
-    </li>
-    <li style="float:right">
+    <li class="left-line" style="float:right">
       <a href="{% url 'logout' %}" title="Wyloguj">
         <i class="fa fa-sign-out fa-lg" style="cursor: pointer;"></i> Wyloguj
       </a>
@@ -58,6 +54,7 @@
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/moment.min.js' %}"></script>
 <script src="{% static 'js/moment-pl.js' %}"></script>
+<script src="{% static 'js/Chart.min.js' %}"></script>
 <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
 <script src="{% static 'autocomplete_light/vendor/select2/dist/js/select2.full.min.js' %}"></script>
 <script src="{% static 'autocomplete_light/vendor/select2/dist/js/i18n/pl.js' %}"></script>
@@ -66,18 +63,7 @@
 <script src="{% static 'autocomplete_light/autocomplete.init.js' %}"></script>
 <script src="{% static 'autocomplete_light/select2.js' %}"></script>
 <script>
-  var isHidden = localStorage.getItem("isHidden");
-  if (isHidden == 'true'){
-    $('.sidenav').addClass('hidden');
-    $('.content').addClass('content-full');
-  }
   $(function () {
-    $(".toggle_menu").click(function(){
-        $('.sidenav').toggleClass('hidden');
-        $('.content').toggleClass('content-full');
-        var isHidden = $('.sidenav').hasClass('hidden')
-        localStorage.setItem('isHidden', isHidden);
-    });
   });
 </script>
 {% block scripts %}

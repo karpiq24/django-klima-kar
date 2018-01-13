@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.db.models import Sum
 
 
 class Ware(models.Model):
@@ -34,6 +35,10 @@ class Supplier(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def all_invoices_value(self):
+        return Invoice.objects.filter(supplier=self).aggregate(Sum('total_value'))['total_value__sum']
 
 
 class Invoice(models.Model):

@@ -53,14 +53,24 @@ class InvoiceTable(tables.Table):
 
 
 class SupplierTable(tables.Table):
+    name = tables.Column(attrs={'th': {'width': '73%'}})
+    all_invoices_value = tables.Column(attrs={'th': {'width': '20%'}}, verbose_name="Łączna wartość zakupów")
     actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
                                     template_name='warehouse/supplier/supplier_actions.html',
                                     orderable=False)
 
+    def render_all_invoices_value(self, value):
+        return "{} zł".format(value)
+
+    def order_all_invoices_value(self, queryset, is_descending):
+        queryset = queryset.annotate(
+            max_price=Sum('invoice__invoiceitem__price')).order_by(('-' if is_descending else '') + 'max_price')
+        return (queryset, True)
+
     class Meta:
         model = Supplier
         attrs = {'class': 'table table-striped table-hover table-bordered table-responsive'}
-        fields = ['name']
+        fields = ['name', 'all_invoices_value']
         order_by = 'name'
         empty_text = 'Brak dostawców'
 

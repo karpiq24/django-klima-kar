@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+<div>
+    <h1>Statystyki</h1>
+</div>
+{% for chart in charts %}
+    <div class="chart-div col-xs-12 col-md-6 text-center">
+        <label>{{ chart.title }}</label>
+        <canvas id="chart_{{ forloop.counter }}" chart-url="{{ chart.url }}"></canvas>
+    </div>
+{% endfor %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('.sidenav #nav-dashboard').children(':first').addClass('active');
+        $("canvas[id^='chart']").each(function() {
+            var url = $(this).attr('chart-url');
+            var ctx = $(this)
+            $.ajax({
+                url: url,
+                success: function (result) {
+                    var chart = new Chart(ctx, {
+                        type: result.options.type,
+                        data: {
+                            labels: result.labels,
+                            datasets: [{
+                                label: '',
+                                data: result.values,
+                                borderWidth: 1,
+                                backgroundColor: result.options.colors,
+                                borderColor: '#ffffff'
+                            }]
+                        },
+                        options: {
+                            legend: {
+                                display: result.options.legend
+                            },
+                        } 
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
