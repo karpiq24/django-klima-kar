@@ -78,7 +78,7 @@ class InvoicesValueOverTime(View):
 
 class WarePurchaseQuantity(View):
     def get(self, *args, **kwargs):
-        wares_quantity = Ware.objects.all().annotate(
+        wares_quantity = Ware.objects.exclude(invoiceitem=None).annotate(
             quantity=Sum('invoiceitem__quantity')).values_list('index', 'quantity').order_by('-quantity')[:10]
 
         response_data = {
