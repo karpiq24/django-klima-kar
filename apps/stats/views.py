@@ -12,16 +12,23 @@ from apps.stats.functions import get_random_colors
 
 
 class SupplierAllInvoicesValue(View):
+    max_positions = 8
+
     def get(self, *args, **kwargs):
         data = Invoice.objects.values('supplier').annotate(
             total=Sum('total_value')).values_list('supplier__name', 'total').order_by('-total')
+        if data.count() > self.max_positions:
+            index = self.max_positions - 1
+        else:
+            index = data.count()
         response_data = {
-            'labels': list(data[0:5].values_list('supplier__name', flat=True)),
-            'values': list(data[0:5].values_list('total', flat=True))
+            'labels': list(data[0:index].values_list('supplier__name', flat=True)),
+            'values': list(data[0:index].values_list('total', flat=True))
         }
-
-        response_data['labels'].append('Pozostali dostawcy')
-        response_data['values'].append(data[5:].values('total').aggregate(Sum('total'))['total__sum'])
+        if data.count() > self.max_positions:
+            response_data['labels'].append('Pozostali dostawcy')
+            response_data['values'].append(data[self.max_positions - 1:].values(
+                'total').aggregate(Sum('total'))['total__sum'])
 
         response_data['options'] = {
             'type': 'doughnut',
@@ -58,9 +65,13 @@ class InvoicesValueOverTime(View):
 
 
 class WarePurchaseQuantity(View):
+    max_positions = 8
+
     def get(self, *args, **kwargs):
         wares_quantity = Ware.objects.exclude(invoiceitem=None).annotate(
-            quantity=Sum('invoiceitem__quantity')).values_list('index', 'quantity').order_by('-quantity')[:10]
+            quantity=Sum('invoiceitem__quantity')).values_list('index', 'quantity').order_by('-quantity')
+        if wares_quantity.count() > self.max_positions:
+            wares_quantity = wares_quantity[:self.max_positions]
 
         response_data = {
             'labels': list(wares_quantity.values_list('index', flat=True)),
@@ -68,8 +79,8 @@ class WarePurchaseQuantity(View):
         }
 
         response_data['options'] = {
-            'type': 'pie',
-            'colors': get_random_colors(10),
+            'type': 'doughnut',
+            'colors': get_random_colors(self.max_positions),
             'legend': True
         }
         return JsonResponse(response_data)
