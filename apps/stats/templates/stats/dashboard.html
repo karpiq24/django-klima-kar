@@ -25,23 +25,10 @@
                 url: url,
                 success: function (result) {
                     var chart = new Chart(ctx, {
-                        type: result.options.type,
-                        data: {
-                            labels: result.labels,
-                            datasets: [{
-                                label: '',
-                                data: result.values,
-                                borderWidth: 1,
-                                backgroundColor: result.options.colors,
-                                borderColor: '#ffffff'
-                            }]
-                        },
-                        options: {
-                            legend: {
-                                display: result.options.legend
-                            },
-                        } 
-                    });
+                        type: result.type,
+                        data: result.data,
+                        options: result.options 
+                    })
                 }
             });
         });

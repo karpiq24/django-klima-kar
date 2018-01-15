@@ -21,3 +21,18 @@ COLORS = [
     '#E67E22',
     '#784212'
 ]
+
+MONTHS = [
+    'Styczeń',
+    'Luty',
+    'Marzec',
+    'Kwiecień',
+    'Maj',
+    'Czerwiec',
+    'Lipiec',
+    'Sierpień',
+    'Wrzesień',
+    'Październik',
+    'Listopad',
+    'Grudzień',
+]

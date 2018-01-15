@@ -26,12 +26,12 @@ class HomeView(TemplateView):
             'url': reverse('stats:ware_purchase_quantity')
         })
         charts.append({
-            'title': 'Łączna wartość zakupów w ostatnich pięciu latach',
-            'url': reverse('stats:invoices_value_all')
+            'title': 'Łączna wartość zakupów w ostatnich dziesięciu latach',
+            'url': reverse('stats:invoices_value_yearly')
         })
         charts.append({
-            'title': 'Łączna wartość zakupów w ostatnim roku',
-            'url': reverse('stats:invoices_value_last_year')
+            'title': 'Łączna wartość zakupów w ostatnich latach',
+            'url': reverse('stats:invoices_value_monthly')
         })
         context['charts'] = charts
         return context
