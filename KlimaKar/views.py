@@ -18,20 +18,28 @@ class HomeView(TemplateView):
         context = super(HomeView, self).get_context_data(**kwargs)
         charts = []
         charts.append({
-            'title': 'Łączna wartość zakupów u dostawców',
-            'url': reverse('stats:supplier_all_invoices_value')
+            'title': 'Wartość zakupów w miesiącach',
+            'url': reverse('stats:invoices_value_monthly')
         })
         charts.append({
-            'title': 'Najczęściej kupowane towary',
-            'url': reverse('stats:ware_purchase_quantity')
-        })
-        charts.append({
-            'title': 'Łączna wartość zakupów w ostatnich dziesięciu latach',
+            'title': 'Wartosć zakupów w latach',
             'url': reverse('stats:invoices_value_yearly')
         })
         charts.append({
-            'title': 'Łączna wartość zakupów w ostatnich latach',
-            'url': reverse('stats:invoices_value_monthly')
+            'title': 'Wartość zakupów u dostawców od początku',
+            'url': reverse('stats:supplier_all_invoices_value')
+        })
+        charts.append({
+            'title': 'Wartość zakupów u dostawców w ostatnim roku',
+            'url': reverse('stats:supplier_last_year_invoices_value')
+        })
+        charts.append({
+            'title': 'Najczęściej kupowane towary od początku',
+            'url': reverse('stats:ware_purchase_quantity')
+        })
+        charts.append({
+            'title': 'Najczęściej kupowane towary w ostatnim roku',
+            'url': reverse('stats:ware_purchase_quantity_last_year')
         })
         context['charts'] = charts
         return context

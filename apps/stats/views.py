@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.db.models import Sum
 from django.db.models.functions import ExtractYear, ExtractMonth
 
+from KlimaKar.mixins import GroupAccessControlMixin
 from apps.warehouse.models import Invoice, Ware
 from apps.stats.functions import get_random_colors
 from apps.stats.dictionaries import MONTHS
@@ -41,11 +42,18 @@ class ChartDataMixin(object):
         return dataset
 
 
-class SupplierAllInvoicesValue(ChartDataMixin, View):
+class SupplierAllInvoicesValue(GroupAccessControlMixin, ChartDataMixin, View):
+    allowed_groups = ['boss']
     max_positions = 8
+    last_year = False
 
     def get(self, *args, **kwargs):
-        data = Invoice.objects.values('supplier').annotate(
+        if self.last_year:
+            date = (datetime.datetime.now() - relativedelta(years=1))
+            invoices = Invoice.objects.filter(date__gte=date)
+        else:
+            invoices = Invoice.objects.all()
+        data = invoices.values('supplier').annotate(
             total=Sum('total_value')).values_list('supplier__name', 'total').order_by('-total')
         if data.count() > self.max_positions:
             index = self.max_positions - 1
@@ -69,9 +77,10 @@ class SupplierAllInvoicesValue(ChartDataMixin, View):
         return JsonResponse(response_data)
 
 
-class InvoicesValueMonthly(ChartDataMixin, View):
+class InvoicesValueMonthly(GroupAccessControlMixin, ChartDataMixin, View):
+    allowed_groups = ['boss']
     years_back = 10
-    how_many_shown = 3
+    how_many_shown = 4
 
     def get(self, *args, **kwargs):
         date = (datetime.datetime.now() - relativedelta(years=self.years_back)).replace(day=1, month=1)
@@ -96,7 +105,8 @@ class InvoicesValueMonthly(ChartDataMixin, View):
         return JsonResponse(response_data)
 
 
-class InvoicesValueYearly(ChartDataMixin, View):
+class InvoicesValueYearly(GroupAccessControlMixin, ChartDataMixin, View):
+    allowed_groups = ['boss']
     years_back = 10
 
     def get(self, *args, **kwargs):
@@ -118,9 +128,14 @@ class InvoicesValueYearly(ChartDataMixin, View):
 
 class WarePurchaseQuantity(ChartDataMixin, View):
     max_positions = 8
+    last_year = False
 
     def get(self, *args, **kwargs):
-        wares_quantity = Ware.objects.exclude(invoiceitem=None).annotate(
+        if self.last_year:
+            wares = Ware.objects.filter(invoiceitem__invoice__date__year=2017)
+        else:
+            wares = Ware.objects.all()
+        wares_quantity = wares.exclude(invoiceitem=None).annotate(
             quantity=Sum('invoiceitem__quantity')).values_list('index', 'quantity').order_by('-quantity')
         if wares_quantity.count() > self.max_positions:
             wares_quantity = wares_quantity[:self.max_positions]
