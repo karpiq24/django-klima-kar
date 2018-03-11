@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+<div>
+    <h1>Szczegóły faktury sprzedażowej</h1>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-lg-8">
+        <table class="table table-bordered">
+            <tr>
+                <td class="detail-label">Rodzaj faktury</td>
+                <td>{{ object.get_invoice_type_display }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Numer faktury</td>
+                <td>{{ object.number }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Kontrahent</td>
+                <td>{{ object.contractor }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Data wystawienia</td>
+                <td>{{ object.issue_date }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Data wykonania</td>
+                <td>{{ object.completion_date }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Rodzaj płatności</td>
+                <td>{{ object.get_payment_type_display }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Termin płatności</td>
+                <td>{{ object.payment_date }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Łączna wartość netto</td>
+                <td>{{ object.total_value_netto|floatformat:2 }} zł</td>
+            </tr>            
+            <tr>
+                <td class="detail-label">Łączna wartość brutto</td>
+                <td>{{ object.total_value_brutto|floatformat:2 }} zł</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Procent podatku VAT</td>
+                <td>{{ object.tax_percent|floatformat:0 }}%</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Uwagi</td>
+                <td>{{ object.comment|default:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Czynnik R134a</td>
+                <td>{{ object.refrigerantweights.r134a }} g</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Czynnik R1234yf</td>
+                <td>{{ object.refrigerantweights.r1234yf }} g</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Czynnik R12</td>
+                <td>{{ object.refrigerantweights.r12 }} g</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Czynnik R404</td>
+                <td>{{ object.refrigerantweights.r404 }} g</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="col-xs-12 col-lg-4">
+        <div class="card-deck text-center">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Akcje</h5>
+                    <a id="pdf-btn" class="btn btn-outline-primary btn-lg" target="_blank" href="{% url 'invoicing:sale_invoice_pdf' object.pk %}">PDF</a>
+                    <a class="btn btn-outline-warning btn-lg" href="{% url 'invoicing:sale_invoice_update' object.pk %}">Edycja</a>
+                    <a class="btn btn-outline-dark btn-lg" href="{% url 'invoicing:sale_invoices' %}">Powrót</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <h4>Pozycje faktury</h4>
+</div>
+{% render_table table "tables2/table.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('.sidenav #nav-sale-invoices').children(':first').addClass('active');
+        $('.sidenav #nav-invoicing').collapse('show');
+
+        var url = window.location.href;
+        if(url.indexOf('?pdf') != -1)
+            window.open($('#pdf-btn').attr('href'), '_blank');
+        else if(url.indexOf('&pdf') != -1)
+            window.open($('#pdf-btn').attr('href'), '_blank');
+    });
+</script>
+{% endblock %}

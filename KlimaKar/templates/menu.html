@@ -1,22 +1,44 @@
 <ul class="sidenav">
-    <li id="nav-dashboard">
+    <li id="nav-dashboard" class="main-nav">
         <a href="{% url 'home' %}">
             <span class="fa fa-tachometer"></span> Statystyki
         </a>
     </li>
-    <li id="nav-wares">
-        <a href="{% url 'warehouse:wares' %}">
-            <span class="fa fa-tags"></span> Towary
-        </a>
+
+    <li>
+        <i data-toggle="collapse" href="#nav-warehouse">Magazyn <span class="fa fa-angle-down"></span></i>
     </li>
-    <li id="nav-invoices">
-        <a href="{% url 'warehouse:invoices' %}">
-            <span class="fa fa-file-text"></span> Faktury
-        </a>
+    <div id="nav-warehouse" class="collapse">
+        <li id="nav-wares">
+            <a href="{% url 'warehouse:wares' %}">
+                <span class="fa fa-tags"></span> Towary
+            </a>
+        </li>
+        <li id="nav-invoices">
+            <a href="{% url 'warehouse:invoices' %}">
+                <span class="fa fa-file-text"></span> Faktury zakupowe
+            </a>
+        </li>
+        <li id="nav-suppliers">
+            <a href="{% url 'warehouse:suppliers' %}">
+                <span class="fa fa-truck"></span> Dostawcy
+            </a>
+        </li>
+    </div>
+
+    <li>
+        <i data-toggle="collapse" href="#nav-invoicing">Fakturowanie | BETA <span class="fa fa-angle-down"></span></i>
     </li>
-    <li id="nav-suppliers">
-        <a href="{% url 'warehouse:suppliers' %}">
-            <span class="fa fa-truck"></span> Dostawcy
-        </a>
-    </li>
+    <div id="nav-invoicing" class="collapse">
+        <li id="nav-saleinvoices">
+            <a href="{% url 'invoicing:sale_invoices' %}">
+                <span class="fa fa-book"></span> Faktury sprzedażowe
+            </a>
+        </li>
+        <li id="nav-contractors">
+            <a href="{% url 'invoicing:contractors' %}">
+                <span class="fa fa-users"></span> Kontrahenci
+            </a>
+        </li>
+    </div>
 </ul>

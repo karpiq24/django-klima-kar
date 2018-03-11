@@ -6,7 +6,7 @@
     <h1>Szczegóły dostawcy</h1>
 </div>
 <div class="row">
-    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+    <div class="col-xs-12 col-lg-8">
         <table class="table table-bordered">
             <tr>
                 <td class="detail-label">Nazwa</td>
@@ -14,25 +14,34 @@
             </tr>
             <tr>
                 <td class="detail-label">Łączna wartość zakupów</td>
-                <td>{{ object.all_invoices_value }} zł</td>
+                <td>{% if object.all_invoices_value|floatformat:2 %}{{ object.all_invoices_value }} zł {% else %}—{% endif %}</td>
             </tr>
         </table>
     </div>
+    <div class="col-xs-12 col-lg-4">
+        <div class="card-deck text-center">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Akcje</h5>
+                    <a class="btn btn-outline-warning btn-lg" href="{% url 'warehouse:supplier_update' object.pk %}">Edycja</a>
+                    <a class="btn btn-outline-dark btn-lg" href="{% url 'warehouse:suppliers' %}">Powrót</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 <div>
     <h4>Faktury tego dostawcy</h4>
 </div>
 {% render_table table "tables2/table.html" %}
-<div>
-    <a class="btn btn-warning" href="{% url 'warehouse:supplier_update' object.pk %}">Edycja</a>
-    <a class="btn btn-default" href="{% url 'warehouse:suppliers' %}">Powrót</a>
-</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
     $(function () {
         $('.sidenav #nav-suppliers').children(':first').addClass('active');
+        $('.sidenav #nav-warehouse').collapse('show');
     });
 </script>
 {% endblock %}

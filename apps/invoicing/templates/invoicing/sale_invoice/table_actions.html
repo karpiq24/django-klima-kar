@@ -1,0 +1,9 @@
+<a class="btn btn-outline-primary btn-sm btn-table" href="{% url 'invoicing:sale_invoice_detail' record.pk %}" title="Szczegóły">
+    Szczegóły
+</a>
+<a class="btn btn-outline-warning btn-sm btn-table" href="{% url 'invoicing:sale_invoice_update' record.pk %}" title="Edycja">
+    Edycja
+</a>
+<a class="btn btn-outline-info btn-sm btn-table disabled" href="{% url 'invoicing:sale_invoice_detail' record.pk %}" title="Korekta">
+    Korekta
+</a>

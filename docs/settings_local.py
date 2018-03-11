@@ -51,3 +51,7 @@ IC_CLIENT_NUMBER = ''
 
 # Dropbox
 DROPBOX_TOKEN = ''
+
+# GUS API KEY
+GUS_SANDBOX = False
+GUS_KEY = ''

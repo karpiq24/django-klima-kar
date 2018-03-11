@@ -1,0 +1,5 @@
+<div style="display:flex">
+    <input type="text" name="nip_prefix" maxlength="2" class="form-control" id="id_nip_prefix" style="min-width:50px;width:15%;margin-right: 5px;" value="{{ prefix }}" placeholder="Prefiks">
+    <input type="{{ widget.type }}" name="{{ widget.name }}"{% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}{% include "django/forms/widgets/attrs.html" %} />
+    <button id="gus-button" class="btn btn-outline-info" style="margin-left: 5px;" type="button" data-url="{{ url }}">GUS</button>
+</div>

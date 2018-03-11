@@ -6,16 +6,7 @@ from dal import autocomplete
 from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 
 
-class BootstrapModelForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(BootstrapModelForm, self).__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({
-                'class': 'form-control'
-            })
-
-
-class WareModelForm(BootstrapModelForm):
+class WareModelForm(forms.ModelForm):
     name = forms.CharField(
         label="Nazwa",
         widget=autocomplete.ListSelect2(url='warehouse:ware_name_autocomplete')
@@ -30,9 +21,12 @@ class WareModelForm(BootstrapModelForm):
     class Meta:
         model = Ware
         fields = ['index', 'name', 'description', 'stock']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+        }
 
 
-class InvoiceModelForm(BootstrapModelForm):
+class InvoiceModelForm(forms.ModelForm):
     supplier = forms.ModelChoiceField(
         label="Dostawca",
         queryset=Supplier.objects.all(),
@@ -44,14 +38,14 @@ class InvoiceModelForm(BootstrapModelForm):
         self.fields['number'].widget.attrs.update({'placeholder': 'Podaj numer faktury'})
         self.fields['supplier'].widget.attrs.update({'data-placeholder': 'Wybierz dostawcę'})
         self.fields['date'].widget.attrs.update({'placeholder': 'Wybierz datę'})
-        self.fields['date'].widget.attrs.update({'class': 'date-input form-control'})
+        self.fields['date'].widget.attrs.update({'class': 'date-input'})
 
     class Meta:
         model = Invoice
         fields = ['supplier', 'number', 'date']
 
 
-class SupplierModelForm(BootstrapModelForm):
+class SupplierModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(SupplierModelForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs.update({'placeholder': 'Podaj nazwę'})
@@ -61,19 +55,19 @@ class SupplierModelForm(BootstrapModelForm):
         fields = ['name']
 
 
-class InvoiceItemModelForm(BootstrapModelForm):
+class InvoiceItemModelForm(forms.ModelForm):
     ware = forms.ModelChoiceField(
         queryset=Ware.objects.all(),
-        widget=autocomplete.ModelSelect2(url='warehouse:ware_autocomplete')
+        widget=autocomplete.ModelSelect2(url='warehouse:ware_autocomplete_create')
     )
 
     def __init__(self, *args, **kwargs):
         super(InvoiceItemModelForm, self).__init__(*args, **kwargs)
         self.fields['quantity'].widget.attrs.update({'placeholder': 'Podaj ilość'})
-        self.fields['quantity'].widget.attrs.update({'class': 'form-control field-quantity'})
+        self.fields['quantity'].widget.attrs.update({'class': 'item-quantity'})
         self.fields['price'].widget.attrs.update({'placeholder': 'Podaj cenę'})
-        self.fields['price'].widget.attrs.update({'class': 'form-control field-price'})
-        self.fields['ware'].widget.attrs.update({'class': 'form-control field-index'})
+        self.fields['price'].widget.attrs.update({'class': 'item-price'})
+        self.fields['ware'].widget.attrs.update({'class': 'item-ware'})
         self.fields['ware'].widget.attrs.update({'data-placeholder': 'Wybierz towar'})
 
     class Meta:

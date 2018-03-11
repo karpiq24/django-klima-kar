@@ -2,18 +2,23 @@
 
 {% if table.page and table.paginator.num_pages > 1 %}
 {% block pagination %}
-<ul class="pager list-inline">
+<nav aria-label="Page navigation example">
+<ul class="pagination justify-content-center">
     {% if table.page.has_previous %}
         {% block pagination.previous %}
-        <li class="previous">
-            <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}" class="btn btn-default"><span aria-hidden="true">&larr;</span> Poprzednia</a>
+        <li class="page-item ">
+            <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}" class="page-link"><span aria-hidden="true">&larr;</span> Poprzednia</a>
         </li>
         {% endblock pagination.previous %}
+    {% else %}
+        <li class="page-item disabled">
+            <a href="#" class="page-link"><span aria-hidden="true">&larr;</span> Poprzednia</a>
+        </li>
     {% endif %}
 
     {% if table.page.has_previous or table.page.has_next %}
         {% block pagination.current %}
-            <li class="cardinality">
+            <li class="page-item cardinality">
                 <small>Strona {{ table.page.number }} z {{ table.paginator.num_pages }}</small>
             </li>
         {% endblock pagination.current %}
@@ -21,11 +26,16 @@
 
     {% if table.page.has_next %}
         {% block pagination.next %}
-        <li class="next">
-            <a href="{% querystring table.prefixed_page_field=table.page.next_page_number %}" class="btn btn-default">Następna <span aria-hidden="true">&rarr;</span></a>
+        <li class="page-item">
+            <a href="{% querystring table.prefixed_page_field=table.page.next_page_number %}" class="page-link">Następna <span aria-hidden="true">&rarr;</span></a>
         </li>
         {% endblock pagination.next %}
+    {% else %}
+        <li class="page-item disabled">
+            <a href="#" class="page-link">Następna  <span aria-hidden="true">&rarr;</span></a>
+        </li>
     {% endif %}
 </ul>
+</nav>
 {% endblock pagination %}
 {% endif %}

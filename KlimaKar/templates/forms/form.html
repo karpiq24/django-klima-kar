@@ -1,0 +1,52 @@
+{% load widget_tweaks %}
+
+{% for hidden_field in form.hidden_fields %}
+  {{ hidden_field }}
+{% endfor %}
+
+{% if form.non_field_errors %}
+  <div class="alert alert-danger" role="alert">
+    {% for error in form.non_field_errors %}
+      {{ error }}
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if as_table %}
+<div class="table-responsive">
+  <table class="table table-striped table-hover table-bordered">
+    <thead>
+      <tr>
+        {% for field in form.visible_fields %}
+          {% if not exclude or field.name not in exclude %}
+            <th>{{ field.label }}</th>
+          {% endif %}
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        {% for field in form.visible_fields %}
+          {% if not exclude or field.name not in exclude %}
+            <td>
+              {% include 'forms/field.html' with field=field hide_label=True %}
+            </td>
+          {% endif %}
+        {% endfor %}
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% else %}
+  {% for field in form.visible_fields %}
+    {% if not exclude or field.name not in exclude %}
+      {% if two_columns %}
+        <div class=col-sm-6>
+          {% include 'forms/field.html' with field=field %}
+        </div>
+      {% else %}
+        {% include 'forms/field.html' with field=field %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endif %}

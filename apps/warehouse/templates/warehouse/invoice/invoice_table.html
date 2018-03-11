@@ -3,12 +3,20 @@
 
 {% block content %}
 <div>
-    <h1>Faktury</h1>
+    <h1>Faktury zakupowe</h1>
 </div>
+
 {% include "filter_panel.html" %}
-<div class="action-buttons text-right">
-    <a class="btn btn-success" href="{% url 'warehouse:invoice_create' %}">Nowa faktura</a>
+
+<div class="card-deck margin-tb-20 text-center">
+    <div class="card bg-light">
+        <div class="card-body">
+            <h5 class="card-title">Dodaj nową fakturę</h5>
+            <a class="btn btn-outline-success btn-lg" href="{% url 'warehouse:invoice_create' %}">Nowa faktura</a>
+        </div>
+    </div>
 </div>
+
 {% render_table table "tables2/table.html" %}
 {% endblock %}
 
@@ -16,9 +24,7 @@
 <script>
     $(function () {
         $('.sidenav #nav-invoices').children(':first').addClass('active');
-        $('.date-input').datetimepicker({
-            format:'YYYY-MM-DD'
-        });
+        $('.sidenav #nav-warehouse').collapse('show');
     });
 </script>
 {% endblock %}

@@ -2,16 +2,15 @@
 
 from django.urls import reverse
 from django.db import IntegrityError, transaction
-from django.forms.formsets import formset_factory
+from django.forms import modelformset_factory
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.views.generic import DetailView, UpdateView, CreateView, View
 from django.db.models import Q
 
-from django_tables2 import SingleTableView
 from django_tables2 import RequestConfig
 from dal import autocomplete
 
-from KlimaKar.views import AjaxCreateView, CustomSelect2QuerySetView
+from KlimaKar.views import AjaxCreateView, CustomSelect2QuerySetView, FilteredSingleTableView
 from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 from apps.warehouse.tables import WareTable, InvoiceTable, SupplierTable, InvoiceItemTable
 from apps.warehouse.filters import WareFilter, InvoiceFilter, SupplierFilter
@@ -20,20 +19,11 @@ from apps.warehouse.forms import (
 from apps.warehouse.functions import export_wares
 
 
-class FilteredSingleTableView(SingleTableView):
-    filter_class = None
-
-    def get_table_data(self):
-        data = super(FilteredSingleTableView, self).get_table_data()
-        self.filter = self.filter_class(self.request.GET, queryset=data)
-        return self.filter.qs
-
-    def get_context_data(self, **kwargs):
-        context = super(FilteredSingleTableView, self).get_context_data(**kwargs)
-        context['filter'] = self.filter
-        key = "{}_params".format(self.filter_class)
-        self.request.session[key] = self.request.GET
-        return context
+class WareTableView(FilteredSingleTableView):
+    model = Ware
+    table_class = WareTable
+    filter_class = WareFilter
+    template_name = 'warehouse/ware/ware_table.html'
 
     def get(self, request, *args, **kwargs):
         if 'export' in request.path:
@@ -47,13 +37,6 @@ class FilteredSingleTableView(SingleTableView):
         return super(FilteredSingleTableView, self).get(request, *args, **kwargs)
 
 
-class WareTableView(FilteredSingleTableView):
-    model = Ware
-    table_class = WareTable
-    filter_class = WareFilter
-    template_name = 'warehouse/ware/ware_table.html'
-
-
 class WareUpdateView(UpdateView):
     model = Ware
     form_class = WareModelForm
@@ -65,7 +48,7 @@ class WareUpdateView(UpdateView):
         return context
 
     def get_success_url(self, **kwargs):
-        return reverse("warehouse:ware_detail", kwargs={'pk': self.kwargs['pk']})
+        return reverse("warehouse:ware_detail", kwargs={'pk': self.object.pk})
 
 
 class WareCreateView(CreateView):
@@ -114,22 +97,26 @@ class InvoiceDetailView(DetailView):
         return context
 
 
-class InvoiceUpdateView(UpdateView):
+class InvoiceFormMixin():
     model = Invoice
     form_class = InvoiceModelForm
     template_name = 'warehouse/invoice/invoice_form.html'
 
     def get_context_data(self, **kwargs):
-        context = super(InvoiceUpdateView, self).get_context_data(**kwargs)
-        InvoiceItemFormSet = formset_factory(InvoiceItemModelForm, extra=10, can_delete=True)
-        items = InvoiceItem.objects.filter(invoice=self.object)
-        item_data = [{'ware': i.ware, 'quantity': i.quantity, 'price': i.price} for i in items]
+        context = super().get_context_data(**kwargs)
+        InvoiceItemFormSet = modelformset_factory(
+            InvoiceItem, form=InvoiceItemModelForm, extra=10, can_delete=True)
+        item_data = []
+        if self.object:
+            items = InvoiceItem.objects.filter(invoice=self.object)
+            item_data = [{'ware': i.ware, 'quantity': i.quantity, 'price': i.price} for i in items]
         if self.request.POST:
-            item_formset = InvoiceItemFormSet(self.request.POST)
+            item_formset = InvoiceItemFormSet(
+                self.request.POST, queryset=InvoiceItem.objects.none(), prefix='item')
         else:
-            item_formset = InvoiceItemFormSet(initial=item_data)
+            item_formset = InvoiceItemFormSet(
+                initial=item_data, queryset=InvoiceItem.objects.none(), prefix='item')
         context['item_formset'] = item_formset
-        context['title'] = "Edycja faktury"
         return context
 
     def form_valid(self, form):
@@ -152,58 +139,6 @@ class InvoiceUpdateView(UpdateView):
                         ware=ware,
                         price=price,
                         quantity=quantity))
-
-            try:
-                with transaction.atomic():
-                    InvoiceItem.objects.filter(invoice=self.object).delete()
-                    InvoiceItem.objects.bulk_create(new_items)
-                    self.object.calculate_total_value()
-            except IntegrityError:
-                return self.render_to_response(self.get_context_data(form=form))
-            return HttpResponseRedirect(self.get_success_url())
-        else:
-            return self.render_to_response(self.get_context_data(form=form))
-
-    def get_success_url(self, **kwargs):
-        return reverse("warehouse:invoice_detail", kwargs={'pk': self.kwargs['pk']})
-
-
-class InvoiceCreateView(CreateView):
-    model = Invoice
-    form_class = InvoiceModelForm
-    template_name = 'warehouse/invoice/invoice_form.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(InvoiceCreateView, self).get_context_data(**kwargs)
-        InvoiceItemFormSet = formset_factory(InvoiceItemModelForm, extra=10)
-
-        if self.request.POST:
-            item_formset = InvoiceItemFormSet(self.request.POST)
-        else:
-            item_formset = InvoiceItemFormSet()
-        context['item_formset'] = item_formset
-        context['title'] = "Nowa faktura"
-        return context
-
-    def form_valid(self, form):
-        ctx = self.get_context_data()
-        item_formset = ctx['item_formset']
-
-        if form.is_valid() and item_formset.is_valid():
-            self.object = form.save()
-            new_items = []
-            for item_form in item_formset:
-                ware = item_form.cleaned_data.get('ware')
-                price = item_form.cleaned_data.get('price')
-                quantity = item_form.cleaned_data.get('quantity')
-
-                if ware and price and quantity:
-                    new_items.append(InvoiceItem(
-                        invoice=self.object,
-                        ware=ware,
-                        price=price,
-                        quantity=quantity))
-
             try:
                 with transaction.atomic():
                     InvoiceItem.objects.filter(invoice=self.object).delete()
@@ -217,6 +152,24 @@ class InvoiceCreateView(CreateView):
 
     def get_success_url(self, **kwargs):
         return reverse("warehouse:invoice_detail", kwargs={'pk': self.object.pk})
+
+
+class InvoiceUpdateView(InvoiceFormMixin, UpdateView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Edycja faktury zakupowej"
+        return context
+
+
+class InvoiceCreateView(InvoiceFormMixin, CreateView):
+    model = Invoice
+    form_class = InvoiceModelForm
+    template_name = 'warehouse/invoice/invoice_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Nowa faktura zakupowa"
+        return context
 
 
 class SupplierTableView(FilteredSingleTableView):
@@ -249,7 +202,7 @@ class SupplierUpdateView(UpdateView):
         return context
 
     def get_success_url(self, **kwargs):
-        return reverse("warehouse:supplier_detail", kwargs={'pk': self.kwargs['pk']})
+        return reverse("warehouse:supplier_detail", kwargs={'pk': self.object.pk})
 
 
 class SupplierCreateView(CreateView):
@@ -286,7 +239,7 @@ class GetWareData(View):
             response = {
                 'index': ware.index,
                 'name': ware.name,
-                'last_price': ware.last_price
+                'last_price': ware.last_price or 0
             }
             return JsonResponse({'status': 'ok',
                                  'ware': response})

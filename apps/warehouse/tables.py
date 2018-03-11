@@ -17,7 +17,7 @@ class WareTable(tables.Table):
                                     orderable=False)
 
     def render_last_price(self, value):
-        return "{} zł".format(value)
+        return "{0:.2f} zł".format(value).replace('.', ',')
 
     def order_last_price(self, queryset, is_descending):
         queryset = queryset.annotate(
@@ -26,7 +26,7 @@ class WareTable(tables.Table):
 
     class Meta:
         model = Ware
-        attrs = {'class': 'table table-striped table-hover table-bordered table-responsive'}
+        attrs = {'class': 'table table-striped table-hover table-bordered'}
         fields = ['index', 'name', 'description', 'last_price', 'stock']
         order_by = 'index'
         empty_text = 'Brak towarów'
@@ -42,11 +42,11 @@ class InvoiceTable(tables.Table):
                                     orderable=False)
 
     def render_total_value(self, value):
-        return "{} zł".format(value)
+        return "{0:.2f} zł".format(value).replace('.', ',')
 
     class Meta:
         model = Invoice
-        attrs = {'class': 'table table-striped table-hover table-bordered table-responsive'}
+        attrs = {'class': 'table table-striped table-hover table-bordered'}
         fields = ['supplier', 'number', 'date', 'total_value']
         order_by = '-date'
         empty_text = 'Brak faktur'
@@ -60,7 +60,7 @@ class SupplierTable(tables.Table):
                                     orderable=False)
 
     def render_all_invoices_value(self, value):
-        return "{} zł".format(value)
+        return "{0:.2f} zł".format(value).replace('.', ',')
 
     def order_all_invoices_value(self, queryset, is_descending):
         queryset = queryset.annotate(
@@ -69,7 +69,7 @@ class SupplierTable(tables.Table):
 
     class Meta:
         model = Supplier
-        attrs = {'class': 'table table-striped table-hover table-bordered table-responsive'}
+        attrs = {'class': 'table table-striped table-hover table-bordered'}
         fields = ['name', 'all_invoices_value']
         order_by = 'name'
         empty_text = 'Brak dostawców'
@@ -87,15 +87,15 @@ class InvoiceItemTable(tables.Table):
 
     class Meta:
         model = InvoiceItem
-        attrs = {'class': 'table table-striped table-hover table-bordered table-responsive'}
+        attrs = {'class': 'table table-striped table-hover table-bordered'}
         fields = ['index', 'name', 'quantity', 'price', 'total']
         empty_text = 'Brak towarów'
 
     def render_price(self, value):
-        return "{} zł".format(value)
+        return "{0:.2f} zł".format(value).replace('.', ',')
 
     def render_total(self, record):
-        return "{} zł".format(record.quantity * record.price)
+        return "{0:.2f} zł".format(record.quantity * record.price).replace('.', ',')
 
     def order_total(self, queryset, is_descending):
         queryset = queryset.annotate(

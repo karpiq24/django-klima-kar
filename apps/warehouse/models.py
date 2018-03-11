@@ -47,7 +47,6 @@ class Invoice(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT, verbose_name=('Dostawca'))
     total_value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=('Łączna wartość'),
                                       null=True, blank=True)
-    items = models.ManyToManyField(Ware, through='InvoiceItem')
 
     def __str__(self):
         return self.number
@@ -64,7 +63,7 @@ class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, verbose_name=('Faktura'))
     ware = models.ForeignKey(Ware, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=('Towar'))
     quantity = models.IntegerField(default=1, verbose_name=('Ilość'))
-    price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name=('Cena netto'))
+    price = models.DecimalField(max_digits=7, decimal_places=2, default='0.00', verbose_name=('Cena netto'))
 
     def __str__(self):
         return self.ware.index

@@ -1,15 +1,16 @@
 # flake8: noqa
-from django.conf.urls import url, include
+from django.urls import include, path
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from KlimaKar.views import HomeView
 
 urlpatterns = [
-    url(r'^$', HomeView.as_view(), name="home"),
-    url(r'^login/$', auth_views.login, name='login'),
-    url(r'^logout/$', auth_views.logout, {'next_page': 'login/'}, name='logout'),
-    url(r'^admin/', admin.site.urls),
+    path('', HomeView.as_view(), name="home"),
+    path('login/', auth_views.login, name='login'),
+    path('logout/', auth_views.logout, {'next_page': 'login/'}, name='logout'),
+    path('admin/', admin.site.urls),
 
-    url(r'^warehouse/', include('apps.warehouse.urls')),
-    url(r'^stats/', include('apps.stats.urls'))
+    path('warehouse/', include('apps.warehouse.urls')),
+    path('invoicing/', include('apps.invoicing.urls')),
+    path('stats/', include('apps.stats.urls'))
 ]

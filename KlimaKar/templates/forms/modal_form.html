@@ -1,17 +1,17 @@
 <form id="modal_form" method="post" onsubmit="submitAjaxForm('{{ url }}', '{{ identifier }}'); return false;">
     {% csrf_token %}
     <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">{{ title }}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title">{{ title }}</h4>
     </div>
     <div class="modal-body">
-        {{ form.as_p }}
+        {% include 'forms/form.html' with form=form %}
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
-        <button type="submit" class="btn btn-primary" id="modal-submit">Dodaj</button>
+        <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Zamknij</button>
+        <button type="submit" class="btn btn-outline-primary" id="modal-submit">Dodaj</button>
     </div>
 </form>
 
@@ -27,6 +27,9 @@
                 if (typeof customSuccessCreate !== 'undefined' && $.isFunction(customSuccessCreate)) {
                     customSuccessCreate(data, identifier);
                 }
+            },
+            error: function(data){
+                $("#modal-generic .modal-content").html(data.responseJSON.html_form);
             }
         });
     };

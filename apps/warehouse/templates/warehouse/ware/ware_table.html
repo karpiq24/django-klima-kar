@@ -5,11 +5,24 @@
 <div>
     <h1>Towary</h1>
 </div>
+
 {% include "filter_panel.html" %}
-<div class="action-buttons text-right">
-    <a class="btn btn-success" href="{% url 'warehouse:ware_create' %}">Nowy towar</a>
-    <a class="btn btn-info" href="{% url 'warehouse:wares_export' %}">Eksport towarów</a>
+
+<div class="card-deck margin-tb-20 text-center">
+    <div class="card bg-light">
+        <div class="card-body">
+            <h5 class="card-title">Dodaj nowy towar</h5>
+            <a class="btn btn-outline-success btn-lg" href="{% url 'warehouse:ware_create' %}">Nowy towar</a>
+        </div>
+    </div>
+    <div class="card bg-light">
+        <div class="card-body">
+            <h5 class="card-title">Eksport towarów</h5>
+            <a class="btn btn-outline-info btn-lg" href="{% url 'warehouse:wares_export' %}">Remanent</a>
+        </div>
+    </div>
 </div>
+
 {% render_table table "tables2/table.html" %}
 {% endblock %}
 
@@ -17,9 +30,7 @@
 <script>
     $(function() {
         $('.sidenav #nav-wares').children(':first').addClass('active');
-        $('.date-input').datetimepicker({
-            format:'YYYY-MM-DD'
-        });
+        $('.sidenav #nav-warehouse').collapse('show');
     });
 </script>
 {% endblock %}

@@ -9,19 +9,19 @@ from apps.warehouse.dictionaries import STOCK_CHOICES
 
 
 class WareFilter(django_filters.FilterSet):
-    index = django_filters.CharFilter(method='index_filter', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    name = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    index = django_filters.CharFilter(method='index_filter', widget=forms.TextInput())
+    name = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
     description = django_filters.CharFilter(lookup_expr='icontains',
-                                            widget=forms.TextInput(attrs={'class': 'form-control'}))
+                                            widget=forms.TextInput())
     stock = django_filters.ChoiceFilter(choices=STOCK_CHOICES, method='stock_filter',
-                                        widget=forms.Select(attrs={'class': 'form-control'}))
+                                        widget=forms.Select())
     supplier = django_filters.ModelChoiceFilter(method='supplier_filter', queryset=Supplier.objects.all(),
-                                                widget=autocomplete.ModelSelect2(url='warehouse:supplier_autocomplete',
-                                                attrs={'class': 'form-control'}), label="Zakup od dostawcy")
+                                                widget=autocomplete.ModelSelect2(url='warehouse:supplier_autocomplete'),
+                                                label="Zakup od dostawcy")
     date__gte = django_filters.DateFilter(method='date_from_filter', label="Data zakupu od",
-                                          widget=forms.DateInput(attrs={'class': 'date-input form-control'}))
+                                          widget=forms.DateInput(attrs={'class': 'date-input'}))
     date__lte = django_filters.DateFilter(method='date_to_filter', label="Data zakupu do",
-                                          widget=forms.DateInput(attrs={'class': 'date-input form-control'}))
+                                          widget=forms.DateInput(attrs={'class': 'date-input'}))
 
     class Meta:
         model = Ware
@@ -51,13 +51,12 @@ class WareFilter(django_filters.FilterSet):
 
 class InvoiceFilter(django_filters.FilterSet):
     supplier = django_filters.ModelChoiceFilter(queryset=Supplier.objects.all(),
-                                                widget=autocomplete.ModelSelect2(url='warehouse:supplier_autocomplete',
-                                                attrs={'class': 'form-control'}))
-    number = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput(attrs={'class': 'form-control'}))
+                                                widget=autocomplete.ModelSelect2(url='warehouse:supplier_autocomplete'))
+    number = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
     date__gte = django_filters.DateFilter(name='date', lookup_expr='gte', label="Data od",
-                                          widget=forms.DateInput(attrs={'class': 'date-input form-control'}))
+                                          widget=forms.DateInput(attrs={'class': 'date-input'}))
     date__lte = django_filters.DateFilter(name='date', lookup_expr='lte', label="Data do",
-                                          widget=forms.DateInput(attrs={'class': 'date-input form-control'}))
+                                          widget=forms.DateInput(attrs={'class': 'date-input'}))
 
     class Meta:
         model = Invoice
@@ -65,7 +64,7 @@ class InvoiceFilter(django_filters.FilterSet):
 
 
 class SupplierFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    name = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
 
     class Meta:
         model = Supplier

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+<div>
+    <h1>Szczegóły kontrahenta</h1>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-lg-8">
+        <table class="table table-bordered">
+            <tr>
+                <td class="detail-label">Nazwa</td>
+                <td>{{ object.name }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">NIP</td>
+                <td>{% if object.nip_prefix %}{{ object.nip_prefix }} {% endif %}{{ object.nip|default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Adres 1</td>
+                <td>{{ object.address_1|default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Adres 2</td>
+                <td>{{ object.address_2|default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Miasto</td>
+                <td>{{ object.city|default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Kod pocztowy</td>
+                <td>{{ object.postal_code|default_if_none:"—" }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="col-xs-12 col-lg-4">
+        <div class="card-deck text-center">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Akcje</h5>
+                    <a class="btn btn-outline-warning btn-lg" href="{% url 'invoicing:contractor_update' object.pk %}">Edycja</a>
+                    <a class="btn btn-outline-dark btn-lg" href="{% url 'invoicing:contractors' %}">Powrót</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <h4>Faktury tego kontrahenta</h4>
+</div>
+{% render_table table "tables2/table.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('.sidenav #nav-contractors').children(':first').addClass('active');
+        $('.sidenav #nav-invoicing').collapse('show');
+    });
+</script>
+{% endblock %}

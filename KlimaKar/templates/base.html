@@ -15,14 +15,14 @@
   <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/navbar.css' %}">
   <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/headings.css' %}">
   <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/styles.css' %}">
-  {% block styles %}
+  {% block header %}
   {% endblock %}
 </head>
 <body>
 
 <ul class="topnav">
   <li><a class="active right-line" href="{% url 'home' %}">Klima-Kar</a></li>
-  <li><span>komfortowy klimat w zasięgu ręki</span></li>
+  <li><span class="motto">komfortowy klimat w zasięgu ręki</span></li>
   {% if user.is_authenticated %}
     <li class="left-line" style="float:right">
       <a href="{% url 'logout' %}" title="Wyloguj">
@@ -41,8 +41,8 @@
   <div class="content text-left {% if not user.is_authenticated %}content-full{% endif %}">
     {% block content %}
     {% endblock %}
-    <div class="modal fade" id="modal-generic">
-      <div class="modal-dialog">
+    <div class="modal fade" id="modal-generic" role="dialog">
+      <div class="modal-dialog" role="document">
           <div class="modal-content">
           </div>
       </div>
@@ -62,8 +62,29 @@
 <script src="{% static 'autocomplete_light/jquery.init.js' %}"></script>
 <script src="{% static 'autocomplete_light/autocomplete.init.js' %}"></script>
 <script src="{% static 'autocomplete_light/select2.js' %}"></script>
+
+<script src="{% static 'js/invoicing/contractor-gus.js' %}"></script>
+
 <script>
+  $(document).on('focus', '.select2-selection--single', function(e) {
+    select2_open = $(this).parent().parent().siblings('select');
+    select2_open.select2('open');
+  });
   $(function () {
+    $('.date-input').datetimepicker({
+      format:'DD.MM.YYYY',
+      icons: {
+        time: 'fa fa-clock-o',
+        date: 'fa fa-calendar',
+        up: 'fa fa-chevron-up',
+        down: 'fa fa-chevron-down',
+        previous: 'fa fa-chevron-left',
+        next: 'fa fa-chevron-right',
+        today: 'fa fa-dot-circle-o',
+        clear: 'fa fa-trash',
+        close: 'fa fa-times'
+      }
+    });
   });
 </script>
 {% block scripts %}

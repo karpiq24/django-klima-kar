@@ -6,9 +6,16 @@
     <h1>Dostawcy</h1>
 </div>
 {% include "filter_panel.html" %}
-<div class="action-buttons text-right">
-    <a class="btn btn-success" href="{% url 'warehouse:supplier_create' %}">Nowy dostawca</a>
+
+<div class="card-deck margin-tb-20 text-center">
+    <div class="card bg-light">
+        <div class="card-body">
+            <h5 class="card-title">Dodaj nowego dostawcę</h5>
+            <a class="btn btn-outline-success btn-lg" href="{% url 'warehouse:supplier_create' %}">Nowy dostawca</a>
+        </div>
+    </div>
 </div>
+
 {% render_table table "tables2/table.html" %}
 {% endblock %}
 
@@ -16,6 +23,7 @@
 <script>
     $(function() {
         $('.sidenav #nav-suppliers').children(':first').addClass('active');
+        $('.sidenav #nav-warehouse').collapse('show');
     });
 </script>
 {% endblock %}

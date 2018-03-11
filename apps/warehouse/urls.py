@@ -1,29 +1,29 @@
 # flake8: noqa
-from django.conf.urls import url
+from django.urls import path
 from apps.warehouse import views
 
 app_name = 'warehouse'
 urlpatterns = [
-    url(r'^wares$', views.WareTableView.as_view(), name='wares'),
-    url(r'^wares/export$', views.WareTableView.as_view(), name='wares_export'),
-    url(r'^wares/create$', views.WareCreateView.as_view(), name='ware_create'),
-    url(r'^wares/create_ajax$', views.WareCreateAjaxView.as_view(), name='ware_create_ajax'),
-    url(r'^wares/(?P<pk>[-\w]+)/detail$', views.WareDetailView.as_view(), name='ware_detail'),
-    url(r'^wares/(?P<pk>[-\w]+)/update$', views.WareUpdateView.as_view(), name='ware_update'),
-    url(r'^get_ware_data$', views.GetWareData.as_view(), name='get_ware_data'),
-    url(r'^ware_autocomplete$', views.WareAutocomplete.as_view(), name='ware_autocomplete'),
-    url(r'^ware_name_autocomplete$', views.WareNameAutocomplete.as_view(), name='ware_name_autocomplete'),
+    path('wares', views.WareTableView.as_view(), name='wares'),
+    path('wares/export', views.WareTableView.as_view(), name='wares_export'),
+    path('wares/create', views.WareCreateView.as_view(), name='ware_create'),
+    path('wares/create_ajax', views.WareCreateAjaxView.as_view(), name='ware_create_ajax'),
+    path('wares/<int:pk>', views.WareDetailView.as_view(), name='ware_detail'),
+    path('wares/<int:pk>/update', views.WareUpdateView.as_view(), name='ware_update'),
+    path('get_ware_data', views.GetWareData.as_view(), name='get_ware_data'),
+    path('ware_autocomplete', views.WareAutocomplete.as_view(), name='ware_autocomplete'),
+    path('ware_autocomplete_create', views.WareAutocomplete.as_view(modal_create=True), name='ware_autocomplete_create'),
+    path('ware_name_autocomplete', views.WareNameAutocomplete.as_view(), name='ware_name_autocomplete'),
 
+    path('invoices', views.InvoiceTableView.as_view(), name='invoices'),
+    path('invoices/create', views.InvoiceCreateView.as_view(), name='invoice_create'),
+    path('invoices/<int:pk>', views.InvoiceDetailView.as_view(), name='invoice_detail'),
+    path('invoices/<int:pk>/update', views.InvoiceUpdateView.as_view(), name='invoice_update'),
 
-    url(r'^invoices$', views.InvoiceTableView.as_view(), name='invoices'),
-    url(r'^invoices/create$', views.InvoiceCreateView.as_view(), name='invoice_create'),
-    url(r'^invoices/(?P<pk>[-\w]+)/detail$', views.InvoiceDetailView.as_view(), name='invoice_detail'),
-    url(r'^invoices/(?P<pk>[-\w]+)/update$', views.InvoiceUpdateView.as_view(), name='invoice_update'),
-
-    url(r'^suppliers$', views.SupplierTableView.as_view(), name="suppliers"),
-    url(r'^suppliers/create$', views.SupplierCreateView.as_view(), name='supplier_create'),
-    url(r'^suppliers/(?P<pk>[-\w]+)/detail$', views.SupplierDetailView.as_view(), name='supplier_detail'),
-    url(r'^suppliers/(?P<pk>[-\w]+)/update$', views.SupplierUpdateView.as_view(), name='supplier_update'),
-    url(r'^supplier_autocomplete$', views.SupplierAutocomplete.as_view(), name='supplier_autocomplete'),
-    url(r'^supplier_autocomplete_create$', views.SupplierAutocomplete.as_view(create_field='name'), name='supplier_autocomplete_create'),
+    path('suppliers', views.SupplierTableView.as_view(), name="suppliers"),
+    path('suppliers/create', views.SupplierCreateView.as_view(), name='supplier_create'),
+    path('suppliers/<int:pk>', views.SupplierDetailView.as_view(), name='supplier_detail'),
+    path('suppliers/<int:pk>/update', views.SupplierUpdateView.as_view(), name='supplier_update'),
+    path('supplier_autocomplete', views.SupplierAutocomplete.as_view(), name='supplier_autocomplete'),
+    path('supplier_autocomplete_create', views.SupplierAutocomplete.as_view(create_field='name'), name='supplier_autocomplete_create'),
 ]

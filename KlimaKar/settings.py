@@ -42,9 +42,11 @@ INSTALLED_APPS = [
 
     'django_tables2',
     'django_filters',
+    'widget_tweaks',
 
     'KlimaKar',
     'apps.warehouse',
+    'apps.invoicing',
     'apps.stats'
 ]
 

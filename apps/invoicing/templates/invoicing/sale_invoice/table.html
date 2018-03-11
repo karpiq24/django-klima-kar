@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+<div>
+    <h1>Faktury sprzedażowe</h1>
+</div>
+
+{% include "filter_panel.html" %}
+
+<div class="card-deck margin-tb-20 text-center">
+    <div class="card bg-light">
+        <div class="card-body">
+            <h5 class="card-title">Dodaj nową fakturę</h5>
+            <a class="btn btn-outline-success btn-lg" href="{% url 'invoicing:sale_invoice_create' 1 %}">Faktura VAT</a>
+            <a class="btn btn-outline-success btn-lg disabled" href="{% url 'invoicing:sale_invoice_create' 2 %}">Pro forma</a>
+            <a class="btn btn-outline-success btn-lg disabled" href="{% url 'invoicing:sale_invoice_create' 4 %}">WDT</a>
+        </div>
+    </div>
+</div>
+
+{% render_table table "tables2/table.html" %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('.sidenav #nav-saleinvoices').children(':first').addClass('active');
+        $('.sidenav #nav-invoicing').collapse('show');
+    });
+</script>
+{% endblock %}

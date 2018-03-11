@@ -1,0 +1,276 @@
+@font-face {
+  font-family: 'Source Sans Pro';
+  src:
+	   url('/static/fonts/SourceSansPro-Regular.ttf');
+	   font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Source Sans Pro';
+  src:
+	   url('/static/fonts/SourceSansPro-SemiBold.ttf');
+	   font-weight: 600;
+}
+
+@font-face {
+  font-family: 'Open Sans Condensed';
+  src:
+	   url('/static/fonts/OpenSansCondensed-Bold.ttf');
+	   font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  src:
+	   url('/static/fonts/OpenSans-SemiBoldItalic.ttf');
+	   font-weight: 600;
+	   font-style: italic;
+}
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+a {
+  color: #000000;
+  text-decoration: none;
+}
+@page { size: A4; margin: 0.4cm 0.8cm 1cm 0.8cm }
+body {
+  height: 100%;
+  color: #000000;
+  background: #FFFFFF; 
+  font-size: 10pt; 
+  font-family: 'Source Sans Pro';
+  font-weight: 400;
+}
+
+header {
+  padding: 10px 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #AAAAAA;
+}
+
+#logo {
+  float: left;
+  margin-top: 8px;
+}
+
+#logo img {
+  height: 70px;
+}
+
+#company {
+  float: right;
+  text-align: right;
+}
+
+#company .nip {
+  font-size: 1.15em;
+}
+
+#details {
+  margin-bottom: 10px;
+}
+
+#client {
+  padding-left: 6px;
+  border-left: 6px solid #00689d;
+  float: left;
+}
+
+#client .to {
+  color: #696969;
+}
+
+#client .nip, .address {
+  font-size: 1.15em;
+}
+
+h2.name {
+  font-size: 1.25em;
+  font-weight: 600;
+  margin: 0;
+}
+
+#invoice {
+  float: right;
+  text-align: right;
+}
+
+#invoice h1 {
+  color: #00689d;
+  font-size: 2em;
+  line-height: 1em;
+  margin: 0  0 10px 0;
+}
+
+#invoice .date {
+  font-size: 1.1em;
+}
+
+#info{
+  font-size: 1.2em;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: 20px;
+}
+
+table th,
+table td {
+  padding: 5px;
+  background: #F7F7F7;
+  text-align: center;
+  border-bottom: 1px solid #FFFFFF;
+}
+
+table th {
+  white-space: nowrap;        
+}
+
+table td {
+  text-align: right;
+}
+
+table td h3{
+  color: #00689d;
+  font-size: 1.2em;
+  font-weight: 400;
+  margin: 0 0 0.2em 0;
+}
+
+table .no {
+  background: #DDDDDD;
+  width: 5%;
+}
+
+table .desc {
+  text-align: left;
+  width: 55%;
+}
+
+table .unit {
+  background: #EEEEEE;
+  width: 15%;
+}
+
+table .qty {
+    width: 10%;
+}
+
+table .total {
+  background: #DDDDDD;
+  width: 15%;
+} 
+
+table td.unit,
+table td.qty,
+table td.total {
+  font-size: 1.2em;
+}
+
+table thead th {
+	font-weight: 400;
+}
+
+table tbody tr:last-child td {
+  border: none;
+}
+
+table tfoot td {
+  padding: 5px 20px;
+  background: #FFFFFF;
+  border-bottom: none;
+  font-size: 1.2em;
+  white-space: nowrap; 
+  border-top: 1px solid #AAAAAA; 
+}
+
+table tfoot tr:first-child td {
+  border-top: none; 
+  
+}
+
+table tfoot tr:last-child td {
+  color: #00689d;
+  font-size: 1.4em;
+  font-weight: 600;
+  border-top: 1px solid #00689d; 
+}
+
+table tfoot tr td:first-child {
+  border: none;
+}
+
+#notices{
+  padding-left: 6px;
+  border-left: 6px solid #00689d; 
+  font-size: 1.2em;  
+}
+
+footer {
+  color: #696969;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  padding: 0px 0;
+  text-align: center;
+}
+
+#podpisy {
+  margin-top: 100px;
+}
+
+#podpislewy {
+  padding-left: 6px;
+  border-top: 1px solid #696969;
+  float: left;
+  font-size: 0.8em;
+}
+
+#podpisprawy {
+  padding-right: 6px;
+  border-top: 1px solid #696969;
+  float: right;
+  font-size: 0.8em;
+}
+
+#logo
+{
+  overflow: hidden;
+}
+
+#logo h1
+{
+  background: #0090c5;
+  color: #ffffff;
+  border: 0;
+  border-radius: 6px;
+  font-family: 'Open Sans Condensed';
+  font-weight: 700;
+  text-decoration: none;
+  outline: 0;
+  margin: 0;
+  padding: 0em 0.2em 0em 0.2em;
+  font-size: 3.75em;
+  letter-spacing: 0.05em;
+  line-height: 1.1em;
+}
+
+#logo span
+{
+  color: #696969;
+  margin-left: 1em;
+  letter-spacing: 0.025em;
+  font-size: 1em;
+  font-style: italic;
+  font-weight: 600;
+}

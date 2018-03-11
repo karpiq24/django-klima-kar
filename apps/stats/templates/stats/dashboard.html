@@ -5,12 +5,16 @@
 <div>
     <h1>Statystyki</h1>
 </div>
-{% for chart in charts %}
-    <div class="chart-div col-xs-12 col-md-6 text-center" style="display:none;">
-        <label>{{ chart.title }}</label>
-        <canvas id="chart_{{ forloop.counter }}" chart-url="{{ chart.url }}"></canvas>
-    </div>
-{% endfor %}
+<div class="row">
+    {% for chart in charts %}
+        <div class="col-xs-12 col-md-6" style="display:none;">
+            <div class="chart-div card bg-light text-center">
+                <h5 class="card-title">{{ chart.title }}</h5>
+                <canvas id="chart_{{ forloop.counter }}" chart-url="{{ chart.url }}"></canvas>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 
 {% endblock %}
 
@@ -19,7 +23,7 @@
     $(function () {
         $('.sidenav #nav-dashboard').children(':first').addClass('active');
         $("canvas[id^='chart']").each(function() {
-            var parent_div = $(this).parent()
+            var parent_div = $(this).parent().parent()
             var url = $(this).attr('chart-url');
             var ctx = $(this)
             $.ajax({
