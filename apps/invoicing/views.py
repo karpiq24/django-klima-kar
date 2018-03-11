@@ -87,7 +87,8 @@ class SaleInvoiceFormMixin():
             self.object.number_year = number_data[1]
             self.object.save()
 
-            self.object.refrigerantweights.delete()
+            if hasattr(self.object, 'refrigerantweights'):
+                self.object.refrigerantweights.delete()
             refrigerant_obj = refrigerant_form.save(commit=False)
             refrigerant_obj.sale_invoice = self.object
             refrigerant_obj.save()
