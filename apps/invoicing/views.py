@@ -163,8 +163,16 @@ class SaleInvoicePDFView(View):
         }
         template = get_template('invoicing/invoice.html')
         rendered_tpl = template.render(context).encode()
-        pdf_file = HTML(string=rendered_tpl).write_pdf(stylesheets=[CSS(filename='KlimaKar/static/css/invoice.css')])
-
+        documents = []
+        documents.append(
+            HTML(string=rendered_tpl).render(stylesheets=[CSS(filename='KlimaKar/static/css/invoice.css')]))
+        documents.append(
+            HTML(string=rendered_tpl).render(stylesheets=[CSS(filename='KlimaKar/static/css/invoice.css')]))
+        all_pages = []
+        for doc in documents:
+            for p in doc.pages:
+                all_pages.append(p)
+        pdf_file = documents[0].copy(all_pages).write_pdf()
         response = HttpResponse(content_type='application/pdf')
         response.write(pdf_file)
         response['Content-Disposition'] = 'filename={} {}.pdf'.format(

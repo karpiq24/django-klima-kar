@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     <title>{{ invoice.get_invoice_type_display|upper }} {{ invoice.number }}</title>
-    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/invoice_template.css' %}">
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/invoice.css' %}">
   </head>
   <body>
     <header class="clearfix">
@@ -40,7 +40,7 @@
           <div class="date">Data wystawienia: {{ invoice.issue_date|date:"d.m.Y" }}</div>
           <div class="date">Data dostawy: {{ invoice.completion_date|date:"d.m.Y" }}</div>
 		      <div class="date">Forma płatności: {{ invoice.get_payment_type_display }}</div>
-		      <div class="date">Termin płatności: {{ invoice.payment_date|date:"d.m.Y" }}</div>
+		      <div class="date">{% if invoice.payment_date %}Termin płatności: {{ invoice.payment_date|date:"d.m.Y" }}{% else %}zapłacono{% endif %}</div>
         </div>
       </div>
 	  <div id="info">{{ invoice.comment }}</div>

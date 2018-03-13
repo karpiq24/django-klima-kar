@@ -7,6 +7,10 @@ from apps.invoicing.models import Contractor, SaleInvoice, SaleInvoiceItem
 from apps.warehouse.models import Ware
 
 
+class EnableDisableDateInput(forms.DateInput):
+    template_name = 'invoicing/sale_invoice/date_field.html'
+
+
 class SaleInvoiceModelForm(forms.ModelForm):
     contractor = forms.ModelChoiceField(
         label="Kontrahent",
@@ -30,6 +34,7 @@ class SaleInvoiceModelForm(forms.ModelForm):
         exclude = ['refrigerant_weidghts', 'number_value', 'number_year']
         widgets = {
             'comment': forms.Textarea(attrs={'rows': 1}),
+            'payment_date': EnableDisableDateInput(),
             'invoice_type': forms.HiddenInput(),
             'total_value_netto': forms.HiddenInput(),
             'total_value_brutto': forms.HiddenInput()

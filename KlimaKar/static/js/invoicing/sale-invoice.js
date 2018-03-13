@@ -152,4 +152,14 @@ $(function () {
         calculateInvoiceTotals();
     });
 
+    $("#id_payed").change(function(){
+        if ($("#id_payed").is(':checked')) {
+            $("#id_payment_date").prop('hidden', true);
+            $("#id_payment_date").val(null);
+        }
+        else {
+            $("#id_payment_date").prop('hidden', false);
+            $("#id_payment_date").focus();
+        }
+    });
 });

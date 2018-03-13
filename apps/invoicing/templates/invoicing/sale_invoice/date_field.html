@@ -1,0 +1,7 @@
+<div style="display:flex;">
+    <div style="display:flex;align-items:center;height:38px;">
+        <input type="checkbox" id="id_payed" name="payed" {% if widget.value is None %}checked{% endif %}/>
+        <label for="id_payed" style="margin:0 5px;">Zapłacono</label>
+    </div>
+    <input type="{{ widget.type }}" name="{{ widget.name }}"{% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% else %} hidden {% endif %}{% include "django/forms/widgets/attrs.html" %} />
+</div>

@@ -31,7 +31,8 @@ class SaleInvoice(models.Model):
     number_value = models.PositiveSmallIntegerField()
     contractor = models.ForeignKey(Contractor, on_delete=models.PROTECT, verbose_name=('Kontrahent'))
     payment_type = models.CharField(max_length=1, verbose_name=('Rodzaj płatności'), choices=PAYMENT_TYPES)
-    payment_date = models.DateField(verbose_name=('Termin płatności'), default=datetime.date.today)
+    payment_date = models.DateField(
+        verbose_name=('Termin płatności'), default=datetime.date.today, null=True, blank=True)
     total_value_netto = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name=('Łączna wartość netto'))
     total_value_brutto = models.DecimalField(

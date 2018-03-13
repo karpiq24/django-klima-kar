@@ -34,7 +34,7 @@
             </tr>
             <tr>
                 <td class="detail-label">Termin płatności</td>
-                <td>{{ object.payment_date }}</td>
+                <td>{{ object.payment_date|default:"zapłacono" }}</td>
             </tr>
             <tr>
                 <td class="detail-label">Łączna wartość netto</td>
@@ -76,7 +76,7 @@
             <div class="card bg-light">
                 <div class="card-body">
                     <h5 class="card-title">Akcje</h5>
-                    <a id="pdf-btn" class="btn btn-outline-primary btn-lg" target="_blank" href="{% url 'invoicing:sale_invoice_pdf' object.pk %}">PDF</a>
+                    <button id="pdf-btn" class="btn btn-outline-primary btn-lg" data-url="{% url 'invoicing:sale_invoice_pdf' object.pk %}">Drukuj</button>
                     <a class="btn btn-outline-warning btn-lg" href="{% url 'invoicing:sale_invoice_update' object.pk %}">Edycja</a>
                     <a class="btn btn-outline-dark btn-lg" href="{% url 'invoicing:sale_invoices' %}">Powrót</a>
                 </div>
@@ -93,15 +93,25 @@
 
 {% block scripts %}
 <script>
+    function print_pdf() {
+        var url = $('#pdf-btn').attr('data-url');
+        var w = window.open(url);
+        w.print();
+    }
+
     $(function () {
         $('.sidenav #nav-sale-invoices').children(':first').addClass('active');
         $('.sidenav #nav-invoicing').collapse('show');
 
         var url = window.location.href;
         if(url.indexOf('?pdf') != -1)
-            window.open($('#pdf-btn').attr('href'), '_blank');
+            print_pdf();
         else if(url.indexOf('&pdf') != -1)
-            window.open($('#pdf-btn').attr('href'), '_blank');
+            print_pdf();
+        
+        $("#pdf-btn").click(function() {
+            print_pdf();
+        });
     });
 </script>
 {% endblock %}
