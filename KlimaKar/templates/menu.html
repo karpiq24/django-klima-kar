@@ -8,7 +8,7 @@
     <li>
         <i data-toggle="collapse" href="#nav-warehouse">Magazyn <span class="fa fa-angle-down"></span></i>
     </li>
-    <div id="nav-warehouse" class="collapse">
+    <div id="nav-warehouse" class="collapse show">
         <li id="nav-wares">
             <a href="{% url 'warehouse:wares' %}">
                 <span class="fa fa-tags"></span> Towary
@@ -29,7 +29,7 @@
     <li>
         <i data-toggle="collapse" href="#nav-invoicing">Fakturowanie | BETA <span class="fa fa-angle-down"></span></i>
     </li>
-    <div id="nav-invoicing" class="collapse">
+    <div id="nav-invoicing" class="collapse show">
         <li id="nav-saleinvoices">
             <a href="{% url 'invoicing:sale_invoices' %}">
                 <span class="fa fa-book"></span> Faktury sprzedażowe
@@ -38,6 +38,11 @@
         <li id="nav-contractors">
             <a href="{% url 'invoicing:contractors' %}">
                 <span class="fa fa-users"></span> Kontrahenci
+            </a>
+        </li>
+        <li id="nav-servicetemplates">
+            <a href="{% url 'invoicing:service_templates' %}">
+                <span class="fa fa-bookmark"></span> Usługi
             </a>
         </li>
     </div>

@@ -3,7 +3,7 @@ from django import forms
 import django_filters
 from dal import autocomplete
 
-from apps.invoicing.models import SaleInvoice, Contractor
+from apps.invoicing.models import SaleInvoice, Contractor, ServiceTemplate
 
 
 class SaleInvoiceFilter(django_filters.FilterSet):
@@ -39,3 +39,12 @@ class ContractorFilter(django_filters.FilterSet):
     class Meta:
         model = Contractor
         fields = ['name', 'nip', 'address_1', 'city', 'postal_code']
+
+
+class ServiceTemplateFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
+    description = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
+
+    class Meta:
+        model = ServiceTemplate
+        fields = ['name', 'description']

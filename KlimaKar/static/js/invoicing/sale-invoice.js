@@ -162,4 +162,36 @@ $(function () {
             $("#id_payment_date").focus();
         }
     });
+
+    $(".choose_service").click(function() {
+        var item_form = $(this).parents(".item-formset-row");
+        var service_pk = $(item_form).find(".item-service").val();
+        if (service_pk === '') {
+            return;
+        }
+        $.ajax({
+            url: GET_SERVICE_DATA,
+            data: {
+                'pk': service_pk
+            },
+            dataType: 'json',
+            success: function (result) {
+                $(item_form).find(".item-name").val(result.service.name);
+                $(item_form).find(".item-description").val(result.service.description);
+                $(item_form).find(".item-netto").val(result.service.price_netto);
+                $(item_form).find(".item-brutto").val(result.service.price_brutto);
+                $(item_form).find(".item-quantity").val(result.service.quantity);
+
+                var $option = $("<option selected></option>").val(result.service.ware.pk).text(result.service.ware.index);
+                var $sel2 = $(item_form).find(".item-ware");
+                $sel2.append($option).trigger('change');
+                if (result.service.price_brutto) {
+                    $(item_form).find(".item-brutto").change();
+                }
+                else {
+                    $(item_form).find(".item-netto").change();
+                }
+            }
+        });
+    });
 });

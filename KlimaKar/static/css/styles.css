@@ -27,6 +27,9 @@ span.required {
     margin-bottom: 25px;
     padding: 10px;
 }
+.card-body .btn {
+    margin: 2px 0px;
+}
 
 /*
     MISC

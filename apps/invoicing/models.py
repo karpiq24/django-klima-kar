@@ -59,6 +59,20 @@ class RefrigerantWeights(models.Model):
         return "Waga czynników dla faktury {}".format(self.sale_invoice)
 
 
+class ServiceTemplate(models.Model):
+    name = models.CharField(max_length=255, verbose_name='Nazwa usługi/towaru')
+    description = models.CharField(max_length=255, verbose_name='Opis usługi/towaru', blank=True, null=True)
+    quantity = models.IntegerField(verbose_name='Ilość', blank=True, null=True)
+    price_netto = models.DecimalField(max_digits=7, decimal_places=2, verbose_name='Cena netto',
+                                      blank=True, null=True)
+    price_brutto = models.DecimalField(max_digits=7, decimal_places=2, verbose_name='Cena brutto',
+                                       blank=True, null=True)
+    ware = models.ForeignKey(Ware, on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Towar')
+
+    def __str__(self):
+        return self.name
+
+
 class SaleInvoiceItem(models.Model):
     sale_invoice = models.ForeignKey(SaleInvoice, on_delete=models.CASCADE, verbose_name='Faktura sprzedażowa')
     name = models.CharField(max_length=255, verbose_name='Nazwa usługi/towaru')

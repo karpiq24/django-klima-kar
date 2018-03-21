@@ -3,7 +3,7 @@ from dal import autocomplete
 from django import forms
 from django.urls import reverse
 
-from apps.invoicing.models import Contractor, SaleInvoice, SaleInvoiceItem
+from apps.invoicing.models import Contractor, SaleInvoice, SaleInvoiceItem, ServiceTemplate
 from apps.warehouse.models import Ware
 
 
@@ -86,6 +86,38 @@ class SaleInvoiceItemModelForm(forms.ModelForm):
         label="Towar", queryset=Ware.objects.all(), required=False,
         widget=autocomplete.ModelSelect2(url='warehouse:ware_autocomplete')
     )
+    service = forms.ModelChoiceField(
+        label="Usługa", queryset=ServiceTemplate.objects.all(), required=False,
+        widget=autocomplete.ModelSelect2(url='invoicing:service_template_autocomplete')
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs.update({'placeholder': 'Podaj nazwę'})
+        self.fields['name'].widget.attrs.update({'class': 'item-name'})
+        self.fields['description'].widget.attrs.update({'placeholder': 'Podaj opis'})
+        self.fields['description'].widget.attrs.update({'class': 'item-description'})
+        self.fields['quantity'].widget.attrs.update({'placeholder': 'Podaj ilość'})
+        self.fields['quantity'].widget.attrs.update({'class': 'item-quantity'})
+        self.fields['price_netto'].widget.attrs.update({'placeholder': 'Podaj cenę netto'})
+        self.fields['price_netto'].widget.attrs.update({'class': 'item-netto'})
+        self.fields['price_brutto'].widget.attrs.update({'placeholder': 'Podaj cenę brutto'})
+        self.fields['price_brutto'].widget.attrs.update({'class': 'item-brutto'})
+        self.fields['ware'].widget.attrs.update({'data-placeholder': 'Wybierz towar'})
+        self.fields['ware'].widget.attrs.update({'class': 'item-ware'})
+        self.fields['service'].widget.attrs.update({'data-placeholder': 'Wybierz usługę'})
+        self.fields['service'].widget.attrs.update({'class': 'item-service'})
+
+    class Meta:
+        model = SaleInvoiceItem
+        fields = ['name', 'description', 'quantity', 'price_netto', 'price_brutto', 'ware', 'service']
+
+
+class ServiceTemplateModelForm(forms.ModelForm):
+    ware = forms.ModelChoiceField(
+        label="Towar", queryset=Ware.objects.all(), required=False,
+        widget=autocomplete.ModelSelect2(url='warehouse:ware_autocomplete')
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -103,5 +135,5 @@ class SaleInvoiceItemModelForm(forms.ModelForm):
         self.fields['ware'].widget.attrs.update({'class': 'item-ware'})
 
     class Meta:
-        model = SaleInvoiceItem
+        model = ServiceTemplate
         fields = ['name', 'description', 'quantity', 'price_netto', 'price_brutto', 'ware']

@@ -11,10 +11,11 @@ from django.db import IntegrityError, transaction
 from django.forms import modelformset_factory
 
 from KlimaKar.views import AjaxCreateView, CustomSelect2QuerySetView, FilteredSingleTableView
-from apps.invoicing.models import SaleInvoice, Contractor, RefrigerantWeights, SaleInvoiceItem
-from apps.invoicing.forms import SaleInvoiceModelForm, ContractorModelForm, SaleInvoiceItemModelForm
-from apps.invoicing.tables import SaleInvoiceTable, ContractorTable, SaleInvoiceItemTable
-from apps.invoicing.filters import SaleInvoiceFilter, ContractorFilter
+from apps.invoicing.models import SaleInvoice, Contractor, RefrigerantWeights, SaleInvoiceItem, ServiceTemplate
+from apps.invoicing.forms import SaleInvoiceModelForm, ContractorModelForm, SaleInvoiceItemModelForm,\
+    ServiceTemplateModelForm
+from apps.invoicing.tables import SaleInvoiceTable, ContractorTable, SaleInvoiceItemTable, ServiceTemplateTable
+from apps.invoicing.filters import SaleInvoiceFilter, ContractorFilter, ServiceTemplateFilter
 from apps.invoicing.dictionaries import INVOICE_TYPES
 from apps.invoicing.functions import get_next_invoice_number
 from apps.invoicing.gus import gus_session
@@ -156,6 +157,8 @@ class SaleInvoiceUpdateView(SaleInvoiceFormMixin, UpdateView):
 
 
 class SaleInvoicePDFView(View):
+    print_version = False
+
     def get(self, request, *args, **kwargs):
         invoice = get_object_or_404(SaleInvoice, pk=kwargs.get('pk'))
         context = {
@@ -166,8 +169,9 @@ class SaleInvoicePDFView(View):
         documents = []
         documents.append(
             HTML(string=rendered_tpl).render(stylesheets=[CSS(filename='KlimaKar/static/css/invoice.css')]))
-        documents.append(
-            HTML(string=rendered_tpl).render(stylesheets=[CSS(filename='KlimaKar/static/css/invoice.css')]))
+        if self.print_version:
+            documents.append(
+                HTML(string=rendered_tpl).render(stylesheets=[CSS(filename='KlimaKar/static/css/invoice.css')]))
         all_pages = []
         for doc in documents:
             for p in doc.pages:
@@ -177,7 +181,78 @@ class SaleInvoicePDFView(View):
         response.write(pdf_file)
         response['Content-Disposition'] = 'filename={} {}.pdf'.format(
             invoice.get_invoice_type_display(), invoice.number.replace('/', '_'))
+        if not self.print_version:
+            response['Content-Disposition'] = 'attachment;' + response['Content-Disposition']
         return response
+
+
+class ServiceTemplateTableView(FilteredSingleTableView):
+    model = ServiceTemplate
+    table_class = ServiceTemplateTable
+    filter_class = ServiceTemplateFilter
+    template_name = 'invoicing/service_template/table.html'
+
+
+class ServiceTemplateDetailView(DetailView):
+    model = ServiceTemplate
+    template_name = 'invoicing/service_template/detail.html'
+
+
+class ServiceTemplateCreateView(CreateView):
+    model = ServiceTemplate
+    form_class = ServiceTemplateModelForm
+    template_name = 'invoicing/service_template/form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Nowa usługa"
+        return context
+
+    def get_success_url(self, **kwargs):
+        return reverse("invoicing:service_template_detail", kwargs={'pk': self.object.pk})
+
+
+class ServiceTemplateUpdateView(UpdateView):
+    model = ServiceTemplate
+    form_class = ServiceTemplateModelForm
+    template_name = 'invoicing/service_template/form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Edycja usługi"
+        return context
+
+    def get_success_url(self, **kwargs):
+        return reverse("invoicing:service_template_detail", kwargs={'pk': self.object.pk})
+
+
+class ServiceTemplateAutocomplete(CustomSelect2QuerySetView):
+    def get_queryset(self):
+        qs = ServiceTemplate.objects.all()
+        if self.q:
+            qs = qs.filter(Q(name__icontains=self.q) | Q(description__icontains=self.q))
+        return qs
+
+
+class ServiceTemplateGetDataView(View):
+    def get(self, *args, **kwargs):
+        service_pk = self.request.GET.get('pk', None)
+        if service_pk:
+            service = ServiceTemplate.objects.get(pk=service_pk)
+            response = {
+                'name': service.name,
+                'description': service.description,
+                'ware': {
+                    'pk': service.ware.pk,
+                    'index': service.ware.index,
+                },
+                'quantity': service.quantity,
+                'price_netto': service.price_netto,
+                'price_brutto': service.price_brutto
+            }
+            return JsonResponse({'status': 'ok',
+                                 'service': response})
+        return JsonResponse({'status': 'error', 'service': []})
 
 
 class ContractorTableView(FilteredSingleTableView):
@@ -235,7 +310,6 @@ class ContractorCreateAjaxView(AjaxCreateView):
 
 
 class ContractorAutocomplete(CustomSelect2QuerySetView):
-
     def get_queryset(self):
         qs = Contractor.objects.all()
         if self.q:

@@ -1,6 +1,6 @@
 import django_tables2 as tables
 
-from apps.invoicing.models import Contractor, SaleInvoice, SaleInvoiceItem
+from apps.invoicing.models import Contractor, SaleInvoice, SaleInvoiceItem, ServiceTemplate
 
 
 class ContractorTable(tables.Table):
@@ -69,4 +69,18 @@ class SaleInvoiceItemTable(tables.Table):
         attrs = {'class': 'table table-striped table-hover table-bordered'}
         fields = ['name', 'description', 'ware', 'quantity', 'price_netto', 'price_brutto']
         empty_text = 'Brak pozycji'
-        localize = ('price_brutto', )
+
+
+class ServiceTemplateTable(tables.Table):
+    name = tables.Column(attrs={'th': {'width': '40%'}}, verbose_name="Nazwa usługi/towaru")
+    description = tables.Column(attrs={'th': {'width': '40%'}}, verbose_name="Opis usługi/towaru")
+    ware = tables.Column(attrs={'th': {'width': '13%'}})
+    actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
+                                    template_name='invoicing/service_template/table_actions.html',
+                                    orderable=False)
+
+    class Meta:
+        model = ServiceTemplate
+        attrs = {'class': 'table table-striped table-hover table-bordered'}
+        fields = ['name', 'description', 'ware']
+        empty_text = 'Brak pozycji'

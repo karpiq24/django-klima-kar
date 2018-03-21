@@ -76,7 +76,9 @@
             <div class="card bg-light">
                 <div class="card-body">
                     <h5 class="card-title">Akcje</h5>
-                    <button id="pdf-btn" class="btn btn-outline-primary btn-lg" data-url="{% url 'invoicing:sale_invoice_pdf' object.pk %}">Drukuj</button>
+                    <button id="print-btn" class="btn btn-outline-primary btn-lg" data-url="{% url 'invoicing:sale_invoice_print_pdf' object.pk %}">Drukuj</button>
+                    <a class="btn btn-outline-primary btn-lg" href="{% url 'invoicing:sale_invoice_pdf' object.pk %}" target="_blank">E-faktura</a>
+                    <a class="disabled btn btn-outline-primary btn-lg" href="{% url 'invoicing:sale_invoice_pdf' object.pk %}" target="_blank">E-mail</a>
                     <a class="btn btn-outline-warning btn-lg" href="{% url 'invoicing:sale_invoice_update' object.pk %}">Edycja</a>
                     <a class="btn btn-outline-dark btn-lg" href="{% url 'invoicing:sale_invoices' %}">Powrót</a>
                 </div>
@@ -94,7 +96,7 @@
 {% block scripts %}
 <script>
     function print_pdf() {
-        var url = $('#pdf-btn').attr('data-url');
+        var url = $('#print-btn').attr('data-url');
         var w = window.open(url);
         w.print();
     }
@@ -109,7 +111,7 @@
         else if(url.indexOf('&pdf') != -1)
             print_pdf();
         
-        $("#pdf-btn").click(function() {
+        $("#print-btn").click(function() {
             print_pdf();
         });
     });

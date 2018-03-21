@@ -9,6 +9,14 @@ urlpatterns = [
     path('sale_invoices/create/<type>', views.SaleInvoiceCreateView.as_view(), name='sale_invoice_create'),
     path('sale_invoices/<int:pk>/update', views.SaleInvoiceUpdateView.as_view(), name='sale_invoice_update'),
     path('sale_invoices/<int:pk>/pdf', views.SaleInvoicePDFView.as_view(), name='sale_invoice_pdf'),
+    path('sale_invoices/<int:pk>/print_pdf', views.SaleInvoicePDFView.as_view(print_version=True), name='sale_invoice_print_pdf'),
+
+    path('services', views.ServiceTemplateTableView.as_view(), name='service_templates'),
+    path('services/<int:pk>', views.ServiceTemplateDetailView.as_view(), name='service_template_detail'),
+    path('services/<int:pk>/update', views.ServiceTemplateUpdateView.as_view(), name='service_template_update'),
+    path('services/create', views.ServiceTemplateCreateView.as_view(), name='service_template_create'),
+    path('service_autocomplete', views.ServiceTemplateAutocomplete.as_view(), name='service_template_autocomplete'),
+    path('get_service_data', views.ServiceTemplateGetDataView.as_view(), name='get_service_template'),
     
     path('contractors', views.ContractorTableView.as_view(), name='contractors'),
     path('contractors/<int:pk>', views.ContractorDetailView.as_view(), name='contractor_detail'),
