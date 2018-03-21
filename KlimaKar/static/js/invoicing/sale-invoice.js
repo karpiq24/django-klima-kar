@@ -182,9 +182,11 @@ $(function () {
                 $(item_form).find(".item-brutto").val(result.service.price_brutto);
                 $(item_form).find(".item-quantity").val(result.service.quantity);
 
-                var $option = $("<option selected></option>").val(result.service.ware.pk).text(result.service.ware.index);
-                var $sel2 = $(item_form).find(".item-ware");
-                $sel2.append($option).trigger('change');
+                if (result.service.ware) {
+                    var $option = $("<option selected></option>").val(result.service.ware.pk).text(result.service.ware.index);
+                    var $sel2 = $(item_form).find(".item-ware");
+                    $sel2.append($option).trigger('change');
+                }
                 if (result.service.price_brutto) {
                     $(item_form).find(".item-brutto").change();
                 }
