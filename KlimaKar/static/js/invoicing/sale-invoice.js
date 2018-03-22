@@ -42,10 +42,6 @@ $(function () {
     $('.sidenav #nav-saleinvoices').children(':first').addClass('active');
     $('.sidenav #nav-invoicing').collapse('show');
 
-    $('#item-rows tr:first').removeClass('d-none');
-    calculateInvoiceTotals();
-    setItemFormCount();
-
     $('#id_contractor').on('select2:selecting', function (e) {
         var data = e.params.args.data;
 
@@ -196,4 +192,19 @@ $(function () {
             }
         });
     });
+
+    $('#item-rows tr:first').removeClass('d-none');
+    $('.item-formset-row').each(function() {
+        var item_form = $(this);
+        if ($(item_form).find(".item-name").val() || $(item_form).find(".item-description").val() ||
+            $(item_form).find(".item-ware").val() ||  $(item_form).find(".item-netto").val() != 0 ||
+            $(item_form).find(".item-brutto").val() != 0 || $(item_form).find(".item-quantity").val() != 1 ||
+            $(item_form).find(".invalid-feedback").length > 0) {
+
+            item_form.removeClass('d-none');
+            $(item_form).find(".item-brutto").change();
+        }
+    })
+    calculateInvoiceTotals();
+    setItemFormCount();
 });
