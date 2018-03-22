@@ -3,7 +3,7 @@ ul.sidenav {
   margin: 0;
   margin-top: 48px;
   padding: 0;
-  width: 190px;
+  width: 200px;
   background-color: #191c21;
   color: #abb;
   position: fixed;
@@ -18,7 +18,7 @@ ul.sidenav li a {
   padding: 8px 16px;
   text-decoration: none;
   border-bottom: solid 1px rgb(85, 85, 85);
-  min-width: 190px;
+  min-width: 200px;
 }
 
 ul.sidenav li a span {
@@ -42,7 +42,7 @@ ul.sidenav li i {
   background-color: #0e1013;
   font-style: normal;
   cursor: pointer;
-  min-width: 190px;
+  min-width: 200px;
 }
 
 ul.sidenav li i span{
@@ -55,7 +55,7 @@ ul.sidenav li i:hover {
 }
 
 div.content {
-  margin-left: 190px;
+  margin-left: 200px;
   padding: 1px 16px;
 }
 
