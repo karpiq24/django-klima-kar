@@ -28,7 +28,7 @@ function calculateInvoiceTotals() {
             var price_netto = toCurrency($(this).find(".item-netto").val());
             var quantity = parseInt($(this).find(".item-quantity").val());
             var total_netto = toCurrency(quantity * price_netto);
-            invoice_total_netto = invoice_total_netto + total_netto;
+            invoice_total_netto = toCurrency(invoice_total_netto + total_netto);
         }
     });
     var invoice_total_brutto = toCurrency(invoice_total_netto + invoice_total_netto * tax_multiplier);
