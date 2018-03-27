@@ -1,7 +1,10 @@
 import datetime
 
+from weasyprint import HTML, CSS
+
 from django.db import models
 from django.core.validators import RegexValidator
+from django.template.loader import get_template
 
 from apps.warehouse.models import Ware
 from apps.invoicing.dictionaries import PAYMENT_TYPES, INVOICE_TYPES
@@ -16,6 +19,7 @@ class Contractor(models.Model):
     address_2 = models.CharField(max_length=128, verbose_name="Adres 2", blank=True, null=True)
     city = models.CharField(max_length=128, verbose_name="Miasto", blank=True, null=True)
     postal_code = models.CharField(max_length=16, verbose_name="Kod pocztowy", blank=True, null=True)
+    email = models.EmailField(verbose_name="Adres e-mail", blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -46,6 +50,21 @@ class SaleInvoice(models.Model):
     @property
     def total_value_tax(self):
         return self.total_value_brutto - self.total_value_netto
+
+    def generate_pdf(self, print_version=False):
+        template = get_template('invoicing/invoice.html')
+        rendered_tpl = template.render({'invoice': self}).encode()
+        documents = []
+        documents.append(
+            HTML(string=rendered_tpl).render(stylesheets=[CSS(filename='KlimaKar/static/css/invoice.css')]))
+        if print_version:
+            documents.append(
+                HTML(string=rendered_tpl).render(stylesheets=[CSS(filename='KlimaKar/static/css/invoice.css')]))
+        all_pages = []
+        for doc in documents:
+            for p in doc.pages:
+                all_pages.append(p)
+        return documents[0].copy(all_pages).write_pdf()
 
 
 class RefrigerantWeights(models.Model):

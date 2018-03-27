@@ -37,6 +37,11 @@
 <div class="spacer">
   &nbsp;
 </div>
+<div id="alert-box">
+  {% for message in messages %}
+    <div class="alert-django alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" data-dismiss="alert">{{ message }}</div>
+  {% endfor %}
+</div>
 <div class="container-fluid text-center">    
   <div class="content text-left {% if not user.is_authenticated %}content-full{% endif %}">
     {% block content %}
@@ -70,6 +75,22 @@
     select2_open = $(this).parent().parent().siblings('select');
     select2_open.select2('open');
   });
+  function append_alert(tag, message) {
+    var message_prefix = ''
+    switch(tag) {
+      case 'danger':
+        message_prefix = 'Błąd! ';
+        break;
+      case 'success':
+        message_prefix = 'Sukces! ';
+        break;
+    }
+    var rnd_class = 'alert-' + Math.random().toString(36).substring(7);
+    $('#alert-box').append('<div class="' + rnd_class + ' alert alert-' + tag + ' alert-dismissible fade show" role="alert" data-dismiss="alert"><strong>' + message_prefix + '</strong>' + message + '</div>');
+    setTimeout(function() {
+        $('.' + rnd_class).alert('close');
+    }, 5000);
+  }
   $(function () {
     $('.date-input').datetimepicker({
       format:'DD.MM.YYYY',
@@ -85,6 +106,9 @@
         close: 'fa fa-times'
       }
     });
+    setTimeout(function() {
+        $(".alert-django").alert('close');
+    }, 5000);
   });
 </script>
 {% block scripts %}

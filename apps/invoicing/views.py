@@ -1,5 +1,5 @@
-from weasyprint import HTML, CSS
 from django_tables2 import RequestConfig
+from smtplib import SMTPRecipientsRefused
 
 from django.views.generic import DetailView, UpdateView, CreateView, View
 from django.shortcuts import get_object_or_404
@@ -9,11 +9,12 @@ from django.urls import reverse
 from django.db.models import Q
 from django.db import IntegrityError, transaction
 from django.forms import modelformset_factory
+from django.core.mail import EmailMessage
 
 from KlimaKar.views import AjaxCreateView, CustomSelect2QuerySetView, FilteredSingleTableView
 from apps.invoicing.models import SaleInvoice, Contractor, RefrigerantWeights, SaleInvoiceItem, ServiceTemplate
 from apps.invoicing.forms import SaleInvoiceModelForm, ContractorModelForm, SaleInvoiceItemModelForm,\
-    ServiceTemplateModelForm
+    ServiceTemplateModelForm, EmailForm
 from apps.invoicing.tables import SaleInvoiceTable, ContractorTable, SaleInvoiceItemTable, ServiceTemplateTable
 from apps.invoicing.filters import SaleInvoiceFilter, ContractorFilter, ServiceTemplateFilter
 from apps.invoicing.dictionaries import INVOICE_TYPES
@@ -37,6 +38,14 @@ class SaleInvoiceDetailView(DetailView):
         table = SaleInvoiceItemTable(SaleInvoiceItem.objects.filter(sale_invoice=context['saleinvoice']))
         RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
         context['table'] = table
+        email_data = {
+            'sale_invoice': self.object,
+            'subject': '{} {}'.format(self.object.get_invoice_type_display(), self.object.number),
+            'message': get_template('invoicing/sale_invoice/email_template.txt').render(),
+            'recipient': self.object.contractor.email
+        }
+        context['email_form'] = EmailForm(initial=email_data)
+        context['email_url'] = reverse('invoicing:sale_invoice_email')
         return context
 
 
@@ -161,22 +170,7 @@ class SaleInvoicePDFView(View):
 
     def get(self, request, *args, **kwargs):
         invoice = get_object_or_404(SaleInvoice, pk=kwargs.get('pk'))
-        context = {
-                'invoice': invoice
-        }
-        template = get_template('invoicing/invoice.html')
-        rendered_tpl = template.render(context).encode()
-        documents = []
-        documents.append(
-            HTML(string=rendered_tpl).render(stylesheets=[CSS(filename='KlimaKar/static/css/invoice.css')]))
-        if self.print_version:
-            documents.append(
-                HTML(string=rendered_tpl).render(stylesheets=[CSS(filename='KlimaKar/static/css/invoice.css')]))
-        all_pages = []
-        for doc in documents:
-            for p in doc.pages:
-                all_pages.append(p)
-        pdf_file = documents[0].copy(all_pages).write_pdf()
+        pdf_file = invoice.generate_pdf(self.print_version)
         response = HttpResponse(content_type='application/pdf')
         response.write(pdf_file)
         response['Content-Disposition'] = 'filename={} {}.pdf'.format(
@@ -184,6 +178,33 @@ class SaleInvoicePDFView(View):
         if not self.print_version:
             response['Content-Disposition'] = 'attachment;' + response['Content-Disposition']
         return response
+
+
+class SendEmailView(View):
+    def post(self, request, *args, **kwargs):
+        invoice = get_object_or_404(SaleInvoice, pk=request.POST.get('sale_invoice'))
+        pdf_file = invoice.generate_pdf()
+        email = EmailMessage(
+            subject=request.POST.get('subject'),
+            body=request.POST.get('message'),
+            to=[request.POST.get('recipient')]
+        )
+        email.attach('{} {}.pdf'.format(
+            invoice.get_invoice_type_display(),
+            invoice.number.replace('/', '_')),
+            pdf_file, mimetype='application/pdf')
+        try:
+            result = email.send(fail_silently=False)
+        except SMTPRecipientsRefused:
+            return JsonResponse({'status': 'error', 'message': 'Podaj poprawny adres email'}, status=400)
+        except IndexError:
+            return JsonResponse({'status': 'error', 'message': 'Podaj poprawny temat wiadomości'}, status=400)
+        if result == 1:
+            return JsonResponse({'status': 'success', 'message': 'Wiadomość została wysłana'}, status=200)
+        else:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Bład przy wysyłaniu wiadomości. Skontaktuj się z administratorem.'}, status=500)
 
 
 class ServiceTemplateTableView(FilteredSingleTableView):

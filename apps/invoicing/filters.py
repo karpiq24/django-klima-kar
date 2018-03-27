@@ -35,10 +35,11 @@ class ContractorFilter(django_filters.FilterSet):
     address_1 = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
     city = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
     postal_code = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
+    email = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
 
     class Meta:
         model = Contractor
-        fields = ['name', 'nip', 'address_1', 'city', 'postal_code']
+        fields = ['name', 'nip', 'address_1', 'city', 'postal_code', 'email']
 
 
 class ServiceTemplateFilter(django_filters.FilterSet):

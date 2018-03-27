@@ -79,6 +79,7 @@ header {
   padding-left: 6px;
   border-left: 6px solid #00689d;
   float: left;
+  max-width: 60%;
 }
 
 #client .to {

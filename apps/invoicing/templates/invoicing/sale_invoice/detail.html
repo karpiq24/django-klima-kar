@@ -78,7 +78,7 @@
                     <h5 class="card-title">Akcje</h5>
                     <button id="print-btn" class="btn btn-outline-primary btn-lg" data-url="{% url 'invoicing:sale_invoice_print_pdf' object.pk %}">Drukuj</button>
                     <a class="btn btn-outline-primary btn-lg" href="{% url 'invoicing:sale_invoice_pdf' object.pk %}" target="_blank">E-faktura</a>
-                    <a class="disabled btn btn-outline-primary btn-lg" href="{% url 'invoicing:sale_invoice_pdf' object.pk %}" target="_blank">E-mail</a>
+                    <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#email_modal">E-mail</button>
                     <a class="btn btn-outline-warning btn-lg" href="{% url 'invoicing:sale_invoice_update' object.pk %}">Edycja</a>
                     <a class="btn btn-outline-dark btn-lg" href="{% url 'invoicing:sale_invoices' %}">Powrót</a>
                 </div>
@@ -91,6 +91,29 @@
     <h4>Pozycje faktury</h4>
 </div>
 {% render_table table "tables2/table.html" %}
+
+<div class="modal fade" id="email_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" id="email_form" onsubmit="submitEmailForm('{{ email_url }}'); return false;">
+                <div class="modal-header">
+                    <h5 class="modal-title">Wyślij E-fakturę</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% csrf_token %}
+                    {% include 'forms/form.html' with form=email_form %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Anuluj</button>
+                    <button type="submit" class="btn btn-outline-primary">Wyślij</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
@@ -100,6 +123,22 @@
         var w = window.open(url);
         w.print();
     }
+    function submitEmailForm(url) {
+        var data = $('#email_form').serialize();
+        data
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: data,
+            success: function(data){
+                $("#email_modal").modal("hide");
+                append_alert('success', data.message);
+            },
+            error: function(data){
+                append_alert('danger', data.responseJSON.message);
+            }
+        });
+    };
 
     $(function () {
         $('.sidenav #nav-saleinvoices').children(':first').addClass('active');

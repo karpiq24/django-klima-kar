@@ -72,10 +72,11 @@ class ContractorModelForm(forms.ModelForm):
         self.fields['address_2'].widget.attrs.update({'placeholder': 'Podaj adres'})
         self.fields['city'].widget.attrs.update({'placeholder': 'Podaj miasto'})
         self.fields['postal_code'].widget.attrs.update({'placeholder': 'Podaj kod pocztowy'})
+        self.fields['email'].widget.attrs.update({'placeholder': 'Podaj adres e-mail'})
 
     class Meta:
         model = Contractor
-        fields = ['nip_prefix', 'nip', 'name', 'city', 'postal_code', 'address_1', 'address_2']
+        fields = ['nip_prefix', 'nip', 'name', 'city', 'postal_code', 'address_1', 'address_2', 'email']
         widgets = {
             'nip_prefix': forms.HiddenInput()
         }
@@ -137,3 +138,14 @@ class ServiceTemplateModelForm(forms.ModelForm):
     class Meta:
         model = ServiceTemplate
         fields = ['name', 'description', 'quantity', 'price_netto', 'price_brutto', 'ware']
+
+
+class EmailForm(forms.Form):
+    recipient = forms.EmailField(label='Do')
+    subject = forms.CharField(label='Temat')
+    message = forms.CharField(widget=forms.Textarea, label='Treść')
+    sale_invoice = forms.ModelChoiceField(queryset=SaleInvoice.objects.none(), widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['sale_invoice'].queryset = SaleInvoice.objects.filter(pk=self.initial['sale_invoice'].pk)

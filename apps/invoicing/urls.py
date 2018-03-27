@@ -10,6 +10,7 @@ urlpatterns = [
     path('sale_invoices/<int:pk>/update', views.SaleInvoiceUpdateView.as_view(), name='sale_invoice_update'),
     path('sale_invoices/<int:pk>/pdf', views.SaleInvoicePDFView.as_view(), name='sale_invoice_pdf'),
     path('sale_invoices/<int:pk>/print_pdf', views.SaleInvoicePDFView.as_view(print_version=True), name='sale_invoice_print_pdf'),
+    path('sale_invoice_email', views.SendEmailView.as_view(), name='sale_invoice_email'),
 
     path('services', views.ServiceTemplateTableView.as_view(), name='service_templates'),
     path('services/<int:pk>', views.ServiceTemplateDetailView.as_view(), name='service_template_detail'),
