@@ -79,7 +79,7 @@ header {
   padding-left: 6px;
   border-left: 6px solid #00689d;
   float: left;
-  max-width: 60%;
+  max-width: 50%;
 }
 
 #client .to {
@@ -274,4 +274,10 @@ footer {
   font-size: 1em;
   font-style: italic;
   font-weight: 600;
+}
+
+#reverse-charge {
+  text-align: right;
+  width: 100%;
+  margin-bottom: 20px;
 }

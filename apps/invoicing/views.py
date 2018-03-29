@@ -11,7 +11,8 @@ from django.db import IntegrityError, transaction
 from django.forms import modelformset_factory
 from django.core.mail import EmailMessage
 
-from KlimaKar.views import AjaxCreateView, CustomSelect2QuerySetView, FilteredSingleTableView
+from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
+from KlimaKar.mixins import AjaxFormMixin
 from apps.invoicing.models import SaleInvoice, Contractor, RefrigerantWeights, SaleInvoiceItem, ServiceTemplate
 from apps.invoicing.forms import SaleInvoiceModelForm, ContractorModelForm, SaleInvoiceItemModelForm,\
     ServiceTemplateModelForm, EmailForm
@@ -153,6 +154,8 @@ class SaleInvoiceCreateView(SaleInvoiceFormMixin, CreateView):
                 'invoice_type': invoice_type,
                 'number': get_next_invoice_number(invoice_type)
             }
+            if invoice_type == '4':
+                self.initial['tax_percent'] = 0
         else:
             raise Http404()
         return super().dispatch(*args, **kwargs)
@@ -325,11 +328,16 @@ class ContractorUpdateView(UpdateView):
         return reverse("invoicing:contractor_detail", kwargs={'pk': self.object.pk})
 
 
-class ContractorCreateAjaxView(AjaxCreateView):
+class ContractorCreateAjaxView(AjaxFormMixin, CreateView):
     model = Contractor
     form_class = ContractorModelForm
     title = "Nowy kontrahent"
-    url = 'invoicing:contractor_create_ajax'
+
+
+class ContractorUpdateAjaxView(AjaxFormMixin, UpdateView):
+    model = Contractor
+    form_class = ContractorModelForm
+    title = "Edycja kontrahenta"
 
 
 class ContractorAutocomplete(CustomSelect2QuerySetView):
@@ -349,3 +357,23 @@ class ContractorGUS(View):
         if not response_data:
             return JsonResponse({}, status=404)
         return JsonResponse(response_data)
+
+
+class ContractorGetDataView(View):
+    def get(self, *args, **kwargs):
+        contractor_pk = self.request.GET.get('pk', None)
+        if contractor_pk:
+            contractor = Contractor.objects.get(pk=contractor_pk)
+            response = {
+                'name': contractor.name,
+                'nip': contractor.nip,
+                'nip_prefix': contractor.nip_prefix,
+                'address_1': contractor.address_1,
+                'address_2': contractor.address_2,
+                'city': contractor.city,
+                'postal_code': contractor.postal_code,
+                'email': contractor.email
+            }
+            return JsonResponse({'status': 'ok',
+                                 'contractor': response})
+        return JsonResponse({'status': 'error', 'contractor': {}})

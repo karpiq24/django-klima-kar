@@ -10,7 +10,8 @@ from django.db.models import Q
 from django_tables2 import RequestConfig
 from dal import autocomplete
 
-from KlimaKar.views import AjaxCreateView, CustomSelect2QuerySetView, FilteredSingleTableView
+from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
+from KlimaKar.mixins import AjaxFormMixin
 from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 from apps.warehouse.tables import WareTable, InvoiceTable, SupplierTable, InvoiceItemTable
 from apps.warehouse.filters import WareFilter, InvoiceFilter, SupplierFilter
@@ -219,11 +220,10 @@ class SupplierCreateView(CreateView):
         return reverse("warehouse:supplier_detail", kwargs={'pk': self.object.pk})
 
 
-class WareCreateAjaxView(AjaxCreateView):
+class WareCreateAjaxView(AjaxFormMixin, CreateView):
     model = Ware
     form_class = WareModelForm
     title = "Nowy towar"
-    url = 'warehouse:ware_create_ajax'
 
 
 class GetWareData(View):

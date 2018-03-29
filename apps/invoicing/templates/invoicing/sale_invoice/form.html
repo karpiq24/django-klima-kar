@@ -8,7 +8,47 @@
 <form id="sale-invoice-form" action="" method="post">
     {% csrf_token %}
     <div class="row">
-        {% include 'forms/form.html' with form=form two_columns=True %}
+        {% for hidden_field in form.hidden_fields %}
+            {{ hidden_field }}
+        {% endfor %}
+      
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
+            </div>
+        {% endif %}
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.0 %}
+        </div>
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.1 %}
+        </div>
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.2 %}
+        </div>
+        <div class=col-sm-6>
+            <div style="display:flex;width:100%;">
+                <div style="width:calc(100% - 105px);">
+                    {% include 'forms/field.html' with field=form.visible_fields.3 %}
+                </div>
+                <button disabled id="contractor-edit" class="btn btn-outline-warning" style="margin-left:5px;margin-top:29px;height:38px;width:100px;" type="button">Edytuj</button>
+            </div>
+        </div>
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.4 %}
+        </div>
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.5 %}
+        </div>
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.6 %}
+        </div>
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.7 %}
+        </div>
+
         {{ refrigerant_formset.management_form }}
         {% include 'forms/form.html' with form=refrigerant_formset.0 as_table=True %}
 
@@ -127,7 +167,10 @@
 {% block scripts %}
 <script>
     var CREATE_CONTRACTOR = "{% url 'invoicing:contractor_create_ajax' %}";
+    var UPDATE_CONTRACTOR = "{% url 'invoicing:contractor_update_ajax' 0 %}";
+    var GET_CONTRACTOR_DATA = "{% url 'invoicing:get_contractor' %}";
     var GET_SERVICE_DATA = "{% url 'invoicing:get_service_template' %}";
+    var INVOICE_TYPE = "{{ form.initial.invoice_type }}";
 </script>
 <script src="{% static 'js/invoicing/sale-invoice.js' %}"></script>
 {% endblock %}

@@ -12,6 +12,7 @@ function customSuccessCreate(data, identifier) {
     if (identifier == '1') {
         var $option = $("<option selected></option>").val(data['pk']).text(data['text']);
         $('#id_contractor').append($option).trigger('change');
+        $('#contractor-edit').prop('disabled', false);
     }
 }
 
@@ -45,8 +46,11 @@ $(function () {
     $('#id_contractor').on('select2:selecting', function (e) {
         var data = e.params.args.data;
 
-        if (data.create_id !== true)
+        if (data.create_id !== true) {
+            $('#contractor-edit').prop('disabled', false);
             return;
+        }
+        $('#contractor-edit').prop('disabled', true);
 
         e.preventDefault();
         if (isInt(data.id)) {
@@ -65,6 +69,33 @@ $(function () {
             },
             success: function (data) {
                 $("#modal-generic .modal-content").html(data.html_form);
+            }
+        });
+    });
+
+    $("#id_contractor").change(function () {
+        if (INVOICE_TYPE != '4') {
+            return;
+        }
+        var parent = $("#id_contractor").parent();
+        var contractor_pk = $('#id_contractor').val();
+        $.ajax({
+            url: GET_CONTRACTOR_DATA,
+            data: {
+                'pk': contractor_pk
+            },
+            dataType: 'json',
+            success: function (result) {
+                if (result.contractor.nip_prefix == null) {
+                    $("#id_contractor").addClass('is-invalid');
+                    if ($(parent).find('div.invalid-feedback').length == 0) {
+                        $(parent).append('<div class="invalid-feedback">Wybrany kontrahent nie ma podanego prefixu NIP.</div>')
+                    }    
+                }
+                else {
+                    $("#id_contractor").removeClass('is-invalid');
+                    $(parent).find('div.invalid-feedback').remove();
+                }
             }
         });
     });
@@ -189,6 +220,22 @@ $(function () {
                 else {
                     $(item_form).find(".item-netto").change();
                 }
+            }
+        });
+    });
+
+    $("#contractor-edit").click(function(){
+        var contractor_pk = $('#id_contractor').val();
+        var url = UPDATE_CONTRACTOR.replace('0', contractor_pk);
+        $.ajax({
+            url: url,
+            type: 'get',
+            dataType: 'json',
+            beforeSend: function () {
+                $("#modal-generic").modal("show");
+            },
+            success: function (data) {
+                $("#modal-generic .modal-content").html(data.html_form);
             }
         });
     });

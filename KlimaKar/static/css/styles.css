@@ -124,7 +124,7 @@ span.required {
 }
 .select2-container {
     width: 100% !important;
-    min-width: 0px;
+    min-width: 0px !important;
 }
 .select2-results__option {
     color: black;

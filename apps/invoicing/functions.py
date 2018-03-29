@@ -9,6 +9,11 @@ from apps.invoicing.gus import gus_session
 def get_next_invoice_number(invoice_type):
     year = datetime.date.today().year
     invoices = SaleInvoice.objects.filter(invoice_type=invoice_type, number_year=year)
+    if invoice_type == '1':
+        invoices = (invoices | SaleInvoice.objects.filter(invoice_type='4', number_year=year)).distinct()
+    elif invoice_type == '4':
+        invoices = (invoices | SaleInvoice.objects.filter(invoice_type='1', number_year=year)).distinct()
+
     if not invoices.exists():
         return "1/{}".format(year)
     last_number = invoices.order_by('-number_value').first().number_value

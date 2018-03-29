@@ -8,5 +8,5 @@ INVOICE_TYPES = [
     ('1', 'Faktura VAT'),
     ('2', 'Pro forma'),
     ('3', 'Korekta'),
-    ('4', 'WDT'),
+    ('4', 'Faktura VAT WDT'),
 ]

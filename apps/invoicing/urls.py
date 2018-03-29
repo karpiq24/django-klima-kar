@@ -22,9 +22,11 @@ urlpatterns = [
     path('contractors', views.ContractorTableView.as_view(), name='contractors'),
     path('contractors/<int:pk>', views.ContractorDetailView.as_view(), name='contractor_detail'),
     path('contractors/<int:pk>/update', views.ContractorUpdateView.as_view(), name='contractor_update'),
+    path('contractors/<int:pk>/update_ajax', views.ContractorUpdateAjaxView.as_view(), name='contractor_update_ajax'),
     path('contractors/create', views.ContractorCreateView.as_view(), name='contractor_create'),
     path('contractors/create_ajax', views.ContractorCreateAjaxView.as_view(), name='contractor_create_ajax'),
     path('contractor_gus', views.ContractorGUS.as_view(), name='contractor_gus'),
     path('contractor_autocomplete', views.ContractorAutocomplete.as_view(), name='contractor_autocomplete'),
     path('contractor_autocomplete_create', views.ContractorAutocomplete.as_view(modal_create=True), name='contractor_autocomplete_create'),
+    path('get_contractor_data', views.ContractorGetDataView.as_view(), name='get_contractor'),
 ]

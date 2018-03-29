@@ -1,8 +1,7 @@
 import six
 
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import TemplateView
 from django.http import JsonResponse, HttpResponseBadRequest
-from django.template.loader import render_to_string
 from django.urls import reverse
 from django.core.exceptions import ImproperlyConfigured
 
@@ -42,59 +41,6 @@ class HomeView(TemplateView):
         })
         context['charts'] = charts
         return context
-
-
-class AjaxCreateView(CreateView):
-    model = None
-    form_class = None
-    title = None
-    url = None
-    identifier = 1
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = self.title
-        context['url'] = reverse(self.url)
-        context['identifier'] = self.identifier
-        return context
-
-    def get(self, *args, **kwargs):
-        if self.request.is_ajax():
-            self.initial = self.request.GET.dict()
-            super().get(self.request)
-            html_form = render_to_string(
-                'forms/modal_form.html',
-                self.get_context_data(),
-                request=self.request,
-            )
-            return JsonResponse({'html_form': html_form})
-        return JsonResponse({'error': "Not allowed"})
-
-    def form_invalid(self, form):
-        response = super().form_invalid(form)
-        if self.request.is_ajax():
-            html_form = render_to_string(
-                'forms/modal_form.html',
-                self.get_context_data(),
-                request=self.request,
-            )
-            return JsonResponse({'html_form': html_form}, status=400)
-        else:
-            return response
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        if self.request.is_ajax():
-            data = {
-                'pk': self.object.pk,
-                'text': str(self.object)
-            }
-            return JsonResponse(data)
-        else:
-            return response
-
-    def get_success_url(self, **kwargs):
-        return None
 
 
 class CustomSelect2QuerySetView(autocomplete.Select2QuerySetView):
