@@ -142,6 +142,9 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'KlimaKar/static/'),
 )
 
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
+
+
 MESSAGE_TAGS = {
     messages.ERROR: 'danger'
 }
