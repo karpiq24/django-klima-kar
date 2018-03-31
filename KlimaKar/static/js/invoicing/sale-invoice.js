@@ -240,6 +240,10 @@ $(function () {
         });
     });
 
+    if ($('#id_contractor').val() != '') {
+        $('#contractor-edit').prop('disabled', false);
+    }
+
     $('#item-rows tr:first').removeClass('d-none');
     $('.item-formset-row').each(function() {
         var item_form = $(this);
