@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% load render_table from django_tables2 %}
 
 {% block content %}
@@ -18,7 +19,7 @@
             </tr>
             <tr>
                 <td class="detail-label">Kontrahent</td>
-                <td>{{ object.contractor }}</td>
+                <td><a href="{% url 'invoicing:contractor_detail' object.contractor.pk %}">{{ object.contractor }}</a></td>
             </tr>
             <tr>
                 <td class="detail-label">Data wystawienia</td>
@@ -117,42 +118,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-    function print_pdf() {
-        var url = $('#print-btn').attr('data-url');
-        var w = window.open(url);
-        w.print();
-    }
-    function submitEmailForm(url) {
-        var data = $('#email_form').serialize();
-        data
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: data,
-            success: function(data){
-                $("#email_modal").modal("hide");
-                append_alert('success', data.message);
-            },
-            error: function(data){
-                append_alert('danger', data.responseJSON.message);
-            }
-        });
-    };
-
-    $(function () {
-        $('.sidenav #nav-saleinvoices').children(':first').addClass('active');
-        $('.sidenav #nav-invoicing').collapse('show');
-
-        var url = window.location.href;
-        if(url.indexOf('?pdf') != -1)
-            print_pdf();
-        else if(url.indexOf('&pdf') != -1)
-            print_pdf();
-        
-        $("#print-btn").click(function() {
-            print_pdf();
-        });
-    });
-</script>
+<script src="{% static 'js/invoicing/sale_invoice_detail.js' %}"></script>
 {% endblock %}

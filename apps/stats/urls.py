@@ -10,4 +10,5 @@ urlpatterns = [
     path('ware_purchase_quantity_last_year', views.WarePurchaseQuantity.as_view(last_year=True), name='ware_purchase_quantity_last_year'),
     path('invoices_value_yearly', views.InvoicesValueYearly.as_view(), name='invoices_value_yearly'),
     path('invoices_value_monthly', views.InvoicesValueMonthly.as_view(), name='invoices_value_monthly'),
+    path('ware_purchase_cost/<int:pk>', views.WarePurchaseCost.as_view(), name='ware_purchase_cost'),
 ]

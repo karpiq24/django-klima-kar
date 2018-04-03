@@ -15,7 +15,7 @@ from KlimaKar.settings import DROPBOX_TOKEN
 
 class Command(BaseCommand):
     help = 'Backups database to dropbox'
-    apps_to_backup = ['warehouse']
+    apps_to_backup = ['warehouse', 'invoicing']
 
     def handle(self, *args, **options):
         print("Backing up database for: {}".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))

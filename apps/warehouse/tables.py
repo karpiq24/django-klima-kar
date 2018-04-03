@@ -52,6 +52,26 @@ class InvoiceTable(tables.Table):
         empty_text = 'Brak faktur'
 
 
+class InvoiceTableWithWare(tables.Table):
+    supplier = tables.Column(attrs={'th': {'width': '28%'}}, verbose_name="Dostawca")
+    number = tables.Column(attrs={'th': {'width': '30%'}}, verbose_name="Numer faktury")
+    date = tables.Column(attrs={'th': {'width': '20%'}}, verbose_name="Data")
+    ware_price = tables.Column(attrs={'th': {'width': '15%'}}, verbose_name="Cena towaru")
+    actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
+                                    template_name='warehouse/invoice/invoice_actions.html',
+                                    orderable=False)
+
+    def render_ware_price(self, value):
+        return "{0:.2f} zł".format(value).replace('.', ',')
+
+    class Meta:
+        model = Invoice
+        attrs = {'class': 'table table-striped table-hover table-bordered'}
+        fields = ['supplier', 'number', 'date', 'ware_price']
+        order_by = '-date'
+        empty_text = 'Brak faktur'
+
+
 class SupplierTable(tables.Table):
     name = tables.Column(attrs={'th': {'width': '73%'}})
     all_invoices_value = tables.Column(attrs={'th': {'width': '20%'}}, verbose_name="Łączna wartość zakupów")

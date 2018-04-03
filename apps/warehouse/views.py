@@ -5,7 +5,7 @@ from django.db import IntegrityError, transaction
 from django.forms import modelformset_factory
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
 from django.views.generic import DetailView, UpdateView, CreateView, View
-from django.db.models import Q
+from django.db.models import Q, F
 
 from django_tables2 import RequestConfig
 from dal import autocomplete
@@ -13,7 +13,7 @@ from dal import autocomplete
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
 from KlimaKar.mixins import AjaxFormMixin
 from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
-from apps.warehouse.tables import WareTable, InvoiceTable, SupplierTable, InvoiceItemTable
+from apps.warehouse.tables import WareTable, InvoiceTable, SupplierTable, InvoiceItemTable, InvoiceTableWithWare
 from apps.warehouse.filters import WareFilter, InvoiceFilter, SupplierFilter
 from apps.warehouse.forms import (
     WareModelForm, InvoiceModelForm, SupplierModelForm, InvoiceItemModelForm)
@@ -72,8 +72,9 @@ class WareDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(WareDetailView, self).get_context_data(**kwargs)
-        invoices = [x.invoice for x in InvoiceItem.objects.filter(ware=context['ware'])]
-        table = InvoiceTable(invoices)
+        invoices = Invoice.objects.filter(invoiceitem__ware=context['ware']).annotate(
+            ware_price=F('invoiceitem__price'))
+        table = InvoiceTableWithWare(invoices)
         RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
         context['table'] = table
         return context

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% load render_table from django_tables2 %}
 
 {% block content %}
@@ -37,6 +38,12 @@
             </div>
         </div>
     </div>
+    <div class="col-xs-12 col-lg-8" style="display:none;margin-top:1rem;">
+        <div class="chart-div card bg-light text-center">
+            <h5 class="card-title">Historia ceny zakupu</h5>
+            <canvas id="chart_ware_price" chart-url="{% url 'stats:ware_purchase_cost' object.pk %}"></canvas>
+        </div>
+    </div>
 </div>
 
 <div>
@@ -52,4 +59,5 @@
         $('.sidenav #nav-warehouse').collapse('show');
     });
 </script>
+<script src="{% static 'js/stats/load_charts.js' %}"></script>
 {% endblock %}

@@ -10,7 +10,7 @@
         <table class="table table-bordered">
             <tr>
                 <td class="detail-label">Dostawca</td>
-                <td>{{ object.supplier }}</td>
+                <td><a href="{% url 'warehouse:supplier_detail' object.supplier.pk %}">{{ object.supplier }}</a></td>
             </tr>
             <tr>
                 <td class="detail-label">Numer</td>

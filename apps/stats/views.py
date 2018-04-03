@@ -148,3 +148,21 @@ class WarePurchaseQuantity(ChartDataMixin, View):
 
         response_data['type'] = 'doughnut'
         return JsonResponse(response_data)
+
+
+class WarePurchaseCost(ChartDataMixin, View):
+    min_count = 3
+
+    def get(self, *args, **kwargs):
+        ware_pk = self.kwargs.get('pk')
+        response_data = self.get_response_data_template()
+        invoices = Invoice.objects.filter(invoiceitem__ware__pk=ware_pk).order_by('date')
+        if invoices.count() < self.min_count:
+            return JsonResponse({}, status=404)
+        response_data['data']['labels'] = list(invoices.values_list('date', flat=True))
+        values = list(invoices.values_list('invoiceitem__price', flat=True))
+        response_data['data']['datasets'].append(self.get_dataset(
+            values, get_random_colors(1)))
+
+        response_data['options']['legend']['display'] = False
+        return JsonResponse(response_data)
