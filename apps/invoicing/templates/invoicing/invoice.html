@@ -13,7 +13,7 @@
 		    <span>komfortowy klimat w zasięgu ręki</span>
       </div>
       <div id="company">
-        <div class="nip">NIP {% if invoice.invoice_type == '4' %}PL {% endif %}899-107-17-77</div>
+        <div class="nip">NIP {% if invoice.invoice_type == '4' %}PL8991071777{% else %}899-107-17-77{% endif %}</div>
 		    <h2 class="name">Klima-Kar Renata Karpińska</h2>
         <div>52-214 Wrocław ul. Grota Roweckiego 129</div>        
 		    <div>PKO Inteligo 50 1020 5558 1111 1223 8400 0094</div>
@@ -25,7 +25,7 @@
         <div id="client">
           <div class="to">Nabywca</div>
           {% if invoice.contractor.nip %}
-            <div class="nip">NIP {{ invoice.contractor.nip_prefix|default_if_none:"" }} {{ invoice.contractor.nip }}</div> 
+            <div class="nip">NIP {{ invoice.contractor.nip_prefix|default_if_none:"" }}{{ invoice.contractor.nip }}</div> 
           {% endif %}
           <h2 class="name">{{ invoice.contractor.name }}</h2>
           {% if invoice.contractor.address_1 or invoice.contractor.postal_code or invoice.contractor.city %}
@@ -38,7 +38,7 @@
         <div id="invoice">
           <h1>{{ invoice.get_invoice_type_display|upper }} {{ invoice.number }}</h1>
           <div class="date">Data wystawienia: {{ invoice.issue_date|date:"d.m.Y" }}</div>
-          <div class="date">Data dostawy: {{ invoice.completion_date|date:"d.m.Y" }}</div>
+          <div class="date">Data sprzedaży: {{ invoice.completion_date|date:"d.m.Y" }}</div>
 		      <div class="date">Forma płatności: {{ invoice.get_payment_type_display }}</div>
 		      <div class="date">{% if invoice.payment_date %}Termin płatności: {{ invoice.payment_date|date:"d.m.Y" }}{% else %}zapłacono{% endif %}</div>
         </div>

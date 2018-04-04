@@ -13,7 +13,7 @@ class ContractorTable(tables.Table):
                                     orderable=False)
 
     def render_nip(self, record):
-        return "{}  {}".format(record.nip_prefix or '', record.nip)
+        return "{}{}".format(record.nip_prefix or '', record.nip)
 
     class Meta:
         model = Contractor
