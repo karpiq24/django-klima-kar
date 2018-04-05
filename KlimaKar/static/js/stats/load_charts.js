@@ -1,6 +1,6 @@
 $(function () {
     $("canvas[id^='chart']").each(function() {
-        var parent_div = $(this).parent().parent()
+        var parent_div = $(this).parent().parent().parent();
         var url = $(this).attr('chart-url');
         var ctx = $(this)
         $.ajax({

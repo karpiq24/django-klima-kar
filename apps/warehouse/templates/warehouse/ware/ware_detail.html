@@ -39,9 +39,11 @@
         </div>
     </div>
     <div class="col-xs-12 col-lg-8" style="display:none;margin-top:1rem;">
-        <div class="chart-div card bg-light text-center">
-            <h5 class="card-title">Historia ceny zakupu</h5>
-            <canvas id="chart_ware_price" chart-url="{% url 'stats:ware_purchase_cost' object.pk %}"></canvas>
+        <div class="chart-div card bg-light">
+            <h5 class="card-header">Historia ceny zakupu</h5>
+            <div class="card-body">
+                <canvas id="chart_ware_price" chart-url="{% url 'stats:ware_purchase_cost' object.pk %}"></canvas>
+            </div>
         </div>
     </div>
 </div>

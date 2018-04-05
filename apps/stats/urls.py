@@ -11,4 +11,7 @@ urlpatterns = [
     path('invoices_value_yearly', views.InvoicesValueYearly.as_view(), name='invoices_value_yearly'),
     path('invoices_value_monthly', views.InvoicesValueMonthly.as_view(), name='invoices_value_monthly'),
     path('ware_purchase_cost/<int:pk>', views.WarePurchaseCost.as_view(), name='ware_purchase_cost'),
+
+    path('sale_invoices_value_monthly', views.SaleInvoicesValueMonthly.as_view(), name='sale_invoices_value_monthly'),
+    path('contractor_all_invoices_value', views.ContractorAllInvoicesValue.as_view(), name='contractor_all_invoices_value'),
 ]

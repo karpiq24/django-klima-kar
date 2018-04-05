@@ -8,7 +8,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
   <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/bootstrap.min.css' %}">
-  <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/font-awesome.min.css' %}">
   <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/bootstrap-datetimepicker.min.css' %}">
   <link rel="stylesheet" type="text/css" media="screen" href="{% static 'autocomplete_light/vendor/select2/dist/css/select2.min.css' %}">
   <link rel="stylesheet" type="text/css" media="screen" href="{% static 'autocomplete_light/select2.css' %}">
@@ -26,7 +25,7 @@
   {% if user.is_authenticated %}
     <li class="left-line" style="float:right">
       <a href="{% url 'logout' %}" title="Wyloguj">
-        <i class="fa fa-sign-out fa-lg" style="cursor: pointer;"></i> Wyloguj
+        <i class="fa fa-sign-out-alt fa-lg" style="cursor: pointer;"></i> Wyloguj
       </a>
     </li>
   {% endif %}
@@ -55,7 +54,11 @@
   </div>
 </div>
 
+<script>
+  FontAwesomeConfig = { searchPseudoElements: true };
+</script>
 <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+<script src="{% static 'js/fontawesome-all.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/moment.min.js' %}"></script>
 <script src="{% static 'js/moment-pl.js' %}"></script>

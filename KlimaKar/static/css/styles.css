@@ -11,7 +11,7 @@ span.required {
     color: red;
     font-weight: bold;
 }
-.card-header{
+.filter-card .card-header{
     cursor: pointer;
 }
 .affix + .container-fluid {
@@ -22,10 +22,6 @@ span.required {
 }
 .invalid-feedback {
     display: block;
-}
-.chart-div {
-    margin-bottom: 25px;
-    padding: 10px;
 }
 .card-body .btn {
     margin: 2px 0px;
@@ -95,14 +91,22 @@ span.required {
 .pagination .next {
 	float: right;
 }
+.table > thead > tr > th.asc > a {
+    margin-right: 8px;
+}
+.table > thead > tr > th.desc > a {
+    margin-right: 8px;
+}
 .table > thead > tr > th.asc::after {
-    font-family: FontAwesome;
-    content: "\f0de";
+    display: none;
+    font-family: "Font Awesome 5 Solid";
+    content: "\f0d8";
     margin-left: 8px;
 }
 .table > thead > tr > th.desc::after {
-    font-family: FontAwesome;
-    content: "\f0dd";
+    display: none;
+    font-family: "Font Awesome 5 Solid";
+    content: "\f0d7";
     margin-left: 8px;
 }
 
@@ -149,4 +153,21 @@ span.required {
 }
 .is-valid ~ .select2-container .selection .select2-selection--single {
     border: 1px solid #28a745 !important;
+}
+
+/* 
+    STATS
+*/
+.metrics-card .card-body {
+    display: flex;
+}
+.metrics-number {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+.metrics-data {
+    margin-left: 1rem;   
+}
+.chart-div, .metrics-card {
+    margin-bottom: 1rem;
 }

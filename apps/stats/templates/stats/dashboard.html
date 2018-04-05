@@ -3,15 +3,36 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
-<div>
-    <h1>Statystyki</h1>
+<h1>Statystyki</h1>
+<div class="row">
+    {% for metric in metrics %}
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="metrics-card card bg-light">
+            <div class="card-body">
+                <div class="fa-4x">
+                    <span class="fa-layers fa-fw">
+                        <i class="fas fa-circle" style="color:{{ metric.color }}"></i>
+                        <i class="fa-inverse fas {{ metric.icon }}" data-fa-transform="shrink-8"></i>
+                    </span>
+                </div>
+                <div class="metrics-data">
+                    <div class="metrics-number">{{ metric.value }}</div>
+                    <div class="metrics-name">{{ metric.title }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
+
 <div class="row">
     {% for chart in charts %}
-        <div class="col-xs-12 col-md-6" style="display:none;">
-            <div class="chart-div card bg-light text-center">
-                <h5 class="card-title">{{ chart.title }}</h5>
-                <canvas id="chart_{{ forloop.counter }}" chart-url="{{ chart.url }}"></canvas>
+        <div class="col-12 {% if chart.big %}col-md-12{% else %}col-md-6{% endif %}" style="display:none;">
+            <div class="chart-div card bg-light">
+                <h5 class="card-header">{{ chart.title }}</h5>
+                <div class="card-body">
+                    <canvas id="chart_{{ forloop.counter }}" chart-url="{{ chart.url }}"></canvas>
+                </div>  
             </div>
         </div>
     {% endfor %}

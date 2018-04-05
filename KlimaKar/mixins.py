@@ -1,6 +1,5 @@
 from django.template.loader import render_to_string
 from django.http import HttpResponseForbidden, JsonResponse
-from django.urls import reverse
 
 
 class GroupAccessControlMixin(object):
