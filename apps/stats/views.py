@@ -178,7 +178,7 @@ class SaleInvoicesValueMonthly(GroupAccessControlMixin, ChartDataMixin, View):
 
     def get(self, *args, **kwargs):
         date = (datetime.datetime.now() - relativedelta(years=self.years_back)).replace(day=1, month=1)
-        invoices = SaleInvoice.objects.filter(issue_date__gte=date)
+        invoices = SaleInvoice.objects.filter(issue_date__gte=date).exclude(invoice_type__in=['2', '3'])
         years = invoices.annotate(year=ExtractYear('issue_date')).values_list(
             'year', flat=True).distinct().order_by('year')
 

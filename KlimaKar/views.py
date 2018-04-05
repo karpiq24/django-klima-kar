@@ -108,7 +108,8 @@ class HomeView(TemplateView):
                 'color': '#89D23A',
                 'title': 'Łączna wartość netto faktur sprzedażowych',
                 'value': "{0:.2f} zł".format(
-                    SaleInvoice.objects.aggregate(Sum('total_value_netto'))['total_value_netto__sum']).replace('.', ',')
+                    SaleInvoice.objects.exclude(invoice_type__in=['2', '3']).aggregate(
+                        Sum('total_value_netto'))['total_value_netto__sum']).replace('.', ',')
             })
         metrics.append({
             'icon': 'fa-flask',
