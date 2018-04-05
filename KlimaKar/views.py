@@ -9,7 +9,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django_tables2 import SingleTableView
 from dal import autocomplete
 
-from apps.warehouse.models import Ware, Invoice, Supplier
+from apps.warehouse.models import Ware, Invoice, Supplier, WarePriceChange
 from apps.invoicing.models import SaleInvoice, Contractor, RefrigerantWeights
 
 
@@ -139,6 +139,8 @@ class HomeView(TemplateView):
                 RefrigerantWeights.objects.aggregate(Sum('r404'))['r404__sum'])
         })
         context['metrics'] = metrics
+
+        context['price_changes'] = WarePriceChange.objects.all().order_by('-created_date')
         return context
 
 

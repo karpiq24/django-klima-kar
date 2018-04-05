@@ -17,7 +17,7 @@ from apps.warehouse.tables import WareTable, InvoiceTable, SupplierTable, Invoic
 from apps.warehouse.filters import WareFilter, InvoiceFilter, SupplierFilter
 from apps.warehouse.forms import (
     WareModelForm, InvoiceModelForm, SupplierModelForm, InvoiceItemModelForm)
-from apps.warehouse.functions import export_wares
+from apps.warehouse.functions import export_wares, check_ware_price_changes
 
 
 class WareTableView(FilteredSingleTableView):
@@ -126,6 +126,7 @@ class InvoiceFormMixin():
         item_formset = ctx['item_formset']
 
         if form.is_valid() and item_formset.is_valid():
+            created = self.object is None
             self.object = form.save()
             new_items = []
             for item_form in item_formset:
@@ -146,6 +147,8 @@ class InvoiceFormMixin():
                     InvoiceItem.objects.filter(invoice=self.object).delete()
                     InvoiceItem.objects.bulk_create(new_items)
                     self.object.calculate_total_value()
+                    if created:
+                        check_ware_price_changes(self.object)
             except IntegrityError:
                 return self.render_to_response(self.get_context_data(form=form))
             return HttpResponseRedirect(self.get_success_url())
@@ -164,10 +167,6 @@ class InvoiceUpdateView(InvoiceFormMixin, UpdateView):
 
 
 class InvoiceCreateView(InvoiceFormMixin, CreateView):
-    model = Invoice
-    form_class = InvoiceModelForm
-    template_name = 'warehouse/invoice/invoice_form.html'
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Nowa faktura zakupowa"

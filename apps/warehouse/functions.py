@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import io
-import csv
 import datetime
 
 from xlsxwriter import Workbook
 
-from django.db.models import Q
-
-from apps.warehouse.models import Ware
+from KlimaKar import settings
+from apps.warehouse.models import WarePriceChange, Invoice
 
 
 def export_wares(queryset):
@@ -67,33 +65,13 @@ def export_wares(queryset):
     return output
 
 
-def restore_wares_stock(file_path):
-    with open(file_path, encoding="utf8") as csvfile:
-        reader = csv.reader(csvfile, delimiter=',')
-        for row in reader:
-            index = row[1].strip()
-            index = Ware.slugify(index)
-            stock = int(row[3].strip())
-            if index:
-                try:
-                    ware = Ware.objects.get(Q(index__iexact=index) | Q(index_slug__iexact=index))
-                    ware.stock = stock
-                    ware.save()
-                except Ware.DoesNotExist:
-                    print("{} does not exist.".format(index))
-                except Ware.MultipleObjectsReturned:
-                    print("Multiple objects returned for index: {}".format(index))
-
-
-def restore_wares_stock_clean_file(file_path):
-    with open(file_path, encoding="utf8") as csvfile:
-        reader = csv.reader(csvfile, delimiter=',')
-        for row in reader:
-            index = row[0]
-            stock = int(row[1])
-            try:
-                ware = Ware.objects.get(index=index)
-                ware.stock = stock
-                ware.save()
-            except Ware.DoesNotExist:
-                print("{} does not exist.".format(index))
+def check_ware_price_changes(invoice):
+    for item in invoice.invoiceitem_set.all():
+        last_invoice = Invoice.objects.filter(supplier=invoice.supplier, invoiceitem__ware=item.ware).exclude(
+            pk=invoice.pk).order_by('-date').first()
+        if not last_invoice:
+            continue
+        last_price = last_invoice.invoiceitem_set.filter(ware=item.ware).first().price
+        percent_change = ((item.price - last_price) / last_price) * 100
+        if percent_change >= settings.PRICE_CHHANGE_PERCENTAGE or percent_change <= -settings.PRICE_CHHANGE_PERCENTAGE:
+            WarePriceChange.objects.create(invoice=invoice, ware=item.ware, last_price=last_price, new_price=item.price)

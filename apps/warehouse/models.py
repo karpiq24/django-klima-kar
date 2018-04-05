@@ -2,6 +2,8 @@
 from django.db import models
 from django.db.models import Sum
 
+from KlimaKar import settings
+
 
 class Ware(models.Model):
     index = models.CharField(max_length=63, unique=True, verbose_name=('Indeks'))
@@ -67,3 +69,15 @@ class InvoiceItem(models.Model):
 
     def __str__(self):
         return self.ware.index
+
+
+class WarePriceChange(models.Model):
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, verbose_name=('Faktura'))
+    ware = models.ForeignKey(Ware, on_delete=models.CASCADE, verbose_name=('Towar'))
+    last_price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name=('Ostatnia cena'))
+    new_price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name=('Nowa cena'))
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name=('Data dodania'))
+
+    @property
+    def is_discount(self):
+        return self.new_price < self.last_price
