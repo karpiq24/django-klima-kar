@@ -32,6 +32,9 @@ function calculateInvoiceTotals() {
             invoice_total_netto = toCurrency(invoice_total_netto + total_netto);
         }
     });
+    if (isNaN(invoice_total_netto)) {
+        invoice_total_netto = 0;
+    }
     var invoice_total_brutto = toCurrency(invoice_total_netto + invoice_total_netto * tax_multiplier);
     $('#id_total_value_netto').val(invoice_total_netto);
     $('#id_total_value_brutto').val(invoice_total_brutto);
@@ -116,8 +119,8 @@ $(function () {
         $(item_form).find(".item-description").val('');
         $(item_form).find(".item-ware").val('').change();
         $(item_form).find(".item-quantity").val(1);
-        $(item_form).find(".item-netto").val('0.00');
-        $(item_form).find(".item-brutto").val('0.00');
+        $(item_form).find(".item-netto").val('');
+        $(item_form).find(".item-brutto").val('');
         $(item_form).find(".item-DELETE").children('input').prop('checked', true);
         calculateInvoiceTotals();
         setItemFormCount();

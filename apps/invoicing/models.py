@@ -97,8 +97,8 @@ class SaleInvoiceItem(models.Model):
     name = models.CharField(max_length=255, verbose_name='Nazwa usługi/towaru')
     description = models.CharField(max_length=255, verbose_name='Opis usługi/towaru', blank=True, null=True)
     quantity = models.IntegerField(default=1, verbose_name='Ilość')
-    price_netto = models.DecimalField(max_digits=7, decimal_places=2, default='0.00', verbose_name='Cena netto')
-    price_brutto = models.DecimalField(max_digits=7, decimal_places=2, default='0.00', verbose_name='Cena brutto')
+    price_netto = models.DecimalField(max_digits=7, decimal_places=2, verbose_name='Cena netto')
+    price_brutto = models.DecimalField(max_digits=7, decimal_places=2, verbose_name='Cena brutto')
     ware = models.ForeignKey(Ware, on_delete=models.SET_NULL, blank=True, null=True, verbose_name='Towar')
 
     def __str__(self):

@@ -12,6 +12,9 @@ function calculateInvoiceTotals() {
             invoice_total = invoice_total + total;
         }
     });
+    if (isNaN(invoice_total)) {
+        invoice_total = 0;
+    }
     $('#invoice-total').text(invoice_total.toFixed(2).replace(".", ",") + " zł");
 }
 
@@ -144,7 +147,7 @@ $(function () {
         var item_form = $(this).parents(".item-formset-row");
         $(item_form).addClass('d-none');
         $(item_form).find(".item-ware").val('').change();
-        $(item_form).find(".item-price").val('0.00');
+        $(item_form).find(".item-price").val('');
         $(item_form).find(".item-name").text('');
         $(item_form).find(".item-quantity").val(1);
         $(item_form).find(".item-total-value").text('0,00 zł');
