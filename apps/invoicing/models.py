@@ -69,10 +69,10 @@ class SaleInvoice(models.Model):
 
 class RefrigerantWeights(models.Model):
     sale_invoice = models.OneToOneField(SaleInvoice, on_delete=models.CASCADE, verbose_name="Faktura sprzedażowa")
-    r134a = models.PositiveIntegerField(verbose_name="Czynnik R134a", default=0, blank=True)
-    r1234yf = models.PositiveIntegerField(verbose_name="Czynnik R1234yf", default=0, blank=True)
-    r12 = models.PositiveIntegerField(verbose_name="Czynnik R12", default=0, blank=True)
-    r404 = models.PositiveIntegerField(verbose_name="Czynnik R404", default=0, blank=True)
+    r134a = models.PositiveIntegerField(verbose_name="Czynnik R134a", default=0)
+    r1234yf = models.PositiveIntegerField(verbose_name="Czynnik R1234yf", default=0)
+    r12 = models.PositiveIntegerField(verbose_name="Czynnik R12", default=0)
+    r404 = models.PositiveIntegerField(verbose_name="Czynnik R404", default=0)
 
     def __str__(self):
         return "Waga czynników dla faktury {}".format(self.sale_invoice)
