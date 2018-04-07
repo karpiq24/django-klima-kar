@@ -2,7 +2,7 @@ import datetime
 import re
 import time
 
-from apps.invoicing.models import SaleInvoice, Contractor
+from apps.invoicing.models import SaleInvoice, Contractor, SaleInvoiceItem, RefrigerantWeights
 from apps.invoicing.gus import gus_session
 
 
@@ -66,3 +66,41 @@ def load_contractors_from_file(path):
 
 def get_time():
     return int(round(time.time() * 1000))
+
+
+def load_legacy_sale_invoices(path):
+    with open(path, encoding="utf8") as f:
+        content = f.readlines()
+    new = 0
+    no_match = []
+
+    contractor, created = Contractor.objects.get_or_create(name='BRAK NAZWY')
+
+    for line in content:
+        match = re.search(r'((\d+)\/(\d+)) F (\d{2}-\d{2}-\d{2}) (\d{2}-\d{2}-\d{2}) ([+-]?[0-9]*[,]?[0-9]+) '
+                          r'([+-]?[0-9]*[,]?[0-9]+) (.+)', line)
+        if match:
+            try:
+                SaleInvoice.objects.get(invoice_type='1', number=match.group(1))
+            except SaleInvoice.DoesNotExist:
+                netto = float(match.group(6).replace(',', '.'))
+                brutto = float(match.group(7).replace(',', '.'))
+                si = SaleInvoice(legacy=True, invoice_type='1', number=match.group(1),
+                                 number_value=match.group(2), number_year=match.group(3),
+                                 issue_date=datetime.datetime.strptime(match.group(4), '%d-%m-%y').date(),
+                                 completion_date=datetime.datetime.strptime(match.group(5), '%d-%m-%y').date(),
+                                 total_value_netto=netto, total_value_brutto=brutto, contractor=contractor,
+                                 payment_type='1', tax_percent=(23 if int(match.group(3)) >= 2011 else 22))
+                si.save()
+                item = SaleInvoiceItem(sale_invoice=si, name="???", price_netto=netto, price_brutto=brutto)
+                item.save()
+                refrigerants = RefrigerantWeights(sale_invoice=si)
+                refrigerants.save()
+                new = new + 1
+        else:
+            no_match.append(line)
+
+    print("NO MATCH TOTAL: {}\nNEW: {}".format(len(no_match), new))
+    print("\n______________________________\n\nNO MATCH:\n")
+    for i in no_match:
+        print(i + '\n')

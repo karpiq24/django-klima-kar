@@ -42,16 +42,16 @@ class HomeView(TemplateView):
                 'url': reverse('stats:invoices_value_yearly')
             })
             charts.append({
+                'title': 'Wartosć sprzedaży w latach',
+                'url': reverse('stats:sale_invoices_value_yearly')
+            })
+            charts.append({
                 'title': 'Wartość zakupów u dostawców od początku',
                 'url': reverse('stats:supplier_all_invoices_value')
             })
             charts.append({
                 'title': 'Wartość zakupów u dostawców w ostatnim roku',
                 'url': reverse('stats:supplier_last_year_invoices_value')
-            })
-            charts.append({
-                'title': 'Wartość sprzedaży dla kontrahentów od początku',
-                'url': reverse('stats:contractor_all_invoices_value')
             })
         charts.append({
             'title': 'Najczęściej kupowane towary od początku',

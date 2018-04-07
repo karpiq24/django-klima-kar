@@ -203,36 +203,22 @@ class SaleInvoicesValueMonthly(GroupAccessControlMixin, ChartDataMixin, View):
         return JsonResponse(response_data)
 
 
-class ContractorAllInvoicesValue(GroupAccessControlMixin, ChartDataMixin, View):
+class SaleInvoicesValueYearly(GroupAccessControlMixin, ChartDataMixin, View):
     allowed_groups = ['boss']
-    max_positions = 8
-    last_year = False
+    years_back = 10
 
     def get(self, *args, **kwargs):
-        if self.last_year:
-            date = (datetime.datetime.now() - relativedelta(years=1))
-            invoices = SaleInvoice.objects.filter(issue_date__gte=date)
-        else:
-            invoices = SaleInvoice.objects.all()
-        data = invoices.values('contractor').annotate(
-            total=Sum('total_value_netto')).values_list('contractor__name', 'total').order_by('-total')
-        if data.count() > self.max_positions:
-            index = self.max_positions - 1
-        else:
-            index = data.count()
+        date = (datetime.datetime.now() - relativedelta(years=self.years_back)).replace(day=1, month=1)
+        invoices = SaleInvoice.objects.filter(issue_date__gte=date)
+        invoices = invoices.annotate(year=ExtractYear('issue_date')).values('year').annotate(
+            total=Sum('total_value_netto')).values_list('year', 'total').order_by('year')
 
         response_data = self.get_response_data_template()
-        labels = list(data[0:index].values_list('contractor__name', flat=True))
-        values = list(data[0:index].values_list('total', flat=True))
-
-        if data.count() > self.max_positions:
-            labels.append('Pozostali kontrahenci')
-            values.append(data[self.max_positions - 1:].values(
-                'total').aggregate(Sum('total'))['total__sum'])
-
-        response_data['data']['labels'] = labels
+        response_data['data']['labels'] = list(invoices.values_list('year', flat=True))
         response_data['data']['datasets'].append(self.get_dataset(
-            values, COLORS[:len(values)]))
+            list(invoices.values_list('total', flat=True)),
+            COLORS[1]))
 
-        response_data['type'] = 'doughnut'
+        response_data['options']['legend']['display'] = False
+        response_data['type'] = 'bar'
         return JsonResponse(response_data)

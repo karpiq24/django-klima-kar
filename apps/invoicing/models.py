@@ -43,6 +43,7 @@ class SaleInvoice(models.Model):
         max_digits=10, decimal_places=2, verbose_name=('Łączna wartość brutto'))
     tax_percent = models.FloatField(verbose_name="Procent podatku VAT", default=23)
     comment = models.TextField(verbose_name=('Uwagi'), blank=True)
+    legacy = models.BooleanField(default=False, verbose_name='Faktura archiwalna')
 
     def __str__(self):
         return self.number
