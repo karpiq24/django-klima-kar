@@ -20,7 +20,7 @@ def get_next_invoice_number(invoice_type):
     return "{}/{}".format(last_number + 1, year)
 
 
-def load_contractors_from_file(path):
+def load_legacy_contractors(path):
     with open(path, encoding="utf8") as f:
         content = f.readlines()
     found = []
@@ -103,4 +103,30 @@ def load_legacy_sale_invoices(path):
     print("NO MATCH TOTAL: {}\nNEW: {}".format(len(no_match), new))
     print("\n______________________________\n\nNO MATCH:\n")
     for i in no_match:
-        print(i + '\n')
+        print(i)
+
+
+def load_legacy_refrigerant_weights(path):
+    no_invoice = []
+    loaded = 0
+
+    with open(path, encoding="utf8") as f:
+        content = f.readlines()
+
+    for line in content:
+        match = re.search(r'(\d+\/\d+)\t(\d+)?\t?(\d+)?', line)
+        if match:
+            try:
+                rw = RefrigerantWeights.objects.get(sale_invoice__invoice_type='1', sale_invoice__number=match.group(1))
+                rw.r134a = int(match.group(2) or 0)
+                rw.r12 = int(match.group(3) or 0)
+                rw.save()
+                loaded = loaded + 1
+            except RefrigerantWeights.DoesNotExist:
+                no_invoice.append(line)
+                continue
+
+    print("NO INVOICE TOTAL: {}\nLOADED: {}".format(len(no_invoice), loaded))
+    print("\n______________________________\n\nNO INVOICE:\n")
+    for i in no_invoice:
+        print(i)
