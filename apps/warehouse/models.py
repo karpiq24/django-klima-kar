@@ -78,6 +78,9 @@ class WarePriceChange(models.Model):
     new_price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name=('Nowa cena'))
     created_date = models.DateTimeField(auto_now_add=True, verbose_name=('Data dodania'))
 
+    def __str__(self):
+        return "{} {} -> {}".format(self.ware, self.last_price, self.new_price)
+
     @property
     def is_discount(self):
         return self.new_price < self.last_price
