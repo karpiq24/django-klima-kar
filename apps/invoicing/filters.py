@@ -35,10 +35,10 @@ class SaleInvoiceFilter(django_filters.FilterSet):
                                    Q(refrigerantweights__r12__gt=0) |
                                    Q(refrigerantweights__r404__gt=0))
         elif value == '2':
-            return queryset.filter(Q(refrigerantweights__r134a=0) |
-                                   Q(refrigerantweights__r1234yf=0) |
-                                   Q(refrigerantweights__r12=0) |
-                                   Q(refrigerantweights__r404=0))
+            return queryset.exclude(Q(refrigerantweights__r134a__gt=0) |
+                                    Q(refrigerantweights__r1234yf__gt=0) |
+                                    Q(refrigerantweights__r12__gt=0) |
+                                    Q(refrigerantweights__r404__gt=0))
 
 
 class ContractorFilter(django_filters.FilterSet):
