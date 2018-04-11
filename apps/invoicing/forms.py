@@ -29,6 +29,21 @@ class SaleInvoiceModelForm(forms.ModelForm):
         self.fields['payment_date'].widget.attrs.update({'placeholder': 'Wybierz datę'})
         self.fields['payment_date'].widget.attrs.update({'class': 'date-input'})
 
+    def clean(self):
+        cleaned_data = super().clean()
+        number = cleaned_data['number']
+        if self.instance and self.instance.number == number:
+            return cleaned_data
+        else:
+            invoice_type = cleaned_data['invoice_type']
+            invoices = SaleInvoice.objects.filter(invoice_type=invoice_type)
+            if invoice_type == '1':
+                invoices = (invoices | SaleInvoice.objects.filter(invoice_type='4')).distinct()
+            elif invoice_type == '4':
+                invoices = (invoices | SaleInvoice.objects.filter(invoice_type='1')).distinct()
+            if invoices.filter(number=number).exists():
+                self.add_error('number', 'Faktura o tym numerze już istnieje.')
+
     class Meta:
         model = SaleInvoice
         exclude = ['refrigerant_weidghts', 'number_value', 'number_year']
