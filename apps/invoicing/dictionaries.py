@@ -10,3 +10,8 @@ INVOICE_TYPES = [
     ('3', 'Korekta'),
     ('4', 'Faktura VAT WDT'),
 ]
+
+REFRIGERANT_FILLED = [
+    ('1', 'Tak'),
+    ('2', 'Nie')
+]

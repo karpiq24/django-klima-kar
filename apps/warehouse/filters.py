@@ -4,7 +4,7 @@ from django.db.models import Q
 import django_filters
 from dal import autocomplete
 
-from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
+from apps.warehouse.models import Ware, Invoice, Supplier
 from apps.warehouse.dictionaries import STOCK_CHOICES
 
 
@@ -31,16 +31,13 @@ class WareFilter(django_filters.FilterSet):
         return queryset.filter(Q(index__icontains=value) | Q(index_slug__icontains=Ware.slugify(value)))
 
     def date_from_filter(self, queryset, name, value):
-        to_include = InvoiceItem.objects.filter(invoice__date__gte=value).values_list('ware__id', flat=True)
-        return queryset.filter(pk__in=to_include).exclude(invoiceitem=None)
+        return queryset.filter(invoiceitem__invoice__date__gte=value).distinct()
 
     def date_to_filter(self, queryset, name, value):
-        to_include = InvoiceItem.objects.filter(invoice__date__lte=value).values_list('ware__id', flat=True)
-        return queryset.filter(pk__in=to_include).exclude(invoiceitem=None)
+        return queryset.filter(invoiceitem__invoice__date__lte=value).distinct()
 
     def supplier_filter(self, queryset, name, value):
-        to_include = InvoiceItem.objects.filter(invoice__supplier=value).values_list('ware__id', flat=True)
-        return queryset.filter(pk__in=to_include).exclude(invoiceitem=None)
+        return queryset.filter(invoiceitem__invoice__supplier=value).distinct()
 
     def stock_filter(self, queryset, name, value):
         if value == '1':
