@@ -1,0 +1,18 @@
+{% for metric in metrics %}
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="metrics-card card bg-light">
+            <div class="card-body">
+                <div class="fa-4x">
+                    <span class="fa-layers fa-fw">
+                        <i class="fas fa-circle" style="color:{{ metric.color }}"></i>
+                        <i class="fa-inverse fas {{ metric.icon }}" data-fa-transform="shrink-8"></i>
+                    </span>
+                </div>
+                <div class="metrics-data">
+                    <div class="metrics-number">{{ metric.value }}</div>
+                    <div class="metrics-name">{{ metric.title }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}

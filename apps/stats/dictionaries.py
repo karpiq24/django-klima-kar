@@ -25,3 +25,13 @@ MONTHS = [
     'Listopad',
     'Grudzień',
 ]
+
+DAYS = [
+    'Poniedziałek',
+    'Wtorek',
+    'Środa',
+    'Czwartek',
+    'Piątek',
+    'Sobota',
+    'Niedziela'
+]

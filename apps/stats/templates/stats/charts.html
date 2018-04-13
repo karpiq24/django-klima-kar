@@ -1,0 +1,36 @@
+{% for chart in charts %}
+    <div class="col-12 {% if chart.big %}col-md-12{% else %}col-md-6{% endif %}">
+        <div class="chart-card card bg-light" chart-url="{{ chart.url }}" id="chart_{{ group }}_{{ forloop.counter }}">
+            <h5 class="card-header">
+                <form class="form-inline flex-column flex-sm-row">
+                    <div class="flex-sm-fill">{{ chart.title }}</div>
+                    {% if chart.custom_select or chart.select_date %}
+                        <div style="width:auto;" class="ml-sm-auto">
+                            <div class="input-group input-group-sm">
+                                {% if chart.custom_select %}
+                                    <select id="chart_custom_select_{{ forloop.counter }}" class="form-control {% if chart.select_date %}mr-sm-2{% endif %}" style="width:auto;">
+                                        {% for option in chart.custom_select %}
+                                            <option value="{{ forloop.counter }}">{{ option }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                                {% if chart.select_date %}
+                                    <select id="chart_date_select_{{ forloop.counter }}" class="form-control" style="width:auto;">
+                                        <option value="0">Tydzień</option>
+                                        <option value="1">Miesiąc</option>
+                                        <option value="2">Rok</option>
+                                        <option value="3">Od początku miesięcznie</option>
+                                        <option value="4">Od początku rocznie</option>
+                                    </select>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </form>
+            </h5>
+            <div class="card-body">
+                <canvas class="chart_canvas"></canvas>
+            </div>
+        </div>
+    </div>
+{% endfor %}

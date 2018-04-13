@@ -17,7 +17,7 @@ class HomeView(TemplateView):
     template_name = "stats/dashboard.html"
 
     def get_context_data(self, **kwargs):
-        context = super(HomeView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         has_permission = False
         if self.request.user.is_superuser:
@@ -25,85 +25,107 @@ class HomeView(TemplateView):
         elif self.request.user.groups.filter(name='boss').exists():
             has_permission = True
 
-        charts = []
+        data = {
+            'warehouse': {
+                'group': 'warehouse',
+                'metrics': [],
+                'charts': [],
+                'price_changes': WarePriceChange.objects.all().order_by('-created_date')
+            },
+            'invoicing': {
+                'group': 'invoicing',
+                'metrics': [],
+                'charts': []
+            },
+            'refrigerant': {
+                'group': 'refrigerant',
+                'metrics': [],
+                'charts': []
+            }
+        }
+        # Charts for warehouse
         if has_permission:
-            charts.append({
+            data['warehouse']['charts'].append({
                 'title': 'Wartość zakupów w miesiącach',
                 'url': reverse('stats:invoices_value_monthly'),
                 'big': True
             })
-            charts.append({
-                'title': 'Wartość sprzedaży w miesiącach',
-                'url': reverse('stats:sale_invoices_value_monthly'),
-                'big': True
-            })
-            charts.append({
+            data['warehouse']['charts'].append({
                 'title': 'Wartosć zakupów w latach',
                 'url': reverse('stats:invoices_value_yearly')
             })
-            charts.append({
-                'title': 'Wartosć sprzedaży w latach',
-                'url': reverse('stats:sale_invoices_value_yearly')
-            })
-            charts.append({
+            data['warehouse']['charts'].append({
                 'title': 'Wartość zakupów u dostawców od początku',
                 'url': reverse('stats:supplier_all_invoices_value')
             })
-            charts.append({
+            data['warehouse']['charts'].append({
                 'title': 'Wartość zakupów u dostawców w ostatnim roku',
                 'url': reverse('stats:supplier_last_year_invoices_value')
             })
-        charts.append({
+        data['warehouse']['charts'].append({
             'title': 'Najczęściej kupowane towary od początku',
             'url': reverse('stats:ware_purchase_quantity')
         })
-        charts.append({
+        data['warehouse']['charts'].append({
             'title': 'Najczęściej kupowane towary w ostatnim roku',
             'url': reverse('stats:ware_purchase_quantity_last_year')
         })
-        context['charts'] = charts
 
-        metrics = []
-        metrics.append({
+        # Metrics for warehouse
+        data['warehouse']['metrics'].append({
             'icon': 'fa-tags',
             'color': '#E21E00',
             'title': 'Liczba towarów',
             'value': Ware.objects.count()
         })
-        metrics.append({
+        data['warehouse']['metrics'].append({
             'icon': 'fa-truck',
             'color': '#C1456E',
             'title': 'Liczba dostawców',
             'value': Supplier.objects.count()
         })
-        metrics.append({
+        data['warehouse']['metrics'].append({
             'icon': 'fa-file-alt',
             'color': '#8355C5',
             'title': 'Liczba faktur zakupowych',
             'value': Invoice.objects.count()
         })
         if has_permission:
-            metrics.append({
+            data['warehouse']['metrics'].append({
                 'icon': 'fa-file-alt',
                 'color': '#8355C5',
                 'title': 'Łączna wartość faktur zakupowych',
                 'value': "{0:.2f} zł".format(
                     Invoice.objects.aggregate(Sum('total_value'))['total_value__sum']).replace('.', ',')
             })
-        metrics.append({
+
+        # Charts for invoicing
+        if has_permission:
+            data['invoicing']['charts'].append({
+                'title': 'Wartość sprzedaży w miesiącach',
+                'url': reverse('stats:sale_invoices_value_monthly'),
+                'big': True
+            })
+            data['invoicing']['charts'].append({
+                'title': 'Wartosć sprzedaży w latach',
+                'url': reverse('stats:sale_invoices_value_yearly')
+            })
+
+        # Metrics for invoicing
+        data['invoicing']['metrics'].append({
             'icon': 'fa-users',
             'color': '#00A0DF',
             'title': 'Liczba kontrahentów',
             'value': Contractor.objects.count()
         })
-        metrics.append({
+        data['invoicing']['metrics'].append({
             'icon': 'fa-book',
             'color': '#89D23A',
             'title': 'Liczba faktur sprzedażowych',
             'value': SaleInvoice.objects.count()
         })
         if has_permission:
-            metrics.append({
+            data['invoicing']['metrics'].append({
                 'icon': 'fa-book',
                 'color': '#89D23A',
                 'title': 'Łączna wartość netto faktur sprzedażowych',
@@ -111,37 +133,46 @@ class HomeView(TemplateView):
                     SaleInvoice.objects.exclude(invoice_type__in=['2', '3']).aggregate(
                         Sum('total_value_netto'))['total_value_netto__sum']).replace('.', ',')
             })
-        metrics.append({
+
+        # Charts for refrigerant
+        data['refrigerant']['charts'].append({
+            'title': 'Historia sprzedaży czynników',
+            'url': reverse('stats:refrigerant_history'),
+            'big': True,
+            'select_date': True,
+            'custom_select': ['R134a', 'R1234yf', 'R12', 'R404']
+        })
+        # Metrics for refrigerant
+        data['refrigerant']['metrics'].append({
             'icon': 'fa-flask',
             'color': '#F8640B',
             'title': 'Łączna sprzedaż czynnika R134a',
             'value': "{} g".format(
                 RefrigerantWeights.objects.aggregate(Sum('r134a'))['r134a__sum'])
         })
-        metrics.append({
+        data['refrigerant']['metrics'].append({
             'icon': 'fa-flask',
             'color': '#F8640B',
             'title': 'Łączna sprzedaż czynnika R1234yf',
             'value': "{} g".format(
                 RefrigerantWeights.objects.aggregate(Sum('r1234yf'))['r1234yf__sum'])
         })
-        metrics.append({
+        data['refrigerant']['metrics'].append({
             'icon': 'fa-flask',
             'color': '#F8640B',
             'title': 'Łączna sprzedaż czynnika R12',
             'value': "{} g".format(
                 RefrigerantWeights.objects.aggregate(Sum('r12'))['r12__sum'])
         })
-        metrics.append({
+        data['refrigerant']['metrics'].append({
             'icon': 'fa-flask',
             'color': '#F8640B',
             'title': 'Łączna sprzedaż czynnika R404',
             'value': "{} g".format(
                 RefrigerantWeights.objects.aggregate(Sum('r404'))['r404__sum'])
         })
-        context['metrics'] = metrics
 
-        context['price_changes'] = WarePriceChange.objects.all().order_by('-created_date')
+        context['stats'] = data
         return context
 
 

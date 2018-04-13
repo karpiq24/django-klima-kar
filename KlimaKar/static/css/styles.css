@@ -168,6 +168,9 @@ span.required {
 .metrics-data {
     margin-left: 1rem;   
 }
-.chart-div, .metrics-card, .price-change-card {
+.chart-card, .metrics-card, .price-change-card {
     margin-bottom: 1rem;
+}
+#stats-tab-content {
+    padding-top: 1rem;
 }

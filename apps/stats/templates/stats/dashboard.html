@@ -4,59 +4,59 @@
 
 {% block content %}
 <h1>Statystyki</h1>
-<div class="row">
-    {% for metric in metrics %}
-    <div class="col-12 col-sm-6 col-xl-4">
-        <div class="metrics-card card bg-light">
-            <div class="card-body">
-                <div class="fa-4x">
-                    <span class="fa-layers fa-fw">
-                        <i class="fas fa-circle" style="color:{{ metric.color }}"></i>
-                        <i class="fa-inverse fas {{ metric.icon }}" data-fa-transform="shrink-8"></i>
-                    </span>
-                </div>
-                <div class="metrics-data">
-                    <div class="metrics-number">{{ metric.value }}</div>
-                    <div class="metrics-name">{{ metric.title }}</div>
-                </div>
-            </div>
-        </div>
+<nav>
+    <div class="nav nav-pills flex-column flex-sm-row nav-fill" id="nav-tab" role="tablist">
+        <a class="flex-sm-fill nav-item nav-link active" id="nav-stats-warehouse-tab" data-toggle="tab" href="#nav-stats-warehouse" role="tab" aria-controls="nav-stats-warehouse" aria-selected="true">Magazyn</a>
+        <a class="flex-sm-fill nav-item nav-link" id="nav-stats-invoicing-tab" data-toggle="tab" href="#nav-stats-invoicing" role="tab" aria-controls="nav-stats-invoicing" aria-selected="false">Fakturowanie</a>
+        <a class="flex-sm-fill nav-item nav-link" id="nav-stats-refrigerant-tab" data-toggle="tab" href="#nav-stats-refrigerant" role="tab" aria-controls="nav-stats-refrigerant" aria-selected="false">Czynnik chłodniczy</a>
     </div>
-    {% endfor %}
-</div>
-
-<div class="row">
-    <div class="col-12">
-        <div class="card bg-light price-change-card">
-            <h5 class="card-header">Zmiany cen towarów</h5>
-            <div class="card-body">
-                <div class="list-group">
-                    {% for change in price_changes %}
-                        <div class="list-group-item list-group-item-action list-group-item-{% if change.is_discount %}success{% else %}danger{% endif%}">
-                            Zmiana ceny <a href="{% url 'warehouse:ware_detail' change.ware.pk %}">{{ change.ware }}</a> z {{ change.last_price }} zł na {{ change.new_price }} zł u dostawcy <a href="{% url 'warehouse:supplier_detail' change.invoice.supplier.pk %}">{{ change.invoice.supplier }}</a>
+</nav>
+<div class="tab-content" id="stats-tab-content">
+    <div class="tab-pane fade show active" id="nav-stats-warehouse" role="tabpanel" aria-labelledby="nav-stats-warehouse-tab">
+        <div class="row">
+            {% include 'stats/metrics.html' with metrics=stats.warehouse.metrics %}
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card bg-light price-change-card">
+                    <h5 class="card-header">Zmiany cen towarów</h5>
+                    <div class="card-body">
+                        <div class="list-group">
+                            {% for change in stats.warehouse.price_changes %}
+                                <div class="list-group-item list-group-item-action list-group-item-{% if change.is_discount %}success{% else %}danger{% endif%}">
+                                    Zmiana ceny <a href="{% url 'warehouse:ware_detail' change.ware.pk %}">{{ change.ware }}</a> z {{ change.last_price }} zł na {{ change.new_price }} zł u dostawcy <a href="{% url 'warehouse:supplier_detail' change.invoice.supplier.pk %}">{{ change.invoice.supplier }}</a>
+                                </div>
+                            {% empty %}
+                                Brak zmian w cenach towarów w ostatnim tygodniu.
+                            {% endfor %}
                         </div>
-                    {% empty %}
-                        Brak zmian w cenach towarów w ostatnim tygodniu.
-                    {% endfor %}
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="row">
+            {% include 'stats/charts.html' with charts=stats.warehouse.charts group=stats.warehouse.group %}
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="nav-stats-invoicing" role="tabpanel" aria-labelledby="nav-stats-invoicing-tab">
+        <div class="row">
+            {% include 'stats/metrics.html' with metrics=stats.invoicing.metrics %}
+        </div>
+        <div class="row">
+            {% include 'stats/charts.html' with charts=stats.invoicing.charts group=stats.invoicing.group %}
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="nav-stats-refrigerant" role="tabpanel" aria-labelledby="nav-stats-refrigerant-tab">
+        <div class="row">
+            {% include 'stats/metrics.html' with metrics=stats.refrigerant.metrics %}
+        </div>
+        <div class="row">
+            {% include 'stats/charts.html' with charts=stats.refrigerant.charts group=stats.refrigerant.group %}
         </div>
     </div>
 </div>
-
-<div class="row">
-    {% for chart in charts %}
-        <div class="col-12 {% if chart.big %}col-md-12{% else %}col-md-6{% endif %}" style="display:none;">
-            <div class="chart-div card bg-light">
-                <h5 class="card-header">{{ chart.title }}</h5>
-                <div class="card-body">
-                    <canvas id="chart_{{ forloop.counter }}" chart-url="{{ chart.url }}"></canvas>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-</div>
-
 {% endblock %}
 
 {% block scripts %}
