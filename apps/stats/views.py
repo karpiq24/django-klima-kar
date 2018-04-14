@@ -227,18 +227,18 @@ class SaleInvoicesValueYearly(GroupAccessControlMixin, ChartDataMixin, View):
 
 class RefrigerantWeightsHistory(ChartDataMixin, View):
     years_back = 9
-    how_many_shown = 3
+    how_many_shown = 4
 
     def get(self, *args, **kwargs):
         date_option = self.request.GET.get('date_select', '0')
         refrigerant = ['r134a', 'r1234yf', 'r12', 'r404'][int(self.request.GET.get('custom_select'), 0) - 1]
         now = datetime.datetime.today()
         if date_option == '0':
-            date = now - relativedelta(days=now.weekday())
+            date = now - relativedelta(days=6)
         elif date_option == '1':
-            date = now - relativedelta(days=now.day-1)
+            date = now - relativedelta(months=1)
         elif date_option == '2':
-            date = now.replace(month=1, day=1)
+            date = (now - relativedelta(years=1, months=-1)).replace(day=1)
         else:
             date = None
 
@@ -246,47 +246,49 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
         if date:
             invoices = invoices.filter(issue_date__gte=date)
 
-        if date_option == '0':
-            response_data = self.get_response_data_template()
-            response_data['data']['labels'] = DAYS
+        response_data = self.get_response_data_template()
 
-            invoices = invoices.annotate(day=ExtractDay('issue_date')).values('day').annotate(
+        if date_option == '0':
+            invoices = invoices.values('issue_date').annotate(
                 total=Sum('refrigerantweights__' + refrigerant)).values_list(
-                    'day', 'total', 'issue_date').order_by('issue_date')
+                    'total', 'issue_date').order_by('issue_date')
             values = list(invoices.values_list('total', flat=True))
-            month_day = (now - relativedelta(days=now.weekday())).day
-            for day in range(month_day, month_day + 7):
-                if day not in invoices.values_list('day', flat=True):
-                    values.insert(day - month_day, 0)
+            days_between = (now - date).days
+            for i in range(days_between + 1):
+                x = date + relativedelta(days=i)
+                if x.date() not in invoices.values_list('issue_date', flat=True):
+                    values.insert(i, 0)
+
+            response_data['data']['labels'] = [DAYS[(date + relativedelta(days=i)).weekday()]
+                                               for i in range(days_between + 1)]
             response_data['data']['datasets'].append(self.get_dataset(
                 values, COLORS[0]))
             response_data['options']['legend']['display'] = False
 
         if date_option == '1':
-            response_data = self.get_response_data_template()
-            days_in_month = range(1, calendar.monthrange(now.year, now.month)[1] + 1)
-            response_data['data']['labels'] = list(days_in_month)
-
-            invoices = invoices.annotate(day=ExtractDay('issue_date')).values('day').annotate(
-                total=Sum('refrigerantweights__' + refrigerant)).values_list('day', 'total').order_by('day')
+            invoices = invoices.values('issue_date').annotate(
+                total=Sum('refrigerantweights__' + refrigerant)).values_list(
+                    'total', 'issue_date').order_by('issue_date')
             values = list(invoices.values_list('total', flat=True))
-            for day in days_in_month:
-                if day not in invoices.values_list('day', flat=True):
-                    values.insert(day - 1, 0)
+            days_between = (now - date).days
+            for i in range(days_between + 1):
+                x = date + relativedelta(days=i)
+                if x.date() not in invoices.values_list('issue_date', flat=True):
+                    values.insert(i, 0)
+
+            response_data['data']['labels'] = [(date + relativedelta(days=i)).strftime('%d/%m')
+                                               for i in range(days_between + 1)]
             response_data['data']['datasets'].append(self.get_dataset(
                 values, COLORS[0]))
             response_data['options']['legend']['display'] = False
 
         if date_option == '2':
-            response_data = self.get_response_data_template()
-            response_data['data']['labels'] = MONTHS
-
-            invoices = invoices.annotate(month=ExtractMonth('issue_date')).values('month').annotate(
-                total=Sum('refrigerantweights__' + refrigerant)).values_list('month', 'total').order_by('month')
+            invoices = invoices.annotate(month=ExtractMonth('issue_date'), year=ExtractYear('issue_date')).values(
+                'year', 'month').annotate(total=Sum('refrigerantweights__' + refrigerant)).values_list(
+                    'year', 'month', 'total').order_by('year', 'month')
             values = list(invoices.values_list('total', flat=True))
-            for j in range(1, 13):
-                if j not in invoices.values_list('month', flat=True):
-                    values.insert(j - 1, 0)
+            months = list(invoices.values_list('month', flat=True))
+            response_data['data']['labels'] = [MONTHS[i - 1] for i in months]
             response_data['data']['datasets'].append(self.get_dataset(
                 values, COLORS[0]))
             response_data['options']['legend']['display'] = False
@@ -294,7 +296,6 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
         if date_option == '3':
             years = invoices.annotate(year=ExtractYear('issue_date')).values_list(
                 'year', flat=True).distinct().order_by('year')
-            response_data = self.get_response_data_template()
             response_data['data']['labels'] = MONTHS
 
             colors = COLORS[len(years)-1::-1]
@@ -309,8 +310,9 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
                 hidden = False
                 if i < len(years) - self.how_many_shown:
                     hidden = True
-                response_data['data']['datasets'].append(self.get_dataset(
-                    values, colors[i], label=year, fill=False, borderColor=colors[i], hidden=hidden))
+                if sum(values) > 0:
+                    response_data['data']['datasets'].append(self.get_dataset(
+                        values, colors[i], label=year, fill=False, borderColor=colors[i], hidden=hidden))
 
         if date_option == '4':
             invoices = invoices.annotate(year=ExtractYear('issue_date')).values('year').annotate(
