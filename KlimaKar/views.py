@@ -46,29 +46,25 @@ class HomeView(TemplateView):
         # Charts for warehouse
         if has_permission:
             data['warehouse']['charts'].append({
-                'title': 'Wartość zakupów w miesiącach',
-                'url': reverse('stats:invoices_value_monthly'),
-                'big': True
+                'title': 'Historia faktur zakupowych',
+                'url': reverse('stats:purchase_invoices_history'),
+                'big': True,
+                'select_date': {
+                    'extra': True
+                },
+                'custom_select': [('Sum', 'Suma'), ('Avg', 'Średnia'), ('Count', 'Ilość')]
             })
             data['warehouse']['charts'].append({
-                'title': 'Wartosć zakupów w latach',
-                'url': reverse('stats:invoices_value_yearly')
-            })
-            data['warehouse']['charts'].append({
-                'title': 'Wartość zakupów u dostawców od początku',
-                'url': reverse('stats:supplier_all_invoices_value')
-            })
-            data['warehouse']['charts'].append({
-                'title': 'Wartość zakupów u dostawców w ostatnim roku',
-                'url': reverse('stats:supplier_last_year_invoices_value')
+                'title': 'Historia zakupów u dostawców',
+                'select_date': True,
+                'custom_select': [('Sum', 'Suma'), ('Avg', 'Średnia'), ('Count', 'Ilość')],
+                'url': reverse('stats:supplier_purchase_history')
             })
         data['warehouse']['charts'].append({
-            'title': 'Najczęściej kupowane towary od początku',
-            'url': reverse('stats:ware_purchase_quantity')
-        })
-        data['warehouse']['charts'].append({
-            'title': 'Najczęściej kupowane towary w ostatnim roku',
-            'url': reverse('stats:ware_purchase_quantity_last_year')
+            'title': 'Historia zakupów towarów',
+            'select_date': True,
+            'custom_select': [('Count', 'Ilość'), ('Sum', 'Suma')],
+            'url': reverse('stats:ware_purchase_history')
         })
 
         # Metrics for warehouse
@@ -102,13 +98,13 @@ class HomeView(TemplateView):
         # Charts for invoicing
         if has_permission:
             data['invoicing']['charts'].append({
-                'title': 'Wartość sprzedaży w miesiącach',
-                'url': reverse('stats:sale_invoices_value_monthly'),
-                'big': True
-            })
-            data['invoicing']['charts'].append({
-                'title': 'Wartosć sprzedaży w latach',
-                'url': reverse('stats:sale_invoices_value_yearly')
+                'title': 'Historia faktur sprzedażowych',
+                'url': reverse('stats:sale_invoices_history'),
+                'big': True,
+                'select_date': {
+                    'extra': True
+                },
+                'custom_select': [('Sum', 'Suma'), ('Avg', 'Średnia'), ('Count', 'Ilość')]
             })
 
         # Metrics for invoicing
@@ -139,8 +135,10 @@ class HomeView(TemplateView):
             'title': 'Historia sprzedaży czynników',
             'url': reverse('stats:refrigerant_history'),
             'big': True,
-            'select_date': True,
-            'custom_select': ['R134a', 'R1234yf', 'R12', 'R404']
+            'select_date': {
+                'extra': True
+            },
+            'custom_select': [('r134a', 'R134a'), ('r1234yf', 'R1234yf'), ('r12', 'R12'), ('r404', 'R404')]
         })
         # Metrics for refrigerant
         data['refrigerant']['metrics'].append({

@@ -1,12 +1,11 @@
 import datetime
-import calendar
 
 from dateutil.relativedelta import relativedelta
 
 from django.views.generic import View
 from django.http import JsonResponse
-from django.db.models import Sum
-from django.db.models.functions import ExtractYear, ExtractMonth, ExtractDay
+from django.db.models import Sum, Avg, Count, Func, F, FloatField
+from django.db.models.functions import ExtractYear, ExtractMonth
 
 from KlimaKar.mixins import GroupAccessControlMixin
 from apps.warehouse.models import Invoice, Ware
@@ -43,32 +42,57 @@ class ChartDataMixin(object):
         return dataset
 
 
-class SupplierAllInvoicesValue(GroupAccessControlMixin, ChartDataMixin, View):
+class Round(Func):
+    function = 'ROUND'
+    template = '%(function)s(%(expressions)s, 2)'
+
+
+class SupplierPurchaseHistory(GroupAccessControlMixin, ChartDataMixin, View):
     allowed_groups = ['boss']
     max_positions = 8
-    last_year = False
 
     def get(self, *args, **kwargs):
-        if self.last_year:
-            date = (datetime.datetime.now() - relativedelta(years=1))
-            invoices = Invoice.objects.filter(date__gte=date)
+        date_option = self.request.GET.get('date_select', 'week')
+        metric = self.request.GET.get('custom_select', 'Sum')
+        now = datetime.datetime.today()
+        if date_option == 'week':
+            date = now - relativedelta(days=6)
+        elif date_option == 'month':
+            date = now - relativedelta(months=1)
+        elif date_option == 'year':
+            date = (now - relativedelta(years=1, months=-1)).replace(day=1)
         else:
-            invoices = Invoice.objects.all()
-        data = invoices.values('supplier').annotate(
-            total=Sum('total_value')).values_list('supplier__name', 'total').order_by('-total')
-        if data.count() > self.max_positions:
+            date = None
+
+        invoices = Invoice.objects.all()
+        if date:
+            invoices = invoices.filter(date__gte=date)
+
+        invoices = invoices.values('supplier')
+        if metric == 'Sum':
+            invoices = invoices.annotate(total=Sum('total_value'))
+        if metric == 'Avg':
+            invoices = invoices.annotate(total=Round(Avg('total_value')))
+        elif metric == 'Count':
+            invoices = invoices.annotate(total=Count('id'))
+        invoices = invoices.values_list('supplier__name', 'total').order_by('-total')
+        if invoices.count() > self.max_positions:
             index = self.max_positions - 1
         else:
-            index = data.count()
+            index = invoices.count()
 
         response_data = self.get_response_data_template()
-        labels = list(data[0:index].values_list('supplier__name', flat=True))
-        values = list(data[0:index].values_list('total', flat=True))
+        labels = list(invoices[0:index].values_list('supplier__name', flat=True))
+        values = list(invoices[0:index].values_list('total', flat=True))
 
-        if data.count() > self.max_positions:
+        if invoices.count() > self.max_positions:
             labels.append('Pozostali dostawcy')
-            values.append(data[self.max_positions - 1:].values(
-                'total').aggregate(Sum('total'))['total__sum'])
+            if metric == 'Avg':
+                values.append(invoices[self.max_positions - 1:].values(
+                    'total').aggregate(avg=Round(Avg('total')))['avg'])
+            else:
+                values.append(invoices[self.max_positions - 1:].values(
+                    'total').aggregate(Sum('total'))['total__sum'])
 
         response_data['data']['labels'] = labels
         response_data['data']['datasets'].append(self.get_dataset(
@@ -78,75 +102,39 @@ class SupplierAllInvoicesValue(GroupAccessControlMixin, ChartDataMixin, View):
         return JsonResponse(response_data)
 
 
-class InvoicesValueMonthly(GroupAccessControlMixin, ChartDataMixin, View):
-    allowed_groups = ['boss']
-    years_back = 9
-    how_many_shown = 4
-
-    def get(self, *args, **kwargs):
-        date = (datetime.datetime.now() - relativedelta(years=self.years_back)).replace(day=1, month=1)
-        invoices = Invoice.objects.filter(date__gte=date)
-        years = invoices.annotate(year=ExtractYear('date')).values_list('year', flat=True).distinct().order_by('year')
-
-        response_data = self.get_response_data_template()
-        response_data['data']['labels'] = MONTHS
-
-        colors = COLORS[len(years)-1::-1]
-        for i, year in enumerate(years):
-            year_invoices = invoices.filter(date__year=year)
-            year_invoices = year_invoices.annotate(month=ExtractMonth('date')).values('month').annotate(
-                total=Sum('total_value')).values_list('month', 'total').order_by('month')
-            values = list(year_invoices.values_list('total', flat=True))
-            for j in range(1, 13):
-                if j not in year_invoices.values_list('month', flat=True):
-                    values.insert(j - 1, 0)
-            hidden = False
-            if i < len(years) - self.how_many_shown:
-                hidden = True
-            response_data['data']['datasets'].append(self.get_dataset(
-                values, colors[i], label=year, fill=False, borderColor=colors[i], hidden=hidden))
-
-        return JsonResponse(response_data)
-
-
-class InvoicesValueYearly(GroupAccessControlMixin, ChartDataMixin, View):
-    allowed_groups = ['boss']
-    years_back = 10
-
-    def get(self, *args, **kwargs):
-        date = (datetime.datetime.now() - relativedelta(years=self.years_back)).replace(day=1, month=1)
-        invoices = Invoice.objects.filter(date__gte=date)
-        invoices = invoices.annotate(year=ExtractYear('date')).values('year').annotate(
-            total=Sum('total_value')).values_list('year', 'total').order_by('year')
-
-        response_data = self.get_response_data_template()
-        response_data['data']['labels'] = list(invoices.values_list('year', flat=True))
-        response_data['data']['datasets'].append(self.get_dataset(
-            list(invoices.values_list('total', flat=True)),
-            COLORS[0]))
-
-        response_data['options']['legend']['display'] = False
-        response_data['type'] = 'bar'
-        return JsonResponse(response_data)
-
-
-class WarePurchaseQuantity(ChartDataMixin, View):
+class WarePurchaseHistory(ChartDataMixin, View):
     max_positions = 8
-    last_year = False
 
     def get(self, *args, **kwargs):
-        if self.last_year:
-            wares = Ware.objects.filter(invoiceitem__invoice__date__year=2017)
+        date_option = self.request.GET.get('date_select', 'week')
+        metric = self.request.GET.get('custom_select', 'Count')
+        now = datetime.datetime.today()
+        if date_option == 'week':
+            date = now - relativedelta(days=6)
+        elif date_option == 'month':
+            date = now - relativedelta(months=1)
+        elif date_option == 'year':
+            date = (now - relativedelta(years=1, months=-1)).replace(day=1)
         else:
-            wares = Ware.objects.all()
-        wares_quantity = wares.exclude(invoiceitem=None).annotate(
-            quantity=Sum('invoiceitem__quantity')).values_list('index', 'quantity').order_by('-quantity')
-        if wares_quantity.count() > self.max_positions:
-            wares_quantity = wares_quantity[:self.max_positions]
+            date = None
+
+        wares = Ware.objects.exclude(invoiceitem=None)
+        if date:
+            wares = wares.filter(invoiceitem__invoice__date__gte=date)
+
+        if metric == 'Sum':
+            wares = wares.annotate(total=Sum(F('invoiceitem__quantity') * F('invoiceitem__price'),
+                                   output_field=FloatField()))
+        elif metric == 'Count':
+            wares = wares.annotate(total=Sum('invoiceitem__quantity'))
+        wares = wares.values_list('index', 'total').order_by('-total')
+
+        if wares.count() > self.max_positions:
+            wares = wares[:self.max_positions]
 
         response_data = self.get_response_data_template()
-        response_data['data']['labels'] = list(wares_quantity.values_list('index', flat=True))
-        values = list(wares_quantity.values_list('quantity', flat=True))
+        response_data['data']['labels'] = list(wares.values_list('index', flat=True))
+        values = list(wares.values_list('total', flat=True))
         response_data['data']['datasets'].append(self.get_dataset(
             values, COLORS[:len(values)]))
 
@@ -154,90 +142,151 @@ class WarePurchaseQuantity(ChartDataMixin, View):
         return JsonResponse(response_data)
 
 
-class WarePurchaseCost(ChartDataMixin, View):
-    min_count = 3
-
-    def get(self, *args, **kwargs):
-        ware_pk = self.kwargs.get('pk')
-        response_data = self.get_response_data_template()
-        invoices = Invoice.objects.filter(invoiceitem__ware__pk=ware_pk).order_by('date')
-        if invoices.count() < self.min_count:
-            return JsonResponse({}, status=404)
-        response_data['data']['labels'] = list(invoices.values_list('date', flat=True))
-        values = list(invoices.values_list('invoiceitem__price', flat=True))
-        response_data['data']['datasets'].append(self.get_dataset(
-            values, COLORS[0]))
-
-        response_data['options']['legend']['display'] = False
-        return JsonResponse(response_data)
-
-
-class SaleInvoicesValueMonthly(GroupAccessControlMixin, ChartDataMixin, View):
+class PurchaseInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
     allowed_groups = ['boss']
-    years_back = 9
     how_many_shown = 4
 
     def get(self, *args, **kwargs):
-        date = (datetime.datetime.now() - relativedelta(years=self.years_back)).replace(day=1, month=1)
-        invoices = SaleInvoice.objects.filter(issue_date__gte=date).exclude(invoice_type__in=['2', '3'])
-        years = invoices.annotate(year=ExtractYear('issue_date')).values_list(
-            'year', flat=True).distinct().order_by('year')
-
-        response_data = self.get_response_data_template()
-        response_data['data']['labels'] = MONTHS
-
-        colors = COLORS[len(years)-1::-1]
-        for i, year in enumerate(years):
-            year_invoices = invoices.filter(issue_date__year=year)
-            year_invoices = year_invoices.annotate(month=ExtractMonth('issue_date')).values('month').annotate(
-                total=Sum('total_value_netto')).values_list('month', 'total').order_by('month')
-            values = list(year_invoices.values_list('total', flat=True))
-            for j in range(1, 13):
-                if j not in year_invoices.values_list('month', flat=True):
-                    values.insert(j - 1, 0)
-            hidden = False
-            if i < len(years) - self.how_many_shown:
-                hidden = True
-            response_data['data']['datasets'].append(self.get_dataset(
-                values, colors[i], label=year, fill=False, borderColor=colors[i], hidden=hidden))
-
-        return JsonResponse(response_data)
-
-
-class SaleInvoicesValueYearly(GroupAccessControlMixin, ChartDataMixin, View):
-    allowed_groups = ['boss']
-    years_back = 10
-
-    def get(self, *args, **kwargs):
-        date = (datetime.datetime.now() - relativedelta(years=self.years_back)).replace(day=1, month=1)
-        invoices = SaleInvoice.objects.filter(issue_date__gte=date)
-        invoices = invoices.annotate(year=ExtractYear('issue_date')).values('year').annotate(
-            total=Sum('total_value_netto')).values_list('year', 'total').order_by('year')
-
-        response_data = self.get_response_data_template()
-        response_data['data']['labels'] = list(invoices.values_list('year', flat=True))
-        response_data['data']['datasets'].append(self.get_dataset(
-            list(invoices.values_list('total', flat=True)),
-            COLORS[1]))
-
-        response_data['options']['legend']['display'] = False
-        response_data['type'] = 'bar'
-        return JsonResponse(response_data)
-
-
-class RefrigerantWeightsHistory(ChartDataMixin, View):
-    years_back = 9
-    how_many_shown = 4
-
-    def get(self, *args, **kwargs):
-        date_option = self.request.GET.get('date_select', '0')
-        refrigerant = ['r134a', 'r1234yf', 'r12', 'r404'][int(self.request.GET.get('custom_select'), 0) - 1]
+        date_option = self.request.GET.get('date_select', 'week')
+        metric = self.request.GET.get('custom_select', 'Sum')
         now = datetime.datetime.today()
-        if date_option == '0':
+        if date_option == 'week':
             date = now - relativedelta(days=6)
-        elif date_option == '1':
+        elif date_option == 'month':
             date = now - relativedelta(months=1)
-        elif date_option == '2':
+        elif date_option == 'year':
+            date = (now - relativedelta(years=1, months=-1)).replace(day=1)
+        else:
+            date = None
+
+        invoices = Invoice.objects.all()
+        if date:
+            invoices = invoices.filter(date__gte=date)
+
+        response_data = self.get_response_data_template()
+
+        if date_option == 'week':
+            invoices = invoices.values('date')
+            if metric == 'Sum':
+                invoices = invoices.annotate(total=Sum('total_value'))
+            elif metric == 'Avg':
+                invoices = invoices.annotate(total=Round(Avg('total_value')))
+            elif metric == 'Count':
+                invoices = invoices.annotate(total=Count('id'))
+            invoices = invoices.values_list('total', 'date').order_by('date')
+            values = list(invoices.values_list('total', flat=True))
+            days_between = (now - date).days
+            for i in range(days_between + 1):
+                x = date + relativedelta(days=i)
+                if x.date() not in invoices.values_list('date', flat=True):
+                    values.insert(i, 0)
+
+            response_data['data']['labels'] = [DAYS[(date + relativedelta(days=i)).weekday()]
+                                               for i in range(days_between + 1)]
+            response_data['data']['datasets'].append(self.get_dataset(
+                values, COLORS[0]))
+            response_data['options']['legend']['display'] = False
+
+        if date_option == 'month':
+            invoices = invoices.values('date')
+            if metric == 'Sum':
+                invoices = invoices.annotate(total=Sum('total_value'))
+            elif metric == 'Avg':
+                invoices = invoices.annotate(total=Round(Avg('total_value')))
+            elif metric == 'Count':
+                invoices = invoices.annotate(total=Count('id'))
+            invoices = invoices.values_list('total', 'date').order_by('date')
+            values = list(invoices.values_list('total', flat=True))
+            days_between = (now - date).days
+            for i in range(days_between + 1):
+                x = date + relativedelta(days=i)
+                if x.date() not in invoices.values_list('date', flat=True):
+                    values.insert(i, 0)
+
+            response_data['data']['labels'] = [(date + relativedelta(days=i)).strftime('%d/%m')
+                                               for i in range(days_between + 1)]
+            response_data['data']['datasets'].append(self.get_dataset(
+                values, COLORS[0]))
+            response_data['options']['legend']['display'] = False
+
+        if date_option == 'year':
+            invoices = invoices.annotate(
+                month=ExtractMonth('date'), year=ExtractYear('date')).values('year', 'month')
+            if metric == 'Sum':
+                invoices = invoices.annotate(total=Sum('total_value'))
+            elif metric == 'Avg':
+                invoices = invoices.annotate(total=Round(Avg('total_value')))
+            elif metric == 'Count':
+                invoices = invoices.annotate(total=Count('id'))
+            invoices = invoices.values_list('year', 'month', 'total').order_by('year', 'month')
+            values = list(invoices.values_list('total', flat=True))
+            months = list(invoices.values_list('month', flat=True))
+            response_data['data']['labels'] = [MONTHS[i - 1] for i in months]
+            response_data['data']['datasets'].append(self.get_dataset(
+                values, COLORS[0]))
+            response_data['options']['legend']['display'] = False
+
+        if date_option == 'all_monthly':
+            years = invoices.annotate(year=ExtractYear('date')).values_list(
+                'year', flat=True).distinct().order_by('year')
+            response_data['data']['labels'] = MONTHS
+
+            colors = COLORS[len(years)-1::-1]
+            for i, year in enumerate(years):
+                year_invoices = invoices.filter(date__year=year)
+                year_invoices = year_invoices.annotate(month=ExtractMonth('date')).values('month')
+                if metric == 'Sum':
+                    year_invoices = year_invoices.annotate(total=Sum('total_value'))
+                elif metric == 'Avg':
+                    year_invoices = year_invoices.annotate(total=Round(Avg('total_value')))
+                elif metric == 'Count':
+                    year_invoices = year_invoices.annotate(total=Count('id'))
+                year_invoices = year_invoices.values_list('month', 'total').order_by('month')
+                values = list(year_invoices.values_list('total', flat=True))
+                for j in range(1, 13):
+                    if j not in year_invoices.values_list('month', flat=True):
+                        values.insert(j - 1, 0)
+                hidden = False
+                if i < len(years) - self.how_many_shown:
+                    hidden = True
+                if sum(values) > 0:
+                    response_data['data']['datasets'].append(self.get_dataset(
+                        values, colors[i], label=year, fill=False, borderColor=colors[i], hidden=hidden))
+
+        if date_option == 'all_yearly':
+            invoices = invoices.annotate(year=ExtractYear('date')).values('year')
+            if metric == 'Sum':
+                invoices = invoices.annotate(total=Sum('total_value'))
+            elif metric == 'Avg':
+                invoices = invoices.annotate(total=Round(Avg('total_value')))
+            elif metric == 'Count':
+                invoices = invoices.annotate(total=Count('id'))
+            invoices = invoices.values_list('year', 'total').exclude(total=0).order_by('year')
+
+            response_data['data']['labels'] = list(invoices.values_list('year', flat=True))
+            response_data['data']['datasets'].append(self.get_dataset(
+                list(invoices.values_list('total', flat=True)),
+                COLORS[0]))
+
+            response_data['options']['legend']['display'] = False
+            response_data['type'] = 'bar'
+
+        return JsonResponse(response_data)
+
+
+class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
+    allowed_groups = ['boss']
+    how_many_shown = 4
+
+    def get(self, *args, **kwargs):
+        date_option = self.request.GET.get('date_select', 'week')
+        metric = self.request.GET.get('custom_select', 'Sum')
+        now = datetime.datetime.today()
+        if date_option == 'week':
+            date = now - relativedelta(days=6)
+        elif date_option == 'month':
+            date = now - relativedelta(months=1)
+        elif date_option == 'year':
             date = (now - relativedelta(years=1, months=-1)).replace(day=1)
         else:
             date = None
@@ -248,7 +297,138 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
 
         response_data = self.get_response_data_template()
 
-        if date_option == '0':
+        if date_option == 'week':
+            invoices = invoices.values('issue_date')
+            if metric == 'Sum':
+                invoices = invoices.annotate(total=Sum('total_value_netto'))
+            elif metric == 'Avg':
+                invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
+            elif metric == 'Count':
+                invoices = invoices.annotate(total=Count('id'))
+            invoices = invoices.values_list('total', 'issue_date').order_by('issue_date')
+            values = list(invoices.values_list('total', flat=True))
+            days_between = (now - date).days
+            for i in range(days_between + 1):
+                x = date + relativedelta(days=i)
+                if x.date() not in invoices.values_list('issue_date', flat=True):
+                    values.insert(i, 0)
+
+            response_data['data']['labels'] = [DAYS[(date + relativedelta(days=i)).weekday()]
+                                               for i in range(days_between + 1)]
+            response_data['data']['datasets'].append(self.get_dataset(
+                values, COLORS[0]))
+            response_data['options']['legend']['display'] = False
+
+        if date_option == 'month':
+            invoices = invoices.values('issue_date')
+            if metric == 'Sum':
+                invoices = invoices.annotate(total=Sum('total_value_netto'))
+            elif metric == 'Avg':
+                invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
+            elif metric == 'Count':
+                invoices = invoices.annotate(total=Count('id'))
+            invoices = invoices.values_list('total', 'issue_date').order_by('issue_date')
+            values = list(invoices.values_list('total', flat=True))
+            days_between = (now - date).days
+            for i in range(days_between + 1):
+                x = date + relativedelta(days=i)
+                if x.date() not in invoices.values_list('issue_date', flat=True):
+                    values.insert(i, 0)
+
+            response_data['data']['labels'] = [(date + relativedelta(days=i)).strftime('%d/%m')
+                                               for i in range(days_between + 1)]
+            response_data['data']['datasets'].append(self.get_dataset(
+                values, COLORS[0]))
+            response_data['options']['legend']['display'] = False
+
+        if date_option == 'year':
+            invoices = invoices.annotate(
+                month=ExtractMonth('issue_date'), year=ExtractYear('issue_date')).values('year', 'month')
+            if metric == 'Sum':
+                invoices = invoices.annotate(total=Sum('total_value_netto'))
+            elif metric == 'Avg':
+                invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
+            elif metric == 'Count':
+                invoices = invoices.annotate(total=Count('id'))
+            invoices = invoices.values_list('year', 'month', 'total').order_by('year', 'month')
+            values = list(invoices.values_list('total', flat=True))
+            months = list(invoices.values_list('month', flat=True))
+            response_data['data']['labels'] = [MONTHS[i - 1] for i in months]
+            response_data['data']['datasets'].append(self.get_dataset(
+                values, COLORS[0]))
+            response_data['options']['legend']['display'] = False
+
+        if date_option == 'all_monthly':
+            years = invoices.annotate(year=ExtractYear('issue_date')).values_list(
+                'year', flat=True).distinct().order_by('year')
+            response_data['data']['labels'] = MONTHS
+
+            colors = COLORS[len(years)-1::-1]
+            for i, year in enumerate(years):
+                year_invoices = invoices.filter(issue_date__year=year)
+                year_invoices = year_invoices.annotate(month=ExtractMonth('issue_date')).values('month')
+                if metric == 'Sum':
+                    year_invoices = year_invoices.annotate(total=Sum('total_value_netto'))
+                elif metric == 'Avg':
+                    year_invoices = year_invoices.annotate(total=Round(Avg('total_value_netto')))
+                elif metric == 'Count':
+                    year_invoices = year_invoices.annotate(total=Count('id'))
+                year_invoices = year_invoices.values_list('month', 'total').order_by('month')
+                values = list(year_invoices.values_list('total', flat=True))
+                for j in range(1, 13):
+                    if j not in year_invoices.values_list('month', flat=True):
+                        values.insert(j - 1, 0)
+                hidden = False
+                if i < len(years) - self.how_many_shown:
+                    hidden = True
+                if sum(values) > 0:
+                    response_data['data']['datasets'].append(self.get_dataset(
+                        values, colors[i], label=year, fill=False, borderColor=colors[i], hidden=hidden))
+
+        if date_option == 'all_yearly':
+            invoices = invoices.annotate(year=ExtractYear('issue_date')).values('year')
+            if metric == 'Sum':
+                invoices = invoices.annotate(total=Sum('total_value_netto'))
+            elif metric == 'Avg':
+                invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
+            elif metric == 'Count':
+                invoices = invoices.annotate(total=Count('id'))
+            invoices = invoices.values_list('year', 'total').exclude(total=0).order_by('year')
+
+            response_data['data']['labels'] = list(invoices.values_list('year', flat=True))
+            response_data['data']['datasets'].append(self.get_dataset(
+                list(invoices.values_list('total', flat=True)),
+                COLORS[0]))
+
+            response_data['options']['legend']['display'] = False
+            response_data['type'] = 'bar'
+
+        return JsonResponse(response_data)
+
+
+class RefrigerantWeightsHistory(ChartDataMixin, View):
+    how_many_shown = 4
+
+    def get(self, *args, **kwargs):
+        date_option = self.request.GET.get('date_select', 'week')
+        refrigerant = self.request.GET.get('custom_select', 'r134a')
+        now = datetime.datetime.today()
+        if date_option == 'week':
+            date = now - relativedelta(days=6)
+        elif date_option == 'month':
+            date = now - relativedelta(months=1)
+        elif date_option == 'year':
+            date = (now - relativedelta(years=1, months=-1)).replace(day=1)
+        else:
+            date = None
+
+        invoices = SaleInvoice.objects.exclude(invoice_type__in=['2', '3'])
+        if date:
+            invoices = invoices.filter(issue_date__gte=date)
+
+        response_data = self.get_response_data_template()
+
+        if date_option == 'week':
             invoices = invoices.values('issue_date').annotate(
                 total=Sum('refrigerantweights__' + refrigerant)).values_list(
                     'total', 'issue_date').order_by('issue_date')
@@ -265,7 +445,7 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
                 values, COLORS[0]))
             response_data['options']['legend']['display'] = False
 
-        if date_option == '1':
+        elif date_option == 'month':
             invoices = invoices.values('issue_date').annotate(
                 total=Sum('refrigerantweights__' + refrigerant)).values_list(
                     'total', 'issue_date').order_by('issue_date')
@@ -282,7 +462,7 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
                 values, COLORS[0]))
             response_data['options']['legend']['display'] = False
 
-        if date_option == '2':
+        elif date_option == 'year':
             invoices = invoices.annotate(month=ExtractMonth('issue_date'), year=ExtractYear('issue_date')).values(
                 'year', 'month').annotate(total=Sum('refrigerantweights__' + refrigerant)).values_list(
                     'year', 'month', 'total').order_by('year', 'month')
@@ -293,7 +473,7 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
                 values, COLORS[0]))
             response_data['options']['legend']['display'] = False
 
-        if date_option == '3':
+        elif date_option == 'all_monthly':
             years = invoices.annotate(year=ExtractYear('issue_date')).values_list(
                 'year', flat=True).distinct().order_by('year')
             response_data['data']['labels'] = MONTHS
@@ -314,12 +494,11 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
                     response_data['data']['datasets'].append(self.get_dataset(
                         values, colors[i], label=year, fill=False, borderColor=colors[i], hidden=hidden))
 
-        if date_option == '4':
+        elif date_option == 'all_yearly':
             invoices = invoices.annotate(year=ExtractYear('issue_date')).values('year').annotate(
                 total=Sum('refrigerantweights__' + refrigerant)).values_list(
                     'year', 'total').exclude(total=0).order_by('year')
 
-            response_data = self.get_response_data_template()
             response_data['data']['labels'] = list(invoices.values_list('year', flat=True))
             response_data['data']['datasets'].append(self.get_dataset(
                 list(invoices.values_list('total', flat=True)),
@@ -328,4 +507,22 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
             response_data['options']['legend']['display'] = False
             response_data['type'] = 'bar'
 
+        return JsonResponse(response_data)
+
+
+class WarePurchaseCost(ChartDataMixin, View):
+    min_count = 3
+
+    def get(self, *args, **kwargs):
+        ware_pk = self.kwargs.get('pk')
+        response_data = self.get_response_data_template()
+        invoices = Invoice.objects.filter(invoiceitem__ware__pk=ware_pk).order_by('date')
+        if invoices.count() < self.min_count:
+            return JsonResponse({}, status=404)
+        response_data['data']['labels'] = list(invoices.values_list('date', flat=True))
+        values = list(invoices.values_list('invoiceitem__price', flat=True))
+        response_data['data']['datasets'].append(self.get_dataset(
+            values, COLORS[0]))
+
+        response_data['options']['legend']['display'] = False
         return JsonResponse(response_data)
