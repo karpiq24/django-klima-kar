@@ -12,7 +12,7 @@ from apps.invoicing.dictionaries import PAYMENT_TYPES, INVOICE_TYPES
 
 class Contractor(models.Model):
     name = models.CharField(max_length=512, verbose_name=('Nazwa'))
-    nip = models.CharField(max_length=10, validators=[RegexValidator(r'^\d{10}$')], verbose_name="NIP",
+    nip = models.CharField(max_length=16, validators=[RegexValidator(r'^\d+$')], verbose_name="NIP",
                            blank=True, null=True)
     nip_prefix = models.CharField(max_length=2, verbose_name="Prefiks NIP", blank=True, null=True)
     address_1 = models.CharField(max_length=128, verbose_name="Adres", blank=True, null=True)
