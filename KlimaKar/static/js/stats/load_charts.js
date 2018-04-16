@@ -1,5 +1,37 @@
 var charts = {};
 
+function number_format(number) {
+    number = number.toString();
+    var decimal_split = number.split('.');
+    number = decimal_split[0].split(/(?=(?:...)*$)/);
+    number = number.join(' ');
+    if (decimal_split.length == 2)
+        number = number + ',' + decimal_split[1];
+    return number;
+}
+
+function set_chart_options(chart, type, custom) {
+    if (type !== 'doughnut') {
+        chart.options.scales.yAxes[0].ticks.callback = function(value, index, values) {
+            return custom.values_prefix + number_format(value) + custom.values_appendix;
+        }
+    }
+    chart.options.tooltips.callbacks.label = function(tooltipItem, chart) {
+        var label = '';
+        var value = chart['datasets'][0]['data'][tooltipItem['index']];
+        if (type !== 'doughnut') {
+            label = chart.datasets[tooltipItem.datasetIndex].label  || '';
+        }
+        else {
+            label = chart['labels'][tooltipItem['index']] || '';
+        }
+        if (label !== '')
+            label = label + ': ';
+        return label + custom.values_prefix + number_format(value) + custom.values_appendix;
+    }
+    chart.update();
+};
+
 function load_chart(chart_card) {
     var data = {};
     var date_select = $(chart_card).find("select[id^='chart_date_select']");
@@ -23,6 +55,7 @@ function load_chart(chart_card) {
                 charts[chart_id].options = result.options;
                 charts[chart_id].data = result.data;
                 charts[chart_id].update();
+                set_chart_options(charts[chart_id], result.type, result.custom);
             }
             else {
                 var chart = new Chart(chart_canvas, {
@@ -30,6 +63,7 @@ function load_chart(chart_card) {
                     data: result.data,
                     options: result.options 
                 })
+                set_chart_options(chart, result.type, result.custom);
                 charts[chart_id] = chart;
             }
             

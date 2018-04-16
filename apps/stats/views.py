@@ -14,17 +14,21 @@ from apps.stats.dictionaries import MONTHS, COLORS, DAYS
 
 
 class ChartDataMixin(object):
-    def get_response_data_template(self):
+    def get_response_data_template(self, chart_type='line', legend_display=True, values_prefix='', values_appendix=''):
         response_data = {
-            'type': 'line',
+            'type': chart_type,
             'data': {
                 'labels': [],
                 'datasets': []
             },
             'options': {
                 'legend': {
-                    'display': True
-                },
+                    'display': legend_display
+                }
+            },
+            'custom': {
+                'values_prefix': values_prefix,
+                'values_appendix': values_appendix
             }
         }
         return response_data
@@ -68,6 +72,7 @@ class SupplierPurchaseHistory(GroupAccessControlMixin, ChartDataMixin, View):
         if date:
             invoices = invoices.filter(date__gte=date)
 
+        response_data = self.get_response_data_template(chart_type='doughnut', values_appendix=' zł')
         invoices = invoices.values('supplier')
         if metric == 'Sum':
             invoices = invoices.annotate(total=Sum('total_value'))
@@ -75,13 +80,13 @@ class SupplierPurchaseHistory(GroupAccessControlMixin, ChartDataMixin, View):
             invoices = invoices.annotate(total=Round(Avg('total_value')))
         elif metric == 'Count':
             invoices = invoices.annotate(total=Count('id'))
+            response_data['custom']['values_appendix'] = ''
         invoices = invoices.values_list('supplier__name', 'total').order_by('-total')
         if invoices.count() > self.max_positions:
             index = self.max_positions - 1
         else:
             index = invoices.count()
 
-        response_data = self.get_response_data_template()
         labels = list(invoices[0:index].values_list('supplier__name', flat=True))
         values = list(invoices[0:index].values_list('total', flat=True))
 
@@ -98,7 +103,6 @@ class SupplierPurchaseHistory(GroupAccessControlMixin, ChartDataMixin, View):
         response_data['data']['datasets'].append(self.get_dataset(
             values, COLORS[:len(values)]))
 
-        response_data['type'] = 'doughnut'
         return JsonResponse(response_data)
 
 
@@ -118,6 +122,7 @@ class WarePurchaseHistory(ChartDataMixin, View):
         else:
             date = None
 
+        response_data = self.get_response_data_template(chart_type='doughnut', values_appendix=' zł')
         wares = Ware.objects.exclude(invoiceitem=None)
         if date:
             wares = wares.filter(invoiceitem__invoice__date__gte=date)
@@ -127,18 +132,17 @@ class WarePurchaseHistory(ChartDataMixin, View):
                                    output_field=FloatField()))
         elif metric == 'Count':
             wares = wares.annotate(total=Sum('invoiceitem__quantity'))
+            response_data['custom']['values_appendix'] = ''
         wares = wares.values_list('index', 'total').order_by('-total')
 
         if wares.count() > self.max_positions:
             wares = wares[:self.max_positions]
 
-        response_data = self.get_response_data_template()
         response_data['data']['labels'] = list(wares.values_list('index', flat=True))
         values = list(wares.values_list('total', flat=True))
         response_data['data']['datasets'].append(self.get_dataset(
             values, COLORS[:len(values)]))
 
-        response_data['type'] = 'doughnut'
         return JsonResponse(response_data)
 
 
@@ -163,7 +167,7 @@ class PurchaseInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
         if date:
             invoices = invoices.filter(date__gte=date)
 
-        response_data = self.get_response_data_template()
+        response_data = self.get_response_data_template(legend_display=False, values_appendix=' zł')
 
         if date_option == 'week':
             invoices = invoices.values('date')
@@ -173,6 +177,7 @@ class PurchaseInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
                 invoices = invoices.annotate(total=Round(Avg('total_value')))
             elif metric == 'Count':
                 invoices = invoices.annotate(total=Count('id'))
+                response_data['custom']['values_appendix'] = ''
             invoices = invoices.values_list('total', 'date').order_by('date')
             values = list(invoices.values_list('total', flat=True))
             days_between = (now - date).days
@@ -185,7 +190,6 @@ class PurchaseInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
                                                for i in range(days_between + 1)]
             response_data['data']['datasets'].append(self.get_dataset(
                 values, COLORS[0]))
-            response_data['options']['legend']['display'] = False
 
         if date_option == 'month':
             invoices = invoices.values('date')
@@ -195,6 +199,7 @@ class PurchaseInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
                 invoices = invoices.annotate(total=Round(Avg('total_value')))
             elif metric == 'Count':
                 invoices = invoices.annotate(total=Count('id'))
+                response_data['custom']['values_appendix'] = ''
             invoices = invoices.values_list('total', 'date').order_by('date')
             values = list(invoices.values_list('total', flat=True))
             days_between = (now - date).days
@@ -207,7 +212,6 @@ class PurchaseInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
                                                for i in range(days_between + 1)]
             response_data['data']['datasets'].append(self.get_dataset(
                 values, COLORS[0]))
-            response_data['options']['legend']['display'] = False
 
         if date_option == 'year':
             invoices = invoices.annotate(
@@ -218,18 +222,19 @@ class PurchaseInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
                 invoices = invoices.annotate(total=Round(Avg('total_value')))
             elif metric == 'Count':
                 invoices = invoices.annotate(total=Count('id'))
+                response_data['custom']['values_appendix'] = ''
             invoices = invoices.values_list('year', 'month', 'total').order_by('year', 'month')
             values = list(invoices.values_list('total', flat=True))
             months = list(invoices.values_list('month', flat=True))
             response_data['data']['labels'] = [MONTHS[i - 1] for i in months]
             response_data['data']['datasets'].append(self.get_dataset(
                 values, COLORS[0]))
-            response_data['options']['legend']['display'] = False
 
         if date_option == 'all_monthly':
             years = invoices.annotate(year=ExtractYear('date')).values_list(
                 'year', flat=True).distinct().order_by('year')
             response_data['data']['labels'] = MONTHS
+            response_data['options']['legend']['display'] = True
 
             colors = COLORS[len(years)-1::-1]
             for i, year in enumerate(years):
@@ -241,6 +246,7 @@ class PurchaseInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
                     year_invoices = year_invoices.annotate(total=Round(Avg('total_value')))
                 elif metric == 'Count':
                     year_invoices = year_invoices.annotate(total=Count('id'))
+                    response_data['custom']['values_appendix'] = ''
                 year_invoices = year_invoices.values_list('month', 'total').order_by('month')
                 values = list(year_invoices.values_list('total', flat=True))
                 for j in range(1, 13):
@@ -261,15 +267,13 @@ class PurchaseInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
                 invoices = invoices.annotate(total=Round(Avg('total_value')))
             elif metric == 'Count':
                 invoices = invoices.annotate(total=Count('id'))
+                response_data['custom']['values_appendix'] = ''
             invoices = invoices.values_list('year', 'total').exclude(total=0).order_by('year')
 
             response_data['data']['labels'] = list(invoices.values_list('year', flat=True))
             response_data['data']['datasets'].append(self.get_dataset(
                 list(invoices.values_list('total', flat=True)),
                 COLORS[0]))
-
-            response_data['options']['legend']['display'] = False
-            response_data['type'] = 'bar'
 
         return JsonResponse(response_data)
 
@@ -295,7 +299,7 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
         if date:
             invoices = invoices.filter(issue_date__gte=date)
 
-        response_data = self.get_response_data_template()
+        response_data = self.get_response_data_template(legend_display=False, values_appendix=' zł')
 
         if date_option == 'week':
             invoices = invoices.values('issue_date')
@@ -305,6 +309,7 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
                 invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
             elif metric == 'Count':
                 invoices = invoices.annotate(total=Count('id'))
+                response_data['custom']['values_appendix'] = ''
             invoices = invoices.values_list('total', 'issue_date').order_by('issue_date')
             values = list(invoices.values_list('total', flat=True))
             days_between = (now - date).days
@@ -317,7 +322,6 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
                                                for i in range(days_between + 1)]
             response_data['data']['datasets'].append(self.get_dataset(
                 values, COLORS[0]))
-            response_data['options']['legend']['display'] = False
 
         if date_option == 'month':
             invoices = invoices.values('issue_date')
@@ -327,6 +331,7 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
                 invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
             elif metric == 'Count':
                 invoices = invoices.annotate(total=Count('id'))
+                response_data['custom']['values_appendix'] = ''
             invoices = invoices.values_list('total', 'issue_date').order_by('issue_date')
             values = list(invoices.values_list('total', flat=True))
             days_between = (now - date).days
@@ -339,7 +344,6 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
                                                for i in range(days_between + 1)]
             response_data['data']['datasets'].append(self.get_dataset(
                 values, COLORS[0]))
-            response_data['options']['legend']['display'] = False
 
         if date_option == 'year':
             invoices = invoices.annotate(
@@ -350,18 +354,19 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
                 invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
             elif metric == 'Count':
                 invoices = invoices.annotate(total=Count('id'))
+                response_data['custom']['values_appendix'] = ''
             invoices = invoices.values_list('year', 'month', 'total').order_by('year', 'month')
             values = list(invoices.values_list('total', flat=True))
             months = list(invoices.values_list('month', flat=True))
             response_data['data']['labels'] = [MONTHS[i - 1] for i in months]
             response_data['data']['datasets'].append(self.get_dataset(
                 values, COLORS[0]))
-            response_data['options']['legend']['display'] = False
 
         if date_option == 'all_monthly':
             years = invoices.annotate(year=ExtractYear('issue_date')).values_list(
                 'year', flat=True).distinct().order_by('year')
             response_data['data']['labels'] = MONTHS
+            response_data['options']['legend']['display'] = True
 
             colors = COLORS[len(years)-1::-1]
             for i, year in enumerate(years):
@@ -373,6 +378,7 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
                     year_invoices = year_invoices.annotate(total=Round(Avg('total_value_netto')))
                 elif metric == 'Count':
                     year_invoices = year_invoices.annotate(total=Count('id'))
+                    response_data['custom']['values_appendix'] = ''
                 year_invoices = year_invoices.values_list('month', 'total').order_by('month')
                 values = list(year_invoices.values_list('total', flat=True))
                 for j in range(1, 13):
@@ -393,15 +399,13 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
                 invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
             elif metric == 'Count':
                 invoices = invoices.annotate(total=Count('id'))
+                response_data['custom']['values_appendix'] = ''
             invoices = invoices.values_list('year', 'total').exclude(total=0).order_by('year')
 
             response_data['data']['labels'] = list(invoices.values_list('year', flat=True))
             response_data['data']['datasets'].append(self.get_dataset(
                 list(invoices.values_list('total', flat=True)),
                 COLORS[0]))
-
-            response_data['options']['legend']['display'] = False
-            response_data['type'] = 'bar'
 
         return JsonResponse(response_data)
 
@@ -426,7 +430,7 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
         if date:
             invoices = invoices.filter(issue_date__gte=date)
 
-        response_data = self.get_response_data_template()
+        response_data = self.get_response_data_template(legend_display=False, values_appendix=' g')
 
         if date_option == 'week':
             invoices = invoices.values('issue_date').annotate(
@@ -443,7 +447,6 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
                                                for i in range(days_between + 1)]
             response_data['data']['datasets'].append(self.get_dataset(
                 values, COLORS[0]))
-            response_data['options']['legend']['display'] = False
 
         elif date_option == 'month':
             invoices = invoices.values('issue_date').annotate(
@@ -460,7 +463,6 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
                                                for i in range(days_between + 1)]
             response_data['data']['datasets'].append(self.get_dataset(
                 values, COLORS[0]))
-            response_data['options']['legend']['display'] = False
 
         elif date_option == 'year':
             invoices = invoices.annotate(month=ExtractMonth('issue_date'), year=ExtractYear('issue_date')).values(
@@ -471,9 +473,9 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
             response_data['data']['labels'] = [MONTHS[i - 1] for i in months]
             response_data['data']['datasets'].append(self.get_dataset(
                 values, COLORS[0]))
-            response_data['options']['legend']['display'] = False
 
         elif date_option == 'all_monthly':
+            response_data['options']['legend']['display'] = True
             years = invoices.annotate(year=ExtractYear('issue_date')).values_list(
                 'year', flat=True).distinct().order_by('year')
             response_data['data']['labels'] = MONTHS
@@ -504,9 +506,6 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
                 list(invoices.values_list('total', flat=True)),
                 COLORS[0]))
 
-            response_data['options']['legend']['display'] = False
-            response_data['type'] = 'bar'
-
         return JsonResponse(response_data)
 
 
@@ -515,7 +514,7 @@ class WarePurchaseCost(ChartDataMixin, View):
 
     def get(self, *args, **kwargs):
         ware_pk = self.kwargs.get('pk')
-        response_data = self.get_response_data_template()
+        response_data = self.get_response_data_template(values_appendix=' zł')
         invoices = Invoice.objects.filter(invoiceitem__ware__pk=ware_pk).order_by('date')
         if invoices.count() < self.min_count:
             return JsonResponse({}, status=404)
