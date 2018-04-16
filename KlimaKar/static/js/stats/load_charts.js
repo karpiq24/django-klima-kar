@@ -18,9 +18,9 @@ function set_chart_options(chart, type, custom) {
     }
     chart.options.tooltips.callbacks.label = function(tooltipItem, chart) {
         var label = '';
-        var value = chart['datasets'][0]['data'][tooltipItem['index']];
+        var value = chart['datasets'][tooltipItem['datasetIndex']]['data'][tooltipItem['index']];
         if (type !== 'doughnut') {
-            label = chart.datasets[tooltipItem.datasetIndex].label  || '';
+            label = chart.datasets[tooltipItem['datasetIndex']].label  || '';
         }
         else {
             label = chart['labels'][tooltipItem['index']] || '';
