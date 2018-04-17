@@ -20,6 +20,7 @@ class Contractor(models.Model):
     city = models.CharField(max_length=128, verbose_name="Miasto", blank=True, null=True)
     postal_code = models.CharField(max_length=16, verbose_name="Kod pocztowy", blank=True, null=True)
     email = models.EmailField(verbose_name="Adres e-mail", blank=True, null=True)
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name=('Data dodania'))
 
     def __str__(self):
         return self.name
@@ -44,6 +45,7 @@ class SaleInvoice(models.Model):
     tax_percent = models.FloatField(verbose_name="Procent podatku VAT", default=23)
     comment = models.TextField(verbose_name=('Uwagi'), blank=True)
     legacy = models.BooleanField(default=False, verbose_name='Faktura archiwalna')
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name=('Data dodania'))
 
     def __str__(self):
         return self.number

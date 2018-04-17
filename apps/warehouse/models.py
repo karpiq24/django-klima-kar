@@ -9,6 +9,7 @@ class Ware(models.Model):
     name = models.CharField(max_length=255, verbose_name=('Nazwa'))
     description = models.TextField(blank=True, null=True, verbose_name=('Opis'))
     stock = models.PositiveIntegerField(default=0, verbose_name=('Stan'))
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name=('Data dodania'))
 
     @property
     def last_price(self):
@@ -32,6 +33,7 @@ class Ware(models.Model):
 
 class Supplier(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name=('Nazwa'))
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name=('Data dodania'))
 
     def __str__(self):
         return self.name
@@ -47,6 +49,7 @@ class Invoice(models.Model):
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT, verbose_name=('Dostawca'))
     total_value = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=('Łączna wartość'),
                                       null=True, blank=True)
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name=('Data dodania'))
 
     def __str__(self):
         return self.number

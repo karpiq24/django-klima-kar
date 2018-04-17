@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>{{ title }}</title>
+    </head>
+    <body>
+        <h1>{{ title }}</h1>
+        <div>
+            <h2>Nowe towary ({{ wares.count }})</h2>
+            <ul>
+                {% for ware in wares %}
+                    <li><a href="{% url 'warehouse:ware_detail' ware.pk %}">{{ ware }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <h2>Zmiany cen towarów ({{ ware_price_changes.count }})</h2>
+            <ul>
+                {% for change in ware_price_changes %}
+                    <li><strong>{% if change.is_discount %}Obniżka ceny{% else %}Podwyżka ceny{% endif %}</strong> <a href="{% url 'warehouse:ware_detail' change.ware.pk %}">{{ change.ware }}</a> z {{ change.last_price|floatformat:2 }} zł na {{ change.new_price|floatformat:2 }} zł u dostawcy <a href="{% url 'warehouse:supplier_detail' change.invoice.supplier.pk %}">{{ change.invoice.supplier }}</a> w fakturze <a href="{% url 'warehouse:invoice_detail' change.invoice.pk %}">{{ change.invoice }}</a>.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <h2>Nowi dostawcy ({{ suppliers.count }})</h2>
+            <ul>
+                {% for supplier in suppliers %}
+                    <li><a href="{% url 'warehouse:supplier_detail' supplier.pk %}">{{ supplier }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <h2>Nowe faktury zakupowe ({{ purchase_invoices.count }})</h2>
+            <ul>
+                {% for invoice in purchase_invoices %}
+                    <li><a href="{% url 'warehouse:invoice_detail' invoice.pk %}">{{ invoice }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <h2>Nowi kontrahenci ({{ contractors.count }})</h2>
+            <ul>
+                {% for contractor in contractors %}
+                    <li><a href="{% url 'invoicing:contractor_detail' contractor.pk %}">{{ contractor }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <h2>Nowe faktury sprzedażowe ({{ sale_invoices.count }})</h2>
+            <ul>
+                {% for invoice in sale_invoices %}
+                    <li><a href="{% url 'invoicing:sale_invoice_detail' invoice.pk %}">{{ invoice }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </body>
+</html>
