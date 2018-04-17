@@ -81,7 +81,7 @@
                     <a class="btn btn-outline-primary btn-lg" href="{% url 'invoicing:sale_invoice_pdf' object.pk %}">E-faktura</a>
                     <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#email_modal">E-mail</button>
                     <a class="btn btn-outline-warning btn-lg" href="{% url 'invoicing:sale_invoice_update' object.pk %}">Edycja</a>
-                    <a class="btn btn-outline-dark btn-lg" href="{% url 'invoicing:sale_invoices' %}">Powrót</a>
+                    <a class="btn btn-outline-dark btn-lg" href="{{ back_url }}">Powrót</a>
                 </div>
             </div>
         </div>

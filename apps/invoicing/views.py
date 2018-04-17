@@ -1,3 +1,4 @@
+from urllib.parse import urlencode
 from django_tables2 import RequestConfig
 from smtplib import SMTPRecipientsRefused
 
@@ -47,6 +48,8 @@ class SaleInvoiceDetailView(DetailView):
         }
         context['email_form'] = EmailForm(initial=email_data)
         context['email_url'] = reverse('invoicing:sale_invoice_email')
+        key = "{}_params".format(self.model.__name__)
+        context['back_url'] = reverse('invoicing:sale_invoices') + '?' + urlencode(self.request.session.get(key, ''))
         return context
 
 
@@ -221,6 +224,13 @@ class ServiceTemplateDetailView(DetailView):
     model = ServiceTemplate
     template_name = 'invoicing/service_template/detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        key = "{}_params".format(self.model.__name__)
+        context['back_url'] = reverse(
+            'invoicing:service_templates') + '?' + urlencode(self.request.session.get(key, ''))
+        return context
+
 
 class ServiceTemplateCreateView(CreateView):
     model = ServiceTemplate
@@ -297,6 +307,8 @@ class ContractorDetailView(DetailView):
         table = SaleInvoiceTable(SaleInvoice.objects.filter(contractor=context['contractor']))
         RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
         context['table'] = table
+        key = "{}_params".format(self.model.__name__)
+        context['back_url'] = reverse('invoicing:contractors') + '?' + urlencode(self.request.session.get(key, ''))
         return context
 
 

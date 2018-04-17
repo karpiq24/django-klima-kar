@@ -226,6 +226,6 @@ class FilteredSingleTableView(SingleTableView):
     def get_context_data(self, **kwargs):
         context = super(FilteredSingleTableView, self).get_context_data(**kwargs)
         context['filter'] = self.filter
-        key = "{}_params".format(self.filter_class)
+        key = "{}_params".format(self.model.__name__)
         self.request.session[key] = self.request.GET
         return context

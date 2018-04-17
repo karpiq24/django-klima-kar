@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from urllib.parse import urlencode
 
 from django.urls import reverse
 from django.db import IntegrityError, transaction
@@ -28,7 +29,7 @@ class WareTableView(FilteredSingleTableView):
 
     def get(self, request, *args, **kwargs):
         if 'export' in request.path:
-            key = "{}_params".format(self.filter_class)
+            key = "{}_params".format(self.model.__name__)
             queryset = self.filter_class(request.session[key], queryset=self.model.objects.all()).qs
             output = export_wares(queryset)
             response = HttpResponse(output.read(),
@@ -77,6 +78,8 @@ class WareDetailView(DetailView):
         table = InvoiceTableWithWare(invoices)
         RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
         context['table'] = table
+        key = "{}_params".format(self.model.__name__)
+        context['back_url'] = reverse('warehouse:wares') + '?' + urlencode(self.request.session.get(key, ''))
         return context
 
 
@@ -96,6 +99,8 @@ class InvoiceDetailView(DetailView):
         table = InvoiceItemTable(InvoiceItem.objects.filter(invoice=context['invoice']))
         RequestConfig(self.request).configure(table)
         context['item_table'] = table
+        key = "{}_params".format(self.model.__name__)
+        context['back_url'] = reverse('warehouse:invoices') + '?' + urlencode(self.request.session.get(key, ''))
         return context
 
 
@@ -189,6 +194,8 @@ class SupplierDetailView(DetailView):
         table = InvoiceTable(Invoice.objects.filter(supplier=context['supplier']))
         RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
         context['table'] = table
+        key = "{}_params".format(self.model.__name__)
+        context['back_url'] = reverse('warehouse:suppliers') + '?' + urlencode(self.request.session.get(key, ''))
         return context
 
 
