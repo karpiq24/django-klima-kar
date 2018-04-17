@@ -23,8 +23,17 @@
                     <div class="card-body">
                         <div class="list-group">
                             {% for change in stats.warehouse.price_changes %}
-                                <div class="list-group-item list-group-item-action list-group-item-{% if change.is_discount %}success{% else %}danger{% endif%}">
-                                    Zmiana ceny <a href="{% url 'warehouse:ware_detail' change.ware.pk %}">{{ change.ware }}</a> z {{ change.last_price }} zł na {{ change.new_price }} zł u dostawcy <a href="{% url 'warehouse:supplier_detail' change.invoice.supplier.pk %}">{{ change.invoice.supplier }}</a>
+                                <div class="list-group-item list-group-item-action list-group-item-{% if change.is_discount %}success{% else %}danger{% endif %}">
+                                    <div><small>{{ change.created_date|date:"d E Y" }}</small></div>
+                                    {% if change.is_discount %}
+                                        <strong>Obniżka ceny</strong>
+                                    {% else %}
+                                        <strong>Podwyżka ceny</strong>
+                                    {% endif %}
+                                    <a href="{% url 'warehouse:ware_detail' change.ware.pk %}">{{ change.ware }}</a>
+                                    z {{ change.last_price|floatformat:2 }} zł na {{ change.new_price|floatformat:2 }} zł u dostawcy
+                                    <a href="{% url 'warehouse:supplier_detail' change.invoice.supplier.pk %}">{{ change.invoice.supplier }}</a>
+                                    w fakturze <a href="{% url 'warehouse:invoice_detail' change.invoice.pk %}">{{ change.invoice }}</a>.
                                 </div>
                             {% empty %}
                                 Brak zmian w cenach towarów w ostatnim tygodniu.
