@@ -1,5 +1,8 @@
 import six
 
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 from django.views.generic import TemplateView
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.urls import reverse
@@ -30,7 +33,8 @@ class HomeView(TemplateView):
                 'group': 'warehouse',
                 'metrics': [],
                 'charts': [],
-                'price_changes': WarePriceChange.objects.all().order_by('-created_date')
+                'price_changes': WarePriceChange.objects.filter(
+                    created_date__gte=(datetime.now() - relativedelta(weeks=1)).date()).order_by('-created_date')
             },
             'invoicing': {
                 'group': 'invoicing',
