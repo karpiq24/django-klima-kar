@@ -1,8 +1,27 @@
+function printJSSupported() {
+    if (typeof InstallTrigger !== 'undefined') {
+        return false;
+    }
+    if (navigator.userAgent.indexOf('MSIE') !== -1 || !!document.documentMode) {
+        return false;
+    }
+    if (!!window.StyleMedia) {
+        return false;
+    }
+    return true;
+};
+
 function print_pdf() {
     var url = $('#print-btn').attr('data-url');
-    var w = window.open(url);
-    w.print();
-}
+    if (printJSSupported()) {
+        printJS(url);
+    }
+    else {
+        var w = window.open(url);
+        w.print();
+    }
+};
+
 function submitEmailForm(url) {
     var data = $('#email_form').serialize();
     data
