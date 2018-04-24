@@ -60,4 +60,6 @@ GUS_KEY = ''
 
 # Ware price changes alerts
 PRICE_CHHANGE_PERCENTAGE = 5
-PRICE_CHANGE_DAYS = 7
+
+# Reports settings
+REPORT_EMAILS = []

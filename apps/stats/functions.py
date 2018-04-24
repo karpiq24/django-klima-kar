@@ -1,3 +1,5 @@
+from django.db.models import Sum
+
 from apps.warehouse.models import WarePriceChange, Invoice, Ware, Supplier
 from apps.invoicing.models import SaleInvoice, Contractor
 
@@ -11,5 +13,25 @@ def get_report_data(date_from, date_to):
         'purchase_invoices': Invoice.objects.filter(created_date__date__gte=date_from, created_date__date__lte=date_to),
         'contractors': Contractor.objects.filter(created_date__date__gte=date_from, created_date__date__lte=date_to),
         'sale_invoices': SaleInvoice.objects.filter(created_date__date__gte=date_from, created_date__date__lte=date_to),
+    }
+    report_data['metrics'] = {
+        'purchase_invoices': "{0:.2f} zł".format(
+            report_data['purchase_invoices'].aggregate(
+                Sum('total_value'))['total_value__sum']).replace('.', ','),
+        'sale_invoices': "{0:.2f} zł".format(
+            report_data['sale_invoices'].aggregate(
+                Sum('total_value_netto'))['total_value_netto__sum']).replace('.', ','),
+        'r134a': "{} g".format(
+            report_data['sale_invoices'].aggregate(
+                Sum('refrigerantweights__r134a'))['refrigerantweights__r134a__sum']),
+        'r1234yf': "{} g".format(
+            report_data['sale_invoices'].aggregate(
+                Sum('refrigerantweights__r1234yf'))['refrigerantweights__r1234yf__sum']),
+        'r12': "{} g".format(
+            report_data['sale_invoices'].aggregate(
+                Sum('refrigerantweights__r12'))['refrigerantweights__r12__sum']),
+        'r404': "{} g".format(
+            report_data['sale_invoices'].aggregate(
+                Sum('refrigerantweights__r404'))['refrigerantweights__r404__sum']),
     }
     return report_data
