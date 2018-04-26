@@ -14,7 +14,7 @@ function printJSSupported() {
 function print_pdf() {
     var url = $('#print-btn').attr('data-url');
     if (printJSSupported()) {
-        printJS(url);
+        printJS({printable: url, type:'pdf', showModal:true, modalMessage:'Przygotowywanie faktury...'});
     }
     else {
         var w = window.open(url);
