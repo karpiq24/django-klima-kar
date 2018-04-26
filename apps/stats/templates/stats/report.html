@@ -31,7 +31,7 @@
     </head>
     <body>
         <h1>{{ title }}</h1>
-        {{ date_from }} - {{ date_to }}
+        Od {{ date_from|date:"d.m.Y" }} do {{ date_to|date:"d.m.Y" }}
 
         <div>
             <h2>Metryki</h2>
@@ -145,7 +145,7 @@
                     <tr>
                         <td><a href="{% url 'warehouse:invoice_detail' invoice.pk %}">{{ invoice }}</a></td>
                         <td><a href="{% url 'warehouse:supplier_detail' invoice.supplier.pk %}">{{ invoice.supplier }}</a></td>
-                        <td>{{ invoice.date }}</td>
+                        <td>{{ invoice.date|date:"d.m.Y" }}</td>
                         <td>{{ invoice.total_value|floatformat:2 }} zł</td>
                     </tr>
                 {% empty %}
@@ -173,7 +173,7 @@
                     <tr>
                         <td><a href="{% url 'invoicing:sale_invoice_detail' invoice.pk %}">{{ invoice }}</a></td>
                         <td><a href="{% url 'invoicing:contractor_detail' invoice.contractor.pk %}">{{ invoice.contractor }}</a></td>
-                        <td>{{ invoice.issue_date }}</td>
+                        <td>{{ invoice.issue_date|date:"d.m.Y" }}</td>
                         <td>{{ invoice.total_value_netto|floatformat:2 }} zł</td>
                     </tr>
                 {% empty %}

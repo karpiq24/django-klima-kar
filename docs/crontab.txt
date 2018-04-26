@@ -21,7 +21,7 @@
 #
 # m h  dom mon dow   command
 
+25 22 * * 0 /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py send_report week $(date +\%Y-\%m-\%d) >> /home/bartosz/klima-kar/logs/email_report.log 2>&1
 30 22 * * * /home/bartosz/klima-kar/suspend_until.sh 07:50
-51 07 * * 1 /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py send_report week >> /home/bartosz/klima-kar/logs/email_report.log 2>&1
 53 07 * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py loadintercars $(date -d "-7 days" +\%Y-\%m-\%d) >> /home/bartosz/klima-kar/logs/intercars.log 2>&1
 59 07 * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py dropbox_backup >> /home/bartosz/klima-kar/logs/dropbox_backup.log 2>&1
