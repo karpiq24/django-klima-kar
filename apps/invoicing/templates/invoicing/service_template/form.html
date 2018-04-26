@@ -14,7 +14,7 @@
         <div class="card bg-light">
             <div class="card-body">
                 <h5 class="card-title">Akcje</h5>
-                <button class="btn btn-outline-primary btn-lg" type="submit">Zapisz</button>
+                <button class="btn btn-outline-primary btn-lg" type="submit"><i class="far fa-save"></i> Zapisz</button>
                 {% if object %}
                     <a class="btn btn-outline-dark btn-lg" href="{% url 'invoicing:service_template_detail' object.pk %}">Powrót</a>
                 {% else %}
