@@ -220,7 +220,7 @@ class ExportRefrigerantWeights(View):
         output = generate_refrigerant_weights_report(queryset)
         response = HttpResponse(output.read(),
                                 content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-        response['Content-Disposition'] = "attachment; filename=Sprzedaz czynnika.xlsx"
+        response['Content-Disposition'] = "attachment; filename=Sprzedaz_czynnika.xlsx"
         return response
 
 
