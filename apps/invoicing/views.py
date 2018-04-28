@@ -20,7 +20,7 @@ from apps.invoicing.forms import SaleInvoiceModelForm, ContractorModelForm, Sale
 from apps.invoicing.tables import SaleInvoiceTable, ContractorTable, SaleInvoiceItemTable, ServiceTemplateTable
 from apps.invoicing.filters import SaleInvoiceFilter, ContractorFilter, ServiceTemplateFilter
 from apps.invoicing.dictionaries import INVOICE_TYPES
-from apps.invoicing.functions import get_next_invoice_number
+from apps.invoicing.functions import get_next_invoice_number, generate_refrigerant_weights_report
 from apps.invoicing.gus import gus_session
 
 
@@ -211,6 +211,17 @@ class SendEmailView(View):
             return JsonResponse({
                 'status': 'error',
                 'message': 'Bład przy wysyłaniu wiadomości. Skontaktuj się z administratorem.'}, status=500)
+
+
+class ExportRefrigerantWeights(View):
+    def get(self, request, *args, **kwargs):
+        key = "{}_params".format(SaleInvoice.__name__)
+        queryset = SaleInvoiceFilter(request.session[key], queryset=SaleInvoice.objects.all()).qs
+        output = generate_refrigerant_weights_report(queryset)
+        response = HttpResponse(output.read(),
+                                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response['Content-Disposition'] = "attachment; filename=Sprzedaz czynnika.xlsx"
+        return response
 
 
 class ServiceTemplateTableView(FilteredSingleTableView):

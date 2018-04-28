@@ -5,7 +5,7 @@ from apps.warehouse import views
 app_name = 'warehouse'
 urlpatterns = [
     path('wares', views.WareTableView.as_view(), name='wares'),
-    path('wares/export', views.WareTableView.as_view(), name='wares_export'),
+    path('wares/inventory', views.ExportWareInventory.as_view(), name='wares_inventory'),
     path('wares/create', views.WareCreateView.as_view(), name='ware_create'),
     path('wares/create_ajax', views.WareCreateAjaxView.as_view(), name='ware_create_ajax'),
     path('wares/<int:pk>', views.WareDetailView.as_view(), name='ware_detail'),

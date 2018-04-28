@@ -17,6 +17,12 @@
             <a class="btn btn-outline-success btn-lg" href="{% url 'invoicing:sale_invoice_create' 4 %}"><i class="far fa-plus-square"></i> WDT</a>
         </div>
     </div>
+    <div class="card bg-light">
+        <div class="card-body">
+            <h5 class="card-title">Eksport faktur</h5>
+            <a class="btn btn-outline-info btn-lg" href="{% url 'invoicing:export_refrigerant_weights' %}"><i class="far fa-file-excel"></i> Sprzedaż czynnika</a>
+        </div>
+    </div>
 </div>
 
 {% render_table table "tables2/table.html" %}

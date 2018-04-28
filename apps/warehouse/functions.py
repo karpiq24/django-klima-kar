@@ -9,7 +9,7 @@ from KlimaKar import settings
 from apps.warehouse.models import WarePriceChange, Invoice
 
 
-def export_wares(queryset):
+def generate_ware_inventory(queryset):
     output = io.BytesIO()
     workbook = Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet()

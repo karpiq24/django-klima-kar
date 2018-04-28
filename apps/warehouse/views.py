@@ -18,7 +18,7 @@ from apps.warehouse.tables import WareTable, InvoiceTable, SupplierTable, Invoic
 from apps.warehouse.filters import WareFilter, InvoiceFilter, SupplierFilter
 from apps.warehouse.forms import (
     WareModelForm, InvoiceModelForm, SupplierModelForm, InvoiceItemModelForm)
-from apps.warehouse.functions import export_wares, check_ware_price_changes
+from apps.warehouse.functions import generate_ware_inventory, check_ware_price_changes
 
 
 class WareTableView(FilteredSingleTableView):
@@ -26,17 +26,6 @@ class WareTableView(FilteredSingleTableView):
     table_class = WareTable
     filter_class = WareFilter
     template_name = 'warehouse/ware/ware_table.html'
-
-    def get(self, request, *args, **kwargs):
-        if 'export' in request.path:
-            key = "{}_params".format(self.model.__name__)
-            queryset = self.filter_class(request.session[key], queryset=self.model.objects.all()).qs
-            output = export_wares(queryset)
-            response = HttpResponse(output.read(),
-                                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-            response['Content-Disposition'] = "attachment; filename=eksport_towarow.xlsx"
-            return response
-        return super(FilteredSingleTableView, self).get(request, *args, **kwargs)
 
 
 class WareUpdateView(UpdateView):
@@ -81,6 +70,16 @@ class WareDetailView(DetailView):
         key = "{}_params".format(self.model.__name__)
         context['back_url'] = reverse('warehouse:wares') + '?' + urlencode(self.request.session.get(key, ''))
         return context
+
+
+class ExportWareInventory(View):
+    def get(self, request, *args, **kwargs):
+        queryset = Ware.objects.filter(stock__gte=1)
+        output = generate_ware_inventory(queryset)
+        response = HttpResponse(output.read(),
+                                content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response['Content-Disposition'] = "attachment; filename=Remanent.xlsx"
+        return response
 
 
 class InvoiceTableView(FilteredSingleTableView):
