@@ -143,10 +143,10 @@ def generate_refrigerant_weights_report(queryset):
     worksheet.set_row(0, 30)
 
     bold = workbook.add_format({'bold': True})
-    bold_weight = workbook.add_format({'num_format': '0 g', 'bold': True})
+    bold_weight = workbook.add_format({'num_format': '#0 "g"', 'bold': True})
     border = workbook.add_format({'border': 1})
     bold_border = workbook.add_format({'border': 1, 'bold': True})
-    border_weight = workbook.add_format({'border': 1, 'num_format': '0 g'})
+    border_weight = workbook.add_format({'border': 1, 'num_format': '#0 "g"'})
     big_bold = workbook.add_format({'font_size': 22, 'bold': True})
     columns = [
         ('Typ faktury', 15),
