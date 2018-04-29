@@ -10,7 +10,7 @@ class ContractorTable(tables.Table):
     city = tables.Column(attrs={'th': {'width': '15%'}})
     actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
                                     template_name='invoicing/contractor/table_actions.html',
-                                    orderable=False)
+                                    orderable=False, exclude_from_export=True)
 
     def render_nip(self, record):
         return "{}{}".format(record.nip_prefix or '', record.nip)
@@ -31,7 +31,7 @@ class SaleInvoiceTable(tables.Table):
     total_value_netto = tables.Column(attrs={'th': {'width': '20%'}}, verbose_name="Łączna wartość netto")
     actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
                                     template_name='invoicing/sale_invoice/table_actions.html',
-                                    orderable=False)
+                                    orderable=False, exclude_from_export=True)
 
     def render_total_value_netto(self, value):
         return "{0:.2f} zł".format(value).replace('.', ',')

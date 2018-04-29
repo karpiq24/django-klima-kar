@@ -9,6 +9,7 @@ from django.views.generic import DetailView, UpdateView, CreateView, View
 from django.db.models import Q, F
 
 from django_tables2 import RequestConfig
+from django_tables2.export.views import ExportMixin
 from dal import autocomplete
 
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
@@ -21,11 +22,12 @@ from apps.warehouse.forms import (
 from apps.warehouse.functions import generate_ware_inventory, check_ware_price_changes
 
 
-class WareTableView(FilteredSingleTableView):
+class WareTableView(ExportMixin, FilteredSingleTableView):
     model = Ware
     table_class = WareTable
     filter_class = WareFilter
     template_name = 'warehouse/ware/ware_table.html'
+    export_name = 'Towary'
 
 
 class WareUpdateView(UpdateView):
@@ -82,11 +84,12 @@ class ExportWareInventory(View):
         return response
 
 
-class InvoiceTableView(FilteredSingleTableView):
+class InvoiceTableView(ExportMixin, FilteredSingleTableView):
     model = Invoice
     table_class = InvoiceTable
     filter_class = InvoiceFilter
     template_name = 'warehouse/invoice/invoice_table.html'
+    export_name = 'Faktury zakupowe'
 
 
 class InvoiceDetailView(DetailView):
@@ -177,11 +180,12 @@ class InvoiceCreateView(InvoiceFormMixin, CreateView):
         return context
 
 
-class SupplierTableView(FilteredSingleTableView):
+class SupplierTableView(ExportMixin, FilteredSingleTableView):
     model = Supplier
     table_class = SupplierTable
     filter_class = SupplierFilter
     template_name = 'warehouse/supplier/supplier_table.html'
+    export_name = 'Dostawcy'
 
 
 class SupplierDetailView(DetailView):

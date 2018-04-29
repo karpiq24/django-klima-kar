@@ -14,7 +14,7 @@ class WareTable(tables.Table):
     last_price = tables.Column(attrs={'th': {'width': '13%'}}, verbose_name="Ostatnia cena")
     actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
                                     template_name='warehouse/ware/ware_actions.html',
-                                    orderable=False)
+                                    orderable=False, exclude_from_export=True)
 
     def render_last_price(self, value):
         return "{0:.2f} zł".format(value).replace('.', ',')
@@ -39,7 +39,7 @@ class InvoiceTable(tables.Table):
     total_value = tables.Column(attrs={'th': {'width': '15%'}}, verbose_name="Łączna wartość")
     actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
                                     template_name='warehouse/invoice/invoice_actions.html',
-                                    orderable=False)
+                                    orderable=False, exclude_from_export=True)
 
     def render_total_value(self, value):
         return "{0:.2f} zł".format(value).replace('.', ',')
@@ -77,7 +77,7 @@ class SupplierTable(tables.Table):
     all_invoices_value = tables.Column(attrs={'th': {'width': '20%'}}, verbose_name="Łączna wartość zakupów")
     actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
                                     template_name='warehouse/supplier/supplier_actions.html',
-                                    orderable=False)
+                                    orderable=False, exclude_from_export=True)
 
     def render_all_invoices_value(self, value):
         return "{0:.2f} zł".format(value).replace('.', ',')

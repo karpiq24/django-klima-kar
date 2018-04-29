@@ -1,5 +1,6 @@
 from urllib.parse import urlencode
 from django_tables2 import RequestConfig
+from django_tables2.export.views import ExportMixin
 from smtplib import SMTPRecipientsRefused
 
 from django.views.generic import DetailView, UpdateView, CreateView, View
@@ -24,11 +25,12 @@ from apps.invoicing.functions import get_next_invoice_number, generate_refrigera
 from apps.invoicing.gus import gus_session
 
 
-class SaleInvoiceTableView(FilteredSingleTableView):
+class SaleInvoiceTableView(ExportMixin, FilteredSingleTableView):
     model = SaleInvoice
     table_class = SaleInvoiceTable
     filter_class = SaleInvoiceFilter
     template_name = 'invoicing/sale_invoice/table.html'
+    export_name = 'Zakupy sprzedazowe'
 
 
 class SaleInvoiceDetailView(DetailView):
@@ -302,11 +304,12 @@ class ServiceTemplateGetDataView(View):
         return JsonResponse({'status': 'error', 'service': []})
 
 
-class ContractorTableView(FilteredSingleTableView):
+class ContractorTableView(ExportMixin, FilteredSingleTableView):
     model = Contractor
     table_class = ContractorTable
     filter_class = ContractorFilter
     template_name = 'invoicing/contractor/table.html'
+    export_name = 'Kontrahenci'
 
 
 class ContractorDetailView(DetailView):
