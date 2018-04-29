@@ -8,7 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
   <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/bootstrap.min.css' %}">
-  <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/jquery.datetimepicker.min.css' %}">
+  <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/picker.css' %}">
+  <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/picker_date.css' %}">
   <link rel="stylesheet" type="text/css" media="screen" href="{% static 'autocomplete_light/vendor/select2/dist/css/select2.min.css' %}">
   <link rel="stylesheet" type="text/css" media="screen" href="{% static 'autocomplete_light/select2.css' %}">
   <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/print.min.css' %}">
@@ -63,7 +64,8 @@
 <script src="{% static 'js/popper.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/Chart.min.js' %}"></script>
-<script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+<script src="{% static 'js/picker.js' %}"></script>
+<script src="{% static 'js/picker_date.js' %}"></script>
 <script src="{% static 'autocomplete_light/vendor/select2/dist/js/select2.full.min.js' %}"></script>
 <script src="{% static 'autocomplete_light/vendor/select2/dist/js/i18n/pl.js' %}"></script>
 <script src="{% static 'autocomplete_light/vendor/select2/dist/js/select2.min.js' %}"></script>
@@ -96,12 +98,23 @@
     }, 5000);
   }
   $(function () {
-    jQuery.datetimepicker.setLocale('pl');
-    jQuery('.date-input').datetimepicker(
+    $('.date-input').pickadate(
       {
-        format:'d.m.Y',
-        timepicker:false,
-        dayOfWeekStart: 1
+        selectMonths: true,
+        selectYears: true,
+        format: 'dd.mm.yyyy',
+        monthsFull: [ 'styczeń', 'luty', 'marzec', 'kwiecień', 'maj', 'czerwiec', 'lipiec', 'sierpień', 'wrzesień', 'październik', 'listopad', 'grudzień' ],
+        monthsShort: [ 'sty', 'lut', 'mar', 'kwi', 'maj', 'cze', 'lip', 'sie', 'wrz', 'paź', 'lis', 'gru' ],
+        weekdaysFull: [ 'niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota' ],
+        weekdaysShort: [ 'niedz.', 'pn.', 'wt.', 'śr.', 'cz.', 'pt.', 'sob.' ],
+        labelMonthNext: 'Następny miesiąc',
+        labelMonthPrev: 'Poprzedni miesiąc',
+        labelMonthSelect: 'Wybierz miesiąc',
+        labelYearSelect: 'Wybierz rok',
+        today: 'Dzisiaj',
+        clear: 'Usuń',
+        close: 'Zamknij',
+        firstDay: 1,
       }
     );
     setTimeout(function() {

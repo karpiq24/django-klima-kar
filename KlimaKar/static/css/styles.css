@@ -38,6 +38,18 @@ span.required {
     margin-bottom: 0.5rem;
     cursor: pointer;
 }
+.date-input.form-control:disabled, .date-input.form-control[readonly] {
+    background-color: #fff;
+}
+.picker__input.picker__input--active {
+    border-color: #80bdff !important;
+    outline: 0;
+    border-radius: .25rem;
+    box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .25);
+}
+.picker__select--month, .picker__select--year {
+    height: auto;
+}
 /*
     MISC
 */
