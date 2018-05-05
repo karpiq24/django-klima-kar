@@ -17,21 +17,21 @@ def get_report_data(date_from, date_to):
     report_data['metrics'] = {
         'purchase_invoices': "{0:.2f} zł".format(
             report_data['purchase_invoices'].aggregate(
-                Sum('total_value'))['total_value__sum']).replace('.', ','),
+                Sum('total_value'))['total_value__sum'] or 0).replace('.', ','),
         'sale_invoices': "{0:.2f} zł".format(
             report_data['sale_invoices'].aggregate(
-                Sum('total_value_netto'))['total_value_netto__sum']).replace('.', ','),
+                Sum('total_value_netto'))['total_value_netto__sum'] or 0).replace('.', ','),
         'r134a': "{} g".format(
             report_data['sale_invoices'].aggregate(
-                Sum('refrigerantweights__r134a'))['refrigerantweights__r134a__sum']),
+                Sum('refrigerantweights__r134a'))['refrigerantweights__r134a__sum'] or 0),
         'r1234yf': "{} g".format(
             report_data['sale_invoices'].aggregate(
-                Sum('refrigerantweights__r1234yf'))['refrigerantweights__r1234yf__sum']),
+                Sum('refrigerantweights__r1234yf'))['refrigerantweights__r1234yf__sum'] or 0),
         'r12': "{} g".format(
             report_data['sale_invoices'].aggregate(
-                Sum('refrigerantweights__r12'))['refrigerantweights__r12__sum']),
+                Sum('refrigerantweights__r12'))['refrigerantweights__r12__sum'] or 0),
         'r404': "{} g".format(
             report_data['sale_invoices'].aggregate(
-                Sum('refrigerantweights__r404'))['refrigerantweights__r404__sum']),
+                Sum('refrigerantweights__r404'))['refrigerantweights__r404__sum'] or 0),
     }
     return report_data

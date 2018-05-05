@@ -62,4 +62,5 @@ GUS_KEY = ''
 PRICE_CHHANGE_PERCENTAGE = 5
 
 # Reports settings
+ABSOLUTE_URL = ''
 REPORT_EMAILS = []

@@ -20,7 +20,7 @@ class Command(BaseCommand):
         date_option = options['date_option']
         input_date = date_parser.parse(options['date']).date()
         if date_option == 'week':
-            date_from = input_date.replace(day=(input_date.day - input_date.weekday()))
+            date_from = input_date - relativedelta(days=input_date.weekday())
             date_to = date_from + relativedelta(days=6)
             title = 'Raport tygodniowy'
         elif date_option == 'month':
@@ -40,6 +40,7 @@ class Command(BaseCommand):
         report_data['title'] = title
         report_data['date_from'] = date_from
         report_data['date_to'] = date_to
+        report_data['absolute_url'] = settings.ABSOLUTE_URL
 
         template = get_template('stats/report.html')
         content = template.render(report_data)
