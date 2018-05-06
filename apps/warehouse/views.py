@@ -266,7 +266,11 @@ class WareAutocomplete(CustomSelect2QuerySetView):
 
 class WareNameAutocomplete(autocomplete.Select2ListView):
     def get_list(self):
-        return list(Ware.objects.values_list('name', flat=True).distinct())
+        result = []
+        if self.q:
+            data = Ware.objects.filter(name__icontains=self.q).values_list('name', flat=True).distinct()[:10]
+            result = list(data)
+        return result
 
     def create(self, text):
         return text
