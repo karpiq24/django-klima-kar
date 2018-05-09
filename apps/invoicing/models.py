@@ -54,6 +54,12 @@ class SaleInvoice(models.Model):
     def total_value_tax(self):
         return self.total_value_brutto - self.total_value_netto
 
+    def save(self, *args, **kwargs):
+        number_data = self.number.split('/')
+        self.number_value = number_data[0]
+        self.number_year = number_data[1]
+        super().save(*args, **kwargs)
+
     def generate_pdf(self, print_version=False):
         template = get_template('invoicing/invoice.html')
         rendered_tpl = template.render({'invoice': self}).encode()

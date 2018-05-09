@@ -16,17 +16,15 @@ function customSuccessCreate(data, identifier) {
     }
 }
 
-function setItemFormCount() {
-    var row_count = $('#item-rows').children('.item-formset-row').length - $('#item-rows').children('.d-none').length;
-    $('#id_item-TOTAL_FORMS').val(row_count);
-}
-
 function calculateInvoiceTotals() {
     var invoice_total_netto = 0.00;
     var tax_multiplier = $("#id_tax_percent").val() / 100;
     $('.item-formset-row').each(function() {
         if (!$(this).hasClass('d-none')) {
             var price_netto = toCurrency($(this).find(".item-netto").val());
+            if (isNaN(price_netto)) {
+                price_netto = 0;
+            }
             var quantity = parseInt($(this).find(".item-quantity").val());
             var total_netto = toCurrency(quantity * price_netto);
             invoice_total_netto = toCurrency(invoice_total_netto + total_netto);
@@ -109,7 +107,6 @@ $(function () {
         $(item_form).removeClass('d-none');
         $(item_form).insertAfter($("#item-rows tr:not('.d-none'):last"));
         $(item_form).find(".form-control").first().focus();
-        setItemFormCount();
     });
 
     $(".remove_item_formset").click(function(){
@@ -123,7 +120,6 @@ $(function () {
         $(item_form).find(".item-brutto").val('');
         $(item_form).find(".item-DELETE").children('input').prop('checked', true);
         calculateInvoiceTotals();
-        setItemFormCount();
     });
 
     $(".item-netto").change(function () {
@@ -260,5 +256,4 @@ $(function () {
         }
     })
     calculateInvoiceTotals();
-    setItemFormCount();
 });

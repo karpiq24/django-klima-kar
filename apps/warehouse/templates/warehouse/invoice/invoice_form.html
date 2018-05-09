@@ -12,8 +12,7 @@
             {% include 'forms/form.html' with form=form %}
         </div>
     </div>
-
-    {{ item_formset.management_form }}
+    {{ inlines.0.management_form }}
     <div class="table-responsive">
         <table class="table table-striped table-hover table-bordered">
             <thead>
@@ -27,7 +26,7 @@
                 </tr>
             </thead>
             <tbody id="item-rows">
-                {% for item_form in item_formset %}
+                {% for item_form in inlines.0 %}
                     {{ item_form.id }}
                     <tr class="item-formset-row d-none">
                         <td width="30%">

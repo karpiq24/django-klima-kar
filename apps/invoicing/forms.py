@@ -1,9 +1,10 @@
 from dal import autocomplete
+from extra_views import InlineFormSet
 
 from django import forms
 from django.urls import reverse
 
-from apps.invoicing.models import Contractor, SaleInvoice, SaleInvoiceItem, ServiceTemplate
+from apps.invoicing.models import Contractor, SaleInvoice, SaleInvoiceItem, ServiceTemplate, RefrigerantWeights
 from apps.warehouse.models import Ware
 
 
@@ -127,6 +128,18 @@ class SaleInvoiceItemModelForm(forms.ModelForm):
     class Meta:
         model = SaleInvoiceItem
         fields = ['name', 'description', 'quantity', 'price_netto', 'price_brutto', 'ware', 'service']
+
+
+class SaleInvoiceItemsInline(InlineFormSet):
+    model = SaleInvoiceItem
+    form_class = SaleInvoiceItemModelForm
+    factory_kwargs = {'extra': 20}
+
+
+class RefrigerantWeightsInline(InlineFormSet):
+    model = RefrigerantWeights
+    factory_kwargs = {'max_num': 1, 'min_num': 1, 'can_delete': False}
+    fields = '__all__'
 
 
 class ServiceTemplateModelForm(forms.ModelForm):

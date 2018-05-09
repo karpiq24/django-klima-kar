@@ -1,7 +1,7 @@
 from django import forms
-from django.forms.formsets import BaseFormSet
 
 from dal import autocomplete
+from extra_views import InlineFormSet
 
 from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 
@@ -42,7 +42,10 @@ class InvoiceModelForm(forms.ModelForm):
 
     class Meta:
         model = Invoice
-        fields = ['supplier', 'number', 'date']
+        fields = ['supplier', 'number', 'date', 'total_value']
+        widgets = {
+            'total_value': forms.HiddenInput()
+        }
 
 
 class SupplierModelForm(forms.ModelForm):
@@ -75,41 +78,7 @@ class InvoiceItemModelForm(forms.ModelForm):
         fields = ['ware', 'quantity', 'price']
 
 
-class BaseInvoiceItemFormSet(BaseFormSet):
-    def clean(self):
-        wares = []
-        duplicates = False
-
-        for form in self.forms:
-            if form.cleaned_data:
-                ware = form.cleaned_data.get('ware', None)
-                quantity = form.cleaned_data.get('quantity', None)
-                price = form.cleaned_data.get('price', None)
-
-                if ware:
-                    if ware in wares:
-                        duplicates = True
-                    wares.append(ware)
-
-                if duplicates:
-                    raise forms.ValidationError(
-                        'Nie można dodać twóch takich samych towarów do jednej faktury.',
-                        code='duplicate_ware'
-                    )
-
-                if not quantity:
-                    raise forms.ValidationError(
-                        'Kaźdy towar musi mieć podaną ilość.',
-                        code='missing_quantity'
-                    )
-                elif quantity <= 0:
-                    raise forms.ValidationError(
-                        'Ilość musi być większa od 0.',
-                        code='missing_quantity'
-                    )
-
-                if not price:
-                    raise forms.ValidationError(
-                        'Każdy towar musi mieć podaną cenę.',
-                        code='missing_price'
-                    )
+class InvoiceItemsInline(InlineFormSet):
+    model = InvoiceItem
+    form_class = InvoiceItemModelForm
+    factory_kwargs = {'extra': 20}
