@@ -21,7 +21,7 @@ from apps.invoicing.tables import SaleInvoiceTable, ContractorTable, SaleInvoice
 from apps.invoicing.filters import SaleInvoiceFilter, ContractorFilter, ServiceTemplateFilter
 from apps.invoicing.dictionaries import INVOICE_TYPES
 from apps.invoicing.functions import get_next_invoice_number, generate_refrigerant_weights_report
-from apps.invoicing.gus import gus_session
+from apps.invoicing.gus import get_gus_address
 
 
 class SaleInvoiceTableView(ExportMixin, FilteredSingleTableView):
@@ -317,7 +317,7 @@ class ContractorGUS(View):
         nip = request.GET.get('nip')
         if len(str(nip)) != 10:
             return JsonResponse({}, status=400)
-        response_data = gus_session.get_address(nip=nip)
+        response_data = get_gus_address(nip)
         if not response_data:
             return JsonResponse({}, status=404)
         return JsonResponse(response_data)
