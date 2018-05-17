@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_filters',
     'widget_tweaks',
+    'reversion',
+    'reversion_compare',
 
     'KlimaKar',
     'apps.warehouse',
@@ -60,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'reversion.middleware.RevisionMiddleware',
     'KlimaKar.middleware.LoginRequiredMiddleware',
 ]
 
@@ -67,6 +70,7 @@ ROOT_URLCONF = 'KlimaKar.urls'
 LOGIN_URL = '/login/'
 LOGIN_EXEMPT_URLS = ['admin']
 LOGIN_REDIRECT_URL = 'home'
+ADD_REVERSION_ADMIN = True
 
 TEMPLATES = [
     {

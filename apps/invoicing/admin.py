@@ -1,8 +1,11 @@
 from django.contrib import admin
 
-from apps.invoicing.models import SaleInvoice, SaleInvoiceItem, Contractor, RefrigerantWeights
+from reversion_compare.admin import CompareVersionAdmin
 
-admin.site.register(SaleInvoice)
-admin.site.register(SaleInvoiceItem)
-admin.site.register(Contractor)
-admin.site.register(RefrigerantWeights)
+from apps.invoicing.models import SaleInvoice, SaleInvoiceItem, Contractor, RefrigerantWeights, ServiceTemplate
+
+admin.site.register(SaleInvoice, CompareVersionAdmin)
+admin.site.register(SaleInvoiceItem, CompareVersionAdmin)
+admin.site.register(Contractor, CompareVersionAdmin)
+admin.site.register(RefrigerantWeights, CompareVersionAdmin)
+admin.site.register(ServiceTemplate, CompareVersionAdmin)
