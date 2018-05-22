@@ -19,25 +19,21 @@
         <div class="row">
             <div class="col-12">
                 <div class="card bg-light price-change-card">
-                    <h5 class="card-header">Zmiany cen towarów</h5>
-                    <div class="card-body">
-                        <div class="list-group">
-                            {% for change in stats.warehouse.price_changes %}
-                                <div class="list-group-item list-group-item-action list-group-item-{% if change.is_discount %}success{% else %}danger{% endif %}">
-                                    <div><small>{{ change.created_date|date:"d E Y" }}</small></div>
-                                    {% if change.is_discount %}
-                                        <strong>Obniżka ceny</strong>
-                                    {% else %}
-                                        <strong>Podwyżka ceny</strong>
-                                    {% endif %}
-                                    <a href="{% url 'warehouse:ware_detail' change.ware.pk %}">{{ change.ware }}</a>
-                                    z {{ change.last_price|floatformat:2 }} zł na {{ change.new_price|floatformat:2 }} zł u dostawcy
-                                    <a href="{% url 'warehouse:supplier_detail' change.invoice.supplier.pk %}">{{ change.invoice.supplier }}</a>
-                                    w fakturze <a href="{% url 'warehouse:invoice_detail' change.invoice.pk %}">{{ change.invoice }}</a>.
+                    <h5 class="card-header">
+                        <form class="form-inline flex-column flex-sm-row">
+                            <div class="flex-sm-fill">Zmiany cen towarów</div>
+                                <div style="width:auto;" class="ml-sm-auto">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                        </div>
+                                        <input type="text" class="date-range-input form-control" id="ware-change-date-range" data-url="{{ stats.warehouse.ware_price_changes_url }}">
+                                    </div>
                                 </div>
-                            {% empty %}
-                                Brak zmian w cenach towarów w ostatnim tygodniu.
-                            {% endfor %}
+                        </form>
+                    </h5>
+                    <div class="card-body">
+                        <div class="list-group" id="ware-price-changes-list">
                         </div>
                     </div>
                 </div>
@@ -69,10 +65,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-    $(function () {
-        $('.sidenav #nav-dashboard').children(':first').addClass('active');
-    });
-</script>
+<script src="{% static 'js/stats/dashboard.js' %}"></script>
 <script src="{% static 'js/stats/load_charts.js' %}"></script>
 {% endblock %}

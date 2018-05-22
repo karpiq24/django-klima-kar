@@ -8,6 +8,7 @@ urlpatterns = [
     path('supplier_purchase_history', views.SupplierPurchaseHistory.as_view(), name='supplier_purchase_history'),
     path('ware_purchase_history', views.WarePurchaseHistory.as_view(), name='ware_purchase_history'),
     path('ware_purchase_cost/<int:pk>', views.WarePurchaseCost.as_view(), name='ware_purchase_cost'),
+    path('ware_price_changes', views.WarePriceChanges.as_view(), name='ware_price_changes'),
 
     path('sale_invoices_history', views.SaleInvoicesHistory.as_view(), name='sale_invoices_history'),
     path('refrigerant_history', views.RefrigerantWeightsHistory.as_view(), name='refrigerant_history'),

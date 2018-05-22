@@ -1,14 +1,17 @@
 import datetime
 
 from dateutil.relativedelta import relativedelta
+from dateutil import parser as date_parser
 
 from django.views.generic import View
 from django.http import JsonResponse
+from django.urls import reverse
 from django.db.models import Sum, Avg, Count, Func, F, FloatField
 from django.db.models.functions import ExtractYear, ExtractMonth
+from django.template.defaultfilters import date as _date
 
 from KlimaKar.mixins import GroupAccessControlMixin
-from apps.warehouse.models import Invoice, Ware
+from apps.warehouse.models import Invoice, Ware, WarePriceChange
 from apps.invoicing.models import SaleInvoice
 from apps.stats.dictionaries import MONTHS, COLORS, DAYS
 
@@ -525,3 +528,32 @@ class WarePurchaseCost(ChartDataMixin, View):
 
         response_data['options']['legend']['display'] = False
         return JsonResponse(response_data)
+
+
+class WarePriceChanges(View):
+    def get(self, *args, **kwargs):
+        date_from = date_parser.parse(self.request.GET.get('date_from')).date()
+        date_to = date_parser.parse(self.request.GET.get('date_to')).date()
+        changes = WarePriceChange.objects.filter(
+            created_date__date__gte=date_from, created_date__date__lte=date_to).order_by('-created_date')
+        response = {'changes': []}
+        for change in changes:
+            response['changes'].append({
+                'invoice': {
+                    'url': reverse('warehouse:invoice_detail', kwargs={'pk': change.invoice.pk}),
+                    'number': change.invoice.number
+                },
+                'ware': {
+                    'url': reverse('warehouse:ware_detail', kwargs={'pk': change.ware.pk}),
+                    'index': change.ware.index,
+                },
+                'supplier': {
+                    'url': reverse('warehouse:supplier_detail', kwargs={'pk': change.invoice.supplier.pk}),
+                    'name': change.invoice.supplier.name
+                },
+                'is_discount': change.is_discount,
+                'last_price': "{0:.2f} zł".format(change.last_price).replace('.', ','),
+                'new_price': "{0:.2f} zł".format(change.new_price).replace('.', ','),
+                'created_date': _date(change.created_date, "d E Y")
+            })
+        return JsonResponse(response)

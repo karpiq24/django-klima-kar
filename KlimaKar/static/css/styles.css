@@ -38,15 +38,13 @@ span.required {
     margin-bottom: 0.5rem;
     cursor: pointer;
 }
-.date-input.form-control:disabled, .date-input.form-control[readonly] {
+.date-input.form-control:disabled,
+.date-input.form-control[readonly],
+.date-range-input.form-control:disabled,
+.date-range-input.form-control[readonly] {
     background-color: #fff;
 }
-.picker__input.picker__input--active {
-    border-color: #80bdff !important;
-    outline: 0;
-    border-radius: .25rem;
-    box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .25);
-}
+
 /*
     MISC
 */
@@ -100,23 +98,15 @@ span.required {
 .pagination .next {
 	float: right;
 }
-.table > thead > tr > th.asc > a {
-    margin-right: 8px;
-}
-.table > thead > tr > th.desc > a {
-    margin-right: 8px;
-}
 .table > thead > tr > th.asc::after {
-    display: none;
-    font-family: "Font Awesome 5 Solid";
-    content: "\f0d8";
     margin-left: 8px;
+    font-family: "Font Awesome 5 Free";
+    content: "\f0d8";
 }
 .table > thead > tr > th.desc::after {
-    display: none;
-    font-family: "Font Awesome 5 Solid";
-    content: "\f0d7";
     margin-left: 8px;
+    font-family: "Font Awesome 5 Free";
+    content: "\f0d7";
 }
 
 /* 

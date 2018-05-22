@@ -1,8 +1,5 @@
 import six
 
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
-
 from django.views.generic import TemplateView
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.urls import reverse
@@ -12,7 +9,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django_tables2 import SingleTableView
 from dal import autocomplete
 
-from apps.warehouse.models import Ware, Invoice, Supplier, WarePriceChange
+from apps.warehouse.models import Ware, Invoice, Supplier
 from apps.invoicing.models import SaleInvoice, Contractor, RefrigerantWeights
 
 
@@ -33,8 +30,7 @@ class HomeView(TemplateView):
                 'group': 'warehouse',
                 'metrics': [],
                 'charts': [],
-                'price_changes': WarePriceChange.objects.filter(
-                    created_date__gte=(datetime.now() - relativedelta(weeks=1)).date()).order_by('-created_date')
+                'ware_price_changes_url': reverse('stats:ware_price_changes')
             },
             'invoicing': {
                 'group': 'invoicing',
