@@ -20,6 +20,9 @@ class WareModelForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 3}),
         }
 
+    class Media:
+        js = ('js/warehouse/ware.js',)
+
 
 class InvoiceModelForm(forms.ModelForm):
     supplier = forms.ModelChoiceField(

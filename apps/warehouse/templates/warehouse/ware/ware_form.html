@@ -35,10 +35,7 @@
     $(function () {
         $('.sidenav #nav-wares').children(':first').addClass('active');
         $('.sidenav #nav-warehouse').collapse('show');
-
-        $('#id_name').autocomplete({
-            serviceUrl: WARE_NAME_AUTOCOMPLETE
-        });
     });
 </script>
+{{ form.media.js }}
 {% endblock %}
