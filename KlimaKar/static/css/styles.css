@@ -157,6 +157,7 @@ span.required {
 /* 
     STATS
 */
+
 .metrics-card .card-body {
     display: flex;
 }
@@ -172,4 +173,35 @@ span.required {
 }
 #stats-tab-content {
     padding-top: 1rem;
+}
+
+/* 
+    JQUERY AUTOCOMPLETE
+*/
+
+.autocomplete-suggestions { 
+    border: 1px solid #80bdff;
+    border-top: none;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    background: #FFF;
+    overflow: auto;
+}
+.autocomplete-suggestion {
+    padding: 2px 5px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.autocomplete-selected {
+    background: #F0F0F0;
+}
+.autocomplete-suggestions strong {
+    font-weight: bold;
+}
+.autocomplete-group {
+    padding: 2px 5px;
+}
+.autocomplete-group strong {
+    display: block;
+    border-bottom: 1px solid #000;
 }

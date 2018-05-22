@@ -7,16 +7,11 @@ from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 
 
 class WareModelForm(forms.ModelForm):
-    name = forms.CharField(
-        label="Nazwa",
-        widget=autocomplete.ListSelect2(url='warehouse:ware_name_autocomplete')
-    )
 
     def __init__(self, *args, **kwargs):
         super(WareModelForm, self).__init__(*args, **kwargs)
         self.fields['index'].widget.attrs.update({'placeholder': 'Podaj indeks'})
-        self.fields['name'].widget.attrs.update({'data-placeholder': 'Podaj nazwę'})
-        self.fields['name'].widget.choices = ((self['name'].value(), self['name'].value(),),)
+        self.fields['name'].widget.attrs.update({'placeholder': 'Podaj nazwę'})
 
     class Meta:
         model = Ware

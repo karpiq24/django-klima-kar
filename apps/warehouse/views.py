@@ -223,13 +223,15 @@ class WareAutocomplete(CustomSelect2QuerySetView):
         return qs
 
 
-class WareNameAutocomplete(autocomplete.Select2ListView):
-    def get_list(self):
+class WareNameAutocomplete(View):
+    def get(self, *args, **kwargs):
+        query = self.request.GET.get('query')
         result = []
-        if self.q:
-            data = Ware.objects.filter(name__icontains=self.q).values_list('name', flat=True).distinct()[:10]
+        if query:
+            data = Ware.objects.filter(name__icontains=query).values_list(
+                'name', flat=True).distinct().order_by('name')[:10]
             result = list(data)
-        return result
+        return JsonResponse({'suggestions': result})
 
     def create(self, text):
         return text
