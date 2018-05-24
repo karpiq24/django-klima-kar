@@ -136,9 +136,18 @@ class SaleInvoiceItemsInline(InlineFormSet):
     factory_kwargs = {'extra': 20}
 
 
+class AlwaysChangedModelForm(forms.ModelForm):
+    '''
+    Force saving RefrigerantWeightsInline formset with default values
+    '''
+    def has_changed(self):
+        return True
+
+
 class RefrigerantWeightsInline(InlineFormSet):
     model = RefrigerantWeights
-    factory_kwargs = {'max_num': 1, 'min_num': 1, 'can_delete': False}
+    factory_kwargs = {'max_num': 1, 'min_num': 1, 'extra': 0, 'can_delete': False}
+    form_class = AlwaysChangedModelForm
     fields = '__all__'
 
 
