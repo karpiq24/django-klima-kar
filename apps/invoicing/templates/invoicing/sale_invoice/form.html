@@ -57,19 +57,19 @@
             <table class="table table-striped table-hover table-bordered">
                 <thead>
                     <tr>
-                        <th>Usługa/Towar</th>
-                        <th>Cena netto</th>
-                        <th>Cena brutto</th>
-                        <th>Ilość</th>
-                        <th>Wartość netto</th>
-                        <th>Akcje</th>
+                        <th style="min-width:15rem;">Usługa/Towar</th>
+                        <th style="min-width:8rem;width:10rem;">Cena netto</th>
+                        <th style="min-width:8rem;width:10rem;">Cena brutto</th>
+                        <th style="min-width:4rem;width:6rem;">Ilość</th>
+                        <th style="min-width:8rem;width:8rem;">Wartość netto</th>
+                        <th style="min-width:4rem;width:8rem;">Akcje</th>
                     </tr>
                 </thead>
                 <tbody id="item-rows">
                     {% for item_form in inlines.0 %}
                         {{ item_form.id }}
                         <tr class="item-formset-row d-none">
-                            <td width="30%">
+                            <td>
                                 <div style="margin-bottom:4px;">
                                     {% include 'forms/field.html' with field=item_form.name hide_label=True %}
                                 </div>
@@ -80,19 +80,19 @@
                                     {% include 'forms/field.html' with field=item_form.ware hide_label=True %}
                                 </div>
                             </td>
-                            <td width="20%">
+                            <td>
                                 {% include 'forms/field.html' with field=item_form.price_netto hide_label=True %}
                             </td>
-                            <td width="20%">
+                            <td>
                                 {% include 'forms/field.html' with field=item_form.price_brutto hide_label=True %}
                             </td>
-                            <td width="7.5%">
+                            <td>
                                 {% include 'forms/field.html' with field=item_form.quantity hide_label=True %}
                             </td>
-                            <td width="15%" class="item-total-netto">
+                            <td class="item-total-netto">
                                 0,00 zł
                             </td>
-                            <td width="7.5%">
+                            <td>
                                 <button type="button" class="btn btn-outline-info btn-sm btn-table" title="Wybierz usługę" data-toggle="modal" data-target="#id_item-{{ forloop.counter }}-service_modal">
                                     Usługa
                                 </button>
