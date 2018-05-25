@@ -3,6 +3,7 @@ from django.db.models import Q
 
 import django_filters
 from dal import autocomplete
+from dateutil import parser as date_parser
 
 from apps.warehouse.models import Ware, Invoice, Supplier
 from apps.warehouse.dictionaries import STOCK_CHOICES
@@ -18,10 +19,8 @@ class WareFilter(django_filters.FilterSet):
     supplier = django_filters.ModelChoiceFilter(method='supplier_filter', queryset=Supplier.objects.all(),
                                                 widget=autocomplete.ModelSelect2(url='warehouse:supplier_autocomplete'),
                                                 label="Zakup od dostawcy")
-    date__gte = django_filters.DateFilter(method='date_from_filter', label="Data zakupu od",
-                                          widget=forms.DateInput(attrs={'class': 'date-input'}))
-    date__lte = django_filters.DateFilter(method='date_to_filter', label="Data zakupu do",
-                                          widget=forms.DateInput(attrs={'class': 'date-input'}))
+    purchase_date = django_filters.CharFilter(method='purchase_date_filter', label="Data zakupu",
+                                              widget=forms.TextInput(attrs={'class': 'date-range-input'}))
 
     class Meta:
         model = Ware
@@ -30,11 +29,15 @@ class WareFilter(django_filters.FilterSet):
     def index_filter(self, queryset, name, value):
         return queryset.filter(Q(index__icontains=value) | Q(index_slug__icontains=Ware.slugify(value)))
 
-    def date_from_filter(self, queryset, name, value):
-        return queryset.filter(invoiceitem__invoice__date__gte=value).distinct()
-
-    def date_to_filter(self, queryset, name, value):
-        return queryset.filter(invoiceitem__invoice__date__lte=value).distinct()
+    def purchase_date_filter(self, queryset, name, value):
+        try:
+            date_from, date_to = value.split(' - ')
+            date_from = date_parser.parse(date_from, dayfirst=True).date()
+            date_to = date_parser.parse(date_to, dayfirst=True).date()
+        except ValueError:
+            return queryset.none()
+        return queryset.filter(invoiceitem__invoice__date__gte=date_from,
+                               invoiceitem__invoice__date__lte=date_to).distinct()
 
     def supplier_filter(self, queryset, name, value):
         return queryset.filter(invoiceitem__invoice__supplier=value).distinct()
@@ -50,14 +53,21 @@ class InvoiceFilter(django_filters.FilterSet):
     supplier = django_filters.ModelChoiceFilter(queryset=Supplier.objects.all(),
                                                 widget=autocomplete.ModelSelect2(url='warehouse:supplier_autocomplete'))
     number = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    date__gte = django_filters.DateFilter(name='date', lookup_expr='gte', label="Data od",
-                                          widget=forms.DateInput(attrs={'class': 'date-input'}))
-    date__lte = django_filters.DateFilter(name='date', lookup_expr='lte', label="Data do",
-                                          widget=forms.DateInput(attrs={'class': 'date-input'}))
+    date = django_filters.CharFilter(method='purchase_date_filter', label="Data zakupu",
+                                     widget=forms.TextInput(attrs={'class': 'date-range-input'}))
 
     class Meta:
         model = Invoice
         fields = ['supplier', 'number']
+
+    def purchase_date_filter(self, queryset, name, value):
+        try:
+            date_from, date_to = value.split(' - ')
+            date_from = date_parser.parse(date_from, dayfirst=True).date()
+            date_to = date_parser.parse(date_to, dayfirst=True).date()
+        except ValueError:
+            return queryset.none()
+        return queryset.filter(date__gte=date_from, date__lte=date_to).distinct()
 
 
 class SupplierFilter(django_filters.FilterSet):

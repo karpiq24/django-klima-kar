@@ -3,6 +3,7 @@ from django.db.models import Q
 
 import django_filters
 from dal import autocomplete
+from dateutil import parser as date_parser
 
 from apps.invoicing.models import SaleInvoice, Contractor, ServiceTemplate
 from apps.invoicing.dictionaries import INVOICE_TYPES, PAYMENT_TYPES, REFRIGERANT_FILLED
@@ -17,12 +18,8 @@ class SaleInvoiceFilter(django_filters.FilterSet):
     payment_type = django_filters.ChoiceFilter(choices=PAYMENT_TYPES)
     refrigerant_filled = django_filters.ChoiceFilter(
         choices=REFRIGERANT_FILLED, label="Uzupełniono czynnik", method='refrigerant_filled_filter')
-    issue_date__gte = django_filters.DateFilter(
-        name='issue_date', lookup_expr='gte', label="Data wystawienia od",
-        widget=forms.DateInput(attrs={'class': 'date-input'}))
-    issue_date__lte = django_filters.DateFilter(
-        name='issue_date', lookup_expr='lte', label="Data wystawienia do",
-        widget=forms.DateInput(attrs={'class': 'date-input'}))
+    issue_date = django_filters.CharFilter(method='issue_date_filter', label="Data wystawienia",
+                                           widget=forms.TextInput(attrs={'class': 'date-range-input'}))
 
     class Meta:
         model = SaleInvoice
@@ -39,6 +36,16 @@ class SaleInvoiceFilter(django_filters.FilterSet):
                                     Q(refrigerantweights__r1234yf__gt=0) |
                                     Q(refrigerantweights__r12__gt=0) |
                                     Q(refrigerantweights__r404__gt=0))
+
+    def issue_date_filter(self, queryset, name, value):
+        try:
+            date_from, date_to = value.split(' - ')
+            date_from = date_parser.parse(date_from, dayfirst=True).date()
+            date_to = date_parser.parse(date_to, dayfirst=True).date()
+        except ValueError:
+            return queryset.none()
+        return queryset.filter(issue_date__gte=date_from,
+                               issue_date__lte=date_to).distinct()
 
 
 class ContractorFilter(django_filters.FilterSet):
