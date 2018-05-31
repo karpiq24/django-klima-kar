@@ -20,6 +20,7 @@ class SaleInvoiceFilter(django_filters.FilterSet):
         choices=REFRIGERANT_FILLED, label="Uzupełniono czynnik", method='refrigerant_filled_filter')
     issue_date = django_filters.CharFilter(method='issue_date_filter', label="Data wystawienia",
                                            widget=forms.TextInput(attrs={'class': 'date-range-input'}))
+    created_date = django_filters.CharFilter(method='created_date_filter', label="", widget=forms.HiddenInput())
 
     class Meta:
         model = SaleInvoice
@@ -47,6 +48,15 @@ class SaleInvoiceFilter(django_filters.FilterSet):
         return queryset.filter(issue_date__gte=date_from,
                                issue_date__lte=date_to).distinct()
 
+    def created_date_filter(self, queryset, name, value):
+        try:
+            date_from, date_to = value.split(' - ')
+            date_from = date_parser.parse(date_from, dayfirst=True).date()
+            date_to = date_parser.parse(date_to, dayfirst=True).date()
+        except ValueError:
+            return queryset.none()
+        return queryset.filter(created_date__gte=date_from, created_date__lte=date_to).distinct()
+
 
 class ContractorFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
@@ -55,10 +65,20 @@ class ContractorFilter(django_filters.FilterSet):
     city = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
     postal_code = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
     email = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
+    created_date = django_filters.CharFilter(method='created_date_filter', label="", widget=forms.HiddenInput())
 
     class Meta:
         model = Contractor
         fields = ['name', 'nip', 'address_1', 'city', 'postal_code', 'email']
+
+    def created_date_filter(self, queryset, name, value):
+        try:
+            date_from, date_to = value.split(' - ')
+            date_from = date_parser.parse(date_from, dayfirst=True).date()
+            date_to = date_parser.parse(date_to, dayfirst=True).date()
+        except ValueError:
+            return queryset.none()
+        return queryset.filter(created_date__gte=date_from, created_date__lte=date_to).distinct()
 
 
 class ServiceTemplateFilter(django_filters.FilterSet):

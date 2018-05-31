@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="pl">
+    <head>
+        <meta name="viewport" content="width=device-width">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>{{ title }}</title>
+        <style>
+            table, th, td {
+                border: 1px solid black;
+            }
+            table {
+                width: 100%;
+            }
+            td, th {
+                vertical-align: middle;
+                padding: 0.75rem;
+            }
+            table tr:nth-of-type(odd) {
+                background-color: rgba(0,0,0,.05);
+            }
+            .table-footer {
+                font-weight: bold;
+            }
+            .change-rise {
+                background-color: #f5c6cb !important;
+            }
+            .change-discount {
+                background-color: #b1dfbb !important;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>{{ title }}</h1>
+        Od {{ date_from|date:"d.m.Y" }} do {{ date_to|date:"d.m.Y" }}
+
+        <div>
+            <h2>Fakturowanie</h2>
+            <table>
+                <tr>
+                    <td><strong>Łączna wartość faktur sprzedażowych</strong></td>
+                    <td>{{ metrics.sale_invoices }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Liczba nowych faktur sprzedażowych</strong></td>
+                    <td><a href="{{ absolute_url }}{% url 'invoicing:sale_invoices' %}?created_date={{ date_from|date:'d.m.Y' }}+-+{{ date_to|date:'d.m.Y' }}">{{ sale_invoices.count }}</a></td>
+                </tr>
+                <tr>
+                    <td><strong>Liczba nowych kontrahentów</strong></td>
+                    <td><a href="{{ absolute_url }}{% url 'invoicing:contractors' %}?created_date={{ date_from|date:'d.m.Y' }}+-+{{ date_to|date:'d.m.Y' }}">{{ contractors.count }}</a></td>
+                </tr>
+                <tr>
+                    <td><strong>Łączna sprzedaż czynnika R134a</strong></td>
+                    <td>{{ metrics.r134a }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Łączna sprzedaż czynnika R1234yf</strong></td>
+                    <td>{{ metrics.r1234yf }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Łączna sprzedaż czynnika R12</strong></td>
+                    <td>{{ metrics.r12 }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Łączna sprzedaż czynnika R404</strong></td>
+                    <td>{{ metrics.r404 }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div>
+            <h2>Magazyn</h2>
+            <table>
+                <tr>
+                    <td><strong>Łączna wartość nowych faktur zakupowych</strong></td>
+                    <td>{{ metrics.purchase_invoices }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Liczba nowych faktur zakupowych</strong></td>
+                    <td><a href="{{ absolute_url }}{% url 'warehouse:invoices' %}?created_date={{ date_from|date:'d.m.Y' }}+-+{{ date_to|date:'d.m.Y' }}">{{ purchase_invoices.count }}</a></td>
+                </tr>
+                <tr>
+                    <td><strong>Liczba nowych towarów</strong></td>
+                    <td><a href="{{ absolute_url }}{% url 'warehouse:wares' %}?created_date={{ date_from|date:'d.m.Y' }}+-+{{ date_to|date:'d.m.Y' }}">{{ wares.count }}</a></td>
+                </tr>
+                <tr>
+                    <td><strong>Liczba nowych dostawców</strong></td>
+                    <td><a href="{{ absolute_url }}{% url 'warehouse:suppliers' %}?created_date={{ date_from|date:'d.m.Y' }}+-+{{ date_to|date:'d.m.Y' }}">{{ suppliers.count }}</a></td>
+                </tr>
+            </table>
+        </div>
+
+        <div>
+            <h2>Zmiany cen towarów ({{ ware_price_changes|length }})</h2>
+            <table>
+                <tr>
+                    <th>Towar</th>
+                    <th>Faktura</th>
+                    <th>Dostawca</th>
+                    <th>Ostatnia cena</th>
+                    <th>Nowa cena</th>
+                    <th>Zmiana</th>
+                </tr>
+                {% for change in ware_price_changes %}
+                    <tr class="{% if change.is_discount %}change-discount{% else %}change-rise{% endif %}">
+                        <td><a href="{{ absolute_url }}{% url 'warehouse:ware_detail' change.ware.pk %}">{{ change.ware }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'warehouse:invoice_detail' change.invoice.pk %}">{{ change.invoice }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'warehouse:supplier_detail' change.invoice.supplier.pk %}">{{ change.invoice.supplier }}</a></td>
+                        <td>{{ change.last_price|floatformat:2 }} zł</td>
+                        <td>{{ change.new_price|floatformat:2 }} zł</td>
+                        <td>{{ change.percent_change|floatformat:1 }}%</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6">Brak zmian w cenach towarów</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </body>
+</html>

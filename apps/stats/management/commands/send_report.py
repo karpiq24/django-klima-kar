@@ -36,13 +36,14 @@ class Command(BaseCommand):
             return
 
         print("Sending {} report from {} to {}".format(date_option, date_from, date_to))
-        report_data = get_report_data(date_from, date_to)
+        report_data = get_report_data(date_from, date_to, settings.REPORT_PRICE_CHANGE_PERCENTAGE[date_option])
         report_data['title'] = title
         report_data['date_from'] = date_from
         report_data['date_to'] = date_to
         report_data['absolute_url'] = settings.ABSOLUTE_URL
+        report_data['price_change_limit'] = settings.REPORT_PRICE_CHANGE_PERCENTAGE[date_option]
 
-        template = get_template('stats/report.html')
+        template = get_template('stats/report_{}.html'.format(date_option))
         content = template.render(report_data)
         email = EmailMultiAlternatives(
             subject="Klima-Kar: {}".format(title),

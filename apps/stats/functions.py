@@ -4,7 +4,7 @@ from apps.warehouse.models import WarePriceChange, Invoice, Ware, Supplier
 from apps.invoicing.models import SaleInvoice, Contractor
 
 
-def get_report_data(date_from, date_to):
+def get_report_data(date_from, date_to, price_change_limit):
     report_data = {
         'wares': Ware.objects.filter(created_date__date__gte=date_from, created_date__date__lte=date_to),
         'ware_price_changes': WarePriceChange.objects.filter(created_date__date__gte=date_from,
@@ -14,6 +14,8 @@ def get_report_data(date_from, date_to):
         'contractors': Contractor.objects.filter(created_date__date__gte=date_from, created_date__date__lte=date_to),
         'sale_invoices': SaleInvoice.objects.filter(created_date__date__gte=date_from, created_date__date__lte=date_to),
     }
+    report_data['ware_price_changes'] = [
+        obj for obj in report_data['ware_price_changes'] if obj.percent_change(absolute=True) >= price_change_limit]
     report_data['metrics'] = {
         'purchase_invoices': "{0:.2f} zł".format(
             report_data['purchase_invoices'].aggregate(

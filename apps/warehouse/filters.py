@@ -21,6 +21,7 @@ class WareFilter(django_filters.FilterSet):
                                                 label="Zakup od dostawcy")
     purchase_date = django_filters.CharFilter(method='purchase_date_filter', label="Data zakupu",
                                               widget=forms.TextInput(attrs={'class': 'date-range-input'}))
+    created_date = django_filters.CharFilter(method='created_date_filter', label="", widget=forms.HiddenInput())
 
     class Meta:
         model = Ware
@@ -39,6 +40,16 @@ class WareFilter(django_filters.FilterSet):
         return queryset.filter(invoiceitem__invoice__date__gte=date_from,
                                invoiceitem__invoice__date__lte=date_to).distinct()
 
+    def created_date_filter(self, queryset, name, value):
+        try:
+            date_from, date_to = value.split(' - ')
+            date_from = date_parser.parse(date_from, dayfirst=True).date()
+            date_to = date_parser.parse(date_to, dayfirst=True).date()
+        except ValueError:
+            return queryset.none()
+        return queryset.filter(created_date__gte=date_from,
+                               created_date__lte=date_to).distinct()
+
     def supplier_filter(self, queryset, name, value):
         return queryset.filter(invoiceitem__invoice__supplier=value).distinct()
 
@@ -55,6 +66,7 @@ class InvoiceFilter(django_filters.FilterSet):
     number = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
     date = django_filters.CharFilter(method='purchase_date_filter', label="Data zakupu",
                                      widget=forms.TextInput(attrs={'class': 'date-range-input'}))
+    created_date = django_filters.CharFilter(method='created_date_filter', label="", widget=forms.HiddenInput())
 
     class Meta:
         model = Invoice
@@ -69,10 +81,30 @@ class InvoiceFilter(django_filters.FilterSet):
             return queryset.none()
         return queryset.filter(date__gte=date_from, date__lte=date_to).distinct()
 
+    def created_date_filter(self, queryset, name, value):
+        try:
+            date_from, date_to = value.split(' - ')
+            date_from = date_parser.parse(date_from, dayfirst=True).date()
+            date_to = date_parser.parse(date_to, dayfirst=True).date()
+        except ValueError:
+            return queryset.none()
+        return queryset.filter(created_date__gte=date_from, created_date__lte=date_to).distinct()
+
 
 class SupplierFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
+    created_date = django_filters.CharFilter(method='created_date_filter', label="", widget=forms.HiddenInput())
 
     class Meta:
         model = Supplier
         fields = ['name']
+
+    def created_date_filter(self, queryset, name, value):
+        try:
+            date_from, date_to = value.split(' - ')
+            date_from = date_parser.parse(date_from, dayfirst=True).date()
+            date_to = date_parser.parse(date_to, dayfirst=True).date()
+        except ValueError:
+            return queryset.none()
+        return queryset.filter(created_date__gte=date_from,
+                               created_date__lte=date_to).distinct()

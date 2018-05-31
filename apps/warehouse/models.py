@@ -85,3 +85,9 @@ class WarePriceChange(models.Model):
     @property
     def is_discount(self):
         return self.new_price < self.last_price
+
+    def percent_change(self, absolute=False):
+        change = ((self.new_price - self.last_price) / self.last_price) * 100
+        if absolute:
+            change = abs(change)
+        return change
