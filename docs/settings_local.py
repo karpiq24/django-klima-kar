@@ -64,3 +64,4 @@ PRICE_CHHANGE_PERCENTAGE = 5
 # Reports settings
 ABSOLUTE_URL = ''
 REPORT_EMAILS = []
+REPORT_PRICE_CHANGE_PERCENTAGE = {'week': 5, 'month': 10, 'year': 25}
