@@ -1,6 +1,6 @@
 django==2.0.7
 django-tables2==1.21.2
-django-filter==1.1.0
+django-filter==2.0.0
 django-autocomplete-light==3.2.10
 django-extra-views==0.11.0
 django-reversion==2.0.13
