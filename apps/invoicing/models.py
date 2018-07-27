@@ -54,6 +54,17 @@ class SaleInvoice(models.Model):
         return self.total_value_brutto - self.total_value_netto
 
     def save(self, *args, **kwargs):
+        invoice_type = self.invoice_type
+        invoices = SaleInvoice.objects.filter(invoice_type=invoice_type)
+        if invoice_type == '1':
+            invoices = (invoices | SaleInvoice.objects.filter(invoice_type='4')).distinct()
+        elif invoice_type == '4':
+            invoices = (invoices | SaleInvoice.objects.filter(invoice_type='1')).distinct()
+        if self.pk:
+            invoices = invoices.exclude(pk=self.pk)
+        if invoices.filter(number=self.number).exists():
+            raise ValueError('number', 'Faktura o tym numerze już istnieje.')
+
         number_data = self.number.split('/')
         self.number_value = number_data[0]
         self.number_year = number_data[1]
