@@ -9,7 +9,7 @@ six==1.11.0
 python-dateutil==2.7.3
 requests==2.19.1
 dropbox==9.0.0
-XlsxWriter==1.0.7
+XlsxWriter==1.1.0
 django-widget-tweaks==1.4.2
 WeasyPrint==0.42.3
 gusregon==1.1.3
