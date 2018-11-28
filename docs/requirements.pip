@@ -7,7 +7,7 @@ django-reversion==3.0.0
 django-reversion-compare==0.8.5
 six==1.11.0
 python-dateutil==2.7.3
-requests==2.19.1
+requests==2.20.1
 dropbox==9.0.0
 XlsxWriter==1.1.2
 django-widget-tweaks==1.4.3
