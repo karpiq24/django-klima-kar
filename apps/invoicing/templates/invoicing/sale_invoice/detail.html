@@ -17,6 +17,12 @@
                 <td class="detail-label">Numer faktury</td>
                 <td>{{ object.number }}</td>
             </tr>
+            {% if object.correctivesaleinvoice %}
+                <tr>
+                    <td class="detail-label">Korekta do</td>
+                    <td><a href="{% url 'invoicing:sale_invoice_detail' object.correctivesaleinvoice.original_invoice.pk %}">{{ object.correctivesaleinvoice.original_invoice }}</a></td>
+                </tr>
+            {% endif %}
             <tr>
                 <td class="detail-label">Kontrahent</td>
                 <td><a href="{% url 'invoicing:contractor_detail' object.contractor.pk %}">{{ object.contractor }}</a></td>
@@ -53,26 +59,33 @@
                 <td class="detail-label">Uwagi</td>
                 <td>{{ object.comment|default:"—" }}</td>
             </tr>
-            <tr>
-                <td class="detail-label">Czynnik R134a</td>
-                <td>{{ object.refrigerantweights.r134a }} g</td>
-            </tr>
-            <tr>
-                <td class="detail-label">Czynnik R1234yf</td>
-                <td>{{ object.refrigerantweights.r1234yf }} g</td>
-            </tr>
-            <tr>
-                <td class="detail-label">Czynnik R12</td>
-                <td>{{ object.refrigerantweights.r12 }} g</td>
-            </tr>
-            <tr>
-                <td class="detail-label">Czynnik R404</td>
-                <td>{{ object.refrigerantweights.r404 }} g</td>
-            </tr>
+            {% if not object.correctivesaleinvoice %}
+                <tr>
+                    <td class="detail-label">Czynnik R134a</td>
+                    <td>{{ object.refrigerantweights.r134a }} g</td>
+                </tr>
+                <tr>
+                    <td class="detail-label">Czynnik R1234yf</td>
+                    <td>{{ object.refrigerantweights.r1234yf }} g</td>
+                </tr>
+                <tr>
+                    <td class="detail-label">Czynnik R12</td>
+                    <td>{{ object.refrigerantweights.r12 }} g</td>
+                </tr>
+                <tr>
+                    <td class="detail-label">Czynnik R404</td>
+                    <td>{{ object.refrigerantweights.r404 }} g</td>
+                </tr>
+            {% endif %}
         </table>
     </div>
 
     <div class="col-xs-12 col-lg-4">
+        {% if object.corrected_invoice %}
+            <div class="alert alert-primary" role="alert">
+                Faktura została skorygowana: <a href="{% url 'invoicing:sale_invoice_detail' object.corrected_invoice.pk %}">Korekta {{ object.corrected_invoice }}</a>
+            </div>
+        {% endif %}
         <div class="card-deck text-center">
             <div class="card bg-light">
                 <div class="card-body">
@@ -81,6 +94,9 @@
                     <a class="btn btn-outline-primary btn-lg" href="{% url 'invoicing:sale_invoice_pdf' object.pk %}"><i class="far fa-file-pdf"></i> PDF</a>
                     <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#email_modal"><i class="far fa-envelope"></i> E-mail</button>
                     <a class="btn btn-outline-warning btn-lg" href="{% url 'invoicing:sale_invoice_update' object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
+                    {% if not object.corrected_invoice and not object.correctivesaleinvoice %}
+                        <a class="btn btn-outline-info btn-lg" href="{% url 'invoicing:sale_invoice_create_corrective' object.pk %}" title="Korekta">Korekta</a>
+                    {% endif %}
                     <a class="btn btn-outline-dark btn-lg" href="{{ back_url }}">Powrót</a>
                 </div>
             </div>

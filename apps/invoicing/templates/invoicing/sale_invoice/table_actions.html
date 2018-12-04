@@ -4,6 +4,12 @@
 <a class="btn btn-outline-warning btn-sm btn-table" href="{% url 'invoicing:sale_invoice_update' record.pk %}" title="Edycja">
     Edycja
 </a>
-<a class="btn btn-outline-info btn-sm btn-table disabled" href="{% url 'invoicing:sale_invoice_detail' record.pk %}" title="Korekta">
-    Korekta
-</a>
+{% if record.corrected_invoice %}
+    <a class="btn btn-outline-secondary btn-sm btn-table" href="{% url 'invoicing:sale_invoice_detail' record.corrected_invoice.pk %}" title="Korekta">
+        Korekta
+    </a>
+{% elif not record.correctivesaleinvoice %}
+    <a class="btn btn-outline-info btn-sm btn-table" href="{% url 'invoicing:sale_invoice_create_corrective' record.pk %}" title="Korekta">
+        Korekta
+    </a>
+{% endif %}

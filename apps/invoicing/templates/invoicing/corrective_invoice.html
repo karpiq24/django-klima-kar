@@ -1,0 +1,183 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ invoice.get_invoice_type_display|upper }} {{ invoice.number }}</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/invoice.css' %}">
+  </head>
+  <body>
+    <header class="clearfix">
+      <div id="logo">
+        <h1>Klima-Kar</h1>
+		    <span>komfortowy klimat w zasięgu ręki</span>
+      </div>
+      <div id="company">
+        <div class="nip">NIP {% if invoice.invoice_type == '4' %}PL8991071777{% else %}899-107-17-77{% endif %}</div>
+		    <h2 class="name">Klima-Kar Renata Karpińska</h2>
+        <div>52-214 Wrocław ul. Grota Roweckiego 129</div>        
+		    <div>PKO Inteligo 50 1020 5558 1111 1223 8400 0094</div>
+        <div>tel. 71 337 14 50 kom. 605 594 506 e-mail: <a href="mailto:serwis@klima-kar.pl">serwis@klima-kar.pl</a></div>
+      </div>
+    </header>
+    <main>
+      <div id="details" class="clearfix">
+        <div id="client">
+          <div class="to">Nabywca</div>
+          {% if invoice.contractor.nip %}
+            <div class="nip">NIP {{ invoice.contractor.nip_prefix|default_if_none:"" }}{{ invoice.contractor.nip }}</div> 
+          {% endif %}
+          <h2 class="name">{{ invoice.contractor.name }}</h2>
+          {% if invoice.contractor.address_1 or invoice.contractor.postal_code or invoice.contractor.city %}
+		        <div class="address">{{ invoice.contractor.postal_code|default_if_none:"" }} {{ invoice.contractor.city|default_if_none:"" }} {{ invoice.contractor.address_1|default_if_none:"" }}</div>    
+          {% endif %}
+          {% if invoice.contractor.address_2 %}
+		        <div class="address">{{ invoice.contractor.address_2|default_if_none:"" }}</div>    
+          {% endif %}
+        </div>
+        <div id="invoice">
+          <h1>{{ invoice.get_invoice_type_display|upper }} {{ invoice.number }}</h1>
+          <h4>
+            Do faktury {{ invoice.correctivesaleinvoice.original_invoice.number }} z dnia {{ invoice.correctivesaleinvoice.original_invoice.issue_date|date:"d.m.Y" }}
+            {% if invoice.correctivesaleinvoice.original_invoice.issue_date != invoice.correctivesaleinvoice.original_invoice.completion_date %}
+              <br>Data sprzedaży {{ invoice.correctivesaleinvoice.original_invoice.completion_date|date:"d.m.Y" }}
+            {% endif %}
+            {% if invoice.correctivesaleinvoice.original_invoice.payment_date %}
+              <br>Termin płatności {{ invoice.correctivesaleinvoice.original_invoice.payment_date|date:"d.m.Y" }}
+            {% endif %}
+          </h4>
+          <div class="date">Data wystawienia: {{ invoice.issue_date|date:"d.m.Y" }}</div>
+          <div class="date">Data sprzedaży: {{ invoice.completion_date|date:"d.m.Y" }}</div>
+		      <div class="date">Forma płatności: {{ invoice.get_payment_type_display }}</div>
+		      <div class="date">{% if invoice.payment_date %}Termin płatności: {{ invoice.payment_date|date:"d.m.Y" }}{% else %}zapłacono{% endif %}</div>
+        </div>
+      </div>
+    <div id="info">{{ invoice.comment }}</div>
+    
+    <h3 class="corrective-header">Stan przed korektą</h3>
+    {% with invoice.correctivesaleinvoice.original_invoice as invoice %}
+      <table class="small">
+        <thead>
+          <tr>
+            <th class="no">lp.</th>
+            <th class="desc">nazwa towaru/usługi</th>
+            <th class="unit">cena netto</th>
+            <th class="qty">ilość</th>
+            <th class="total">wartość netto</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in invoice.saleinvoiceitem_set.all %}
+            <tr>
+              <td class="no">{{ forloop.counter }}</td>
+              <td class="desc"><h3>{{ item.name }}</h3> {{item.description|default_if_none:"" }}</td>
+              <td class="unit">{{ item.price_netto|floatformat:2 }} zł</td>
+              <td class="qty">{{ item.quantity }}</td>
+              <td class="total">{{ item.total_netto|floatformat:2 }} zł</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2"></td>
+            <td colspan="2">RAZEM NETTO</td>
+            <td>{{ invoice.total_value_netto|floatformat:2 }} zł</td>
+          </tr>
+          <tr>
+            <td colspan="2"></td>
+            <td colspan="2">VAT {{ invoice.tax_percent|floatformat:0 }}%</td>
+            <td>{{ invoice.total_value_tax|floatformat:2 }} zł</td>
+          </tr>
+          <tr>
+            <td colspan="2"></td>
+            <td colspan="2">RAZEM {% if invoice.invoice_type != '4' %}BRUTTO{% endif %}</td>
+            <td>{{ invoice.total_value_brutto|floatformat:2 }} zł</td>
+          </tr>
+        </tfoot>
+      </table>
+    {% endwith %}
+
+    <h3 class="corrective-header">Stan po korekcie</h2>
+    <table class="small">
+      <thead>
+        <tr>
+          <th class="no">lp.</th>
+          <th class="desc">nazwa towaru/usługi</th>
+          <th class="unit">cena netto</th>
+          <th class="qty">ilość</th>
+          <th class="total">wartość netto</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in invoice.saleinvoiceitem_set.all %}
+          <tr>
+            <td class="no">{{ forloop.counter }}</td>
+            <td class="desc"><h3>{{ item.name }}</h3> {{item.description|default_if_none:"" }}</td>
+            <td class="unit">{{ item.price_netto|floatformat:2 }} zł</td>
+            <td class="qty">{{ item.quantity }}</td>
+            <td class="total">{{ item.total_netto|floatformat:2 }} zł</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2"></td>
+          <td colspan="2">RAZEM NETTO</td>
+          <td>{{ invoice.total_value_netto|floatformat:2 }} zł</td>
+        </tr>
+        <tr>
+          <td colspan="2"></td>
+          <td colspan="2">VAT {{ invoice.tax_percent|floatformat:0 }}%</td>
+          <td>{{ invoice.total_value_tax|floatformat:2 }} zł</td>
+        </tr>
+        <tr>
+          <td colspan="2"></td>
+          <td colspan="2">RAZEM {% if invoice.invoice_type != '4' %}BRUTTO{% endif %}</td>
+          <td>{{ invoice.total_value_brutto|floatformat:2 }} zł</td>
+        </tr>
+      </tfoot>
+    </table>
+    
+    <hr>
+
+    <table>
+        <tfoot>
+          <tr>
+            <td colspan="2"></td>
+            <td colspan="2">RÓŻNICA NETTO</td>
+            <td>{{ invoice.correctivesaleinvoice.diffrence_netto|floatformat:2 }} zł</td>
+          </tr>
+          <tr>
+            <td colspan="2"></td>
+            <td colspan="2">RÓŻNICA VAT {{ invoice.tax_percent|floatformat:0 }}%</td>
+            <td>{{ invoice.correctivesaleinvoice.diffrence_tax|floatformat:2 }} zł</td>
+          </tr>
+          <tr>
+            <td colspan="2"></td>
+            <td colspan="2">RÓŻNICA {% if invoice.invoice_type != '4' %}BRUTTO{% endif %}</td>
+            <td>{{ invoice.correctivesaleinvoice.diffrence_brutto|floatformat:2 }} zł</td>
+          </tr>
+        </tfoot>
+      </table>
+  
+    {% if invoice.invoice_type == '4' %}
+      <div id="reverse-charge">Do rozliczenia podatku VAT zobowiązany jest nabywca (reverse charge).</div>
+    {% endif %}
+    <div id="podpisy">
+      <div id="podpislewy">
+        <div class="to">osoba upoważniona do odbioru faktury</div> 
+      </div>
+      <div id="podpisprawy">
+        <div class="to">osoba upoważniona do wystawiania faktur</div> 
+      </div>
+	  </div>
+	  
+    </main>
+    <footer>
+      <div id="notices">
+        <div>Dziękujemy, zapraszamy ponownie.</div>
+        <div class="notice"></div>
+      </div>
+    </footer>
+  </body>
+</html>

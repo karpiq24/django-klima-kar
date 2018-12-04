@@ -5,7 +5,8 @@ from smtplib import SMTPRecipientsRefused
 from extra_views import CreateWithInlinesView, UpdateWithInlinesView
 
 from django.views.generic import DetailView, UpdateView, CreateView, View
-from django.shortcuts import get_object_or_404
+from django.forms.models import model_to_dict
+from django.shortcuts import get_object_or_404, redirect
 from django.http import HttpResponse, Http404, JsonResponse
 from django.template.loader import get_template
 from django.urls import reverse
@@ -14,9 +15,9 @@ from django.core.mail import EmailMessage
 
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
 from KlimaKar.mixins import AjaxFormMixin
-from apps.invoicing.models import SaleInvoice, Contractor, SaleInvoiceItem, ServiceTemplate
+from apps.invoicing.models import SaleInvoice, Contractor, SaleInvoiceItem, ServiceTemplate, CorrectiveSaleInvoice
 from apps.invoicing.forms import SaleInvoiceModelForm, ContractorModelForm, SaleInvoiceItemsInline,\
-    ServiceTemplateModelForm, EmailForm, RefrigerantWeightsInline
+    ServiceTemplateModelForm, EmailForm, RefrigerantWeightsInline, CorrectiveSaleInvoiceModelForm
 from apps.invoicing.tables import SaleInvoiceTable, ContractorTable, SaleInvoiceItemTable, ServiceTemplateTable
 from apps.invoicing.filters import SaleInvoiceFilter, ContractorFilter, ServiceTemplateFilter
 from apps.invoicing.dictionaries import INVOICE_TYPES
@@ -68,10 +69,8 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
     def dispatch(self, *args, **kwargs):
         invoice_type = kwargs.get('type')
         if invoice_type and invoice_type in dict(INVOICE_TYPES):
-            self.initial = {
-                'invoice_type': invoice_type,
-                'number': get_next_invoice_number(invoice_type)
-            }
+            self.initial['invoice_type'] = invoice_type
+            self.initial['number'] = get_next_invoice_number(invoice_type)
             if invoice_type == '4':
                 self.initial['tax_percent'] = 0
         else:
@@ -95,6 +94,12 @@ class SaleInvoiceUpdateView(UpdateWithInlinesView):
     inlines = [SaleInvoiceItemsInline, RefrigerantWeightsInline]
     template_name = 'invoicing/sale_invoice/form.html'
 
+    def dispatch(self, *args, **kwargs):
+        dispatch = super().dispatch(*args, **kwargs)
+        if self.model == SaleInvoice and self.object.invoice_type == '3':
+            return redirect('invoicing:sale_invoice_update_corrective', **kwargs)
+        return dispatch
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Edycja faktury sprzedażowej ({})".format(self.get_object().get_invoice_type_display())
@@ -109,6 +114,48 @@ class SaleInvoiceUpdateView(UpdateWithInlinesView):
             return reverse("invoicing:sale_invoice_detail", kwargs={'pk': self.object.pk}) + "?pdf"
         else:
             return reverse("invoicing:sale_invoice_detail", kwargs={'pk': self.object.pk})
+
+
+class CorrectiveSaleInvoiceCreateView(SaleInvoiceCreateView):
+    model = CorrectiveSaleInvoice
+    form_class = CorrectiveSaleInvoiceModelForm
+    inlines = [SaleInvoiceItemsInline, RefrigerantWeightsInline]
+    template_name = 'invoicing/sale_invoice/corrective_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = context['title'].replace(')', ' do faktury {})'.format(self.original_invoice))
+        context['original_invoice'] = self.original_invoice
+        return context
+
+    def dispatch(self, *args, **kwargs):
+        kwargs['type'] = '3'
+        self.original_invoice = SaleInvoice.objects.get(pk=kwargs.get('pk'))
+        self.initial = model_to_dict(self.original_invoice)
+        self.initial.pop('issue_date', None)
+        self.initial.pop('completion_date', None)
+        self.initial.pop('payment_date', None)
+        self.initial['original_invoice'] = self.original_invoice
+        self.kwargs['original_invoice'] = self.original_invoice
+        return super().dispatch(*args, **kwargs)
+
+
+class CorrectiveSaleInvoiceUpdateView(SaleInvoiceUpdateView):
+    model = CorrectiveSaleInvoice
+    form_class = CorrectiveSaleInvoiceModelForm
+    inlines = [SaleInvoiceItemsInline, RefrigerantWeightsInline]
+    template_name = 'invoicing/sale_invoice/corrective_form.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = context['title'].replace(')', ' do faktury {})'.format(self.invoice.original_invoice))
+        context['original_invoice'] = self.invoice.original_invoice
+        return context
+
+    def dispatch(self, *args, **kwargs):
+        self.invoice = CorrectiveSaleInvoice.objects.get(pk=kwargs.get('pk'))
+        self.kwargs['original_invoice'] = self.invoice.original_invoice
+        return super().dispatch(*args, **kwargs)
 
 
 class SaleInvoicePDFView(View):

@@ -53,6 +53,10 @@ class SaleInvoice(models.Model):
     def total_value_tax(self):
         return self.total_value_brutto - self.total_value_netto
 
+    @property
+    def corrected_invoice(self):
+        return CorrectiveSaleInvoice.objects.get(original_invoice=self)
+
     def save(self, *args, **kwargs):
         invoice_type = self.invoice_type
         invoices = SaleInvoice.objects.filter(invoice_type=invoice_type)
@@ -71,7 +75,10 @@ class SaleInvoice(models.Model):
         super().save(*args, **kwargs)
 
     def generate_pdf(self, print_version=False):
-        template = get_template('invoicing/invoice.html')
+        if self.invoice_type == '3':
+            template = get_template('invoicing/corrective_invoice.html')
+        else:
+            template = get_template('invoicing/invoice.html')
         rendered_tpl = template.render({'invoice': self}).encode()
         documents = []
         documents.append(
@@ -130,3 +137,20 @@ class SaleInvoiceItem(models.Model):
     @property
     def total_brutto(self):
         return self.price_brutto * self.quantity
+
+
+class CorrectiveSaleInvoice(SaleInvoice):
+    original_invoice = models.ForeignKey(SaleInvoice, on_delete=models.CASCADE, verbose_name='Oryginalna faktura',
+                                         related_name='%(class)s_original_invoice')
+
+    @property
+    def diffrence_netto(self):
+        return self.total_value_netto - self.original_invoice.total_value_netto
+
+    @property
+    def diffrence_brutto(self):
+        return self.total_value_brutto - self.original_invoice.total_value_brutto
+
+    @property
+    def diffrence_tax(self):
+        return self.total_value_tax - self.original_invoice.total_value_tax

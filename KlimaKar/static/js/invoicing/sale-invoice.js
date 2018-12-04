@@ -19,7 +19,7 @@ function customSuccessCreate(data, identifier) {
 function calculateInvoiceTotals() {
     var invoice_total_netto = 0.00;
     var tax_multiplier = $("#id_tax_percent").val() / 100;
-    $('.item-formset-row').each(function() {
+    $('.item-formset-row').not('.readonly').each(function() {
         if (!$(this).hasClass('d-none')) {
             var price_netto = toCurrency($(this).find(".item-netto").val());
             if (isNaN(price_netto)) {

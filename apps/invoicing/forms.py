@@ -3,8 +3,10 @@ from extra_views import InlineFormSet
 
 from django import forms
 from django.urls import reverse
+from django.forms.models import model_to_dict
 
-from apps.invoicing.models import Contractor, SaleInvoice, SaleInvoiceItem, ServiceTemplate, RefrigerantWeights
+from apps.invoicing.models import Contractor, SaleInvoice, SaleInvoiceItem, ServiceTemplate, RefrigerantWeights,\
+    CorrectiveSaleInvoice
 from apps.warehouse.models import Ware
 
 
@@ -44,6 +46,7 @@ class SaleInvoiceModelForm(forms.ModelForm):
                 invoices = (invoices | SaleInvoice.objects.filter(invoice_type='1')).distinct()
             if invoices.filter(number=number).exists():
                 self.add_error('number', 'Faktura o tym numerze już istnieje.')
+        return cleaned_data
 
     class Meta:
         model = SaleInvoice
@@ -54,6 +57,27 @@ class SaleInvoiceModelForm(forms.ModelForm):
             'invoice_type': forms.HiddenInput(),
             'total_value_netto': forms.HiddenInput(),
             'total_value_brutto': forms.HiddenInput()
+        }
+
+
+class CorrectiveSaleInvoiceModelForm(SaleInvoiceModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['contractor'].disabled = True
+        self.fields['comment'].label += ' (Powód wystawienia korekty)'
+        self.fields['comment'].required = True
+
+    class Meta:
+        model = CorrectiveSaleInvoice
+        exclude = ['refrigerant_weidghts', 'number_value', 'number_year']
+        widgets = {
+            'comment': forms.Textarea(attrs={'rows': 1}),
+            'payment_date': EnableDisableDateInput(),
+            'invoice_type': forms.HiddenInput(),
+            'total_value_netto': forms.HiddenInput(),
+            'total_value_brutto': forms.HiddenInput(),
+            'original_invoice': forms.HiddenInput(),
         }
 
 
@@ -134,6 +158,17 @@ class SaleInvoiceItemsInline(InlineFormSet):
     model = SaleInvoiceItem
     form_class = SaleInvoiceItemModelForm
     factory_kwargs = {'extra': 20}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.original_invoice = self.kwargs.get('original_invoice', None)
+
+    def get_initial(self):
+        if not self.object and self.original_invoice:
+            items = SaleInvoiceItem.objects.filter(sale_invoice=self.original_invoice)
+            initial = [model_to_dict(item) for item in items]
+            return initial
+        return self.initial[:]
 
 
 class AlwaysChangedModelForm(forms.ModelForm):

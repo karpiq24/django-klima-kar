@@ -67,9 +67,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'KlimaKar.urls'
-LOGIN_URL = '/login/'
+LOGIN_URL = 'login'
 LOGIN_EXEMPT_URLS = ['admin']
 LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login'
 ADD_REVERSION_ADMIN = True
 
 TEMPLATES = [

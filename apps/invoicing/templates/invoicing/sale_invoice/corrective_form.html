@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div>
+    <h1>{{ title }}</h1>
+</div>
+<form id="sale-invoice-form" action="" method="post">
+    {% csrf_token %}
+    <div class="row">
+        {% for hidden_field in form.hidden_fields %}
+            {{ hidden_field }}
+        {% endfor %}
+      
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
+            </div>
+        {% endif %}
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.0 %}
+        </div>
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.1 %}
+        </div>
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.2 %}
+        </div>
+        <div class=col-sm-6>
+            <div style="display:flex;width:100%;">
+                <div style="width:calc(100% - 105px);">
+                    {% include 'forms/field.html' with field=form.visible_fields.3 %}
+                </div>
+                <button disabled id="contractor-edit" class="btn btn-outline-warning" style="margin-left:5px;margin-top:29px;height:38px;width:100px;" type="button"><i class="fas fa-edit"></i> Edytuj</button>
+            </div>
+        </div>
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.4 %}
+        </div>
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.5 %}
+        </div>
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.6 %}
+        </div>
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.7 %}
+        </div>
+
+        {{ inlines.1.management_form }}
+        {% include 'forms/form.html' with form=inlines.1.0 as_table=True hidden=True %}
+
+        {{ inlines.0.management_form }}
+        <h4>Stan przed korektą</h4>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th style="min-width:15rem;">Usługa/Towar</th>
+                        <th style="min-width:8rem;width:10rem;">Cena netto</th>
+                        <th style="min-width:8rem;width:10rem;">Cena brutto</th>
+                        <th style="min-width:4rem;width:6rem;">Ilość</th>
+                        <th style="min-width:8rem;width:8rem;">Wartość netto</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in original_invoice.saleinvoiceitem_set.all %}
+                        <tr class="item-formset-row readonly d-none">
+                            <td>
+                                <div style="margin-bottom:4px;">
+                                    <input value="{{ item.name }}" class="form-control" readonly>
+                                </div>
+                                {% if item.description %}
+                                    <div style="margin-bottom:4px;">
+                                        <input value="{{ item.description|default:'' }}" class="form-control" readonly>
+                                    </div>
+                                {% endif %}
+                                {% if item.ware %}
+                                    <div>
+                                        <input value="{{ item.ware|default:'' }}" class="form-control" readonly>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <input value="{{ item.price_netto|floatformat:2 }}" class="form-control" readonly>
+                            </td>
+                            <td>
+                                <input value="{{ item.price_brutto|floatformat:2 }}" class="form-control" readonly>
+                            </td>
+                            <td>
+                                <input value="{{ item.quantity }}" class="form-control" readonly>
+                            </td>
+                            <td class="item-total-netto">
+                                {{ item.total_netto|floatformat:2 }} zł
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="no-right-border no-bottom-border">
+                            <span style="float:right">Razem netto:</span>
+                        </td>
+                        <td colspan="2" class="no-left-border no-bottom-border">
+                            {{ original_invoice.total_value_netto|floatformat:2 }} zł
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="no-right-border no-top-border">
+                                <span style="float:right">Razem brutto:</span>
+                        </td>
+                        <td colspan="2" class="no-left-border no-top-border">
+                            {{ original_invoice.total_value_brutto|floatformat:2 }} zł
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    
+        <h4>Stan po korekcie</h4>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th style="min-width:15rem;">Usługa/Towar</th>
+                        <th style="min-width:8rem;width:10rem;">Cena netto</th>
+                        <th style="min-width:8rem;width:10rem;">Cena brutto</th>
+                        <th style="min-width:4rem;width:6rem;">Ilość</th>
+                        <th style="min-width:8rem;width:8rem;">Wartość netto</th>
+                        <th style="min-width:4rem;width:8rem;">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody id="item-rows">
+                    {% for item_form in inlines.0 %}
+                        {{ item_form.id }}
+                        <tr class="item-formset-row d-none">
+                            <td>
+                                <div style="margin-bottom:4px;">
+                                    {% include 'forms/field.html' with field=item_form.name hide_label=True %}
+                                </div>
+                                <div style="margin-bottom:4px;">
+                                    {% include 'forms/field.html' with field=item_form.description hide_label=True %}
+                                </div>
+                                <div>
+                                    {% include 'forms/field.html' with field=item_form.ware hide_label=True %}
+                                </div>
+                            </td>
+                            <td>
+                                {% include 'forms/field.html' with field=item_form.price_netto hide_label=True %}
+                            </td>
+                            <td>
+                                {% include 'forms/field.html' with field=item_form.price_brutto hide_label=True %}
+                            </td>
+                            <td>
+                                {% include 'forms/field.html' with field=item_form.quantity hide_label=True %}
+                            </td>
+                            <td class="item-total-netto">
+                                0,00 zł
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-outline-info btn-sm btn-table" title="Wybierz usługę" data-toggle="modal" data-target="#id_item-{{ forloop.counter }}-service_modal">
+                                    Usługa
+                                </button>
+                                <div class="modal fade" id="id_item-{{ forloop.counter }}-service_modal" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Wybierz usługę</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                {% include 'forms/field.html' with field=item_form.service hide_label=True %}
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-outline-primary choose_service" data-dismiss="modal">Wybierz</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-outline-danger btn-sm btn-table remove_item_formset" title="Usuń">
+                                    Usuń
+                                </button>
+                            </td>
+                            <td class="item-DELETE d-none">{{ item_form.DELETE }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2" rowspan="2" class="no-right-border">
+                            <button type="button" class="btn btn-outline-info" id="add_item_formset">
+                                Kolejna pozycja
+                            </button>
+                        </td>
+                        <td colspan="2" class="no-left-border no-right-border no-bottom-border">
+                            <span style="float:right">Razem netto:</span>
+                        </td>
+                        <td colspan="2" id="invoice-total-netto" class="no-left-border no-bottom-border">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="no-left-border no-right-border no-top-border">
+                                <span style="float:right">Razem brutto:</span>
+                        </td>
+                        <td colspan="2" id="invoice-total-brutto" class="no-left-border no-top-border">
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="card-deck text-center">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Akcje</h5>
+                <button class="btn btn-outline-primary btn-lg" type="submit" name="generate_pdf"><i class="fas fa-print"></i> Zapisz i drukuj</button>
+                <button class="btn btn-outline-primary btn-lg" type="submit"><i class="far fa-save"></i> Zapisz</button>
+                {% if object.pk %}
+                    <a class="btn btn-outline-dark btn-lg" href="{% url 'invoicing:sale_invoice_detail' object.pk %}">Powrót</a>
+                {% else %}
+                    <a class="btn btn-outline-dark btn-lg" href="{% url 'invoicing:sale_invoices' %}">Powrót</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var CREATE_CONTRACTOR = "{% url 'invoicing:contractor_create_ajax' %}";
+    var UPDATE_CONTRACTOR = "{% url 'invoicing:contractor_update_ajax' 0 %}";
+    var GET_CONTRACTOR_DATA = "{% url 'invoicing:get_contractor' %}";
+    var GET_SERVICE_DATA = "{% url 'invoicing:get_service_template' %}";
+    var INVOICE_TYPE = "{{ form.initial.invoice_type }}";
+</script>
+<script src="{% static 'js/invoicing/sale-invoice.js' %}"></script>
+{% endblock %}

@@ -8,6 +8,8 @@ urlpatterns = [
     path('sale_invoices/<int:pk>', views.SaleInvoiceDetailView.as_view(), name='sale_invoice_detail'),
     path('sale_invoices/create/<type>', views.SaleInvoiceCreateView.as_view(), name='sale_invoice_create'),
     path('sale_invoices/<int:pk>/update', views.SaleInvoiceUpdateView.as_view(), name='sale_invoice_update'),
+    path('sale_invoices/create_corrective/<int:pk>', views.CorrectiveSaleInvoiceCreateView.as_view(), name='sale_invoice_create_corrective'),
+    path('sale_invoices/<int:pk>/update_corrective', views.CorrectiveSaleInvoiceUpdateView.as_view(), name='sale_invoice_update_corrective'),
     path('sale_invoices/<int:pk>/pdf', views.SaleInvoicePDFView.as_view(), name='sale_invoice_pdf'),
     path('sale_invoices/<int:pk>/print_pdf', views.SaleInvoicePDFView.as_view(print_version=True), name='sale_invoice_print_pdf'),
     path('export_refrigerant_weights', views.ExportRefrigerantWeights.as_view(), name='export_refrigerant_weights'),

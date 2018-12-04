@@ -108,6 +108,10 @@ h2.name {
   margin: 0  0 10px 0;
 }
 
+#invoice h4 {
+  margin: -10px  0 10px 0;
+}
+
 #invoice .date {
   font-size: 1.1em;
 }
@@ -125,12 +129,21 @@ table {
   margin-bottom: 20px;
 }
 
+table.small {
+  margin-bottom: 5px;
+}
+
 table th,
 table td {
   padding: 5px;
   background: #F7F7F7;
   text-align: center;
   border-bottom: 1px solid #FFFFFF;
+}
+
+table.small th,
+table.small td {
+  padding: 2px 5px;
 }
 
 table th {
@@ -146,6 +159,10 @@ table td h3{
   font-size: 1.2em;
   font-weight: 400;
   margin: 0 0 0.2em 0;
+}
+
+table.small td h3{
+  font-size: 1.0em;
 }
 
 table .no {
@@ -178,6 +195,12 @@ table td.total {
   font-size: 1.2em;
 }
 
+table.small td.unit,
+table.small td.qty,
+table.small td.total {
+  font-size: 1.0em;
+}
+
 table thead th {
 	font-weight: 400;
 }
@@ -195,9 +218,12 @@ table tfoot td {
   border-top: 1px solid #AAAAAA; 
 }
 
+table.small tfoot td {
+  font-size: 1.0em;
+}
+
 table tfoot tr:first-child td {
   border-top: none; 
-  
 }
 
 table tfoot tr:last-child td {
@@ -205,6 +231,10 @@ table tfoot tr:last-child td {
   font-size: 1.4em;
   font-weight: 600;
   border-top: 1px solid #00689d; 
+}
+
+table.small tfoot tr:last-child td {
+  font-size: 1.2em;
 }
 
 table tfoot tr td:first-child {
@@ -280,4 +310,8 @@ footer {
   text-align: right;
   width: 100%;
   margin-bottom: 20px;
+}
+
+.corrective-header {
+  margin: 0 0 5px 0;
 }
