@@ -37,6 +37,7 @@ class SaleInvoice(models.Model):
     payment_type = models.CharField(max_length=1, verbose_name=('Rodzaj płatności'), choices=PAYMENT_TYPES)
     payment_date = models.DateField(
         verbose_name=('Termin płatności'), null=True, blank=True)
+    payed = models.BooleanField(verbose_name=('Zapłacono'), default=True)
     total_value_netto = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name=('Łączna wartość netto'))
     total_value_brutto = models.DecimalField(
@@ -72,6 +73,8 @@ class SaleInvoice(models.Model):
         number_data = self.number.split('/')
         self.number_value = number_data[0]
         self.number_year = number_data[1]
+        if not self.pk and self.payment_date:
+            self.payed = False
         super().save(*args, **kwargs)
 
     def generate_pdf(self, print_version=False):

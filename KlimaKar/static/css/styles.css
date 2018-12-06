@@ -168,7 +168,10 @@ span.required {
 .metrics-data {
     margin-left: 1rem;   
 }
-.chart-card, .metrics-card, .price-change-card {
+.chart-card,
+.metrics-card,
+.price-change-card,
+.due-payment-card {
     margin-bottom: 1rem;
 }
 #stats-tab-content {

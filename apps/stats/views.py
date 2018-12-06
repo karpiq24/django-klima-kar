@@ -557,3 +557,25 @@ class WarePriceChanges(View):
                 'created_date': _date(change.created_date, "d E Y")
             })
         return JsonResponse(response)
+
+
+class DuePayments(GroupAccessControlMixin, View):
+    allowed_groups = ['boss']
+
+    def get(self, *args, **kwargs):
+        invoices = SaleInvoice.objects.filter(payed=False).order_by('payment_date')
+        response = {'invoices': []}
+        for invoice in invoices:
+            response['invoices'].append({
+                'url': reverse('invoicing:sale_invoice_detail', kwargs={'pk': invoice.pk}),
+                'number': invoice.number,
+                'brutto_price': "{0:.2f} zł".format(invoice.total_value_brutto).replace('.', ','),
+                'payment_date': _date(invoice.payment_date, "d E Y"),
+                'is_exceeded': invoice.payment_date < datetime.date.today(),
+                'contractor': {
+                    'url': reverse('invoicing:contractor_detail', kwargs={'pk': invoice.contractor.pk}),
+                    'name': invoice.contractor.name
+                },
+                'payed_url': reverse('invoicing:sale_invoice_set_payed', kwargs={'pk': invoice.pk})
+            })
+        return JsonResponse(response)

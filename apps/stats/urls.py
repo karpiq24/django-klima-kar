@@ -11,5 +11,7 @@ urlpatterns = [
     path('ware_price_changes', views.WarePriceChanges.as_view(), name='ware_price_changes'),
 
     path('sale_invoices_history', views.SaleInvoicesHistory.as_view(), name='sale_invoices_history'),
+    path('due_payments', views.DuePayments.as_view(), name='due_payments'),
+
     path('refrigerant_history', views.RefrigerantWeightsHistory.as_view(), name='refrigerant_history'),
 ]

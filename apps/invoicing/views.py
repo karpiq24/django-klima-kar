@@ -14,7 +14,7 @@ from django.db.models import Q
 from django.core.mail import EmailMessage
 
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
-from KlimaKar.mixins import AjaxFormMixin
+from KlimaKar.mixins import AjaxFormMixin, GroupAccessControlMixin
 from apps.invoicing.models import SaleInvoice, Contractor, SaleInvoiceItem, ServiceTemplate, CorrectiveSaleInvoice
 from apps.invoicing.forms import SaleInvoiceModelForm, ContractorModelForm, SaleInvoiceItemsInline,\
     ServiceTemplateModelForm, EmailForm, RefrigerantWeightsInline, CorrectiveSaleInvoiceModelForm
@@ -388,3 +388,13 @@ class ContractorGetDataView(View):
             return JsonResponse({'status': 'ok',
                                  'contractor': response})
         return JsonResponse({'status': 'error', 'contractor': {}})
+
+
+class SaeInvoiceSetPayed(GroupAccessControlMixin, View):
+    allowed_groups = ['boss']
+
+    def get(self, *args, **kwargs):
+        invoice = SaleInvoice.objects.get(pk=kwargs.get('pk'))
+        invoice.payed = True
+        invoice.save()
+        return JsonResponse({'status': 'success'})

@@ -14,6 +14,7 @@ urlpatterns = [
     path('sale_invoices/<int:pk>/print_pdf', views.SaleInvoicePDFView.as_view(print_version=True), name='sale_invoice_print_pdf'),
     path('export_refrigerant_weights', views.ExportRefrigerantWeights.as_view(), name='export_refrigerant_weights'),
     path('sale_invoice_email', views.SendEmailView.as_view(), name='sale_invoice_email'),
+    path('sale_invoice_set_payed/<int:pk>', views.SaeInvoiceSetPayed.as_view(), name='sale_invoice_set_payed'),
 
     path('services', views.ServiceTemplateTableView.as_view(), name='service_templates'),
     path('services/<int:pk>', views.ServiceTemplateDetailView.as_view(), name='service_template_detail'),
