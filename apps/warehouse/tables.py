@@ -111,6 +111,9 @@ class InvoiceItemTable(tables.Table):
         fields = ['index', 'name', 'quantity', 'price', 'total']
         empty_text = 'Brak towarów'
 
+    def render_quantity(self, value):
+        return value.normalize()
+
     def render_price(self, value):
         return "{0:.2f} zł".format(value).replace('.', ',')
 

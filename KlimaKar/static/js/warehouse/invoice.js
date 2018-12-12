@@ -7,7 +7,7 @@ function calculateInvoiceTotals() {
     $('.item-formset-row').each(function() {
         if (!$(this).hasClass('d-none')){
             var price = toCurrency($(this).find(".item-price").val());
-            var quantity = parseInt($(this).find(".item-quantity").val());
+            var quantity = parseFloat($(this).find(".item-quantity").val());
             var total = toCurrency(quantity * price);
             invoice_total = toCurrency(invoice_total + total);
         }
@@ -121,7 +121,7 @@ $(function () {
                 $(item_form).find(".item-name").text(result['ware']['name']);
                 $(item_form).find(".item-price").val(result['ware']['last_price']);
 
-                var quantity = parseInt($(item_form).find(".item-quantity").val());
+                var quantity = parseFloat($(item_form).find(".item-quantity").val());
                 var total = toCurrency(result['ware']['last_price'] * quantity);
                 $(item_form).find(".item-total-value").text(total.toFixed(2).replace(".", ",") + ' zł');
                 calculateInvoiceTotals();
@@ -152,7 +152,7 @@ $(function () {
     $(".item-quantity").change(function () {
         var item_form = $(this).parents('.item-formset-row');
         var price = toCurrency($(item_form).find(".item-price").val());
-        var quantity = parseInt($(item_form).find(".item-quantity").val());
+        var quantity = parseFloat($(item_form).find(".item-quantity").val());
         var total = toCurrency(price * quantity);
         $(item_form).find(".item-total-value").text(total.toFixed(2).replace(".", ",") + ' zł');
         calculateInvoiceTotals();
@@ -161,7 +161,7 @@ $(function () {
     $(".item-price").change(function () {
         var item_form = $(this).parents('.item-formset-row');
         var price = toCurrency($(item_form).find(".item-price").val());
-        var quantity = parseInt($(item_form).find(".item-quantity").val());
+        var quantity = parseFloat($(item_form).find(".item-quantity").val());
         var total = toCurrency(price * quantity);
         $(item_form).find(".item-total-value").text(total.toFixed(2).replace(".", ",") + ' zł');
         calculateInvoiceTotals();
