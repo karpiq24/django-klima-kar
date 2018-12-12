@@ -22,13 +22,13 @@ function calculateInvoiceTotals() {
 function customSuccessCreate(data, identifier) {
     if (identifier == '1') {
         var $option = $("<option selected></option>").val(data['pk']).text(data['text']);
-        var $sel2 = $("#item-rows tr:not('.d-none'):last").find(".item-ware");
+        var $sel2 = $("#item-rows tr:not('.d-none'):last").find("select.item-ware");
         if (!$sel2.val() == "") {
             var item_form = $('#item-rows').children('.d-none').first();
             $(item_form).find(".item-DELETE").children('input').prop('checked', false);
             $(item_form).removeClass('d-none');
             $(item_form).insertAfter($("#item-rows tr:not('.d-none'):last"));
-            $sel2 = $("#item-rows tr:not('.d-none'):last").find(".item-ware");
+            $sel2 = $("#item-rows tr:not('.d-none'):last").find("select.item-ware");
         }
         $sel2.append($option).trigger('change');
 
