@@ -65,7 +65,7 @@ class Invoice(models.Model):
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, verbose_name=('Faktura'))
     ware = models.ForeignKey(Ware, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=('Towar'))
-    quantity = models.DecimalField(default=1, max_digits=4, decimal_places=3, verbose_name=('Ilość'))
+    quantity = models.DecimalField(default=1, max_digits=8, decimal_places=3, verbose_name=('Ilość'))
     price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name=('Cena netto'))
 
     def __str__(self):
