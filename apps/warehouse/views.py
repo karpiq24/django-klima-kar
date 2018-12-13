@@ -62,7 +62,7 @@ class WareDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(WareDetailView, self).get_context_data(**kwargs)
         invoices = Invoice.objects.filter(invoiceitem__ware=context['ware']).annotate(
-            ware_price=F('invoiceitem__price'))
+            ware_price=F('invoiceitem__price'), ware_quantity=F('invoiceitem__quantity'))
         table = InvoiceTableWithWare(invoices)
         RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
         context['table'] = table

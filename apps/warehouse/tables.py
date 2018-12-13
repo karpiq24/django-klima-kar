@@ -53,16 +53,20 @@ class InvoiceTable(tables.Table):
 
 
 class InvoiceTableWithWare(tables.Table):
-    supplier = tables.Column(attrs={'th': {'width': '28%'}}, verbose_name="Dostawca")
-    number = tables.Column(attrs={'th': {'width': '30%'}}, verbose_name="Numer faktury")
-    date = tables.Column(attrs={'th': {'width': '20%'}}, verbose_name="Data")
+    supplier = tables.Column(attrs={'th': {'width': '24%'}}, verbose_name="Dostawca")
+    number = tables.Column(attrs={'th': {'width': '26%'}}, verbose_name="Numer faktury")
+    date = tables.Column(attrs={'th': {'width': '18%'}}, verbose_name="Data")
     ware_price = tables.Column(attrs={'th': {'width': '15%'}}, verbose_name="Cena towaru")
+    ware_quantity = tables.Column(attrs={'th': {'width': '10%'}}, verbose_name="Ilość")
     actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
                                     template_name='warehouse/invoice/invoice_actions.html',
                                     orderable=False)
 
     def render_ware_price(self, value):
         return "{0:.2f} zł".format(value).replace('.', ',')
+
+    def render_ware_quantity(self, value):
+        return value.normalize()
 
     class Meta:
         model = Invoice
