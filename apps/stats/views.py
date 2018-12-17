@@ -154,7 +154,8 @@ class PurchaseInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
     how_many_shown = 4
 
     def get(self, *args, **kwargs):
-        date_option = self.request.GET.get('date_select', 'week')
+        supplier = kwargs.get('supplier')
+        date_option = self.request.GET.get('date_select', 'week' if not supplier else 'year')
         metric = self.request.GET.get('custom_select', 'Sum')
         now = datetime.datetime.today()
         if date_option == 'week':
@@ -167,6 +168,8 @@ class PurchaseInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
             date = None
 
         invoices = Invoice.objects.all()
+        if supplier:
+            invoices = invoices.filter(supplier__pk=supplier)
         if date:
             invoices = invoices.filter(date__gte=date)
 

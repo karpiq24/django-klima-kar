@@ -1,7 +1,7 @@
 var charts = {};
 
 function number_format(number) {
-    number = number.toString();
+    number = parseFloat(number).toString();
     var decimal_split = number.split('.');
     number = decimal_split[0].split(/(?=(?:...)*$)/);
     number = number.join(' ');

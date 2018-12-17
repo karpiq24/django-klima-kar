@@ -164,11 +164,22 @@ class SupplierDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(SupplierDetailView, self).get_context_data(**kwargs)
-        table = InvoiceTable(Invoice.objects.filter(supplier=context['supplier']))
+        invoices = Invoice.objects.filter(supplier=context['supplier'])
+        table = InvoiceTable(invoices)
         RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
         context['table'] = table
         key = "{}_params".format(self.model.__name__)
         context['back_url'] = reverse('warehouse:suppliers') + '?' + urlencode(self.request.session.get(key, ''))
+        if invoices.count() > 3:
+            context['chart'] = {
+                'title': 'Historia zakupów',
+                'url': reverse('stats:purchase_invoices_history_per_supplier', kwargs={'supplier': self.object.pk}),
+                'select_date': {
+                    'extra': True,
+                    'default': 'year'
+                },
+                'custom_select': [('Sum', 'Suma'), ('Avg', 'Średnia'), ('Count', 'Ilość')]
+            }
         return context
 
 

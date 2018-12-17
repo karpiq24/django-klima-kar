@@ -1,0 +1,36 @@
+<div class="chart-card card bg-light" chart-url="{{ chart.url }}" id="chart_{{ group }}_{{ id }}">
+    <h5 class="card-header">
+        <form class="form-inline flex-column flex-sm-row">
+            <div class="flex-sm-fill">{{ chart.title }}</div>
+            {% if chart.custom_select or chart.select_date %}
+                <div style="width:auto;" class="ml-sm-auto">
+                    <div class="input-group input-group-sm">
+                        {% if chart.custom_select %}
+                            <select id="chart_custom_select_{{ id }}" class="form-control {% if chart.select_date %}mr-sm-2{% endif %}" style="width:auto;">
+                                {% for option in chart.custom_select %}
+                                    <option value="{{ option.0 }}">{{ option.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+                        {% if chart.select_date %}
+                            <select id="chart_date_select_{{ id }}" class="form-control" style="width:auto;">
+                                <option value="week">Tydzień</option>
+                                <option value="month">Miesiąc</option>
+                                <option value="year"{% if chart.select_date.default == 'year' %} selected{% endif %}>Rok</option>
+                                {% if chart.select_date.extra %}
+                                    <option value="all_monthly">Od początku miesięcznie</option>
+                                    <option value="all_yearly">Od początku rocznie</option>
+                                {% else %}
+                                    <option value="all">Od początku</option>
+                                {% endif %}
+                            </select>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </form>
+    </h5>
+    <div class="card-body">
+        <canvas class="chart_canvas"></canvas>
+    </div>
+</div>
