@@ -70,7 +70,7 @@ class CorrectiveSaleInvoiceModelForm(SaleInvoiceModelForm):
 
     class Meta:
         model = CorrectiveSaleInvoice
-        exclude = ['refrigerant_weidghts', 'number_value', 'number_year']
+        exclude = ['refrigerant_weidghts', 'number_value', 'number_year', 'payed']
         widgets = {
             'comment': forms.Textarea(attrs={'rows': 1}),
             'payment_date': EnableDisableDateInput(),

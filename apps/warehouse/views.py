@@ -109,12 +109,6 @@ class InvoiceCreateView(CreateWithInlinesView):
     inlines = [InvoiceItemsInline]
     template_name = 'warehouse/invoice/invoice_form.html'
 
-    def get_initial(self):
-        '''
-        Workaround for weird initial values caching from another app.
-        '''
-        return {}
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Nowa faktura zakupowa"
@@ -134,12 +128,6 @@ class InvoiceUpdateView(UpdateWithInlinesView):
     form_class = InvoiceModelForm
     inlines = [InvoiceItemsInline]
     template_name = 'warehouse/invoice/invoice_form.html'
-
-    def get_initial(self):
-        '''
-        Workaround for weird initial values caching from another app.
-        '''
-        return {}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

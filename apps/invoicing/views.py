@@ -63,17 +63,21 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = "Nowa faktura sprzedażowa ({})".format(dict(INVOICE_TYPES)[self.initial['invoice_type']])
+        context['title'] = "Nowa faktura sprzedażowa ({})".format(
+            dict(INVOICE_TYPES)[self.invoice_type])
         return context
 
+    def get_initial(self):
+        initial = dict()
+        initial['invoice_type'] = self.invoice_type
+        initial['number'] = get_next_invoice_number(self.invoice_type)
+        if self.invoice_type == '4':
+            initial['tax_percent'] = 0
+        return initial
+
     def dispatch(self, *args, **kwargs):
-        invoice_type = kwargs.get('type')
-        if invoice_type and invoice_type in dict(INVOICE_TYPES):
-            self.initial['invoice_type'] = invoice_type
-            self.initial['number'] = get_next_invoice_number(invoice_type)
-            if invoice_type == '4':
-                self.initial['tax_percent'] = 0
-        else:
+        self.invoice_type = kwargs.get('type')
+        if not self.invoice_type or self.invoice_type not in dict(INVOICE_TYPES):
             raise Http404()
         return super().dispatch(*args, **kwargs)
 
@@ -130,14 +134,20 @@ class CorrectiveSaleInvoiceCreateView(SaleInvoiceCreateView):
 
     def dispatch(self, *args, **kwargs):
         kwargs['type'] = '3'
+        self.invoice_type = '3'
         self.original_invoice = SaleInvoice.objects.get(pk=kwargs.get('pk'))
-        self.initial = model_to_dict(self.original_invoice)
-        self.initial.pop('issue_date', None)
-        self.initial.pop('completion_date', None)
-        self.initial.pop('payment_date', None)
-        self.initial['original_invoice'] = self.original_invoice
         self.kwargs['original_invoice'] = self.original_invoice
         return super().dispatch(*args, **kwargs)
+
+    def get_initial(self):
+        initial = model_to_dict(self.original_invoice)
+        initial.pop('issue_date', None)
+        initial.pop('completion_date', None)
+        initial.pop('payment_date', None)
+        initial['original_invoice'] = self.original_invoice
+        initial['invoice_type'] = self.invoice_type
+        initial['number'] = get_next_invoice_number(self.invoice_type)
+        return initial
 
 
 class CorrectiveSaleInvoiceUpdateView(SaleInvoiceUpdateView):
