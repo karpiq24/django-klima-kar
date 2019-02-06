@@ -154,6 +154,8 @@ MESSAGE_TAGS = {
     messages.ERROR: 'danger'
 }
 
+DJANGO_TABLES2_TEMPLATE = 'tables2/table.html'
+
 def FILTERS_VERBOSE_LOOKUPS():
     from django_filters.conf import DEFAULTS
 

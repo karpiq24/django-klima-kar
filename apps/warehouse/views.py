@@ -6,12 +6,11 @@ from django.http import JsonResponse, HttpResponse
 from django.views.generic import DetailView, UpdateView, CreateView, View
 from django.db.models import Q, F
 
-from django_tables2 import RequestConfig
 from django_tables2.export.views import ExportMixin
 from extra_views import CreateWithInlinesView, UpdateWithInlinesView
 
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
-from KlimaKar.mixins import AjaxFormMixin
+from KlimaKar.mixins import AjaxFormMixin, SingleTableAjaxMixin
 from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 from apps.warehouse.tables import WareTable, InvoiceTable, SupplierTable, InvoiceItemTable, InvoiceTableWithWare
 from apps.warehouse.filters import WareFilter, InvoiceFilter, SupplierFilter
@@ -55,20 +54,20 @@ class WareCreateView(CreateView):
         return reverse("warehouse:ware_detail", kwargs={'pk': self.object.pk})
 
 
-class WareDetailView(DetailView):
+class WareDetailView(SingleTableAjaxMixin, DetailView):
     model = Ware
     template_name = 'warehouse/ware/ware_detail.html'
+    table_class = InvoiceTableWithWare
 
     def get_context_data(self, **kwargs):
-        context = super(WareDetailView, self).get_context_data(**kwargs)
-        invoices = Invoice.objects.filter(invoiceitem__ware=context['ware']).annotate(
-            ware_price=F('invoiceitem__price'), ware_quantity=F('invoiceitem__quantity'))
-        table = InvoiceTableWithWare(invoices)
-        RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
-        context['table'] = table
+        context = super().get_context_data(**kwargs)
         key = "{}_params".format(self.model.__name__)
         context['back_url'] = reverse('warehouse:wares') + '?' + urlencode(self.request.session.get(key, ''))
         return context
+
+    def get_table_data(self):
+        return Invoice.objects.filter(invoiceitem__ware=self.object).annotate(
+            ware_price=F('invoiceitem__price'), ware_quantity=F('invoiceitem__quantity'))
 
 
 class ExportWareInventory(View):
@@ -89,18 +88,19 @@ class InvoiceTableView(ExportMixin, FilteredSingleTableView):
     export_name = 'Faktury zakupowe'
 
 
-class InvoiceDetailView(DetailView):
+class InvoiceDetailView(SingleTableAjaxMixin, DetailView):
     model = Invoice
     template_name = 'warehouse/invoice/invoice_detail.html'
+    table_class = InvoiceItemTable
 
     def get_context_data(self, **kwargs):
-        context = super(InvoiceDetailView, self).get_context_data(**kwargs)
-        table = InvoiceItemTable(InvoiceItem.objects.filter(invoice=context['invoice']))
-        RequestConfig(self.request).configure(table)
-        context['item_table'] = table
+        context = super().get_context_data(**kwargs)
         key = "{}_params".format(self.model.__name__)
         context['back_url'] = reverse('warehouse:invoices') + '?' + urlencode(self.request.session.get(key, ''))
         return context
+
+    def get_table_data(self):
+        return InvoiceItem.objects.filter(invoice=self.object)
 
 
 class InvoiceCreateView(CreateWithInlinesView):
@@ -146,19 +146,16 @@ class SupplierTableView(ExportMixin, FilteredSingleTableView):
     export_name = 'Dostawcy'
 
 
-class SupplierDetailView(DetailView):
+class SupplierDetailView(SingleTableAjaxMixin, DetailView):
     model = Supplier
     template_name = 'warehouse/supplier/supplier_detail.html'
+    table_class = InvoiceTable
 
     def get_context_data(self, **kwargs):
-        context = super(SupplierDetailView, self).get_context_data(**kwargs)
-        invoices = Invoice.objects.filter(supplier=context['supplier'])
-        table = InvoiceTable(invoices)
-        RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
-        context['table'] = table
+        context = super().get_context_data(**kwargs)
         key = "{}_params".format(self.model.__name__)
         context['back_url'] = reverse('warehouse:suppliers') + '?' + urlencode(self.request.session.get(key, ''))
-        if invoices.count() > 3:
+        if self.get_table_data().count() > 3:
             context['chart'] = {
                 'title': 'Historia zakupów',
                 'url': reverse('stats:purchase_invoices_history_per_supplier', kwargs={'supplier': self.object.pk}),
@@ -169,6 +166,9 @@ class SupplierDetailView(DetailView):
                 'custom_select': [('Sum', 'Suma'), ('Avg', 'Średnia'), ('Count', 'Ilość')]
             }
         return context
+
+    def get_table_data(self):
+        return Invoice.objects.filter(supplier=self.object)
 
 
 class SupplierUpdateView(UpdateView):

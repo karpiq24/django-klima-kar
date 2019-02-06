@@ -1,5 +1,4 @@
 from urllib.parse import urlencode
-from django_tables2 import RequestConfig
 from django_tables2.export.views import ExportMixin
 from smtplib import SMTPRecipientsRefused
 from extra_views import CreateWithInlinesView, UpdateWithInlinesView
@@ -14,7 +13,7 @@ from django.db.models import Q
 from django.core.mail import EmailMessage
 
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
-from KlimaKar.mixins import AjaxFormMixin, GroupAccessControlMixin
+from KlimaKar.mixins import AjaxFormMixin, GroupAccessControlMixin, SingleTableAjaxMixin
 from apps.invoicing.models import SaleInvoice, Contractor, SaleInvoiceItem, ServiceTemplate, CorrectiveSaleInvoice
 from apps.invoicing.forms import SaleInvoiceModelForm, ContractorModelForm, SaleInvoiceItemsInline,\
     ServiceTemplateModelForm, EmailForm, RefrigerantWeightsInline, CorrectiveSaleInvoiceModelForm
@@ -33,15 +32,13 @@ class SaleInvoiceTableView(ExportMixin, FilteredSingleTableView):
     export_name = 'Zakupy sprzedazowe'
 
 
-class SaleInvoiceDetailView(DetailView):
+class SaleInvoiceDetailView(SingleTableAjaxMixin, DetailView):
     model = SaleInvoice
     template_name = 'invoicing/sale_invoice/detail.html'
+    table_class = SaleInvoiceItemTable
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        table = SaleInvoiceItemTable(SaleInvoiceItem.objects.filter(sale_invoice=context['saleinvoice']))
-        RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
-        context['table'] = table
         email_data = {
             'sale_invoice': self.object,
             'subject': '{} {}'.format(self.object.get_invoice_type_display(), self.object.number),
@@ -53,6 +50,9 @@ class SaleInvoiceDetailView(DetailView):
         key = "{}_params".format(self.model.__name__)
         context['back_url'] = reverse('invoicing:sale_invoices') + '?' + urlencode(self.request.session.get(key, ''))
         return context
+
+    def get_table_data(self):
+        return SaleInvoiceItem.objects.filter(sale_invoice=self.object)
 
 
 class SaleInvoiceCreateView(CreateWithInlinesView):
@@ -307,18 +307,19 @@ class ContractorTableView(ExportMixin, FilteredSingleTableView):
     export_name = 'Kontrahenci'
 
 
-class ContractorDetailView(DetailView):
+class ContractorDetailView(SingleTableAjaxMixin, DetailView):
     model = Contractor
     template_name = 'invoicing/contractor/detail.html'
+    table_class = SaleInvoiceTable
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        table = SaleInvoiceTable(SaleInvoice.objects.filter(contractor=context['contractor']))
-        RequestConfig(self.request, paginate={"per_page": 10}).configure(table)
-        context['table'] = table
         key = "{}_params".format(self.model.__name__)
         context['back_url'] = reverse('invoicing:contractors') + '?' + urlencode(self.request.session.get(key, ''))
         return context
+
+    def get_table_data(self):
+        return SaleInvoice.objects.filter(contractor=self.object)
 
 
 class ContractorCreateView(CreateView):

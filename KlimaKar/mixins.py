@@ -1,6 +1,8 @@
 from django.template.loader import render_to_string
 from django.http import HttpResponseForbidden, JsonResponse
 
+from django_tables2 import SingleTableMixin
+
 
 class GroupAccessControlMixin(object):
     allowed_groups = []
@@ -63,3 +65,15 @@ class AjaxFormMixin(object):
 
     def get_success_url(self, **kwargs):
         return None
+
+
+class SingleTableAjaxMixin(SingleTableMixin):
+    table_pagination = {"per_page": 10}
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, args, kwargs)
+        if self.request.is_ajax():
+            table = self.get_table(**self.get_table_kwargs())
+            return JsonResponse({"table": table.as_html(request)})
+        else:
+            return response
