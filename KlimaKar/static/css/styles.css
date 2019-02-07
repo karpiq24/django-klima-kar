@@ -26,18 +26,6 @@ span.required {
 .card-body .btn {
     margin: 2px 0px;
 }
-#alert-box {
-    z-index: 99999;
-    position: fixed;
-    top: 60px;
-    right: 15px;
-    width: 400px;
-    font-size: 13px;
-}
-#alert-box .alert {
-    margin-bottom: 0.5rem;
-    cursor: pointer;
-}
 .date-input.form-control:disabled,
 .date-input.form-control[readonly],
 .date-range-input.form-control:disabled,

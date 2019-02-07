@@ -202,6 +202,8 @@ class SendEmailView(View):
             return JsonResponse({'status': 'error', 'message': 'Podaj poprawny adres email'}, status=400)
         except IndexError:
             return JsonResponse({'status': 'error', 'message': 'Podaj poprawny temat wiadomości'}, status=400)
+        except Exception:
+            result = 0
         if result == 1:
             return JsonResponse({'status': 'success', 'message': 'Wiadomość została wysłana'}, status=200)
         else:

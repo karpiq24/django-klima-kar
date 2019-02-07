@@ -24,17 +24,33 @@ function print_pdf() {
 
 function submitEmailForm(url) {
     var data = $('#email_form').serialize();
-    data
+    var spinner = document.createElement("i");
+    spinner.className = 'fas fa-spinner fa-spin fa-8x'
+    spinner.style = 'margin-bottom: 26px;color: #00a0df;'
+    $("#email_modal").modal("hide");
+    swal({
+        title: "Wysyłanie wiadomości email",
+        content: spinner,
+        buttons: false,
+    })
     $.ajax({
         url: url,
         type: 'POST',
         data: data,
-        success: function(data){
+        success: function(data) {
             $("#email_modal").modal("hide");
-            append_alert('success', data.message);
+            swal({
+                title: data.message,
+                icon: 'success'
+            })
         },
-        error: function(data){
-            append_alert('danger', data.responseJSON.message);
+        error: function(data) {
+            swal({
+                title: data.responseJSON.message,
+                icon: 'error'
+            }).then(function() {
+                $("#email_modal").modal("show");
+            })
         }
     });
 };
