@@ -226,11 +226,11 @@ class FilteredSingleTableView(SingleTableView):
     def get_context_data(self, **kwargs):
         context = super(FilteredSingleTableView, self).get_context_data(**kwargs)
         context['filter'] = self.filter
-        key = "{}_params".format(self.model.__name__)
-        self.request.session[key] = self.request.GET
         return context
 
     def get(self, request, *args, **kwargs):
+        key = "{}_params".format(self.model.__name__)
+        self.request.session[key] = self.request.GET
         if self.request.is_ajax():
             table = self.get_table(**self.get_table_kwargs())
             return JsonResponse({"table": table.as_html(request)})

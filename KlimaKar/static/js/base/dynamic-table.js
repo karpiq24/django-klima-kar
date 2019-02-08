@@ -1,10 +1,17 @@
 $(function() {
-    function reload_table (page = 1) {
+    function reload_table ({page = 1, sort = null}) {
+        var url = [location.protocol, '//', location.host, location.pathname].join('');
+        var data = $('#filters > form').serialize() + '&page=' + page;
+        if (sort !== null) {
+            data += '&sort=' + sort;
+        } else {
+            data += '&sort=' + $('.orderable.desc, .orderable.asc').data('sort');
+        }
         $.ajax({
-            url: window.location.href,
+            url: url,
             type: 'get',
             dataType: 'json',
-            data: $('#filters > form').serialize() + '&page=' + page,
+            data: data,
             success: function (data) {
                 $('.table-container').replaceWith(data.table)
             }
@@ -20,19 +27,25 @@ $(function() {
     })();
 
     $('#filters > form :input').on('keyup paste', function() {
-        debounce(reload_table, 300)
+        debounce(function () {
+            reload_table({});
+        }, 300)
     });
 
     $('#filters > form select').on('change', function() {
-        reload_table();
+        reload_table({});
     });
 
     $('#filters > form :input').on('apply.daterangepicker', function() {
-        reload_table();
+        reload_table({});
     });
 
     $('.content').on('click', '.page-link', function() {
-        reload_table(page=$(this).data('page'));
+        reload_table({page:$(this).data('page')});
+    });
+
+    $('.content').on('click', '.orderable > a', function() {
+        reload_table({sort:$(this).data('query')});
     });
 
     $('.clear-filters').on('click', function() {
