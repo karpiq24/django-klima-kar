@@ -12,5 +12,6 @@ urlpatterns = [
 
     path('warehouse/', include('apps.warehouse.urls')),
     path('invoicing/', include('apps.invoicing.urls')),
-    path('stats/', include('apps.stats.urls'))
+    path('stats/', include('apps.stats.urls')),
+    path('settings/', include('apps.settings.urls'))
 ]

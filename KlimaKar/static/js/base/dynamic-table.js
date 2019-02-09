@@ -33,11 +33,15 @@ $(function() {
     });
 
     $('#filters > form select').on('change', function() {
-        reload_table({});
+        debounce(function () {
+            reload_table({});
+        }, 10)
     });
 
     $('#filters > form :input').on('apply.daterangepicker', function() {
-        reload_table({});
+        debounce(function () {
+            reload_table({});
+        }, 10)
     });
 
     $('.content').on('click', '.page-link', function() {

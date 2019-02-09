@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'reversion_compare',
 
     'KlimaKar',
+    'apps.settings',
     'apps.warehouse',
     'apps.invoicing',
     'apps.stats'

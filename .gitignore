@@ -102,6 +102,7 @@ ENV/
 
 # custom
 apps/*/migrations/
+KlimaKar/migrations/
 *.sqlite3
 data/
 .vscode/

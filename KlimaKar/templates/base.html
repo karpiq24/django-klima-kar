@@ -1,4 +1,4 @@
-{% load static %}
+{% load static access_control %}
 
 <!DOCTYPE html>
 <html lang="pl">
@@ -25,9 +25,16 @@
   <li><a class="active right-line" href="{% url 'home' %}">Klima-Kar</a></li>
   <li><span class="motto">komfortowy klimat w zasięgu ręki</span></li>
   {% if user.is_authenticated %}
-    <li class="left-line" style="float:right">
-      <a href="{% url 'logout' %}" title="Wyloguj">
-        <i class="fa fa-sign-out-alt fa-lg" style="cursor: pointer;"></i> Wyloguj
+  <li class="left-line" style="float:right">
+    <a href="{% url 'logout' %}" title="Wyloguj">
+      <i class="fa fa-sign-out-alt fa-lg" style="cursor: pointer;"></i> Wyloguj
+    </a>
+  </li>
+  {% endif %}
+  {% if request.user|has_group:"boss" %}
+    <li style="float:right">
+      <a href="{% url 'settings:settings' %}" title="Wyloguj">
+        <i class="fa fa-cogs fa-lg" style="cursor: pointer;"></i>
       </a>
     </li>
   {% endif %}
@@ -57,7 +64,6 @@
 </div>
 
 <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
-<script src="{% static 'js/popper.min.js' %}"></script>
 <script src="{% static 'js/moment.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/Chart.min.js' %}"></script>

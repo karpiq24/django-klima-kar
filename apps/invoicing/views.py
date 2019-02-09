@@ -7,11 +7,11 @@ from django.views.generic import DetailView, UpdateView, CreateView, View
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404, redirect
 from django.http import HttpResponse, Http404, JsonResponse
-from django.template.loader import get_template
+from django.template import Template, Context
 from django.urls import reverse
 from django.db.models import Q
-from django.core.mail import EmailMessage
 
+from KlimaKar.email import get_email_message
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
 from KlimaKar.mixins import AjaxFormMixin, GroupAccessControlMixin, SingleTableAjaxMixin
 from apps.invoicing.models import SaleInvoice, Contractor, SaleInvoiceItem, ServiceTemplate, CorrectiveSaleInvoice
@@ -22,6 +22,7 @@ from apps.invoicing.filters import SaleInvoiceFilter, ContractorFilter, ServiceT
 from apps.invoicing.dictionaries import INVOICE_TYPES
 from apps.invoicing.functions import get_next_invoice_number, generate_refrigerant_weights_report
 from apps.invoicing.gus import get_gus_address
+from apps.settings.models import SiteSettings
 
 
 class SaleInvoiceTableView(ExportMixin, FilteredSingleTableView):
@@ -39,10 +40,17 @@ class SaleInvoiceDetailView(SingleTableAjaxMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        site_settings = SiteSettings.load()
+        subject = ''
+        if site_settings.SALE_INVOICE_EMAIL_TITLE:
+            subject = Template(site_settings.SALE_INVOICE_EMAIL_TITLE).render(Context({'invoice': self.object}))
+        message = ''
+        if site_settings.SALE_INVOICE_EMAIL_BODY:
+            message = Template(site_settings.SALE_INVOICE_EMAIL_BODY).render(Context({'invoice': self.object}))
         email_data = {
             'sale_invoice': self.object,
-            'subject': '{} {}'.format(self.object.get_invoice_type_display(), self.object.number),
-            'message': get_template('invoicing/sale_invoice/email_template.txt').render(),
+            'subject': subject,
+            'message': message,
             'recipient': self.object.contractor.email
         }
         context['email_form'] = EmailForm(initial=email_data)
@@ -71,8 +79,10 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
         initial = dict()
         initial['invoice_type'] = self.invoice_type
         initial['number'] = get_next_invoice_number(self.invoice_type)
+        site_settings = SiteSettings.load()
+        initial['tax_percent'] = site_settings.SALE_INVOICE_TAX_PERCENT
         if self.invoice_type == '4':
-            initial['tax_percent'] = 0
+            initial['tax_percent'] = site_settings.SALE_INVOICE_TAX_PERCENT_WDT
         return initial
 
     def dispatch(self, *args, **kwargs):
@@ -187,7 +197,7 @@ class SendEmailView(View):
     def post(self, request, *args, **kwargs):
         invoice = get_object_or_404(SaleInvoice, pk=request.POST.get('sale_invoice'))
         pdf_file = invoice.generate_pdf()
-        email = EmailMessage(
+        email = get_email_message(
             subject=request.POST.get('subject'),
             body=request.POST.get('message'),
             to=[request.POST.get('recipient')]
@@ -209,7 +219,7 @@ class SendEmailView(View):
         else:
             return JsonResponse({
                 'status': 'error',
-                'message': 'Bład przy wysyłaniu wiadomości. Skontaktuj się z administratorem.'}, status=500)
+                'message': 'Bład przy wysyłaniu wiadomości. Sprawdź konfigurację serwera e-mail.'}, status=500)
 
 
 class ExportRefrigerantWeights(View):
