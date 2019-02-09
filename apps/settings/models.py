@@ -5,7 +5,7 @@ from KlimaKar.models import SingletonModel
 
 class SiteSettings(SingletonModel):
     EMAIL_HOST = models.CharField(max_length=255, verbose_name='Serwer poczty', blank=True, null=True)
-    EMAIL_HOST_USER = models.CharField(max_length=255, verbose_name='Użytkownika', blank=True, null=True)
+    EMAIL_HOST_USER = models.CharField(max_length=255, verbose_name='Użytkownik', blank=True, null=True)
     EMAIL_HOST_PASSWORD = models.CharField(max_length=255, verbose_name='Hasło', blank=True, null=True)
     EMAIL_PORT = models.PositiveIntegerField(default=0, verbose_name='Port', blank=True, null=True)
     EMAIL_USE_TLS = models.BooleanField(verbose_name='Wymagane połączenie TLS', default=False)
