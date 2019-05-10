@@ -60,26 +60,29 @@ $(function () {
     });
 
     var url = $('#due-payments-list').attr('data-url');
-    $.ajax({
-        url: url,
-        success: function (result) {
-            if (result.invoices.length === 0) {
-                $('#due-payments-list').html('Brak zaległych płatności.');
-                return;
+    if (url) {
+        $.ajax({
+            url: url,
+            success: function (result) {
+                console.log(result)
+                if (result.invoices.length === 0) {
+                    $('#due-payments-list').html('Brak zaległych płatności.');
+                    return;
+                }
+                result.invoices.forEach(function (invoice) {
+                    var row_class = ((invoice.is_exceeded) ? 'table-danger' : '');
+                    var result_row = '<tr class="' + row_class +'">\
+                        <td><a href="' + invoice.url + '">' + invoice.number +'</a></td>\
+                        <td><a href="' + invoice.contractor.url + '">' + invoice.contractor.name +'</a></td>\
+                        <td>' + invoice.brutto_price + '</td>\
+                        <td>' + invoice.payment_date + '</td>\
+                        <td><button class="btn btn-outline-dark btn-table payed" data-invoice="' + invoice.number + '" data-contractor="' + invoice.contractor.name + '" data-url="' + invoice.payed_url + '">Zapłacono</button></td>\
+                        </tr>'
+                    $('#due-payments-list').find('tbody').append(result_row);
+                });
             }
-            result.invoices.forEach(function (invoice) {
-                var row_class = ((invoice.is_exceeded) ? 'table-danger' : '');
-                var result_row = '<tr class="' + row_class +'">\
-                    <td><a href="' + invoice.url + '">' + invoice.number +'</a></td>\
-                    <td><a href="' + invoice.contractor.url + '">' + invoice.contractor.name +'</a></td>\
-                    <td>' + invoice.brutto_price + '</td>\
-                    <td>' + invoice.payment_date + '</td>\
-                    <td><button class="btn btn-outline-dark btn-table payed" data-invoice="' + invoice.number + '" data-contractor="' + invoice.contractor.name + '" data-url="' + invoice.payed_url + '">Zapłacono</button></td>\
-                    </tr>'
-                $('#due-payments-list').find('tbody').append(result_row);
-            });
-        }
-    });
+        });
+    }
     $('#due-payments-list').on('click', '.payed', function() {
         var that = this;
         swal({
