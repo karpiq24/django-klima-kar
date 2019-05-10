@@ -1,8 +1,8 @@
 django==2.1.7
-django-tables2==2.0.4
+django-tables2==2.0.6
 django-filter==2.1.0
 django==2.1.7
-django-tables2==2.0.4
+django-tables2==2.0.6
 django-filter==2.1.0
 django-reversion==3.0.3
 django-extra-views==0.12.0
