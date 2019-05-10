@@ -36,6 +36,29 @@ $(function () {
     $('#ware-change-date-range').data('daterangepicker').setEndDate(moment());
     $('#ware-change-date-range').data('daterangepicker').clickApply();
 
+    $('.metrics-date-range').each(function () {
+        $(this).data('daterangepicker').setStartDate(moment().subtract(6, 'days'));
+        $(this).data('daterangepicker').setEndDate(moment());
+        $(this).data('daterangepicker').clickApply();
+    })
+
+    $('.metrics-date-range').on('apply.daterangepicker', function(ev, picker) {
+        var url = $(this).attr('data-url');
+        $.ajax({
+            url: url,
+            data: {
+                date_from: picker.startDate.format('YYYY-MM-DD'),
+                date_to: picker.endDate.format('YYYY-MM-DD')
+            },
+            success: function (result) {
+                for (var key in result) {
+                    var value = result[key];
+                    $('.metrics-number.' + key).text(value);
+                }
+            }
+        });
+    });
+
     var url = $('#due-payments-list').attr('data-url');
     $.ajax({
         url: url,

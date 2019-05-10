@@ -11,8 +11,8 @@ from django.db.models.functions import ExtractYear, ExtractMonth
 from django.template.defaultfilters import date as _date
 
 from KlimaKar.mixins import GroupAccessControlMixin
-from apps.warehouse.models import Invoice, Ware, WarePriceChange
-from apps.invoicing.models import SaleInvoice
+from apps.warehouse.models import Invoice, Ware, WarePriceChange, Supplier
+from apps.invoicing.models import SaleInvoice, Contractor, RefrigerantWeights
 from apps.stats.dictionaries import MONTHS, COLORS, DAYS
 
 
@@ -581,4 +581,79 @@ class DuePayments(GroupAccessControlMixin, View):
                 },
                 'payed_url': reverse('invoicing:sale_invoice_set_payed', kwargs={'pk': invoice.pk})
             })
+        return JsonResponse(response)
+
+
+class Metrics(View):
+    def get(self, *args, **kwargs):
+        has_permission = False
+        if self.request.user.is_superuser:
+            has_permission = True
+        elif self.request.user.groups.filter(name='boss').exists():
+            has_permission = True
+
+        group = self.request.GET.get('group')
+        date_from = date_parser.parse(self.request.GET.get('date_from')).date()
+        date_to = date_parser.parse(self.request.GET.get('date_to')).date()
+
+        if group == 'warehouse':
+            response = {
+                'ware_count': Ware.objects.filter(
+                    created_date__date__gte=date_from, created_date__date__lte=date_to).count(),
+                'supplier_count': Supplier.objects.filter(
+                    created_date__date__gte=date_from, created_date__date__lte=date_to).count(),
+                'invoice_count': Invoice.objects.filter(
+                    created_date__date__gte=date_from, created_date__date__lte=date_to).count()
+            }
+            if has_permission:
+                invoices = Invoice.objects.filter(created_date__date__gte=date_from, created_date__date__lte=date_to)
+                invoices_sum = 0
+                if invoices:
+                    invoices_sum = invoices.aggregate(Sum('total_value'))['total_value__sum']
+                response['invoice_sum'] = "{0:.2f} zł".format(invoices_sum).replace('.', ',')
+
+        if group == 'invoicing':
+            response = {
+                'contractor_count': Contractor.objects.filter(
+                    created_date__date__gte=date_from, created_date__date__lte=date_to).count(),
+                'sale_invoice_count': SaleInvoice.objects.filter(
+                    issue_date__gte=date_from, issue_date__lte=date_to).count()
+            }
+            if has_permission:
+                invoices = SaleInvoice.objects.filter(
+                    issue_date__gte=date_from, issue_date__lte=date_to).exclude(invoice_type__in=['2', '3'])
+                invoices_sum = 0
+                tax_sum = 0
+                person_tax_sum = 0
+                if invoices:
+                    invoices_sum = invoices.aggregate(Sum('total_value_netto'))['total_value_netto__sum']
+                    tax_sum = invoices.annotate(
+                        vat=F('total_value_brutto') - F('total_value_netto')).aggregate(Sum('vat'))['vat__sum']
+                invoices = invoices.filter(contractor__nip=None)
+                if invoices:
+                    person_tax_sum = invoices.annotate(
+                        vat=F('total_value_brutto') - F('total_value_netto')).aggregate(Sum('vat'))['vat__sum']
+
+                response['sale_invoice_sum'] = "{0:.2f} zł".format(invoices_sum).replace('.', ',')
+                response['vat_sum'] = "{0:.2f} zł".format(tax_sum).replace('.', ',')
+                response['person_vat_sum'] = "{0:.2f} zł".format(person_tax_sum).replace('.', ',')
+
+        if group == 'refrigerant':
+            weight_objects = RefrigerantWeights.objects.filter(
+                sale_invoice__issue_date__gte=date_from, sale_invoice__issue_date__lte=date_to)
+            r134a = 0
+            r1234yf = 0
+            r12 = 0
+            r404 = 0
+            if weight_objects:
+                r134a = weight_objects.aggregate(Sum('r134a'))['r134a__sum']
+                r1234yf = weight_objects.aggregate(Sum('r1234yf'))['r1234yf__sum']
+                r12 = weight_objects.aggregate(Sum('r12'))['r12__sum']
+                r404 = weight_objects.aggregate(Sum('r404'))['r404__sum']
+            response = {
+                'r134a_sum': "{} g".format(r134a),
+                'r1234yf_sum': "{} g".format(r1234yf),
+                'r12_sum': "{} g".format(r12),
+                'r404_sum': "{} g".format(r404)
+            }
         return JsonResponse(response)

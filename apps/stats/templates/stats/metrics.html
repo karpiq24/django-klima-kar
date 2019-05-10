@@ -1,16 +1,35 @@
-{% for metric in metrics %}
-    <div class="col-12 col-sm-6 col-xl-4">
-        <div class="metrics-card card bg-light">
-            <div class="card-body">
-                <span class="fa-stack fa-2x">
-                    <i class="fas fa-circle fa-stack-2x" style="color:{{ metric.color }}"></i>
-                    <i class="fa-inverse fas {{ metric.icon }} fa-stack-1x" data-fa-transform="shrink-8"></i>
-                </span>
-                <div class="metrics-data">
-                    <div class="metrics-number">{{ metric.value }}</div>
-                    <div class="metrics-name">{{ metric.title }}</div>
+<div class="card bg-light all-metrics-card">
+    <h5 class="card-header">
+        <form class="form-inline flex-column flex-sm-row">
+            <div class="flex-sm-fill">Metryki</div>
+                <div style="width:auto;" class="ml-sm-auto">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        <input type="text" class="date-range-input form-control metrics-date-range" data-url="{% url 'stats:metrics' %}?group={{ group }}">
+                    </div>
                 </div>
-            </div>
+        </form>
+    </h5>
+    <div class="card-body">
+        <div class="row metrics-list">
+            {% for metric in metrics %}
+                <div class="col-12 col-sm-6 col-xl-4">
+                    <div class="metrics-card card">
+                        <div class="card-body">
+                            <span class="fa-stack fa-2x">
+                                <i class="fas fa-circle fa-stack-2x" style="color:{{ metric.color }}"></i>
+                                <i class="fa-inverse fas {{ metric.icon }} fa-stack-1x" data-fa-transform="shrink-8"></i>
+                            </span>
+                            <div class="metrics-data">
+                                <div class="metrics-number {{ metric.class }}">{{ metric.value }}</div>
+                                <div class="metrics-name">{{ metric.title }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
-{% endfor %}
+</div>

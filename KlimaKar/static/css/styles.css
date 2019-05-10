@@ -159,7 +159,8 @@ span.required {
 .chart-card,
 .metrics-card,
 .price-change-card,
-.due-payment-card {
+.due-payment-card,
+.all-metrics-card {
     margin-bottom: 1rem;
 }
 #stats-tab-content {

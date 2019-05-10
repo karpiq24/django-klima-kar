@@ -14,7 +14,9 @@
 <div class="tab-content" id="stats-tab-content">
     <div class="tab-pane fade show active" id="nav-stats-warehouse" role="tabpanel" aria-labelledby="nav-stats-warehouse-tab">
         <div class="row">
-            {% include 'stats/metrics.html' with metrics=stats.warehouse.metrics %}
+            <div class="col-12">
+                {% include 'stats/metrics.html' with metrics=stats.warehouse.metrics group=stats.warehouse.group %}
+            </div>
         </div>
         <div class="row">
             <div class="col-12">
@@ -46,7 +48,9 @@
 
     <div class="tab-pane fade" id="nav-stats-invoicing" role="tabpanel" aria-labelledby="nav-stats-invoicing-tab">
         <div class="row">
-            {% include 'stats/metrics.html' with metrics=stats.invoicing.metrics %}
+            <div class="col-12">
+                {% include 'stats/metrics.html' with metrics=stats.invoicing.metrics group=stats.invoicing.group %}
+            </div>
         </div>
 
         {% if request.user|has_group:"boss" %}
@@ -85,7 +89,9 @@
 
     <div class="tab-pane fade" id="nav-stats-refrigerant" role="tabpanel" aria-labelledby="nav-stats-refrigerant-tab">
         <div class="row">
-            {% include 'stats/metrics.html' with metrics=stats.refrigerant.metrics %}
+            <div class="col-12">
+                {% include 'stats/metrics.html' with metrics=stats.refrigerant.metrics group=stats.refrigerant.group %}
+            </div>
         </div>
         <div class="row">
             {% include 'stats/charts.html' with charts=stats.refrigerant.charts group=stats.refrigerant.group %}
