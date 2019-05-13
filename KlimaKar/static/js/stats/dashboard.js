@@ -37,8 +37,8 @@ $(function () {
     $('#ware-change-date-range').data('daterangepicker').clickApply();
 
     $('.metrics-date-range').each(function () {
-        $(this).data('daterangepicker').setStartDate(moment().subtract(6, 'days'));
-        $(this).data('daterangepicker').setEndDate(moment());
+        $(this).data('daterangepicker').setStartDate(moment().startOf('week').add(1, 'days'));
+        $(this).data('daterangepicker').setEndDate(moment().endOf('week').add(1, 'days'));
         $(this).data('daterangepicker').clickApply();
     })
 
