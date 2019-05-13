@@ -28,7 +28,7 @@ class HomeView(TemplateView):
             has_permission = True
 
         now = datetime.datetime.today()
-        last_week = (now - relativedelta(days=6)).date()
+        this_week = (now - relativedelta(days=now.weekday())).date()
 
         data = {
             'warehouse': {
@@ -77,25 +77,25 @@ class HomeView(TemplateView):
             'icon': 'fa-tags',
             'color': '#E21E00',
             'title': 'Liczba nowych towarów',
-            'value': Ware.objects.filter(created_date__date__gte=last_week).count(),
+            'value': Ware.objects.filter(created_date__date__gte=this_week).count(),
             'class': 'ware_count'
         })
         data['warehouse']['metrics'].append({
             'icon': 'fa-truck',
             'color': '#C1456E',
             'title': 'Liczba nowych dostawców',
-            'value': Supplier.objects.filter(created_date__date__gte=last_week).count(),
+            'value': Supplier.objects.filter(created_date__date__gte=this_week).count(),
             'class': 'supplier_count'
         })
         data['warehouse']['metrics'].append({
             'icon': 'fa-file-alt',
             'color': '#8355C5',
             'title': 'Liczba nowych faktur',
-            'value': Invoice.objects.filter(created_date__date__gte=last_week).count(),
+            'value': Invoice.objects.filter(created_date__date__gte=this_week).count(),
             'class': 'invoice_count'
         })
         if has_permission:
-            invoices = Invoice.objects.filter(created_date__date__gte=last_week)
+            invoices = Invoice.objects.filter(created_date__date__gte=this_week)
             invoices_sum = 0
             if invoices:
                 invoices_sum = invoices.aggregate(Sum('total_value'))['total_value__sum']
@@ -124,19 +124,19 @@ class HomeView(TemplateView):
             'icon': 'fa-users',
             'color': '#00A0DF',
             'title': 'Liczba nowych kontrahentów',
-            'value': Contractor.objects.filter(created_date__date__gte=last_week).count(),
+            'value': Contractor.objects.filter(created_date__date__gte=this_week).count(),
             'class': 'contractor_count'
         })
         data['invoicing']['metrics'].append({
             'icon': 'fa-book',
             'color': '#89D23A',
             'title': 'Liczba nowych faktur',
-            'value': SaleInvoice.objects.filter(issue_date__gte=last_week).count(),
+            'value': SaleInvoice.objects.filter(issue_date__gte=this_week).count(),
             'class': 'sale_invoice_count'
         })
         if has_permission:
             invoices = SaleInvoice.objects.filter(
-                issue_date__gte=last_week).exclude(invoice_type__in=['2', '3'])
+                issue_date__gte=this_week).exclude(invoice_type__in=['2', '3'])
             invoices_sum = 0
             tax_sum = 0
             person_tax_sum = 0
@@ -181,7 +181,7 @@ class HomeView(TemplateView):
             'custom_select': [('r134a', 'R134a'), ('r1234yf', 'R1234yf'), ('r12', 'R12'), ('r404', 'R404')]
         })
         # Metrics for refrigerant
-        weight_objects = RefrigerantWeights.objects.filter(sale_invoice__issue_date__gte=last_week)
+        weight_objects = RefrigerantWeights.objects.filter(sale_invoice__issue_date__gte=this_week)
         r134a = 0
         r1234yf = 0
         r12 = 0
