@@ -65,14 +65,14 @@ class CorrectiveSaleInvoiceModelForm(SaleInvoiceModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['contractor'].disabled = True
-        self.fields['comment'].label += ' (Powód wystawienia korekty)'
-        self.fields['comment'].required = True
+        self.fields['completion_date'].disabled = True
 
     class Meta:
         model = CorrectiveSaleInvoice
         exclude = ['refrigerant_weidghts', 'number_value', 'number_year', 'payed']
         widgets = {
             'comment': forms.Textarea(attrs={'rows': 1}),
+            'reason': forms.Textarea(attrs={'rows': 1}),
             'payment_date': EnableDisableDateInput(),
             'invoice_type': forms.HiddenInput(),
             'total_value_netto': forms.HiddenInput(),

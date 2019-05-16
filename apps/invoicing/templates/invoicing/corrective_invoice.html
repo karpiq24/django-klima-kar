@@ -52,7 +52,7 @@
 		      <div class="date">{% if invoice.payment_date %}Termin płatności: {{ invoice.payment_date|date:"d.m.Y" }}{% else %}zapłacono{% endif %}</div>
         </div>
       </div>
-    <div id="info">{{ invoice.comment }}</div>
+    <div id="info">{{ invoice.correctivesaleinvoice.reason }}<br>{{ invoice.comment }}</div>
     
     <h3 class="corrective-header">Stan przed korektą</h3>
     {% with invoice.correctivesaleinvoice.original_invoice as invoice %}

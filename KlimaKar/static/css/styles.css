@@ -26,11 +26,16 @@ span.required {
 .card-body .btn {
     margin: 2px 0px;
 }
-.date-input.form-control:disabled,
+
 .date-input.form-control[readonly],
 .date-range-input.form-control:disabled,
 .date-range-input.form-control[readonly] {
     background-color: #fff;
+}
+
+.date-input.form-control:disabled {
+    background-color: #e9ecef;
+    opacity: 1;
 }
 
 /*
@@ -70,6 +75,9 @@ span.required {
 .table > tfoot > tr > td {
     vertical-align: middle;
     font-weight: bold;
+}
+.table > tbody > tr > td > p {
+    margin-bottom: 0;
 }
 .table .form-group {
     margin-bottom: 0;

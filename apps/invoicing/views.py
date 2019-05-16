@@ -152,7 +152,6 @@ class CorrectiveSaleInvoiceCreateView(SaleInvoiceCreateView):
     def get_initial(self):
         initial = model_to_dict(self.original_invoice)
         initial.pop('issue_date', None)
-        initial.pop('completion_date', None)
         initial.pop('payment_date', None)
         initial['original_invoice'] = self.original_invoice
         initial['invoice_type'] = self.invoice_type
@@ -413,7 +412,7 @@ class ContractorGetDataView(View):
         return JsonResponse({'status': 'error', 'contractor': {}})
 
 
-class SaeInvoiceSetPayed(GroupAccessControlMixin, View):
+class SaleInvoiceSetPayed(GroupAccessControlMixin, View):
     allowed_groups = ['boss']
 
     def get(self, *args, **kwargs):

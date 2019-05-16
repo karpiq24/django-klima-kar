@@ -145,6 +145,7 @@ class SaleInvoiceItem(models.Model):
 class CorrectiveSaleInvoice(SaleInvoice):
     original_invoice = models.ForeignKey(SaleInvoice, on_delete=models.CASCADE, verbose_name='Oryginalna faktura',
                                          related_name='%(class)s_original_invoice')
+    reason = models.TextField(max_length=255, verbose_name='Powód wystawienia korekty')
 
     @property
     def diffrence_netto(self):

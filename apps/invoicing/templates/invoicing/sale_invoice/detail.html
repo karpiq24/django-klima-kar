@@ -22,6 +22,10 @@
                     <td class="detail-label">Korekta do</td>
                     <td><a href="{% url 'invoicing:sale_invoice_detail' object.correctivesaleinvoice.original_invoice.pk %}">{{ object.correctivesaleinvoice.original_invoice }}</a></td>
                 </tr>
+                <tr>
+                    <td class="detail-label">Powód wystawienia korekty</td>
+                    <td>{{ object.correctivesaleinvoice.reason|linebreaks }}</td>
+                </tr>
             {% endif %}
             <tr>
                 <td class="detail-label">Kontrahent</td>
@@ -57,7 +61,7 @@
             </tr>
             <tr>
                 <td class="detail-label">Uwagi</td>
-                <td>{{ object.comment|default:"—" }}</td>
+                <td>{{ object.comment|linebreaks|default:"—" }}</td>
             </tr>
             {% if not object.correctivesaleinvoice %}
                 <tr>

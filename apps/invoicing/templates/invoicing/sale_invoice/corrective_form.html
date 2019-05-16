@@ -48,7 +48,12 @@
         <div class=col-sm-6>
             {% include 'forms/field.html' with field=form.visible_fields.7 %}
         </div>
-
+        <div class=col-sm-6>
+            {% include 'forms/field.html' with field=form.visible_fields.9 %}
+        </div>
+    </div>
+        
+    <div class="row">
         {{ inlines.1.management_form }}
         {% include 'forms/form.html' with form=inlines.1.0 as_table=True hidden=True %}
 
