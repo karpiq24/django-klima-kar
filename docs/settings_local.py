@@ -51,6 +51,10 @@ IC_API_URL = 'https://katalog.intercars.com.pl/api/v2/External/'
 IC_TOKEN = ''
 IC_CLIENT_NUMBER = ''
 
+# DEKO
+DEKO_LOGIN = ''
+DEKO_PASSWORD = ''
+
 # Dropbox
 DROPBOX_TOKEN = ''
 

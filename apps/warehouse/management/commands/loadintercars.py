@@ -4,6 +4,7 @@ import dateutil.parser
 import xml.dom.minidom
 
 from django.core.management.base import BaseCommand
+from django.core.mail import mail_admins
 
 from apps.warehouse.models import Invoice, InvoiceItem, Supplier, Ware
 from apps.warehouse.functions import check_ware_price_changes
@@ -52,6 +53,8 @@ class Command(BaseCommand):
         }
         headers = {'kh_kod': IC_CLIENT_NUMBER, 'token': IC_TOKEN}
         r = requests.get(url, params=params, headers=headers)
+        if r.status_code != 200:
+            report_admins('Invoice list download failed.\n{}'.format(r.text))
         DOMTree = xml.dom.minidom.parseString(r.text)
         collection = DOMTree.documentElement
         invoices = collection.getElementsByTagName("nag")
@@ -81,12 +84,17 @@ class Command(BaseCommand):
         params = {'id': invoice_id}
         headers = {'kh_kod': IC_CLIENT_NUMBER, 'token': IC_TOKEN}
         r = requests.get(url, params=params, headers=headers)
+        if r.status_code != 200:
+            report_admins('Invoice {} details download failed.\n{}'.format(invoice_obj.number, r.text))
         DOMTree = xml.dom.minidom.parseString(r.text)
         collection = DOMTree.documentElement
         wares = collection.getElementsByTagName("poz")
         new_wares = 0
 
         for ware in wares:
+            if not getData(ware, 'indeks') or not getData(ware, 'nazwa'):
+                report_admins('Invalid data in invoice {}. Please verify.'.format(invoice_obj.number))
+                continue
             try:
                 ware_obj = Ware.objects.get(index=getData(ware, 'indeks'))
             except Ware.DoesNotExist:
@@ -123,3 +131,7 @@ def getData(node, tag):
         return node.getElementsByTagName(tag)[0].childNodes[0].nodeValue
     else:
         return None
+
+
+def report_admins(message):
+    mail_admins('Inter Cars invoice download failed!', message)
