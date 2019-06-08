@@ -21,7 +21,7 @@ class Command(BaseCommand):
         parser.add_argument('date_from', nargs='?',
                             default=(datetime.date.today() - datetime.timedelta(7)).strftime('%Y-%m-%d'))
         parser.add_argument('date_to', nargs='?',
-                            default=datetime.date.today().strftime('%Y-%m-%d'))
+                            default=(datetime.date.today() + datetime.timedelta(1)).strftime('%Y-%m-%d'))
 
     def handle(self, *args, **options):
         with requests.Session() as s:
