@@ -566,7 +566,7 @@ class DuePayments(GroupAccessControlMixin, View):
     allowed_groups = ['boss']
 
     def get(self, *args, **kwargs):
-        invoices = SaleInvoice.objects.filter(payed=False).order_by('payment_date')
+        invoices = SaleInvoice.objects.exclude(invoice_type='2').filter(payed=False).order_by('payment_date')
         response = {'invoices': []}
         for invoice in invoices:
             response['invoices'].append({
@@ -637,6 +637,7 @@ class Metrics(View):
                 response['sale_invoice_sum'] = "{0:.2f} zł".format(invoices_sum).replace('.', ',')
                 response['vat_sum'] = "{0:.2f} zł".format(tax_sum).replace('.', ',')
                 response['person_vat_sum'] = "{0:.2f} zł".format(person_tax_sum).replace('.', ',')
+                response['company_vat_sum'] = "{0:.2f} zł".format(tax_sum - person_tax_sum).replace('.', ',')
 
         if group == 'refrigerant':
             weight_objects = RefrigerantWeights.objects.filter(

@@ -165,6 +165,13 @@ class HomeView(TemplateView):
             data['invoicing']['metrics'].append({
                 'icon': 'fa-percentage',
                 'color': '#E21E00',
+                'title': 'Podatek VAT od firm',
+                'value': "{0:.2f} zł".format(person_tax_sum).replace('.', ','),
+                'class': 'company_vat_sum'
+            })
+            data['invoicing']['metrics'].append({
+                'icon': 'fa-percentage',
+                'color': '#E21E00',
                 'title': 'Podatek VAT od osób fizycznych',
                 'value': "{0:.2f} zł".format(person_tax_sum).replace('.', ','),
                 'class': 'person_vat_sum'
