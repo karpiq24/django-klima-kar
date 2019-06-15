@@ -64,7 +64,6 @@ $(function () {
         $.ajax({
             url: url,
             success: function (result) {
-                console.log(result)
                 if (result.invoices.length === 0) {
                     $('#due-payments-list').html('Brak zaległych płatności.');
                     return;

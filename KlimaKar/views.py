@@ -148,6 +148,7 @@ class HomeView(TemplateView):
             if invoices:
                 person_tax_sum = invoices.annotate(
                     vat=F('total_value_brutto') - F('total_value_netto')).aggregate(Sum('vat'))['vat__sum']
+            company_vat_sum = tax_sum - person_tax_sum
             data['invoicing']['metrics'].append({
                 'icon': 'fa-book',
                 'color': '#89D23A',
@@ -166,7 +167,7 @@ class HomeView(TemplateView):
                 'icon': 'fa-percentage',
                 'color': '#E21E00',
                 'title': 'Podatek VAT od firm',
-                'value': "{0:.2f} zł".format(person_tax_sum).replace('.', ','),
+                'value': "{0:.2f} zł".format(company_vat_sum).replace('.', ','),
                 'class': 'company_vat_sum'
             })
             data['invoicing']['metrics'].append({

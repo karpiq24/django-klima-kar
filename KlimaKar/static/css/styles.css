@@ -65,6 +65,17 @@ span.required {
     border-right: 1px dotted #dbd8cf;
 }
 
+small#gus-data {
+    color: #007bff;
+    text-decoration: none;
+    background-color: transparent;
+    float: right;
+    cursor: pointer;
+}
+small#gus-data:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
 /*
     TABLES
 */

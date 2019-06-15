@@ -35,6 +35,8 @@
                 </div>
                 <button disabled id="contractor-edit" class="btn btn-outline-warning" style="margin-left:5px;margin-top:29px;height:38px;width:100px;" type="button"><i class="fas fa-edit"></i> Edytuj</button>
             </div>
+            <small data-url="{% url 'invoicing:contractor_gus' %}" data-nip="{{ object.contractor.nip }}" id="gus-data" style="margin-top: -16px;{% if not object.contractor.nip %}display:none;{% endif %}">Pokaż wszystkie dane z GUS</small>
+            {% include 'invoicing/contractor/gus_modal.html' %}
         </div>
         <div class=col-sm-6>
             {% include 'forms/field.html' with field=form.visible_fields.4 %}
@@ -173,4 +175,5 @@
     var INVOICE_TYPE = "{{ form.initial.invoice_type }}";
 </script>
 <script src="{% static 'js/invoicing/sale-invoice.js' %}"></script>
+<script src="{% static 'js/invoicing/contractor-gus-allinfo.js' %}"></script>
 {% endblock %}

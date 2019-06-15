@@ -21,7 +21,7 @@ from apps.invoicing.tables import SaleInvoiceTable, ContractorTable, SaleInvoice
 from apps.invoicing.filters import SaleInvoiceFilter, ContractorFilter, ServiceTemplateFilter
 from apps.invoicing.dictionaries import INVOICE_TYPES
 from apps.invoicing.functions import get_next_invoice_number, generate_refrigerant_weights_report
-from apps.invoicing.gus import get_gus_address
+from apps.invoicing.gus import get_gus_address, get_gus_pkd, get_gus_data
 from apps.settings.models import SiteSettings
 
 
@@ -384,9 +384,17 @@ class ContractorAutocomplete(CustomSelect2QuerySetView):
 class ContractorGUS(View):
     def get(self, request, *args, **kwargs):
         nip = request.GET.get('nip')
+        request_type = request.GET.get('type', 'address')
         if len(str(nip)) != 10:
             return JsonResponse({}, status=400)
-        response_data = get_gus_address(nip)
+        response_data = None
+        if request_type == 'address':
+            response_data = get_gus_address(nip)
+        elif request_type == 'pkd':
+            response_data = {'pkd': sorted(get_gus_pkd(nip), key=lambda k: k['main'], reverse=True)}
+        elif request_type == 'all':
+            response_data = {'pkd': sorted(get_gus_pkd(nip), key=lambda k: k['main'], reverse=True),
+                             'info': get_gus_data(nip)}
         if not response_data:
             return JsonResponse({}, status=404)
         return JsonResponse(response_data)

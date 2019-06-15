@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% load render_table from django_tables2 %}
 
 {% block content %}
@@ -44,6 +45,9 @@
             <div class="card bg-light">
                 <div class="card-body">
                     <h5 class="card-title">Akcje</h5>
+                    {% if object.nip %}
+                        <button class="btn btn-outline-primary btn-lg" data-url="{% url 'invoicing:contractor_gus' %}" data-nip="{{ object.nip }}" id="gus-data"><i class="fas fa-eye"></i> Dane GUS</button>
+                    {% endif %}
                     <a class="btn btn-outline-warning btn-lg" href="{% url 'invoicing:contractor_update' object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
                     <a class="btn btn-outline-dark btn-lg" href="{{ back_url }}">Powrót</a>
                 </div>
@@ -56,6 +60,9 @@
     <h4>Faktury tego kontrahenta</h4>
 </div>
 {% render_table table %}
+
+{% include 'invoicing/contractor/gus_modal.html' %}
+
 {% endblock %}
 
 {% block scripts %}
@@ -65,4 +72,5 @@
         $('.sidenav #nav-invoicing').collapse('show');
     });
 </script>
+<script src="{% static 'js/invoicing/contractor-gus-allinfo.js' %}"></script>
 {% endblock %}

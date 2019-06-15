@@ -75,9 +75,6 @@ $(function () {
     });
 
     $("#id_contractor").change(function () {
-        if (INVOICE_TYPE != '4') {
-            return;
-        }
         var parent = $("#id_contractor").parent();
         var contractor_pk = $('#id_contractor').val();
         $.ajax({
@@ -87,15 +84,23 @@ $(function () {
             },
             dataType: 'json',
             success: function (result) {
-                if (result.contractor.nip_prefix == null) {
-                    $("#id_contractor").addClass('is-invalid');
-                    if ($(parent).find('div.invalid-feedback').length == 0) {
-                        $(parent).append('<div class="invalid-feedback">Wybrany kontrahent nie ma podanego prefixu NIP.</div>')
-                    }    
+                if (result.contractor.nip) {
+                    $('#gus-data').data('nip', result.contractor.nip);
+                    $('#gus-data').show();
+                } else {
+                    $('#gus-data').hide();
                 }
-                else {
-                    $("#id_contractor").removeClass('is-invalid');
-                    $(parent).find('div.invalid-feedback').remove();
+                if (INVOICE_TYPE === '4') {
+                    if (result.contractor.nip_prefix == null) {
+                        $("#id_contractor").addClass('is-invalid');
+                        if ($(parent).find('div.invalid-feedback').length == 0) {
+                            $(parent).append('<div class="invalid-feedback">Wybrany kontrahent nie ma podanego prefixu NIP.</div>')
+                        }    
+                    }
+                    else {
+                        $("#id_contractor").removeClass('is-invalid');
+                        $(parent).find('div.invalid-feedback').remove();
+                    }
                 }
             }
         });
