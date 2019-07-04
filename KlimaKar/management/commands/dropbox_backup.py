@@ -24,7 +24,7 @@ class Command(BaseCommand):
         dbx = dropbox.Dropbox(DROPBOX_TOKEN)
         try:
             dbx.users_get_current_account()
-        except AuthError as err:
+        except AuthError:
             print("ERROR: Invalid access token; try re-generating an access token from the app console on the web.")
             return
 
