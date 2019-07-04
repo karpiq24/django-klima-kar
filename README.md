@@ -18,7 +18,11 @@ Django project used in my family buisness. It provides warehouse management and 
   - print invoice
   - email invoice to contractor
 - Advanced statistics
+<<<<<<< HEAD
   - rich interactive charts and metrics
+=======
+  - rich interactive charts
+>>>>>>> 8c61c4aba8b70187e3199ba960808a8ee5ae2790
   - detect purchased ware price changes
   - weekly, monthly and yearly reports
 - Other
@@ -26,7 +30,11 @@ Django project used in my family buisness. It provides warehouse management and 
   - filtering and paginating tables using ajax
   - automatic dropbox backup
 
+<<<<<<< HEAD
 ## Requirements
+=======
+## Requirments
+>>>>>>> 8c61c4aba8b70187e3199ba960808a8ee5ae2790
 1. docs/requirements.pip
    ```
    pip install -r docs/requirements.pip
