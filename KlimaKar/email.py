@@ -15,4 +15,4 @@ def get_email_message(subject, body, to):
         from_email = config.DEFAULT_FROM_EMAIL or config.EMAIL_HOST_USER or DEFAULT_FROM_EMAIL
         return EmailMessage(subject=subject, body=body, from_email=from_email, to=to, connection=backend)
     else:
-        return EmailMessage(subject=subject, body=body, from_email=from_email, to=to)
+        return EmailMessage(subject=subject, body=body, to=to)

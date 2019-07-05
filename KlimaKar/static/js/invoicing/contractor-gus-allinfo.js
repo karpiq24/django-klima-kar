@@ -114,7 +114,7 @@ $(function () {
                 $("#gus_modal").modal("show");
             },
             error: function(data) {
-                swal("Błąd!", "Upewnij się, że NIP jest poprawny.", "error");
+                addAlert("Błąd!", "error", "Upewnij się, że NIP jest poprawny");
             }
         });
     });

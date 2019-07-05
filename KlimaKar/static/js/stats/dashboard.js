@@ -84,30 +84,27 @@ $(function () {
     }
     $('#due-payments-list').on('click', '.payed', function() {
         var that = this;
-        swal({
+        Swal.fire({
             title: "Jesteś pewny, że faktura została opłacona?",
             text: "Faktura " + $(this).data('invoice') + " dla kontrahenta " + $(this).data('contractor'),
-            icon: "warning",
-            buttons: ["Nie", "Tak"],
-            dangerMode: true,
-          })
-          .then((payed) => {
-            if (payed) {
+            type: "warning",
+            showCancelButton: true,
+            focusCancel: true,
+            confirmButtonText: 'Tak',
+            cancelButtonText: 'Nie'
+        }).then((payed) => {
+            if (payed.value) {
                 $.ajax({
-                    url: $(this).data('url'),
+                    url: $(that).data('url'),
                     success: function (result) {
-                        swal("Sukces!", "", {
-                            icon: "success",
-                          });
+                        addAlert('Sukces!', 'success', 'Faktura została opłacona.');
                         $(that).closest('tr').remove();
                         if ($('#due-payments-list tbody tr').length === 0) {
                             $('#due-payments-list').html('Brak zaległych płatności.');
                         }
                     },
                     error: function (result) {
-                        swal("Błąd!", "Coś poszło nie tak, spróbuj ponownie.", {
-                            icon: "error",
-                          });
+                        addAlert('Błąd!', 'error', 'Coś poszło nie tak, spróbuj ponownie.');
                     }
                 })
             }

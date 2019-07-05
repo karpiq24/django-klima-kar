@@ -28,10 +28,10 @@ function submitEmailForm(url) {
     spinner.className = 'fas fa-spinner fa-spin fa-8x'
     spinner.style = 'margin-bottom: 26px;color: #00a0df;'
     $("#email_modal").modal("hide");
-    swal({
-        title: "Wysyłanie wiadomości email",
-        content: spinner,
-        buttons: false,
+    Swal.fire({
+        title: 'Wysyłanie wiadomości email',
+        html: '<i class="fas fa-spinner fa-spin fa-8x" style="margin: 26px;color: #00a0df;"></i>',
+        showConfirmButton: false
     })
     $.ajax({
         url: url,
@@ -39,18 +39,11 @@ function submitEmailForm(url) {
         data: data,
         success: function(data) {
             $("#email_modal").modal("hide");
-            swal({
-                title: data.message,
-                icon: 'success'
-            })
+            addAlert('Sukces!', 'success', data.message + '.');
         },
         error: function(data) {
-            swal({
-                title: data.responseJSON.message,
-                icon: 'error'
-            }).then(function() {
-                $("#email_modal").modal("show");
-            })
+            addAlert('Błąd!', 'error', data.responseJSON.message + '.');
+            $("#email_modal").modal("show");
         }
     });
 };

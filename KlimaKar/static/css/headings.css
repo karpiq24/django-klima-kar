@@ -1,4 +1,4 @@
-h2:after, 
+h2:not(.swal2-title):after, 
 h3:after, 
 h4:after {
 	position: absolute;
@@ -13,7 +13,7 @@ h4:after {
 		0 1px 1px rgba(255,255,255,0.3);
 }
 
-h2:after { background: #33495C }
+h2:not(.swal2-title):after { background: #33495C }
 h3:after { background: #33495C }
 h4:after { background: #33495C }
 
@@ -30,7 +30,7 @@ h1 {
     border-bottom-width: 1px;
 }
 
-h2 {
+h2:not(.swal2-title) {
 	margin: 0 0 .6em 0;
 	padding: 0 0 0 20px;
 	color: black;
