@@ -12,6 +12,13 @@ ul.sidenav {
   overflow: auto;
 }
 
+.spacer
+{
+  width: 100%;
+  height: 30px;
+}
+
+
 ul.sidenav li a {
   display: block;
   color: #abb;
@@ -64,28 +71,32 @@ div.content-full {
 }
 
 @media screen and (max-width: 992px) {
-  ul.sidenav {
-      width: 100%;
-      height: auto;
-      position: relative;
-  }
-  ul.sidenav .collapse {
-    display: block;
-}
-  ul.sidenav li a {
-      float: left;
-      padding: 15px;
-      border-right: solid 1px rgb(85, 85, 85);
-      border-bottom: none;
-  }
-  ul.sidenav li i {
-    display: none;
-    float: left;
-    padding: 15px;
-    border-right: solid 1px rgb(85, 85, 85);
-    border-bottom: none;
-}
-  div.content {margin-left: 0;}
+    ul.sidenav {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    ul.sidenav .collapse {
+        display: block;
+    }
+    ul.sidenav li a {
+        float: left;
+        padding: 15px;
+        border-right: solid 1px rgb(85, 85, 85);
+        border-bottom: none;
+    }
+    ul.sidenav li i {
+        display: none;
+        float: left;
+        padding: 15px;
+        border-right: solid 1px rgb(85, 85, 85);
+        border-bottom: none;
+    }
+    div.content {margin-left: 0;}
+    .spacer {
+      height: 0px;
+    }
+
 }
 
 @media screen and (max-width: 768px) {
@@ -135,10 +146,4 @@ ul.topnav li a {
 
 ul.topnav .active {
   font-weight: bold;
-}
-
-.spacer
-{
-  width: 100%;
-  height: 30px;
 }

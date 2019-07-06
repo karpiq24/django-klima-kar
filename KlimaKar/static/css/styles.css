@@ -3,6 +3,26 @@ body {
     font-weight: 400;
     padding-bottom: 50px;
     font-size: 14px;
+    color:#343a40;
+}
+@media screen and (max-width: 992px) {
+    .container-fluid {
+        padding: 4px;
+        margin: 0;
+    }
+    div.content {
+        padding: 1px 8px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .container-fluid {
+        padding: 0;
+        margin: 0;
+    }
+    div.content {
+        padding: 1px 4px;
+    }
 }
 i {
     font-style: inherit;

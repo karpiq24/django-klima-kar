@@ -50,102 +50,106 @@
         <div class=col-sm-6>
             {% include 'forms/field.html' with field=form.visible_fields.7 %}
         </div>
+    </div>
 
-        {{ inlines.1.management_form }}
-        {% include 'forms/form.html' with form=inlines.1.0 as_table=True %}
+    <div class="row">
+        <div class="col-12">
+            {{ inlines.1.management_form }}
+            {% include 'forms/form.html' with form=inlines.1.0 as_table=True %}
 
-        {{ inlines.0.management_form }}
-        <div class="table-responsive">
-            <table class="table table-striped table-hover table-bordered">
-                <thead>
-                    <tr>
-                        <th style="min-width:15rem;">Usługa/Towar</th>
-                        <th style="min-width:8rem;width:10rem;">Cena netto</th>
-                        <th style="min-width:8rem;width:10rem;">Cena brutto</th>
-                        <th style="min-width:4rem;width:6rem;">Ilość</th>
-                        <th style="min-width:8rem;width:8rem;">Wartość netto</th>
-                        <th style="min-width:4rem;width:8rem;">Akcje</th>
-                    </tr>
-                </thead>
-                <tbody id="item-rows">
-                    {% for item_form in inlines.0 %}
-                        {{ item_form.id }}
-                        <tr class="item-formset-row d-none">
-                            <td>
-                                <div style="margin-bottom:4px;">
-                                    {% include 'forms/field.html' with field=item_form.name hide_label=True %}
-                                </div>
-                                <div style="margin-bottom:4px;">
-                                    {% include 'forms/field.html' with field=item_form.description hide_label=True %}
-                                </div>
-                                <div>
-                                    {% include 'forms/field.html' with field=item_form.ware hide_label=True %}
-                                </div>
-                            </td>
-                            <td>
-                                {% include 'forms/field.html' with field=item_form.price_netto hide_label=True %}
-                            </td>
-                            <td>
-                                {% include 'forms/field.html' with field=item_form.price_brutto hide_label=True %}
-                            </td>
-                            <td>
-                                {% include 'forms/field.html' with field=item_form.quantity hide_label=True %}
-                            </td>
-                            <td class="item-total-netto">
-                                0,00 zł
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-outline-info btn-sm btn-table" title="Wybierz usługę" data-toggle="modal" data-target="#id_item-{{ forloop.counter }}-service_modal">
-                                    Usługa
-                                </button>
-                                <div class="modal fade" id="id_item-{{ forloop.counter }}-service_modal" tabindex="-1" role="dialog" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Wybierz usługę</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                {% include 'forms/field.html' with field=item_form.service hide_label=True %}
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-outline-primary choose_service" data-dismiss="modal">Wybierz</button>
+            {{ inlines.0.management_form }}
+            <div class="table-responsive">
+                <table class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="min-width:15rem;">Usługa/Towar</th>
+                            <th style="min-width:8rem;width:10rem;">Cena netto</th>
+                            <th style="min-width:8rem;width:10rem;">Cena brutto</th>
+                            <th style="min-width:4rem;width:6rem;">Ilość</th>
+                            <th style="min-width:8rem;width:8rem;">Wartość netto</th>
+                            <th style="min-width:4rem;width:8rem;">Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody id="item-rows">
+                        {% for item_form in inlines.0 %}
+                            {{ item_form.id }}
+                            <tr class="item-formset-row d-none">
+                                <td>
+                                    <div style="margin-bottom:4px;">
+                                        {% include 'forms/field.html' with field=item_form.name hide_label=True %}
+                                    </div>
+                                    <div style="margin-bottom:4px;">
+                                        {% include 'forms/field.html' with field=item_form.description hide_label=True %}
+                                    </div>
+                                    <div>
+                                        {% include 'forms/field.html' with field=item_form.ware hide_label=True %}
+                                    </div>
+                                </td>
+                                <td>
+                                    {% include 'forms/field.html' with field=item_form.price_netto hide_label=True %}
+                                </td>
+                                <td>
+                                    {% include 'forms/field.html' with field=item_form.price_brutto hide_label=True %}
+                                </td>
+                                <td>
+                                    {% include 'forms/field.html' with field=item_form.quantity hide_label=True %}
+                                </td>
+                                <td class="item-total-netto">
+                                    0,00 zł
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-info btn-sm btn-table" title="Wybierz usługę" data-toggle="modal" data-target="#id_item-{{ forloop.counter }}-service_modal">
+                                        Usługa
+                                    </button>
+                                    <div class="modal fade" id="id_item-{{ forloop.counter }}-service_modal" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Wybierz usługę</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    {% include 'forms/field.html' with field=item_form.service hide_label=True %}
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-outline-primary choose_service" data-dismiss="modal">Wybierz</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <button type="button" class="btn btn-outline-danger btn-sm btn-table remove_item_formset" title="Usuń">
-                                    Usuń
+                                    <button type="button" class="btn btn-outline-danger btn-sm btn-table remove_item_formset" title="Usuń">
+                                        Usuń
+                                    </button>
+                                </td>
+                                <td class="item-DELETE d-none">{{ item_form.DELETE }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2" rowspan="2" class="no-right-border">
+                                <button type="button" class="btn btn-outline-info" id="add_item_formset">
+                                    Kolejna pozycja
                                 </button>
                             </td>
-                            <td class="item-DELETE d-none">{{ item_form.DELETE }}</td>
+                            <td colspan="2" class="no-left-border no-right-border no-bottom-border">
+                                <span style="float:right">Razem netto:</span>
+                            </td>
+                            <td colspan="2" id="invoice-total-netto" class="no-left-border no-bottom-border">
+                            </td>
                         </tr>
-                    {% endfor %}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="2" rowspan="2" class="no-right-border">
-                            <button type="button" class="btn btn-outline-info" id="add_item_formset">
-                                Kolejna pozycja
-                            </button>
-                        </td>
-                        <td colspan="2" class="no-left-border no-right-border no-bottom-border">
-                            <span style="float:right">Razem netto:</span>
-                        </td>
-                        <td colspan="2" id="invoice-total-netto" class="no-left-border no-bottom-border">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="no-left-border no-right-border no-top-border">
-                                <span style="float:right">Razem brutto:</span>
-                        </td>
-                        <td colspan="2" id="invoice-total-brutto" class="no-left-border no-top-border">
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
+                        <tr>
+                            <td colspan="2" class="no-left-border no-right-border no-top-border">
+                                    <span style="float:right">Razem brutto:</span>
+                            </td>
+                            <td colspan="2" id="invoice-total-brutto" class="no-left-border no-top-border">
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
         </div>
     </div>
 
