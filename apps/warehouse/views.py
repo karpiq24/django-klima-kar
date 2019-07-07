@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.http import JsonResponse, HttpResponse
 from django.views.generic import DetailView, UpdateView, CreateView, View
 from django.db.models import Q, F
+from django.contrib import messages
 
 from django_tables2.export.views import ExportMixin
 from extra_views import CreateWithInlinesView, UpdateWithInlinesView
@@ -36,6 +37,10 @@ class WareUpdateView(UpdateView):
         context['title'] = "Edycja towaru"
         return context
 
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
+        return super().form_valid(form)
+
     def get_success_url(self, **kwargs):
         return reverse("warehouse:ware_detail", kwargs={'pk': self.object.pk})
 
@@ -49,6 +54,11 @@ class WareCreateView(CreateView):
         context = super(WareCreateView, self).get_context_data(**kwargs)
         context['title'] = "Nowy towar"
         return context
+
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejny towar.</a>'.format(
+                reverse('warehouse:ware_create')))
+        return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
         return reverse("warehouse:ware_detail", kwargs={'pk': self.object.pk})
@@ -117,6 +127,8 @@ class InvoiceCreateView(CreateWithInlinesView):
     def forms_valid(self, form, inlines):
         response = super().forms_valid(form, inlines)
         check_ware_price_changes(self.object)
+        messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejną fakturę.</a>'.format(
+                reverse('warehouse:invoice_create')))
         return response
 
     def get_success_url(self):
@@ -133,6 +145,10 @@ class InvoiceUpdateView(UpdateWithInlinesView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Edycja faktury zakupowej"
         return context
+
+    def forms_valid(self, form, inlines):
+        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse("warehouse:invoice_detail", kwargs={'pk': self.object.pk})
@@ -181,6 +197,10 @@ class SupplierUpdateView(UpdateView):
         context['title'] = "Edycja dostawcy"
         return context
 
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
+        return super().form_valid(form)
+
     def get_success_url(self, **kwargs):
         return reverse("warehouse:supplier_detail", kwargs={'pk': self.object.pk})
 
@@ -194,6 +214,11 @@ class SupplierCreateView(CreateView):
         context = super(SupplierCreateView, self).get_context_data(**kwargs)
         context['title'] = "Nowy dostawca"
         return context
+
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejnego dostawcę.</a>'.format(
+                reverse('warehouse:supplier_create')))
+        return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
         return reverse("warehouse:supplier_detail", kwargs={'pk': self.object.pk})

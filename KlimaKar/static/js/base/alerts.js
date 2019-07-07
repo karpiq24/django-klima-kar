@@ -6,13 +6,31 @@ function addAlert(title, tag, text='', html='') {
         text: text,
         html: html,
         showConfirmButton: false,
-        timer: 3000,
+        timer: 5000,
         toast: true
     });
 }
 
 $(function () {
     MESSAGES.forEach(function (message) {
-        addAlert(message.message, message.tag)
+        var title = '';
+        switch (message.tag) {
+            case 'success':
+                title = 'Sukces!'
+                break;
+            case 'error':
+                title = 'Błąd!'
+                break;
+            case 'info':
+                title = 'Informacja!'
+                break;
+            case 'warning':
+                title = 'Uwaga!'
+                break;
+            case 'debug':
+                title = 'DEBUG!'
+                break;
+        }
+        addAlert(title, message.tag, '', message.message)
     });
 });

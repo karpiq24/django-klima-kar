@@ -10,6 +10,7 @@ from django.http import HttpResponse, Http404, JsonResponse
 from django.template import Template, Context
 from django.urls import reverse
 from django.db.models import Q
+from django.contrib import messages
 
 from KlimaKar.email import get_email_message
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
@@ -93,6 +94,11 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
 
     def forms_valid(self, form, inlines):
         self.generate_pdf = 'generate_pdf' in form.data
+        if self.invoice_type != '3':
+            messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejną fakturę.</a>'.format(
+                reverse('invoicing:sale_invoice_create', kwargs={'type': self.invoice_type})))
+        else:
+            messages.add_message(self.request, messages.SUCCESS, 'Zapisano fakturę.')
         return super().forms_valid(form, inlines)
 
     def get_success_url(self, **kwargs):
@@ -121,6 +127,7 @@ class SaleInvoiceUpdateView(UpdateWithInlinesView):
 
     def forms_valid(self, form, inlines):
         self.generate_pdf = 'generate_pdf' in form.data
+        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
         return super().forms_valid(form, inlines)
 
     def get_success_url(self, **kwargs):
@@ -261,6 +268,11 @@ class ServiceTemplateCreateView(CreateView):
         context['title'] = "Nowa usługa"
         return context
 
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejną usługę.</a>'.format(
+                reverse('invoicing:service_template_create')))
+        return super().form_valid(form)
+
     def get_success_url(self, **kwargs):
         return reverse("invoicing:service_template_detail", kwargs={'pk': self.object.pk})
 
@@ -274,6 +286,10 @@ class ServiceTemplateUpdateView(UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Edycja usługi"
         return context
+
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
+        return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
         return reverse("invoicing:service_template_detail", kwargs={'pk': self.object.pk})
@@ -343,6 +359,11 @@ class ContractorCreateView(CreateView):
         context['title'] = "Nowy kontrahent"
         return context
 
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejnego kontrahenta.</a>'.format(
+                reverse('invoicing:contractor_create')))
+        return super().form_valid(form)
+
     def get_success_url(self, **kwargs):
         return reverse("invoicing:contractor_detail", kwargs={'pk': self.object.pk})
 
@@ -356,6 +377,10 @@ class ContractorUpdateView(UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = "Edycja kontrahenta"
         return context
+
+    def form_valid(self, form):
+        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
+        return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
         return reverse("invoicing:contractor_detail", kwargs={'pk': self.object.pk})
