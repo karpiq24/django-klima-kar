@@ -55,7 +55,7 @@ class SaleInvoiceFilter(django_filters.FilterSet):
             date_to = date_parser.parse(date_to, dayfirst=True).date()
         except ValueError:
             return queryset.none()
-        return queryset.filter(created_date__gte=date_from, created_date__lte=date_to).distinct()
+        return queryset.filter(created_date__date__gte=date_from, created_date__date__lte=date_to).distinct()
 
 
 class ContractorFilter(django_filters.FilterSet):
@@ -78,7 +78,7 @@ class ContractorFilter(django_filters.FilterSet):
             date_to = date_parser.parse(date_to, dayfirst=True).date()
         except ValueError:
             return queryset.none()
-        return queryset.filter(created_date__gte=date_from, created_date__lte=date_to).distinct()
+        return queryset.filter(created_date__date__gte=date_from, created_date__date__lte=date_to).distinct()
 
 
 class ServiceTemplateFilter(django_filters.FilterSet):
