@@ -38,7 +38,7 @@
     {% endif %}
     {% if request.user|has_group:"boss" %}
         <li style="float:right">
-            <a href="{% url 'settings:settings' %}" title="Wyloguj">
+            <a href="{% url 'settings:settings' %}" title="Ustawienia">
                 <i class="fa fa-cogs fa-lg" style="cursor: pointer;"></i>
             </a>
         </li>

@@ -192,8 +192,10 @@ class SaleInvoicePDFView(View):
         pdf_file = invoice.generate_pdf(self.print_version)
         response = HttpResponse(content_type='application/pdf')
         response.write(pdf_file)
-        response['Content-Disposition'] = 'filename={} {}.pdf'.format(
+        response['Content-Disposition'] = 'filename="{} {}.pdf"'.format(
             invoice.get_invoice_type_display(), invoice.number.replace('/', '_'))
+        response['Content-Encoding'] = None
+        response['Content-Type'] = 'application/pdf'
         if not self.print_version:
             response['Content-Disposition'] = 'attachment;' + response['Content-Disposition']
         return response
