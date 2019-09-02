@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load slugify %}
 {% load render_table from django_tables2 %}
 
 {% block content %}
@@ -10,7 +11,7 @@
         <table class="table table-bordered">
             <tr>
                 <td class="detail-label">Dostawca</td>
-                <td><a href="{% url 'warehouse:supplier_detail' object.supplier.pk %}">{{ object.supplier }}</a></td>
+                <td><a href="{% url 'warehouse:supplier_detail' object.supplier.name|slugify object.supplier.pk %}">{{ object.supplier }}</a></td>
             </tr>
             <tr>
                 <td class="detail-label">Numer</td>
@@ -31,7 +32,7 @@
             <div class="card bg-light">
                 <div class="card-body">
                     <h5 class="card-title">Akcje</h5>
-                    <a class="btn btn-outline-warning btn-lg" href="{% url 'warehouse:invoice_update' object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
+                    <a class="btn btn-outline-warning btn-lg" href="{% url 'warehouse:invoice_update' object.supplier.name|slugify object.number|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
                     <a class="btn btn-outline-dark btn-lg" href="{{ back_url }}">Powrót</a>
                 </div>
             </div>

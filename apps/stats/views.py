@@ -11,6 +11,7 @@ from django.db.models.functions import ExtractYear, ExtractMonth
 from django.template.defaultfilters import date as _date
 
 from KlimaKar.mixins import GroupAccessControlMixin
+from KlimaKar.templatetags.slugify import slugify
 from apps.warehouse.models import Invoice, Ware, WarePriceChange, Supplier
 from apps.invoicing.models import SaleInvoice, Contractor, RefrigerantWeights
 from apps.stats.dictionaries import MONTHS, COLORS, DAYS
@@ -543,15 +544,25 @@ class WarePriceChanges(View):
         for change in changes:
             response['changes'].append({
                 'invoice': {
-                    'url': reverse('warehouse:invoice_detail', kwargs={'pk': change.invoice.pk}),
+                    'url': reverse('warehouse:invoice_detail', kwargs={
+                        'pk': change.invoice.pk,
+                        'supplier': slugify(change.invoice.supplier.name),
+                        'number': slugify(change.invoice.number),
+                        }),
                     'number': change.invoice.number
                 },
                 'ware': {
-                    'url': reverse('warehouse:ware_detail', kwargs={'pk': change.ware.pk}),
+                    'url': reverse('warehouse:ware_detail', kwargs={
+                        'pk': change.ware.pk,
+                        'index': slugify(change.ware.index),
+                        'name': slugify(change.ware.name)}),
                     'index': change.ware.index,
                 },
                 'supplier': {
-                    'url': reverse('warehouse:supplier_detail', kwargs={'pk': change.invoice.supplier.pk}),
+                    'url': reverse('warehouse:supplier_detail', kwargs={
+                        'pk': change.invoice.supplier.pk,
+                        'name': slugify(change.invoice.supplier.name)
+                        }),
                     'name': change.invoice.supplier.name
                 },
                 'is_discount': change.is_discount,
@@ -570,13 +581,20 @@ class DuePayments(GroupAccessControlMixin, View):
         response = {'invoices': []}
         for invoice in invoices:
             response['invoices'].append({
-                'url': reverse('invoicing:sale_invoice_detail', kwargs={'pk': invoice.pk}),
+                'url': reverse('invoicing:sale_invoice_detail', kwargs={
+                    'pk': invoice.pk,
+                    'kind': slugify(invoice.get_invoice_type_display()),
+                    'number': slugify(invoice.number)
+                }),
                 'number': invoice.number,
                 'brutto_price': "{0:.2f} zł".format(invoice.total_value_brutto).replace('.', ','),
                 'payment_date': _date(invoice.payment_date, "d E Y"),
                 'is_exceeded': invoice.payment_date < datetime.date.today(),
                 'contractor': {
-                    'url': reverse('invoicing:contractor_detail', kwargs={'pk': invoice.contractor.pk}),
+                    'url': reverse('invoicing:contractor_detail', kwargs={
+                        'pk': invoice.contractor.pk,
+                        'name': slugify(invoice.contractor.name)
+                    }),
                     'name': invoice.contractor.name
                 },
                 'payed_url': reverse('invoicing:sale_invoice_set_payed', kwargs={'pk': invoice.pk})

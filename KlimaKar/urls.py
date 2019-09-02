@@ -6,12 +6,12 @@ from KlimaKar.views import HomeView
 
 urlpatterns = [
     path('', HomeView.as_view(), name="home"),
-    path('login/', auth_views.LoginView.as_view(), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('zaloguj/', auth_views.LoginView.as_view(), name='login'),
+    path('wyloguj/', auth_views.LogoutView.as_view(), name='logout'),
     path('admin/', admin.site.urls),
 
-    path('warehouse/', include('apps.warehouse.urls')),
-    path('invoicing/', include('apps.invoicing.urls')),
+    path('magazyn/', include('apps.warehouse.urls')),
+    path('fakturowanie/', include('apps.invoicing.urls')),
     path('stats/', include('apps.stats.urls')),
-    path('settings/', include('apps.settings.urls'))
+    path('ustawienia/', include('apps.settings.urls'))
 ]

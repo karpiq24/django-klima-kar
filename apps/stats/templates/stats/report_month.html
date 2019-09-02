@@ -1,3 +1,4 @@
+{% load slugify %}
 <!doctype html>
 <html lang="pl">
     <head>
@@ -102,9 +103,9 @@
                 </tr>
                 {% for change in ware_price_changes %}
                     <tr class="{% if change.is_discount %}change-discount{% else %}change-rise{% endif %}">
-                        <td><a href="{{ absolute_url }}{% url 'warehouse:ware_detail' change.ware.pk %}">{{ change.ware }}</a></td>
-                        <td><a href="{{ absolute_url }}{% url 'warehouse:invoice_detail' change.invoice.pk %}">{{ change.invoice }}</a></td>
-                        <td><a href="{{ absolute_url }}{% url 'warehouse:supplier_detail' change.invoice.supplier.pk %}">{{ change.invoice.supplier }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'warehouse:ware_detail' change.ware.index|slugify change.ware.name|slugify change.ware.pk %}">{{ change.ware }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'warehouse:invoice_detail' change.invoice.supplier.name|slugify change.invoice.number|slugify change.invoice.pk %}">{{ change.invoice }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'warehouse:supplier_detail' change.invoice.supplier.name|slugify change.invoice.supplier.pk %}">{{ change.invoice.supplier }}</a></td>
                         <td>{{ change.last_price|floatformat:2 }} zł</td>
                         <td>{{ change.new_price|floatformat:2 }} zł</td>
                         <td>{{ change.percent_change|floatformat:1 }}%</td>

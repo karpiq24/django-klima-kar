@@ -15,6 +15,7 @@ from django.contrib import messages
 from KlimaKar.email import get_email_message
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
 from KlimaKar.mixins import AjaxFormMixin, GroupAccessControlMixin, SingleTableAjaxMixin
+from KlimaKar.templatetags.slugify import slugify
 from apps.invoicing.models import SaleInvoice, Contractor, SaleInvoiceItem, ServiceTemplate, CorrectiveSaleInvoice
 from apps.invoicing.forms import SaleInvoiceModelForm, ContractorModelForm, SaleInvoiceItemsInline,\
     ServiceTemplateModelForm, EmailForm, RefrigerantWeightsInline, CorrectiveSaleInvoiceModelForm
@@ -96,16 +97,27 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
         self.generate_pdf = 'generate_pdf' in form.data
         if self.invoice_type != '3':
             messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejną fakturę.</a>'.format(
-                reverse('invoicing:sale_invoice_create', kwargs={'type': self.invoice_type})))
+                reverse('invoicing:sale_invoice_create', kwargs={
+                    'type': self.invoice_type,
+                    'kind': slugify(dict(INVOICE_TYPES)[self.invoice_type])
+                })))
         else:
             messages.add_message(self.request, messages.SUCCESS, 'Zapisano fakturę.')
         return super().forms_valid(form, inlines)
 
     def get_success_url(self, **kwargs):
         if self.generate_pdf:
-            return reverse("invoicing:sale_invoice_detail", kwargs={'pk': self.object.pk}) + "?pdf"
+            return reverse("invoicing:sale_invoice_detail", kwargs={
+                'pk': self.object.pk,
+                'kind': slugify(self.object.get_invoice_type_display()),
+                'number': slugify(self.object.number)
+            }) + "?pdf"
         else:
-            return reverse("invoicing:sale_invoice_detail", kwargs={'pk': self.object.pk})
+            return reverse("invoicing:sale_invoice_detail", kwargs={
+                'pk': self.object.pk,
+                'kind': slugify(self.object.get_invoice_type_display()),
+                'number': slugify(self.object.number)
+            })
 
 
 class SaleInvoiceUpdateView(UpdateWithInlinesView):
@@ -132,9 +144,17 @@ class SaleInvoiceUpdateView(UpdateWithInlinesView):
 
     def get_success_url(self, **kwargs):
         if self.generate_pdf:
-            return reverse("invoicing:sale_invoice_detail", kwargs={'pk': self.object.pk}) + "?pdf"
+            return reverse("invoicing:sale_invoice_detail", kwargs={
+                'pk': self.object.pk,
+                'kind': slugify(self.object.get_invoice_type_display()),
+                'number': slugify(self.object.number)
+            }) + "?pdf"
         else:
-            return reverse("invoicing:sale_invoice_detail", kwargs={'pk': self.object.pk})
+            return reverse("invoicing:sale_invoice_detail", kwargs={
+                'pk': self.object.pk,
+                'kind': slugify(self.object.get_invoice_type_display()),
+                'number': slugify(self.object.number)
+            })
 
 
 class CorrectiveSaleInvoiceCreateView(SaleInvoiceCreateView):
@@ -276,7 +296,10 @@ class ServiceTemplateCreateView(CreateView):
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
-        return reverse("invoicing:service_template_detail", kwargs={'pk': self.object.pk})
+        return reverse("invoicing:service_template_detail", kwargs={
+            'pk': self.object.pk,
+            'name': slugify(self.object.name)
+        })
 
 
 class ServiceTemplateUpdateView(UpdateView):
@@ -294,7 +317,10 @@ class ServiceTemplateUpdateView(UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
-        return reverse("invoicing:service_template_detail", kwargs={'pk': self.object.pk})
+        return reverse("invoicing:service_template_detail", kwargs={
+            'pk': self.object.pk,
+            'name': slugify(self.object.name)
+        })
 
 
 class ServiceTemplateAutocomplete(CustomSelect2QuerySetView):
@@ -367,7 +393,10 @@ class ContractorCreateView(CreateView):
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
-        return reverse("invoicing:contractor_detail", kwargs={'pk': self.object.pk})
+        return reverse("invoicing:contractor_detail", kwargs={
+            'pk': self.object.pk,
+            'name': slugify(self.object.name)
+        })
 
 
 class ContractorUpdateView(UpdateView):
@@ -385,7 +414,10 @@ class ContractorUpdateView(UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
-        return reverse("invoicing:contractor_detail", kwargs={'pk': self.object.pk})
+        return reverse("invoicing:contractor_detail", kwargs={
+            'pk': self.object.pk,
+            'name': slugify(self.object.name)
+        })
 
 
 class ContractorCreateAjaxView(AjaxFormMixin, CreateView):

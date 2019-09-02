@@ -12,6 +12,7 @@ from extra_views import CreateWithInlinesView, UpdateWithInlinesView
 
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
 from KlimaKar.mixins import AjaxFormMixin, SingleTableAjaxMixin
+from KlimaKar.templatetags.slugify import slugify
 from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 from apps.warehouse.tables import WareTable, InvoiceTable, SupplierTable, InvoiceItemTable, InvoiceTableWithWare
 from apps.warehouse.filters import WareFilter, InvoiceFilter, SupplierFilter
@@ -42,7 +43,10 @@ class WareUpdateView(UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
-        return reverse("warehouse:ware_detail", kwargs={'pk': self.object.pk})
+        return reverse("warehouse:ware_detail", kwargs={
+            'pk': self.object.pk,
+            'index': slugify(self.object.index),
+            'name': slugify(self.object.name)})
 
 
 class WareCreateView(CreateView):
@@ -61,7 +65,10 @@ class WareCreateView(CreateView):
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
-        return reverse("warehouse:ware_detail", kwargs={'pk': self.object.pk})
+        return reverse("warehouse:ware_detail", kwargs={
+            'pk': self.object.pk,
+            'index': slugify(self.object.index),
+            'name': slugify(self.object.name)})
 
 
 class WareDetailView(SingleTableAjaxMixin, DetailView):
@@ -132,7 +139,11 @@ class InvoiceCreateView(CreateWithInlinesView):
         return response
 
     def get_success_url(self):
-        return reverse("warehouse:invoice_detail", kwargs={'pk': self.object.pk})
+        return reverse("warehouse:invoice_detail", kwargs={
+            'pk': self.object.pk,
+            'supplier': slugify(self.object.supplier.name),
+            'number': slugify(self.object.number)
+        })
 
 
 class InvoiceUpdateView(UpdateWithInlinesView):
@@ -151,7 +162,11 @@ class InvoiceUpdateView(UpdateWithInlinesView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("warehouse:invoice_detail", kwargs={'pk': self.object.pk})
+        return reverse("warehouse:invoice_detail", kwargs={
+            'pk': self.object.pk,
+            'supplier': slugify(self.object.supplier.name),
+            'number': slugify(self.object.number)
+        })
 
 
 class SupplierTableView(ExportMixin, FilteredSingleTableView):
@@ -202,7 +217,10 @@ class SupplierUpdateView(UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
-        return reverse("warehouse:supplier_detail", kwargs={'pk': self.object.pk})
+        return reverse("warehouse:supplier_detail", kwargs={
+            'pk': self.object.pk,
+            'name': slugify(self.object.name)
+        })
 
 
 class SupplierCreateView(CreateView):
@@ -221,7 +239,10 @@ class SupplierCreateView(CreateView):
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
-        return reverse("warehouse:supplier_detail", kwargs={'pk': self.object.pk})
+        return reverse("warehouse:supplier_detail", kwargs={
+            'pk': self.object.pk,
+            'name': slugify(self.object.name)
+        })
 
 
 class WareCreateAjaxView(AjaxFormMixin, CreateView):

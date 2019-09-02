@@ -1,15 +1,16 @@
-<a class="btn btn-outline-primary btn-sm btn-table" href="{% url 'invoicing:sale_invoice_detail' record.pk %}" title="Szczegóły">
+{% load slugify %}
+<a class="btn btn-outline-primary btn-sm btn-table" href="{% url 'invoicing:sale_invoice_detail' record.get_invoice_type_display|slugify record.number|slugify record.pk %}" title="Szczegóły">
     Szczegóły
 </a>
-<a class="btn btn-outline-warning btn-sm btn-table" href="{% url 'invoicing:sale_invoice_update' record.pk %}" title="Edycja">
+<a class="btn btn-outline-warning btn-sm btn-table" href="{% url 'invoicing:sale_invoice_update' record.get_invoice_type_display|slugify record.number|slugify record.pk %}" title="Edycja">
     Edycja
 </a>
 {% if record.corrected_invoice %}
-    <a class="btn btn-outline-secondary btn-sm btn-table" href="{% url 'invoicing:sale_invoice_detail' record.corrected_invoice.pk %}" title="Korekta">
+    <a class="btn btn-outline-secondary btn-sm btn-table" href="{% url 'invoicing:sale_invoice_detail' record.corrected_invoice.get_invoice_type_display|slugify record.corrected_invoice.number|slugify record.corrected_invoice.pk %}" title="Korekta">
         Korekta
     </a>
 {% elif not record.correctivesaleinvoice %}
-    <a class="btn btn-outline-info btn-sm btn-table" href="{% url 'invoicing:sale_invoice_create_corrective' record.pk %}" title="Korekta">
+    <a class="btn btn-outline-info btn-sm btn-table" href="{% url 'invoicing:sale_invoice_create_corrective' record.get_invoice_type_display|slugify record.number|slugify record.pk %}" title="Korekta">
         Korekta
     </a>
 {% endif %}
