@@ -9,4 +9,4 @@ def slugify(value):
     if not value:
         return ''
     value = value.replace('/', '-').replace('ł', 'l').replace('Ł', 'L')
-    return _slugify(value)
+    return _slugify(value) or '_'
