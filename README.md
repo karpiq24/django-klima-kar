@@ -9,7 +9,7 @@ Django project used in my family buisness. It provides warehouse management and 
   - wares, suppliers and purchase invoices
   - export data to multiple formats
   - generate inventory report
-  - automatically load data from suppliers using APIs or web crawling
+  - automatically load data from suppliers using APIs or web scraping
 - Invoicing
   - contractors, sale invoices and default services
   - multiple invoice forms (VAT, WDT, Pro forma, Corrective)
