@@ -580,6 +580,10 @@ class DuePayments(GroupAccessControlMixin, View):
         invoices = SaleInvoice.objects.exclude(invoice_type='2').filter(payed=False).order_by('payment_date')
         response = {'invoices': []}
         for invoice in invoices:
+            if not invoice.payment_date:
+                invoice.payed = True
+                invoice.save()
+                continue
             response['invoices'].append({
                 'url': reverse('invoicing:sale_invoice_detail', kwargs={
                     'pk': invoice.pk,
