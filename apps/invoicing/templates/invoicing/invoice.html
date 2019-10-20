@@ -36,7 +36,14 @@
           {% endif %}
         </div>
         <div id="invoice">
-          <h1>{{ invoice.get_invoice_type_display|upper }} {{ invoice.number }}</h1>
+          <h1>
+            {{ invoice.get_invoice_type_display|upper }} {{ invoice.number }}
+            {% if invoice.commission_set.all.exists %}
+              <div class="commission-list">
+                Do zlecenia: {% for commission in invoice.commission_set.all %}{{ commission.pk }}{% if not forloop.last %}; {% endif %}{% endfor %}
+              </div>
+            {% endif %}
+          </h1>
           <div class="date">Data wystawienia: {{ invoice.issue_date|date:"d.m.Y" }}</div>
           <div class="date">Data sprzedaży: {{ invoice.completion_date|date:"d.m.Y" }}</div>
 		      <div class="date">Forma płatności: {{ invoice.get_payment_type_display }}</div>

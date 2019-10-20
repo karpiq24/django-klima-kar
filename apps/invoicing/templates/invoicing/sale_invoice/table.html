@@ -37,6 +37,13 @@
     </div>
 </div>
 
+<nav>
+    <div class="nav nav-tabs filter-tabs" id="nav-tab" role="tablist">
+        {% for type in invoice_type_data %}
+            <a class="nav-item nav-link {% if type.0 == current_tab_filter %}active{% endif %}" id="nav-{{ type.0 }}-tab" data-filter="id_invoice_type" data-value="{{ type.0 }}" data-toggle="tab" role="tab" aria-controls="nav-{{ type.0 }}" aria-selected="{% if forloop.counter == 1 %}true{% else %}false{% endif %}">{{ type.1 }} <span class="badge badge-primary">{{ type.2 }}</span></a>
+        {% endfor %}
+    </div>
+</nav>
 {% render_table table %}
 
 {% endblock %}

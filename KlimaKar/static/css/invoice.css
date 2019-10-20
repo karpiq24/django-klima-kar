@@ -315,3 +315,12 @@ footer {
 .corrective-header {
   margin: 0 0 5px 0;
 }
+
+.commission-list {
+  margin: -8px 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.4em;
+  color: black;
+  font-weight: normal;
+}

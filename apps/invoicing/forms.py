@@ -8,6 +8,7 @@ from django.forms.models import model_to_dict
 from apps.invoicing.models import Contractor, SaleInvoice, SaleInvoiceItem, ServiceTemplate, RefrigerantWeights,\
     CorrectiveSaleInvoice
 from apps.warehouse.models import Ware
+from apps.commission.models import CommissionItem
 
 
 class EnableDisableDateInput(forms.DateInput):
@@ -31,6 +32,10 @@ class SaleInvoiceModelForm(forms.ModelForm):
         self.fields['completion_date'].widget.attrs.update({'class': 'date-input'})
         self.fields['payment_date'].widget.attrs.update({'placeholder': 'Wybierz datę'})
         self.fields['payment_date'].widget.attrs.update({'class': 'date-input'})
+
+        contractor = self.initial.get('contractor')
+        if contractor:
+            self.fields['contractor'].initial = contractor
 
     def clean(self):
         cleaned_data = super().clean()
@@ -113,10 +118,13 @@ class ContractorModelForm(forms.ModelForm):
         self.fields['city'].widget.attrs.update({'placeholder': 'Podaj miasto'})
         self.fields['postal_code'].widget.attrs.update({'placeholder': 'Podaj kod pocztowy'})
         self.fields['email'].widget.attrs.update({'placeholder': 'Podaj adres e-mail'})
+        self.fields['phone_1'].widget.attrs.update({'placeholder': 'Podaj numer telefonu'})
+        self.fields['phone_2'].widget.attrs.update({'placeholder': 'Podaj numer telefonu'})
 
     class Meta:
         model = Contractor
-        fields = ['nip_prefix', 'nip', 'name', 'city', 'postal_code', 'address_1', 'address_2', 'email']
+        fields = ['nip_prefix', 'nip', 'name', 'city', 'postal_code', 'address_1', 'address_2', 'email',
+                  'phone_1', 'phone_2']
         widgets = {
             'nip_prefix': forms.HiddenInput()
         }
@@ -161,12 +169,17 @@ class SaleInvoiceItemsInline(InlineFormSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.commission = self.kwargs.get('commission', None)
         self.original_invoice = self.kwargs.get('original_invoice', None)
 
     def get_initial(self):
         if not self.object and self.original_invoice:
             items = SaleInvoiceItem.objects.filter(sale_invoice=self.original_invoice)
             initial = [model_to_dict(item) for item in items]
+            return initial
+        if not self.object and self.commission:
+            items = CommissionItem.objects.filter(commission=self.commission)
+            initial = [model_to_dict(item, exclude=['id', 'commission']) for item in items]
             return initial
         return self.initial[:]
 

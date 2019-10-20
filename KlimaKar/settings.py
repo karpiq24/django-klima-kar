@@ -31,14 +31,13 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_filters',
     'widget_tweaks',
-    'reversion',
-    'reversion_compare',
     'compressor',
 
     'KlimaKar',
     'apps.settings',
     'apps.warehouse',
     'apps.invoicing',
+    'apps.commission',
     'apps.stats'
 ]
 
@@ -50,7 +49,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'reversion.middleware.RevisionMiddleware',
     'KlimaKar.middleware.LoginRequiredMiddleware',
 ]
 
@@ -59,7 +57,6 @@ LOGIN_URL = 'zaloguj'
 LOGIN_EXEMPT_URLS = ['admin']
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
-ADD_REVERSION_ADMIN = True
 
 TEMPLATES = [
     {

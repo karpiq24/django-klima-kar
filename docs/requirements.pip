@@ -4,10 +4,8 @@ django-filter==2.2.0
 django==2.2.5
 django-tables2==2.1.0
 django-filter==2.2.0
-django-reversion==3.0.4
 django-extra-views==0.12.0
 django-autocomplete-light==3.4.1
-django-reversion-compare==0.8.6
 six==1.12.0
 python-dateutil==2.8.0
 requests==2.22.0
@@ -20,3 +18,4 @@ tablib==0.13.0
 openpyxl==2.6.3
 beautifulsoup4==4.8.0
 django_compressor==2.3
+psycopg2==2.8.3

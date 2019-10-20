@@ -3,7 +3,8 @@ from django.urls import reverse
 
 from KlimaKar.mixins import GroupAccessControlMixin
 from apps.settings.models import SiteSettings
-from apps.settings.forms import EmailSettingsModelForm, InvoicingSettingsModelForm
+from apps.settings.forms import EmailSettingsModelForm, InvoicingSettingsModelForm,\
+    CommissionSettingsModelForm
 
 
 class EmailSettingsUpdateView(GroupAccessControlMixin, UpdateView):
@@ -30,3 +31,16 @@ class InvoicingSettingsUpdateView(GroupAccessControlMixin, UpdateView):
 
     def get_success_url(self, **kwargs):
         return reverse("settings:invoicing")
+
+
+class CommissionSettingsUpdateView(GroupAccessControlMixin, UpdateView):
+    allowed_groups = ['boss']
+    model = SiteSettings
+    form_class = CommissionSettingsModelForm
+    template_name = 'settings/commission.html'
+
+    def get_object(self, queryset=None):
+        return SiteSettings.load()
+
+    def get_success_url(self, **kwargs):
+        return reverse("settings:commission")

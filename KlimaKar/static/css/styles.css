@@ -5,25 +5,24 @@ body {
     font-size: 14px;
     color:#343a40;
 }
+.container-fluid {
+    margin-top: 49px;
+}
 @media screen and (max-width: 992px) {
     .container-fluid {
         padding: 4px;
-        margin: 0;
     }
-    div.content {
-        padding: 1px 8px;
+    .menu-shown > .container-fluid {
+        margin: 0;
     }
 }
 
 @media screen and (max-width: 768px) {
     .container-fluid {
         padding: 0;
-        margin: 0;
-    }
-    div.content {
-        padding: 1px 4px;
     }
 }
+
 i {
     font-style: inherit;
 }
@@ -56,6 +55,21 @@ span.required {
 .date-input.form-control:disabled {
     background-color: #e9ecef;
     opacity: 1;
+}
+
+.simple-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.filter-tabs {
+    margin-bottom: 1rem;
+}
+
+.filter-tabs a {
+    cursor: pointer;
+    color: #007bff !important;
 }
 
 /*
@@ -179,6 +193,16 @@ small#gus-data:hover {
 }
 .is-valid ~ .select2-container .selection .select2-selection--single {
     border: 1px solid #28a745 !important;
+}
+
+.dal-create {
+    font-weight: bold;
+}
+.dal-create::before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f0fe";
+    margin-right: 8px;
 }
 
 /* 

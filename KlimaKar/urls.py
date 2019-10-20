@@ -12,6 +12,7 @@ urlpatterns = [
 
     path('magazyn/', include('apps.warehouse.urls')),
     path('fakturowanie/', include('apps.invoicing.urls')),
+    path('zlecenia/', include('apps.commission.urls')),
     path('stats/', include('apps.stats.urls')),
     path('ustawienia/', include('apps.settings.urls'))
 ]

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static slugify %}
+{% block content %}
+<div>
+    <h1>{{ title }}</h1>
+</div>
+<form action="" method="post">
+    {% csrf_token %}
+    <div class="row">
+        {% include 'forms/form.html' with form=form two_columns=True %}
+    </div>
+
+    <div class="card-deck text-center">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Akcje</h5>
+                <button class="btn btn-outline-primary btn-lg" type="submit"><i class="far fa-save"></i> Zapisz</button>
+                {% if object.pk %}
+                    <a class="btn btn-outline-dark btn-lg" href="{% url 'commission:vehicle_detail' object.brand|slugify object.pk %}">Powrót</a>
+                {% else %}
+                    <a class="btn btn-outline-dark btn-lg" href="{% url 'commission:vehicles' %}">Powrót</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('.sidenav #nav-vehicles').children(':first').addClass('active');
+        $('.sidenav #nav-commission').collapse('show');
+    });
+</script>
+{% endblock %}

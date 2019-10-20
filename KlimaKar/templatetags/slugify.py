@@ -8,5 +8,7 @@ register = Library()
 def slugify(value):
     if not value:
         return ''
+    if not isinstance(value, str):
+        value = str(value)
     value = value.replace('/', '-').replace('ł', 'l').replace('Ł', 'L')
     return _slugify(value) or '_'

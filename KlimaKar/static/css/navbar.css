@@ -1,7 +1,6 @@
 ul.sidenav {
   list-style-type: none;
   margin: 0;
-  margin-top: 48px;
   padding: 0;
   width: 200px;
   background-color: #191c21;
@@ -11,13 +10,6 @@ ul.sidenav {
   height: 100%;
   overflow: auto;
 }
-
-.spacer
-{
-  width: 100%;
-  height: 30px;
-}
-
 
 ul.sidenav li a {
   display: block;
@@ -30,6 +22,8 @@ ul.sidenav li a {
 
 ul.sidenav li a span {
   margin-right: 10px;
+  width: 14px;
+  text-align: center;
 }
 
 ul.sidenav li a.active {
@@ -63,18 +57,27 @@ ul.sidenav li i:hover {
 
 div.content {
   margin-left: 200px;
-  padding: 1px 16px;
+  padding: 16px 16px;
 }
 
 div.content-full {
   margin-left: 0% !important;
 }
 
+#toggleMenu {
+  display: none;
+}
+
 @media screen and (max-width: 992px) {
     ul.sidenav {
-        width: 100%;
-        height: auto;
-        position: relative;
+      width: 100%;
+      height: auto;
+      position: relative;
+      display: none;
+      margin-top: 49px;
+    }
+    #toggleMenu {
+      display: block;
     }
     ul.sidenav .collapse {
         display: block;
@@ -87,16 +90,8 @@ div.content-full {
     }
     ul.sidenav li i {
         display: none;
-        float: left;
-        padding: 15px;
-        border-right: solid 1px rgb(85, 85, 85);
-        border-bottom: none;
     }
     div.content {margin-left: 0;}
-    .spacer {
-      height: 0px;
-    }
-
 }
 
 @media screen and (max-width: 768px) {
@@ -121,6 +116,7 @@ ul.topnav {
   z-index: 999;
   top: 0;
   width: 100%;
+  max-height: 49px;
 }
 
 ul.topnav li {

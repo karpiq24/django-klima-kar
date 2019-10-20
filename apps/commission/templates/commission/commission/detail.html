@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% load static slugify %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+<div>
+    <h1>Szczegóły zlecenia</h1>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-lg-8">
+        <table class="table table-bordered">
+            <tr>
+                <td class="detail-label">Numer zlecenia</td>
+                <td>{{ object.pk }}</td>
+                </tr>
+            {% if object.vehicle %}
+                <tr>
+                    <td class="detail-label">Pojazd</td>
+                    <td><a href="{% url 'commission:vehicle_detail' object.vehicle.brand|slugify object.vehicle.pk %}">{{ object.vehicle }}</a></td>
+                </tr>
+            {% elif object.component %}
+                <tr>
+                    <td class="detail-label">Podzespół</td>
+                    <td><a href="{% url 'commission:component_detail' object.component.get_component_type_display|slugify object.component.pk %}">{{ object.component }}</a></td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td class="detail-label">Pojazd/Podzespół</td>
+                    <td>{{ object.vc_name }}</td>
+                </tr>
+            {% endif%}
+            <tr>
+                <td class="detail-label">Status</td>
+                <td>
+                    {% csrf_token %}
+                    <div id="status-select" class="btn-group btn-group-toggle" data-toggle="buttons" data-url="{% url 'commission:change_status' %}" data-done="{{ object.DONE }}">
+                        {% for status in object.STATUS_CHOICES %}
+                            <label class="btn btn-outline-primary{% if object.status == status.0 %} active{% endif %}">
+                                <input type="radio" name="status" id="option_{{ status.0 }}" data-value="{{ status.0 }}" data-pk="{{ object.pk }}" autocomplete="off" {% if object.status == status.0 %}checked{% endif %}> {{ status.1 }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="detail-label">Kontrahent</td>
+                <td><a href="{% url 'invoicing:contractor_detail' object.contractor.name|slugify object.contractor.pk %}">{{ object.contractor }}</a></td>
+            </tr>
+            <tr>
+                <td class="detail-label">Faktury sprzedażowe</td>
+                <td>
+                    {% if object.sale_invoices.all.exists %}
+                        <ul class="simple-list">
+                            {% for invoice in object.sale_invoices.all %}
+                                <li>
+                                    <a href="{% url 'invoicing:sale_invoice_detail' invoice.get_invoice_type_display|slugify invoice.number|slugify invoice.pk %}">{{ invoice }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td class="detail-label">Opis</td>
+                <td>{{ object.description|default:"—"|linebreaks }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Data przyjęcia</td>
+                <td>{{ object.start_date }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Data zakończenia</td>
+                <td>{{ object.end_date|default:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Łączna wartość netto</td>
+                <td>{{ object.value_netto|floatformat:2 }} zł</td>
+            </tr>            
+            <tr>
+                <td class="detail-label">Łączna wartość brutto</td>
+                <td>{{ object.value_brutto|floatformat:2 }} zł</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Procent podatku VAT</td>
+                <td>{{ object.tax_percent|floatformat:0 }}%</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="col-xs-12 col-lg-4">
+        <div class="card-deck text-center">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Akcje</h5>
+                    <button id="print-btn" class="btn btn-outline-primary btn-lg" data-url="{% url 'commission:commission_print_pdf' object|slugify object.pk %}"><i class="fas fa-print"></i> Drukuj</button>
+                    <a class="btn btn-outline-primary btn-lg" href="{% url 'commission:commission_pdf' object|slugify object.pk %}"><i class="far fa-file-pdf"></i> PDF</a>
+                    <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#email_modal"><i class="far fa-envelope"></i> E-mail</button>
+                    <button type="button" id="add_invoice" class="btn btn-outline-success btn-lg" data-toggle="modal" data-target="#invoice_modal"><i class="fa fa-book"></i> Dodaj fakturę</button>
+                    <a class="btn btn-outline-warning btn-lg" href="{% url 'commission:commission_update' object|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
+                    <a class="btn btn-outline-dark btn-lg" href="{{ back_url }}">Powrót</a>
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>
+
+<div>
+    <h2>Pozycje zlecenia</h2>
+</div>
+{% render_table table %}
+
+<div class="modal fade" id="invoice_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" id="invoice_form" onsubmit="submitInvoiceForm('{% url 'commission:prepare_invoice_url' %}', '{{ object.pk }}'); return false;">
+                <div class="modal-header">
+                    <h5 class="modal-title">Dodaj nową fakturę na podstawie zlecenia</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% csrf_token %}
+                    {% include 'commission/commission/to_invoice_form.html' with commission=object types=invoice_types %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Anuluj</button>
+                    <button type="submit" class="btn btn-outline-success">Dodaj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="email_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" id="email_form" onsubmit="submitEmailForm('{{ email_url }}'); return false;">
+                <div class="modal-header">
+                    <h5 class="modal-title">Wyślij E-zlecenie</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% csrf_token %}
+                    {% include 'forms/form.html' with form=email_form %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Anuluj</button>
+                    <button type="submit" class="btn btn-outline-primary">Wyślij</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/commission/commission-detail.js' %}"></script>
+{% endblock %}

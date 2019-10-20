@@ -7,6 +7,7 @@ urlpatterns = [
     path('faktury', views.SaleInvoiceTableView.as_view(), name='sale_invoices'),
     path('faktury/<str:kind>,<str:number>,<int:pk>', views.SaleInvoiceDetailView.as_view(), name='sale_invoice_detail'),
     path('faktury/nowa/<str:kind>,<type>', views.SaleInvoiceCreateView.as_view(), name='sale_invoice_create'),
+    path('faktury/nowa/<str:kind>,<type>/zlecenie/<str:slug>,<int:pk>', views.SaleInvoiceCommissionCreateView.as_view(), name='sale_invoice_commission_create'),
     path('faktury/<str:kind>,<str:number>,<int:pk>/edycja', views.SaleInvoiceUpdateView.as_view(), name='sale_invoice_update'),
     path('faktury/korekta/<str:kind>,<str:number>,<int:pk>', views.CorrectiveSaleInvoiceCreateView.as_view(), name='sale_invoice_create_corrective'),
     path('faktury/<str:kind>,<str:number>,<int:pk>/edycja-korekty', views.CorrectiveSaleInvoiceUpdateView.as_view(), name='sale_invoice_update_corrective'),

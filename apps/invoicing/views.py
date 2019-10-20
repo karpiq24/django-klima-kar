@@ -25,6 +25,7 @@ from apps.invoicing.dictionaries import INVOICE_TYPES
 from apps.invoicing.functions import get_next_invoice_number, generate_refrigerant_weights_report
 from apps.invoicing.gus import get_gus_address, get_gus_pkd, get_gus_data
 from apps.settings.models import SiteSettings
+from apps.commission.models import Commission
 
 
 class SaleInvoiceTableView(ExportMixin, FilteredSingleTableView):
@@ -33,6 +34,9 @@ class SaleInvoiceTableView(ExportMixin, FilteredSingleTableView):
     filter_class = SaleInvoiceFilter
     template_name = 'invoicing/sale_invoice/table.html'
     export_name = 'Zakupy sprzedazowe'
+    tab_filter = 'invoice_type'
+    tab_filter_default = '1'
+    tab_filter_choices = INVOICE_TYPES
 
 
 class SaleInvoiceDetailView(SingleTableAjaxMixin, DetailView):
@@ -118,6 +122,35 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
                 'kind': slugify(self.object.get_invoice_type_display()),
                 'number': slugify(self.object.number)
             })
+
+
+class SaleInvoiceCommissionCreateView(SaleInvoiceCreateView):
+
+    def dispatch(self, *args, **kwargs):
+        try:
+            self.commission = Commission.objects.get(pk=kwargs.get('pk'))
+            self.desc = self.request.GET.get('desc', '')
+            self.kwargs['commission'] = self.commission
+        except Commission.DoesNotExist:
+            raise Http404()
+        return super().dispatch(*args, **kwargs)
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['contractor'] = self.commission.contractor
+        initial['comment'] = self.desc
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = "Nowa faktura sprzedażowa ({}) dla zlecenia {}".format(
+            dict(INVOICE_TYPES)[self.invoice_type], str(self.commission.pk))
+        return context
+
+    def forms_valid(self, form, inlines):
+        response = super().forms_valid(form, inlines)
+        self.commission.sale_invoices.add(self.object)
+        return response
 
 
 class SaleInvoiceUpdateView(UpdateWithInlinesView):

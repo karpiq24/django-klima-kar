@@ -107,3 +107,4 @@ KlimaKar/migrations/
 data/
 .vscode/
 KlimaKar/settings_local.py
+scripts/aztec

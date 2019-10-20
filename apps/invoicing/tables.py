@@ -24,10 +24,9 @@ class ContractorTable(tables.Table):
 
 
 class SaleInvoiceTable(tables.Table):
-    invoice_type = tables.Column(attrs={'th': {'width': '10%'}}, verbose_name="Rodzaj faktury")
-    number = tables.Column(attrs={'th': {'width': '20%'}}, verbose_name="Numer faktury")
-    contractor = tables.Column(attrs={'th': {'width': '30%'}})
-    issue_date = tables.Column(attrs={'th': {'width': '13%'}}, verbose_name="Data wystawienia")
+    number = tables.Column(attrs={'th': {'width': '22%'}}, verbose_name="Numer faktury")
+    contractor = tables.Column(attrs={'th': {'width': '36%'}})
+    issue_date = tables.Column(attrs={'th': {'width': '15%'}}, verbose_name="Data wystawienia")
     total_value_netto = tables.Column(attrs={'th': {'width': '20%'}}, verbose_name="Łączna wartość netto")
     actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
                                     template_name='invoicing/sale_invoice/table_actions.html',
@@ -45,7 +44,7 @@ class SaleInvoiceTable(tables.Table):
     class Meta:
         model = SaleInvoice
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['invoice_type', 'number', 'contractor', 'issue_date', 'total_value_netto']
+        fields = ['number', 'contractor', 'issue_date', 'total_value_netto']
         order_by = '-number'
         empty_text = 'Brak faktur'
 

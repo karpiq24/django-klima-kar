@@ -26,3 +26,15 @@ class InvoicingSettingsModelForm(forms.ModelForm):
             'SALE_INVOICE_EMAIL_TITLE': 'Zawiera dostęp do kontekstu faktury np. {{ invoice.number }}',
             'SALE_INVOICE_EMAIL_BODY': 'Zawiera dostęp do kontekstu faktury np. {{ invoice.contractor }}',
         }
+
+
+class CommissionSettingsModelForm(forms.ModelForm):
+
+    class Meta:
+        model = SiteSettings
+        fields = ['COMMISSION_TAX_PERCENT', 'COMMISSION_EMAIL_TITLE',
+                  'COMMISSION_EMAIL_BODY']
+        help_texts = {
+            'COMMISSION_EMAIL_TITLE': 'Zawiera dostęp do kontekstu faktury np. {{ commission.number }}',
+            'COMMISSION_EMAIL_BODY': 'Zawiera dostęp do kontekstu faktury np. {{ commission.contractor }}',
+        }

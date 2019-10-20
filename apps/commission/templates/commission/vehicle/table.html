@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+<div>
+    <h1>Pojazdy</h1>
+</div>
+
+{% include "filter_panel.html" %}
+
+<div class="card-deck margin-tb-20 text-center">
+    <div class="card bg-light">
+        <div class="card-body">
+            <h5 class="card-title">Dodaj nowy pojazd</h5>
+            <a class="btn btn-outline-success btn-lg" href="{% url 'commission:vehicle_create' %}"><i class="far fa-plus-square"></i> Nowy pojazd</a>
+        </div>
+    </div>
+</div>
+
+{% render_table table %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('.sidenav #nav-vehicles').children(':first').addClass('active');
+        $('.sidenav #nav-commission').collapse('show');
+    });
+</script>
+{% endblock %}

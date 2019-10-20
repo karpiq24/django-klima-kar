@@ -46,4 +46,24 @@
             </a>
         </li>
     </div>
+    <li>
+        <i data-toggle="collapse" href="#nav-commission">Zlecenia<span class="fa fa-angle-down"></span></i>
+    </li>
+    <div id="nav-commission" class="collapse show">
+        <li id="nav-commissions">
+            <a href="{% url 'commission:commissions' %}">
+                <span class="fa fa-tasks"></span> Zlecenia
+            </a>
+        </li>
+        <li id="nav-vehicles">
+            <a href="{% url 'commission:vehicles' %}">
+                <span class="fa fa-car"></span> Pojazdy
+            </a>
+        </li>
+        <li id="nav-components">
+            <a href="{% url 'commission:components' %}">
+                <span class="fa fa-microchip"></span> Podzespoły
+            </a>
+        </li>
+    </div>
 </ul>

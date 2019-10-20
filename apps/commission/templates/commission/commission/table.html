@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load render_table export_url from django_tables2 %}
+
+{% block content %}
+<div>
+    <h1>Zlecenia</h1>
+</div>
+
+{% include "filter_panel.html" %}
+
+<div class="card-deck margin-tb-20 text-center">
+    <div class="card bg-light">
+        <div class="card-body">
+            <h5 class="card-title">Dodaj nowe zlecenie</h5>
+            <a class="btn btn-outline-success btn-lg" href="{% url 'commission:commission_create_vehicle' %}"><i class="far fa-plus-square"></i> Pojazd</a>
+            <a class="btn btn-outline-success btn-lg" href="{% url 'commission:commission_create_component' %}"><i class="far fa-plus-square"></i> Podzespół</a>
+        </div>
+    </div>
+    <div class="card bg-light">
+        <div class="card-body">
+            <h5 class="card-title">Eksport zleceń</h5>
+            <button class="btn btn-outline-info btn-lg dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="far fa-file-archive"></i> Eksport
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% export_url 'xlsx' %}">.xlsx</a>
+                <a class="dropdown-item" href="{% export_url 'xls' %}">.xls</a>
+                <a class="dropdown-item" href="{% export_url 'csv' %}">.csv</a>
+                <a class="dropdown-item" href="{% export_url 'json' %}">.json</a>
+                <a class="dropdown-item" href="{% export_url 'ods' %}">.ods</a>
+                <a class="dropdown-item" href="{% export_url 'latex' %}">.latex</a>
+                <a class="dropdown-item" href="{% export_url 'tsv' %}">.tsv</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<nav>
+    <div class="nav nav-tabs filter-tabs" id="nav-tab" role="tablist">
+        {% for status in status_data %}
+            <a class="nav-item nav-link {% if status.0 == current_tab_filter %}active{% endif %}" id="nav-{{ status.0 }}-tab" data-filter="id_status" data-value="{{ status.0 }}" data-toggle="tab" role="tab" aria-controls="nav-{{ status.0 }}" aria-selected="{% if forloop.counter == 1 %}true{% else %}false{% endif %}">{{ status.1 }} <span class="badge badge-primary">{{ status.2 }}</span></a>
+        {% endfor %}
+    </div>
+</nav>
+{% render_table table %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('.sidenav #nav-commissions').children(':first').addClass('active');
+        $('.sidenav #nav-commission').collapse('show');
+    });
+</script>
+{% endblock %}

@@ -37,6 +37,14 @@
                 <td class="detail-label">Adres e-mail</td>
                 <td>{{ object.email|default_if_none:"—" }}</td>
             </tr>
+            <tr>
+                <td class="detail-label">Numer telefonu</td>
+                <td>{{ object.phone_1|default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Numer telefonu 2</td>
+                <td>{{ object.phone_2|default_if_none:"—" }}</td>
+            </tr>
         </table>
     </div>
 

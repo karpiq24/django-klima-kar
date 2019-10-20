@@ -17,6 +17,13 @@ Django project used in my family buisness. It provides warehouse management and 
   - export invoice to PDF
   - print invoice
   - email invoice to contractor
+- Commissions
+  - commissions, vehicles, components
+  - decode AZTEC code from registration papers to get vehicle information
+  - export commission to PDF
+  - print commission
+  - email commission to contracotr
+  - generate invoice based on commission
 - Advanced statistics
   - rich interactive charts and metrics
   - detect purchased ware price changes
@@ -37,6 +44,10 @@ Django project used in my family buisness. It provides warehouse management and 
    ```
 3. Install fonts
    ```
-    sudo cp KlimaKar/static/fonts/* /usr/local/share/fonts/
-    sudo fc-cache -fv
+   sudo cp KlimaKar/static/fonts/* /usr/local/share/fonts/
+   sudo fc-cache -fv
+   ```
+4. Compile aztec code decoder
+   ```
+   g++ -o scripts/aztec scripts/aztec.cpp
    ```

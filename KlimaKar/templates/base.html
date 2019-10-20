@@ -29,6 +29,11 @@
 <ul class="topnav">
     <li><a class="active right-line" href="{% url 'home' %}">Klima-Kar</a></li>
     <li><span class="motto">komfortowy klimat w zasięgu ręki</span></li>
+    <li class="left-line" style="float:right">
+        <a href="#" title="Menu" id="toggleMenu">
+            <i class="fa fa-bars fa-lg" style="cursor: pointer;"></i>
+        </a>
+    </li>
     {% if user.is_authenticated %}
     <li class="left-line" style="float:right">
         <a href="{% url 'logout' %}" title="Wyloguj">
@@ -47,10 +52,7 @@
 {% if user.is_authenticated %}
     {% include 'menu.html' %}
 {% endif %}
-<div class="spacer">
-    &nbsp;
-</div>
-<div class="container-fluid text-center">        
+<div class="container-fluid text-center">
     <div class="content text-left {% if not user.is_authenticated %}content-full{% endif %}">
         {% block content %}
         {% endblock %}
@@ -94,6 +96,10 @@
             select2_open = $(this).parent().parent().siblings('select');
             select2_open.select2('open');
         });
+        $('#toggleMenu').on('click', function () {
+            $('.sidenav').toggle();
+            $('body').toggleClass('menu-shown');
+        })
     </script>
 {% endcompress %}
 {% compress js file page %}

@@ -234,11 +234,15 @@ class HomeView(TemplateView):
 
 class CustomSelect2QuerySetView(autocomplete.Select2QuerySetView):
     modal_create = False
+    always_show_create = False
+    create_empty_label = 'Nowy obiekt'
 
     def get_create_option(self, context, q):
         create_option = []
         display_create_option = False
-        if self.modal_create and q:
+        if self.always_show_create:
+            display_create_option = True
+        elif self.modal_create and q:
             display_create_option = True
         elif self.create_field and q:
             page_obj = context.get('page_obj', None)
@@ -248,8 +252,8 @@ class CustomSelect2QuerySetView(autocomplete.Select2QuerySetView):
 
         if display_create_option:
             create_option = [{
-                'id': q,
-                'text': ('Dodaj "%(new_value)s"') % {'new_value': q},
+                'id': q or self.create_empty_label,
+                'text': ('Dodaj "%(new_value)s"') % {'new_value': q or self.create_empty_label},
                 'create_id': True,
             }]
         return create_option
@@ -275,15 +279,26 @@ class CustomSelect2QuerySetView(autocomplete.Select2QuerySetView):
 
 class FilteredSingleTableView(SingleTableView):
     filter_class = None
+    tab_filter = None
+    tab_filter_default = None
+    tab_filter_choices = None
 
     def get_table_data(self):
         data = super(FilteredSingleTableView, self).get_table_data()
-        self.filter = self.filter_class(self.request.GET, queryset=data)
+        params = self.request.GET.copy()
+        if self.tab_filter and self.tab_filter not in params:
+            params[self.tab_filter] = self.tab_filter_default
+        self.filter = self.filter_class(params, queryset=data)
         return self.filter.qs
 
     def get_context_data(self, **kwargs):
         context = super(FilteredSingleTableView, self).get_context_data(**kwargs)
         context['filter'] = self.filter
+        if self.tab_filter:
+            context['current_tab_filter'] = self.request.GET.get(self.tab_filter, self.tab_filter_default)
+            context['{}_data'.format(self.tab_filter)] = [(
+                *data, self.model.objects.filter(
+                    **{self.tab_filter: data[0]}).count()) for data in self.tab_filter_choices]
         return context
 
     def get(self, request, *args, **kwargs):

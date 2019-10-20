@@ -6,11 +6,11 @@ from dal import autocomplete
 from dateutil import parser as date_parser
 
 from apps.invoicing.models import SaleInvoice, Contractor, ServiceTemplate
-from apps.invoicing.dictionaries import INVOICE_TYPES, PAYMENT_TYPES, REFRIGERANT_FILLED
+from apps.invoicing.dictionaries import PAYMENT_TYPES, REFRIGERANT_FILLED
 
 
 class SaleInvoiceFilter(django_filters.FilterSet):
-    invoice_type = django_filters.ChoiceFilter(choices=INVOICE_TYPES)
+    invoice_type = django_filters.CharFilter(widget=forms.HiddenInput())
     contractor = django_filters.ModelChoiceFilter(
         queryset=Contractor.objects.all(), widget=autocomplete.ModelSelect2(
             url='invoicing:contractor_autocomplete'))

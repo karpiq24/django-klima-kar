@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+{% load slugify %}
+
+{% block content %}
+<div>
+    <h1>Szczegóły pojazdu</h1>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-lg-8">
+        <table class="table table-bordered">
+            <tr>
+                <td class="detail-label">Marka</td>
+                <td>{{ object.brand }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Model</td>
+                <td>{{ object.model|default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Numer rejestracyjny</td>
+                <td>{{ object.registration_plate|default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Numer VIN</td>
+                <td>{{ object.vin|default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Pojemność silnika (cm3)</td>
+                <td>{{ object.engine_volume|default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Moc silnika (kW)</td>
+                <td>{{ object.engine_power|default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Rok produkcji</td>
+                <td>{{ object.production_year|default_if_none:"—" }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="col-xs-12 col-lg-4">
+        <div class="card-deck text-center">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Akcje</h5>
+                    <a class="btn btn-outline-warning btn-lg" href="{% url 'commission:vehicle_update' object.brand|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
+                    <a class="btn btn-outline-dark btn-lg" href="{{ back_url }}">Powrót</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <h2>Zlecenia dotyczące tego pojazdu</h2>
+</div>
+{% render_table table %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('.sidenav #nav-vehicles').children(':first').addClass('active');
+        $('.sidenav #nav-commission').collapse('show');
+    });
+</script>
+{% endblock %}

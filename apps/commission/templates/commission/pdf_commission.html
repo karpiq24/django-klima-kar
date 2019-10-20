@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <title>Zlecenie {{ commission.pk }}</title>
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/invoice.css' %}">
+  </head>
+  <body>
+    <header class="clearfix">
+      <div id="logo">
+        <h1>Klima-Kar</h1>
+		    <span>komfortowy klimat w zasięgu ręki</span>
+      </div>
+      <div id="company">
+        <div class="nip">NIP {% if invoice.invoice_type == '4' %}PL8991071777{% else %}899-107-17-77{% endif %}</div>
+		    <h2 class="name">Klima-Kar Renata Karpińska</h2>
+        <div>52-214 Wrocław ul. Grota Roweckiego 129</div>        
+		    <div>PKO Inteligo 50 1020 5558 1111 1223 8400 0094</div>
+        <div>tel. 71 337 14 50 kom. 605 594 506 e-mail: <a href="mailto:serwis@klima-kar.pl">serwis@klima-kar.pl</a></div>
+      </div>
+    </header>
+    <main>
+      <div id="details" class="clearfix">
+        <div id="client">
+          <div class="to">Zlecający</div>
+          {% if commission.contractor.nip %}
+            <div class="nip">NIP {{ commission.contractor.nip_prefix|default_if_none:"" }}{{ commission.contractor.nip }}</div> 
+          {% endif %}
+          <h2 class="name">{{ commission.contractor.name }}</h2>
+          {% if commission.contractor.address_1 or commission.contractor.postal_code or commission.contractor.city %}
+		        <div class="address">{{ commission.contractor.postal_code|default_if_none:"" }} {{ commission.contractor.city|default_if_none:"" }} {{ commission.contractor.address_1|default_if_none:"" }}</div>    
+          {% endif %}
+          {% if commission.contractor.address_2 %}
+		        <div class="address">{{ commission.contractor.address_2|default_if_none:"" }}</div>    
+          {% endif %}
+        </div>
+        <div id="invoice">
+          <h1>Zlecenie {{ commission.pk }}</h1>
+          {% if commission.vehicle %}
+            <div class="date">Pojazd: {{ commission.vehicle }}</div>
+          {% elif commission.component %}
+            <div class="date">Podzespół: {{ commission.component }}</div>
+          {% else %}
+            <div class="date">Pojazd/podzespół: {{ commission.vc_name }}</div>
+          {% endif %}
+          <div class="date">Data przyjęcia: {{ commission.start_date|date:"d.m.Y" }}</div>
+          <div class="date">Data zakończenia: {{ commission.end_date|date:"d.m.Y"|default:"—" }}</div>
+		      <div class="date">Status: {{ commission.get_status_display }}</div>
+        </div>
+      </div>
+	  <div id="info">{{ commission.description }}</div>
+    <table>
+      <thead>
+        <tr>
+          <th class="no">lp.</th>
+          <th class="desc">nazwa towaru/usługi</th>
+          <th class="unit">cena netto</th>
+          <th class="qty">ilość</th>
+          <th class="total">wartość netto</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in commission.commissionitem_set.all %}
+          <tr>
+            <td class="no">{{ forloop.counter }}</td>
+            <td class="desc"><h3>{{ item.name }}</h3> {{item.description|default_if_none:"" }}</td>
+            <td class="unit">{{ item.price_netto|floatformat:2 }} zł</td>
+            <td class="qty">{{ item.quantity }}</td>
+            <td class="total">{{ item.total_netto|floatformat:2 }} zł</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2"></td>
+          <td colspan="2">RAZEM NETTO</td>
+          <td>{{ commission.value_netto|floatformat:2 }} zł</td>
+        </tr>
+        <tr>
+          <td colspan="2"></td>
+          <td colspan="2">VAT {{ commission.tax_percent|floatformat:0 }}%</td>
+          <td>{{ commission.value_tax|floatformat:2 }} zł</td>
+        </tr>
+        <tr>
+          <td colspan="2"></td>
+          <td colspan="2">RAZEM BRUTTO</td>
+          <td>{{ commission.value_brutto|floatformat:2 }} zł</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    </main>
+    <footer>
+      <div id="notices">
+        <div>Dziękujemy, zapraszamy ponownie.</div>
+        <div class="notice"></div>
+      </div>
+    </footer>
+  </body>
+</html>
