@@ -163,6 +163,18 @@ $(function () {
         $('#contractor-edit').prop('disabled', false);
     }
 
+    if ($('#id_component').val() === '') {
+        $('#id_vc_name').prop('readonly', false);
+    } else {
+        $('#id_vc_name').prop('readonly', true);
+    }
+
+    if ($('#id_vehicle').val() === '') {
+        $('#id_vc_name').prop('readonly', false);
+    } else {
+        $('#id_vc_name').prop('readonly', true);
+    }
+
     $('#id_vehicle').on('select2:selecting', function (e) {
         var data = e.params.args.data;
 
@@ -425,24 +437,21 @@ $(function () {
         });
     }
 
-    var new_input_length = 0;
     $(document).on('input', '.select2-search__field.vehicle', function (e) {
-        new_input_length += 1;
         var code = $(this).val();
-        if (code.length > 100 && new_input_length > 100) {
+        if (code.length > 350) {
             debounce(function () {
                 decode_aztec(code);
-            }, 100)
-        new_input_length = 0;
+            }, 300)
         }
     })
 
     $(document).on('paste', '.select2-search__field.vehicle', function (e) {
         var code = e.originalEvent.clipboardData.getData('Text');
-        if (code.length > 100) {
+        if (code.length > 350) {
             debounce(function () {
                 decode_aztec(code);
-            }, 100)
+            }, 300)
         }
     })
 

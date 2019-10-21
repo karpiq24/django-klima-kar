@@ -44,7 +44,11 @@
             </tr>
             <tr>
                 <td class="detail-label">Kontrahent</td>
-                <td><a href="{% url 'invoicing:contractor_detail' object.contractor.name|slugify object.contractor.pk %}">{{ object.contractor }}</a></td>
+                {% if object.contractor %}
+                    <td><a href="{% url 'invoicing:contractor_detail' object.contractor.name|slugify object.contractor.pk %}">{{ object.contractor }}</a></td>
+                {% else %}
+                    <td>—</td>
+                {% endif %}
             </tr>
             <tr>
                 <td class="detail-label">Faktury sprzedażowe</td>

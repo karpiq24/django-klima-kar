@@ -98,9 +98,11 @@ class Commission(models.Model):
     ]
     VEHICLE = 'VH'
     COMPONENT = 'CO'
+    FAST = 'FA'
     COMMISSION_TYPES = [
         (VEHICLE, 'Pojazd'),
-        (COMPONENT, 'Podzespół')
+        (COMPONENT, 'Podzespół'),
+        (FAST, 'Szybkie')
     ]
 
     commission_type = models.CharField(
@@ -125,6 +127,8 @@ class Commission(models.Model):
     contractor = models.ForeignKey(
         Contractor,
         on_delete=models.PROTECT,
+        blank=True,
+        null=True,
         verbose_name='Kontrahent')
     sale_invoices = models.ManyToManyField(
         SaleInvoice,

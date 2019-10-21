@@ -24,7 +24,7 @@ from apps.commission.models import Vehicle, Component, Commission, CommissionIte
 from apps.commission.tables import VehicleTable, ComponentTable, CommissionTable, CommissionItemTable
 from apps.commission.filters import VehicleFilter, ComponentFilter, CommissionFilter
 from apps.commission.forms import VehicleModelForm, ComponentModelForm, CommissionModelForm, CommissionItemInline, \
-    CommissionEmailForm
+    CommissionEmailForm, CommissionFastModelForm
 from apps.invoicing.dictionaries import INVOICE_TYPES
 
 
@@ -218,6 +218,20 @@ class CommissionTableView(ExportMixin, FilteredSingleTableView):
     tab_filter_default = Commission.OPEN
     tab_filter_choices = Commission.STATUS_CHOICES
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        site_settings = SiteSettings.load()
+        commission_data = {
+            'status': Commission.DONE,
+            'start_date': datetime.date.today(),
+            'end_date': datetime.date.today(),
+            'tax_percent': site_settings.COMMISSION_TAX_PERCENT,
+            'commission_type': Commission.FAST
+        }
+        context['fast_commission_form'] = CommissionFastModelForm(initial=commission_data)
+        context['fast_commission_url'] = reverse('commission:fast_commission')
+        return context
+
 
 class CommissionDetailView(SingleTableAjaxMixin, DetailView):
     model = Commission
@@ -243,7 +257,7 @@ class CommissionDetailView(SingleTableAjaxMixin, DetailView):
             'commission': self.object,
             'subject': subject,
             'message': message,
-            'recipient': self.object.contractor.email
+            'recipient': self.object.contractor.email if self.object.contractor else ''
         }
         context['email_form'] = CommissionEmailForm(initial=email_data)
         context['email_url'] = reverse('commission:commission_email')
@@ -318,6 +332,29 @@ class CommissionUpdateView(UpdateWithInlinesView):
                 'pk': self.object.pk,
                 'desc': slugify(str(self.object))
             }), '?pdf' if self.generate_pdf else '')
+
+
+class FastCommissionCreateView(View):
+    def post(self, request, *args, **kwargs):
+        form = CommissionFastModelForm(data=request.POST)
+        if not form.is_valid():
+            return JsonResponse({'status': 'error', 'message': form.errors}, status=400)
+        commission = form.save()
+        CommissionItem.objects.create(
+            commission=commission,
+            name=commission.description,
+            price_netto=commission.value_netto,
+            price_brutto=commission.value_brutto
+        )
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Zlecenie zostało zapisane',
+            'url': self.get_success_url(commission)}, status=200)
+
+    def get_success_url(self, commission):
+        return reverse("commission:commission_detail", kwargs={
+            'pk': commission.pk,
+            'desc': slugify(str(commission))})
 
 
 class CommissionPDFView(View):

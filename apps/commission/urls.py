@@ -34,4 +34,5 @@ urlpatterns = [
     path('change_status', views.ChangeCommissionStatus.as_view(), name='change_status'),
     path('prepare_invoice_url', views.PrepareInvoiceUrl.as_view(), name='prepare_invoice_url'),
     path('commission_email', views.CommissionSendEmailView.as_view(), name='commission_email'),
+    path('fast_commission', views.FastCommissionCreateView.as_view(), name='fast_commission'),
 ]

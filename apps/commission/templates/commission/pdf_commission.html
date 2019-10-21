@@ -22,6 +22,7 @@
     </header>
     <main>
       <div id="details" class="clearfix">
+        {% if commission.contractor %}
         <div id="client">
           <div class="to">Zlecający</div>
           {% if commission.contractor.nip %}
@@ -35,6 +36,7 @@
 		        <div class="address">{{ commission.contractor.address_2|default_if_none:"" }}</div>    
           {% endif %}
         </div>
+        {% endif %}
         <div id="invoice">
           <h1>Zlecenie {{ commission.pk }}</h1>
           {% if commission.vehicle %}

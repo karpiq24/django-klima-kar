@@ -50,7 +50,8 @@ class CommissionModelForm(forms.ModelForm):
     contractor = forms.ModelChoiceField(
         label="Kontrahent",
         queryset=Contractor.objects.all(),
-        widget=autocomplete.ModelSelect2(url='invoicing:contractor_autocomplete_create')
+        widget=autocomplete.ModelSelect2(url='invoicing:contractor_autocomplete_create'),
+        required=False
     )
     vehicle = forms.ModelChoiceField(
         label="Pojazd",
@@ -85,9 +86,13 @@ class CommissionModelForm(forms.ModelForm):
         if self.commission_type == Commission.VEHICLE:
             self.fields.pop('component')
             self.fields['vc_name'].label = 'Nazwa pojazdu'
-        else:
+        elif self.commission_type == Commission.COMPONENT:
             self.fields.pop('vehicle')
             self.fields['vc_name'].label = 'Nazwa podzespołu'
+        else:
+            self.fields.pop('vehicle')
+            self.fields.pop('component')
+            self.fields['vc_name'].label = 'Nazwa'
 
     class Meta:
         model = Commission
@@ -97,6 +102,28 @@ class CommissionModelForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 4}),
             'value_netto': forms.HiddenInput(),
             'value_brutto': forms.HiddenInput(),
+            'commission_type': forms.HiddenInput(),
+        }
+
+
+class CommissionFastModelForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['vc_name'].widget.attrs.update(
+            {'placeholder': 'Podaj nazwę'})
+        self.fields['vc_name'].label = 'Nazwa'
+        self.fields['description'].required = True
+
+    class Meta:
+        model = Commission
+        fields = ['vc_name', 'description', 'status', 'start_date', 'end_date',
+                  'value_netto', 'value_brutto', 'tax_percent', 'commission_type']
+        widgets = {
+            'description': forms.TextInput(attrs={'placeholder': 'Podaj krótki opis'}),
+            'status': forms.HiddenInput(),
+            'start_date': forms.HiddenInput(),
+            'end_date': forms.HiddenInput(),
+            'tax_percent': forms.HiddenInput(),
             'commission_type': forms.HiddenInput(),
         }
 
