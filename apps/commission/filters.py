@@ -45,6 +45,10 @@ class ComponentFilter(django_filters.FilterSet):
 class CommissionFilter(django_filters.FilterSet):
     status = django_filters.CharFilter(
         widget=forms.HiddenInput(attrs={'value': Commission.OPEN}))
+    pk = django_filters.CharFilter(
+        lookup_expr='iexact',
+        widget=forms.TextInput(),
+        label="Numer zlecenia")
     vc_name = django_filters.CharFilter(
         lookup_expr='icontains',
         widget=forms.TextInput(),
@@ -66,7 +70,7 @@ class CommissionFilter(django_filters.FilterSet):
 
     class Meta:
         model = Commission
-        fields = ['status', 'vc_name', 'contractor', 'description', 'start_date', 'end_date']
+        fields = ['status', 'pk', 'vc_name', 'contractor', 'description', 'start_date', 'end_date']
 
     def start_date_filter(self, queryset, name, value):
         try:

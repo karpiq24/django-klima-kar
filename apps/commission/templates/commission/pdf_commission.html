@@ -57,9 +57,9 @@
         <tr>
           <th class="no">lp.</th>
           <th class="desc">nazwa towaru/usługi</th>
-          <th class="unit">cena netto</th>
+          <th class="unit">cena</th>
           <th class="qty">ilość</th>
-          <th class="total">wartość netto</th>
+          <th class="total">wartość</th>
         </tr>
       </thead>
       <tbody>
@@ -67,26 +67,22 @@
           <tr>
             <td class="no">{{ forloop.counter }}</td>
             <td class="desc"><h3>{{ item.name }}</h3> {{item.description|default_if_none:"" }}</td>
-            <td class="unit">{{ item.price_netto|floatformat:2 }} zł</td>
+            <td class="unit">{{ item.price_brutto|floatformat:2 }} zł</td>
             <td class="qty">{{ item.quantity }}</td>
-            <td class="total">{{ item.total_netto|floatformat:2 }} zł</td>
+            <td class="total">{{ item.total_brutto|floatformat:2 }} zł</td>
           </tr>
         {% endfor %}
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="2"></td>
-          <td colspan="2">RAZEM NETTO</td>
-          <td>{{ commission.value_netto|floatformat:2 }} zł</td>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+            <td colspan="5"></td>
         </tr>
         <tr>
           <td colspan="2"></td>
-          <td colspan="2">VAT {{ commission.tax_percent|floatformat:0 }}%</td>
-          <td>{{ commission.value_tax|floatformat:2 }} zł</td>
-        </tr>
-        <tr>
-          <td colspan="2"></td>
-          <td colspan="2">RAZEM BRUTTO</td>
+          <td colspan="2">RAZEM</td>
           <td>{{ commission.value_brutto|floatformat:2 }} zł</td>
         </tr>
       </tfoot>

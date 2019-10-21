@@ -92,6 +92,12 @@ class CommissionTable(tables.Table):
             phone = '{}{}'.format(phone, ' {}'.format(record.contractor.phone_2) if record.contractor.phone_2 else '')
         return phone or '—'
 
+    def order_phone(self, queryset, is_descending):
+        queryset = queryset.order_by(
+            ('-' if is_descending else '') + 'contractor__phone_1',
+            ('-' if is_descending else '') + 'contractor__phone_2')
+        return (queryset, True)
+
     class Meta:
         model = Commission
         attrs = {'class': 'table table-striped table-hover table-bordered'}
