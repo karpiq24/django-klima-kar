@@ -28,7 +28,7 @@
             {% endfor %}
             </div>
         {% endif %}
-        {% if object.commission_type == object.FAST %}
+        {% if object and object.commission_type == object.FAST %}
             <div class="col-sm-6">
                 {% include 'forms/field.html' with field=form.visible_fields.0 %}
             </div>

@@ -111,7 +111,7 @@ class CommissionFastModelForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['vc_name'].widget.attrs.update(
             {'placeholder': 'Podaj nazwę'})
-        self.fields['vc_name'].label = 'Nazwa'
+        self.fields['value_brutto'].label = 'Cena brutto'
         self.fields['description'].required = True
 
     class Meta:
@@ -125,6 +125,7 @@ class CommissionFastModelForm(forms.ModelForm):
             'end_date': forms.HiddenInput(),
             'tax_percent': forms.HiddenInput(),
             'commission_type': forms.HiddenInput(),
+            'value_netto': forms.HiddenInput()
         }
 
 

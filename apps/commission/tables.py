@@ -57,17 +57,24 @@ class CommissionTable(tables.Table):
         empty_values=(),
         verbose_name="Numer zlecenia")
     vc_name = tables.Column(
-        attrs={'th': {'width': '24%'}},
+        attrs={'th': {'width': '19%'}},
         empty_values=(),
         verbose_name="Pojazd/podzespół")
     contractor = tables.Column(
-        attrs={'th': {'width': '24%'}})
+        attrs={'th': {'width': '15%'}})
+    phone = tables.Column(
+        attrs={'th': {'width': '8%'}},
+        empty_values=(),
+        verbose_name="Telefon")
     start_date = tables.Column(
-        attrs={'th': {'width': '15%'}},
+        attrs={'th': {'width': '14%'}},
         verbose_name="Data wystawienia")
-    value_netto = tables.Column(
-        attrs={'th': {'width': '20%'}},
-        verbose_name="Łączna wartość netto")
+    end_date = tables.Column(
+        attrs={'th': {'width': '14%'}},
+        verbose_name="Data zakończenia")
+    value_brutto = tables.Column(
+        attrs={'th': {'width': '13%'}},
+        verbose_name="Cena brutto")
     actions = tables.TemplateColumn(
         attrs={'th': {'width': '7%'}},
         verbose_name="Akcje",
@@ -75,13 +82,20 @@ class CommissionTable(tables.Table):
         orderable=False,
         exclude_from_export=True)
 
-    def render_value_netto(self, value):
+    def render_value_brutto(self, value):
         return "{0:.2f} zł".format(value).replace('.', ',')
+
+    def render_phone(self, record):
+        phone = ''
+        if record.contractor:
+            phone = record.contractor.phone_1 or ''
+            phone = '{}{}'.format(phone, ' {}'.format(record.contractor.phone_2) if record.contractor.phone_2 else '')
+        return phone or '—'
 
     class Meta:
         model = Commission
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['pk', 'vc_name', 'contractor', 'start_date', 'value_netto']
+        fields = ['pk', 'vc_name', 'contractor', 'phone', 'start_date', 'end_date', 'value_brutto']
         order_by = '-pk'
         empty_text = 'Brak zleceń'
 
