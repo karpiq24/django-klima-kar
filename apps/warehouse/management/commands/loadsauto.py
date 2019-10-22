@@ -25,7 +25,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         with requests.Session() as s:
-            url = 'https://s-auto.profiauto.net/Uzt/Login'
+            url = 'https://s-auto.profiauto.net/Account/Login'
             headers = {
                 'User-Agent': ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)'
                                ' Chrome/75.0.3770.80 Safari/537.36')
@@ -40,6 +40,18 @@ class Command(BaseCommand):
                 print(message)
                 self.report_admins(message)
                 return
+
+            soup = BeautifulSoup(r.content, 'html5lib')
+            url = 'https://s-auto.profiauto.net/'
+            data = {
+                'code': soup.find('input', attrs={'name': 'code'})['value'],
+                'token_type': soup.find('input', attrs={'name': 'token_type'})['value'],
+                'access_token': soup.find('input', attrs={'name': 'access_token'})['value'],
+                'expires_in': soup.find('input', attrs={'name': 'expires_in'})['value'],
+                'id_token': soup.find('input', attrs={'name': 'id_token'})['value'],
+                'state': soup.find('input', attrs={'name': 'state'})['value'],
+            }
+            r = s.post(url, headers=headers, data=data)
 
             url = 'https://s-auto.profiauto.net/klient/faktury'
             data = {
@@ -60,15 +72,16 @@ class Command(BaseCommand):
             soup = BeautifulSoup(r.content, 'html5lib')
             new_invoices = 0
             new_wares = 0
-            for row in soup.find('tbody').find_all('tr'):
-                number = row.find_all('td')[1].find('a').text.strip()
-                if number and not Invoice.objects.filter(number=number).exists():
-                    invoice_id = row.find('a')['href'].split('/')[-1]
-                    url = 'https://s-auto.profiauto.net/Klient/faktury/EksportXML/{}'.format(invoice_id)
-                    r = s.get(url, headers=headers)
-                    result = self.parse_invoice(r.text)
-                    new_invoices = new_invoices + result[0]
-                    new_wares = new_wares + result[1]
+            if soup.find('tbody'):
+                for row in soup.find('tbody').find_all('tr'):
+                    number = row.find_all('td')[1].find('a').text.strip()
+                    if number and not Invoice.objects.filter(number=number).exists():
+                        invoice_id = row.find('a')['href'].split('/')[-1]
+                        url = 'https://s-auto.profiauto.net/Klient/faktury/EksportXML/{}'.format(invoice_id)
+                        r = s.get(url, headers=headers)
+                        result = self.parse_invoice(r.text)
+                        new_invoices = new_invoices + result[0]
+                        new_wares = new_wares + result[1]
             print("Added {} new invoices.". format(new_invoices))
             print("Added {} new wares.\n". format(new_wares))
 
