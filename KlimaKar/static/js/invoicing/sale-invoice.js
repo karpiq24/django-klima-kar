@@ -90,7 +90,7 @@ $(function () {
                 } else {
                     $('#gus-data').hide();
                 }
-                if (INVOICE_TYPE === '4') {
+                if (INVOICE_TYPE === '4' || INVOICE_TYPE === '5') {
                     if (result.contractor.nip_prefix == null) {
                         $("#id_contractor").addClass('is-invalid');
                         if ($(parent).find('div.invalid-feedback').length == 0) {

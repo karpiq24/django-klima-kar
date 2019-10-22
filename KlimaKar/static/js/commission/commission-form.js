@@ -51,8 +51,9 @@ function calculateInvoiceTotals() {
 }
 
 function checkEndDate() {
-    if ($('#id_status').val() === 'DO') {
+    if ($('input[type=radio][name=status]:checked').val() === 'DO') {
         $('#id_end_date').prop('disabled', false);
+        $('#id_end_date').val(moment().format('DD.MM.YYYY'))
     } else {
         $('#id_end_date').prop('disabled', true);
         $('#id_end_date').val('');
@@ -123,6 +124,7 @@ $(function () {
     });
 
     $("#id_contractor").change(function () {
+        var parent = $("#id_contractor").parent();
         var contractor_pk = $('#id_contractor').val();
         $.ajax({
             url: GET_CONTRACTOR_DATA,
@@ -136,6 +138,16 @@ $(function () {
                     $('#gus-data').show();
                 } else {
                     $('#gus-data').hide();
+                }
+                if (result.contractor.phone == null) {
+                    $("#id_contractor").addClass('is-invalid');
+                    if ($(parent).find('div.invalid-feedback').length == 0) {
+                        $(parent).append('<div class="invalid-feedback">Wybrany kontrahent nie ma podanego numeru telefonu.</div>')
+                    }    
+                }
+                else {
+                    $("#id_contractor").removeClass('is-invalid');
+                    $(parent).find('div.invalid-feedback').remove();
                 }
             }
         });
@@ -455,7 +467,7 @@ $(function () {
         }
     })
 
-    $('#id_status').on('change', function () {
+    $('input[type=radio][name=status]').change(function() {
         checkEndDate();
     })
     checkEndDate();

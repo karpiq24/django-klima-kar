@@ -98,16 +98,15 @@ class Commission(models.Model):
     ]
     VEHICLE = 'VH'
     COMPONENT = 'CO'
-    FAST = 'FA'
     COMMISSION_TYPES = [
         (VEHICLE, 'Pojazd'),
-        (COMPONENT, 'Podzespół'),
-        (FAST, 'Szybkie')
+        (COMPONENT, 'Podzespół')
     ]
 
     commission_type = models.CharField(
         max_length=2,
         choices=COMMISSION_TYPES,
+        default=VEHICLE,
         verbose_name='Rodzaj zlecenia')
     vc_name = models.CharField(
         max_length=128,
@@ -173,15 +172,12 @@ class Commission(models.Model):
     def number(self):
         return self.pk
 
-    def generate_pdf(self, print_version=False):
+    def generate_pdf(self):
         template = get_template('commission/pdf_commission.html')
         rendered_tpl = template.render({'commission': self}).encode()
         documents = []
         documents.append(
             HTML(string=rendered_tpl).render(stylesheets=[CSS(filename='KlimaKar/static/css/invoice.css')]))
-        if print_version:
-            documents.append(
-                HTML(string=rendered_tpl).render(stylesheets=[CSS(filename='KlimaKar/static/css/invoice.css')]))
         all_pages = []
         for doc in documents:
             for p in doc.pages:

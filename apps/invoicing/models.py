@@ -67,6 +67,10 @@ class SaleInvoice(models.Model):
             invoices = (invoices | SaleInvoice.objects.filter(invoice_type='4')).distinct()
         elif invoice_type == '4':
             invoices = (invoices | SaleInvoice.objects.filter(invoice_type='1')).distinct()
+        elif invoice_type == '2':
+            invoices = (invoices | SaleInvoice.objects.filter(invoice_type='5')).distinct()
+        elif invoice_type == '5':
+            invoices = (invoices | SaleInvoice.objects.filter(invoice_type='2')).distinct()
         if self.pk:
             invoices = invoices.exclude(pk=self.pk)
         if invoices.filter(number=self.number).exists():

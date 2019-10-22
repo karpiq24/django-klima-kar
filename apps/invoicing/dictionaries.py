@@ -9,6 +9,7 @@ INVOICE_TYPES = [
     ('2', 'Pro forma'),
     ('3', 'Korekta'),
     ('4', 'Faktura VAT WDT'),
+    ('5', 'Pro forma WDT'),
 ]
 
 REFRIGERANT_FILLED = [

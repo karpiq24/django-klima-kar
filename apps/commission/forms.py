@@ -3,6 +3,7 @@ from extra_views import InlineFormSet
 
 from django import forms
 
+from KlimaKar.widgets import PrettySelect
 from apps.commission.models import Vehicle, Component, Commission, CommissionItem
 from apps.invoicing.models import Contractor, ServiceTemplate
 from apps.warehouse.models import Ware
@@ -28,7 +29,7 @@ class VehicleModelForm(forms.ModelForm):
 
     class Meta:
         model = Vehicle
-        fields = ['brand', 'model', 'registration_plate', 'vin', 'engine_volume', 'engine_power', 'production_year']
+        fields = ['registration_plate', 'brand', 'model', 'vin', 'engine_volume', 'engine_power', 'production_year']
 
 
 class ComponentModelForm(forms.ModelForm):
@@ -103,6 +104,8 @@ class CommissionModelForm(forms.ModelForm):
             'value_netto': forms.HiddenInput(),
             'value_brutto': forms.HiddenInput(),
             'commission_type': forms.HiddenInput(),
+            'tax_percent': forms.HiddenInput(),
+            'status': PrettySelect()
         }
 
 
@@ -116,15 +119,15 @@ class CommissionFastModelForm(forms.ModelForm):
 
     class Meta:
         model = Commission
-        fields = ['vc_name', 'description', 'status', 'start_date', 'end_date',
-                  'value_netto', 'value_brutto', 'tax_percent', 'commission_type']
+        fields = ['commission_type', 'vc_name', 'description', 'status', 'start_date', 'end_date',
+                  'value_netto', 'value_brutto', 'tax_percent']
         widgets = {
             'description': forms.TextInput(attrs={'placeholder': 'Podaj krótki opis'}),
             'status': forms.HiddenInput(),
             'start_date': forms.HiddenInput(),
             'end_date': forms.HiddenInput(),
             'tax_percent': forms.HiddenInput(),
-            'commission_type': forms.HiddenInput(),
+            'commission_type': PrettySelect(),
             'value_netto': forms.HiddenInput()
         }
 

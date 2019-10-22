@@ -1,48 +1,14 @@
 <h6>Uwzględnij w fakturze:</h6>
 {% if commission.vehicle %}
-    {% if commission.vehicle.brand %}
-        <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="checkVehicleBrand" checked name="desc" value="{{ commission.vehicle.brand }}">
-            <label class="form-check-label" for="checkVehicleBrand">Marka - {{ commission.vehicle.brand }}</label>
-        </div>
-    {% endif %}
-    {% if commission.vehicle.model %}
-        <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="checkVehicleModel" checked name="desc" value="{{ commission.vehicle.model }}">
-            <label class="form-check-label" for="checkVehicleModel">Model - {{ commission.vehicle.model }}</label>
-        </div>
-    {% endif %}
-    {% if commission.vehicle.registration_plate %}
-        <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="checkVehiclePlate" checked name="desc" value="{{ commission.vehicle.registration_plate }}">
-            <label class="form-check-label" for="checkVehiclePlate">Numer rejestracyjny - {{ commission.vehicle.registration_plate }}</label>
-        </div>
-    {% endif %}
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="checkVehicle" checked name="desc" value="{{ commission.vehicle }}">
+        <label class="form-check-label" for="checkVehicle">Dane pojazdu - {{ commission.vehicle }}</label>
+    </div>
 {% elif commission.component %}
-    {% if commission.component_type.component_type %}
         <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="checkComponentType" checked name="desc" value="{{ commission.component.get_component_type_display }}">
-            <label class="form-check-label" for="checkComponentType">Rodzaj - {{ commission.component.get_component_type_display }}</label>
+            <input type="checkbox" class="form-check-input" id="checkComponent" checked name="desc" value="{{ commission.component }}">
+            <label class="form-check-label" for="checkComponent">Dane podzespołu - {{ commission.component }}</label>
         </div>
-    {% endif %}
-    {% if commission.component.model %}
-        <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="checkComponentModel" checked name="desc" value="{{ commission.component.model }}">
-            <label class="form-check-label" for="checkComponentModel">Model - {{ commission.component.model }}</label>
-        </div>
-    {% endif %}
-    {% if commission.component.serial_number %}
-        <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="checkComponentSerial" checked name="desc" value="{{ commission.component.serial_number }}">
-            <label class="form-check-label" for="checkComponentSerial">Numer seryjny - {{ commission.component.serial_number }}</label>
-        </div>
-    {% endif %}
-    {% if commission.component.catalog_number %}
-        <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="checkComponentCatalog" checked name="desc" value="{{ commission.component.catalog_number }}">
-            <label class="form-check-label" for="checkComponentCatalog">Numer katalogowy - {{ commission.component.catalog_number }}</label>
-        </div>
-    {% endif %}
 {% else %}
     <div class="form-group form-check">
         <input type="checkbox" class="form-check-input" id="checkName" checked name="desc" value="{{ commission.vc_name }}">

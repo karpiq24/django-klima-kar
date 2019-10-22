@@ -16,7 +16,10 @@ def get_next_invoice_number(invoice_type):
         invoices = (invoices | SaleInvoice.objects.filter(invoice_type='4', number_year=year)).distinct()
     elif invoice_type == '4':
         invoices = (invoices | SaleInvoice.objects.filter(invoice_type='1', number_year=year)).distinct()
-
+    elif invoice_type == '2':
+        invoices = (invoices | SaleInvoice.objects.filter(invoice_type='5', number_year=year)).distinct()
+    elif invoice_type == '5':
+        invoices = (invoices | SaleInvoice.objects.filter(invoice_type='2', number_year=year)).distinct()
     if not invoices.exists():
         return "1/{}".format(year)
     last_number = invoices.order_by('-number_value').first().number_value

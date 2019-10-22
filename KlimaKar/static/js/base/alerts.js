@@ -6,7 +6,7 @@ function addAlert(title, tag, text='', html='') {
         text: text,
         html: html,
         showConfirmButton: false,
-        timer: 5000,
+        timer: 10000,
         toast: true
     });
 }

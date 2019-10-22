@@ -27,12 +27,12 @@ class SaleInvoiceTable(tables.Table):
     number = tables.Column(attrs={'th': {'width': '22%'}}, verbose_name="Numer faktury")
     contractor = tables.Column(attrs={'th': {'width': '36%'}})
     issue_date = tables.Column(attrs={'th': {'width': '15%'}}, verbose_name="Data wystawienia")
-    total_value_netto = tables.Column(attrs={'th': {'width': '20%'}}, verbose_name="Łączna wartość netto")
+    total_value_brutto = tables.Column(attrs={'th': {'width': '20%'}}, verbose_name="Cena brutto")
     actions = tables.TemplateColumn(attrs={'th': {'width': '7%'}}, verbose_name="Akcje",
                                     template_name='invoicing/sale_invoice/table_actions.html',
                                     orderable=False, exclude_from_export=True)
 
-    def render_total_value_netto(self, value):
+    def render_total_value_brutto(self, value):
         return "{0:.2f} zł".format(value).replace('.', ',')
 
     def order_number(self, queryset, is_descending):
@@ -44,7 +44,7 @@ class SaleInvoiceTable(tables.Table):
     class Meta:
         model = SaleInvoice
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['number', 'contractor', 'issue_date', 'total_value_netto']
+        fields = ['number', 'contractor', 'issue_date', 'total_value_brutto']
         order_by = '-number'
         empty_text = 'Brak faktur'
 

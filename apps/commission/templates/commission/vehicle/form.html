@@ -5,7 +5,17 @@
     <h1>{{ title }}</h1>
 </div>
 <form action="" method="post">
+    <input type="hidden" id="decode_aztec_url" value="{% url 'commission:decode_aztec' %}">
     {% csrf_token %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <input type="text" placeholder="Zeskanuj dowód rejestracyjny" class="form-control form-control-lg" id="id_aztec">
+            </div>
+        </div>
+    </div>
+    <hr>
     <div class="row">
         {% include 'forms/form.html' with form=form two_columns=True %}
     </div>
@@ -27,10 +37,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-    $(function () {
-        $('.sidenav #nav-vehicles').children(':first').addClass('active');
-        $('.sidenav #nav-commission').collapse('show');
-    });
-</script>
+<script src="{% static 'js/commission/vehicle-form.js' %}"></script>
 {% endblock %}

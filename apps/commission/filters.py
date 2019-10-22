@@ -64,7 +64,7 @@ class CommissionFilter(django_filters.FilterSet):
         label="Data przyjęcia",
         widget=forms.TextInput(attrs={'class': 'date-range-input'}))
     end_date = django_filters.CharFilter(
-        method='start_date_filter',
+        method='end_date_filter',
         label="Data zakończenia",
         widget=forms.TextInput(attrs={'class': 'date-range-input'}))
 

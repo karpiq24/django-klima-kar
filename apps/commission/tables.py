@@ -68,7 +68,7 @@ class CommissionTable(tables.Table):
         verbose_name="Telefon")
     start_date = tables.Column(
         attrs={'th': {'width': '14%'}},
-        verbose_name="Data wystawienia")
+        verbose_name="Data przyjęcia")
     end_date = tables.Column(
         attrs={'th': {'width': '14%'}},
         verbose_name="Data zakończenia")

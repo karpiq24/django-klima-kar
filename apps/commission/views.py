@@ -225,9 +225,9 @@ class CommissionTableView(ExportMixin, FilteredSingleTableView):
             'status': Commission.DONE,
             'start_date': datetime.date.today(),
             'end_date': datetime.date.today(),
-            'tax_percent': site_settings.COMMISSION_TAX_PERCENT,
-            'commission_type': Commission.FAST
+            'tax_percent': site_settings.COMMISSION_TAX_PERCENT
         }
+        context['status_done'] = Commission.DONE
         context['fast_commission_form'] = CommissionFastModelForm(initial=commission_data)
         context['fast_commission_url'] = reverse('commission:fast_commission')
         return context
@@ -362,7 +362,7 @@ class CommissionPDFView(View):
 
     def get(self, request, *args, **kwargs):
         commission = get_object_or_404(Commission, pk=kwargs.get('pk'))
-        pdf_file = commission.generate_pdf(self.print_version)
+        pdf_file = commission.generate_pdf()
         response = HttpResponse(content_type='application/pdf')
         response.write(pdf_file)
         response['Content-Disposition'] = 'filename="Zlecenie {}.pdf"'.format(commission.pk)

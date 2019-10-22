@@ -5,6 +5,7 @@ from django import forms
 from django.urls import reverse
 from django.forms.models import model_to_dict
 
+from KlimaKar.widgets import PrettySelect
 from apps.invoicing.models import Contractor, SaleInvoice, SaleInvoiceItem, ServiceTemplate, RefrigerantWeights,\
     CorrectiveSaleInvoice
 from apps.warehouse.models import Ware
@@ -49,19 +50,25 @@ class SaleInvoiceModelForm(forms.ModelForm):
                 invoices = (invoices | SaleInvoice.objects.filter(invoice_type='4')).distinct()
             elif invoice_type == '4':
                 invoices = (invoices | SaleInvoice.objects.filter(invoice_type='1')).distinct()
+            elif invoice_type == '2':
+                invoices = (invoices | SaleInvoice.objects.filter(invoice_type='5')).distinct()
+            elif invoice_type == '5':
+                invoices = (invoices | SaleInvoice.objects.filter(invoice_type='2')).distinct()
             if invoices.filter(number=number).exists():
                 self.add_error('number', 'Faktura o tym numerze już istnieje.')
         return cleaned_data
 
     class Meta:
         model = SaleInvoice
-        exclude = ['refrigerant_weidghts', 'number_value', 'number_year', 'payed']
+        exclude = ['refrigerant_weidghts', 'number_value', 'number_year', 'payed', 'legacy']
         widgets = {
-            'comment': forms.Textarea(attrs={'rows': 1}),
+            'comment': forms.Textarea(attrs={'rows': 2}),
             'payment_date': EnableDisableDateInput(),
             'invoice_type': forms.HiddenInput(),
             'total_value_netto': forms.HiddenInput(),
-            'total_value_brutto': forms.HiddenInput()
+            'total_value_brutto': forms.HiddenInput(),
+            'tax_percent': forms.HiddenInput(),
+            'payment_type': PrettySelect()
         }
 
 
@@ -74,15 +81,17 @@ class CorrectiveSaleInvoiceModelForm(SaleInvoiceModelForm):
 
     class Meta:
         model = CorrectiveSaleInvoice
-        exclude = ['refrigerant_weidghts', 'number_value', 'number_year', 'payed']
+        exclude = ['refrigerant_weidghts', 'number_value', 'number_year', 'payed', 'legacy']
         widgets = {
-            'comment': forms.Textarea(attrs={'rows': 1}),
-            'reason': forms.Textarea(attrs={'rows': 1}),
+            'comment': forms.Textarea(attrs={'rows': 2}),
+            'reason': forms.Textarea(attrs={'rows': 2}),
             'payment_date': EnableDisableDateInput(),
             'invoice_type': forms.HiddenInput(),
             'total_value_netto': forms.HiddenInput(),
             'total_value_brutto': forms.HiddenInput(),
             'original_invoice': forms.HiddenInput(),
+            'tax_percent': forms.HiddenInput(),
+            'payment_type': PrettySelect()
         }
 
 

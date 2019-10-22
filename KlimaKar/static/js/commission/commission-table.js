@@ -48,4 +48,12 @@ $(function () {
             $("#id_value_brutto").removeClass('is-invalid');
         }
     });
+
+    $('.filter-tabs > a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+        if ($(e.target).data('value') === $('.filter-tabs').data('done')) {
+            $('#id_end_date').val(moment().format('DD.MM.YYYY') + ' - ' + moment().format('DD.MM.YYYY'));
+        } else {
+            $('#id_end_date').val('');
+        }
+    })
 });

@@ -72,6 +72,32 @@ span.required {
     color: #007bff !important;
 }
 
+.pretty-select {
+    width: 100%;
+}
+
+.pretty-select.form-control {
+    padding: 0;
+    border: none;
+}
+
+.pretty-select.is-invalid > label.btn {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.pretty-select.is-invalid > label.btn.active,
+.pretty-select.is-invalid > label.btn:hover {
+    color: white;
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.pretty-select.is-invalid > label.btn.focus,
+.pretty-select.is-invalid > label.btn:focus {
+    box-shadow: 0 0 0 .2rem rgba(220, 53, 69, 0.5);
+}
+
 /*
     MISC
 */

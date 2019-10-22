@@ -87,7 +87,7 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
         initial['number'] = get_next_invoice_number(self.invoice_type)
         site_settings = SiteSettings.load()
         initial['tax_percent'] = site_settings.SALE_INVOICE_TAX_PERCENT
-        if self.invoice_type == '4':
+        if self.invoice_type in ['4', '5']:
             initial['tax_percent'] = site_settings.SALE_INVOICE_TAX_PERCENT_WDT
         return initial
 
@@ -505,7 +505,8 @@ class ContractorGetDataView(View):
                 'address_2': contractor.address_2,
                 'city': contractor.city,
                 'postal_code': contractor.postal_code,
-                'email': contractor.email
+                'email': contractor.email,
+                'phone': contractor.phone_1 or contractor.phone_2 or None
             }
             return JsonResponse({'status': 'ok',
                                  'contractor': response})

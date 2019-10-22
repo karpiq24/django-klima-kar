@@ -28,73 +28,39 @@
             {% endfor %}
             </div>
         {% endif %}
-        {% if object and object.commission_type == object.FAST %}
-            <div class="col-sm-6">
-                {% include 'forms/field.html' with field=form.visible_fields.0 %}
-            </div>
-            <div class="col-sm-6">
-                <div style="display:flex;width:100%;">
-                    <div style="width:calc(100% - 105px);">
-                        {% include 'forms/field.html' with field=form.visible_fields.1 %}
-                    </div>
-                    <button disabled id="contractor-edit" class="btn btn-outline-warning" style="margin-left:5px;margin-top:29px;height:38px;width:100px;" type="button"><i class="fas fa-edit"></i> Edytuj</button>
+        <div class="col-sm-6">
+            {% include 'forms/field.html' with field=form.visible_fields.0 %}
+        </div>
+        <div class="col-sm-6">
+            <div style="display:flex;width:100%;">
+                <div style="width:calc(100% - 105px);">
+                    {% include 'forms/field.html' with field=form.visible_fields.1 %}
                 </div>
-                <small data-url="{% url 'invoicing:contractor_gus' %}" data-nip="{{ object.contractor.nip }}" id="gus-data" style="margin-top: -16px;{% if not object.contractor.nip %}display:none;{% endif %}">Pokaż wszystkie dane z GUS</small>
-                {% include 'invoicing/contractor/gus_modal.html' %}
+                <button disabled id="vehicle-component-edit" class="btn btn-outline-warning" style="margin-left:5px;margin-top:29px;height:38px;width:100px;" type="button"><i class="fas fa-edit"></i> Edytuj</button>
             </div>
-            <div class="col-sm-6">
-                {% include 'forms/field.html' with field=form.visible_fields.3 %}
-            </div>
-            <div class="col-sm-6">
-                {% include 'forms/field.html' with field=form.visible_fields.6 %}
-            </div>
-            <div class="col-sm-6">
-                {% include 'forms/field.html' with field=form.visible_fields.4 %}
-            </div>
-            <div class="col-sm-6">
-                {% include 'forms/field.html' with field=form.visible_fields.5 %}
-            </div>
-            <div class="col-sm-12">
-                {% include 'forms/field.html' with field=form.visible_fields.2 %}
-            </div>
-        {% else %}
-            <div class="col-sm-6">
-                {% include 'forms/field.html' with field=form.visible_fields.0 %}
-            </div>
-            <div class="col-sm-6">
-                <div style="display:flex;width:100%;">
-                    <div style="width:calc(100% - 105px);">
-                        {% include 'forms/field.html' with field=form.visible_fields.1 %}
-                    </div>
-                    <button disabled id="vehicle-component-edit" class="btn btn-outline-warning" style="margin-left:5px;margin-top:29px;height:38px;width:100px;" type="button"><i class="fas fa-edit"></i> Edytuj</button>
+        </div>
+        <div class="col-sm-6">
+            <div style="display:flex;width:100%;">
+                <div style="width:calc(100% - 105px);">
+                    {% include 'forms/field.html' with field=form.visible_fields.2 %}
                 </div>
+                <button disabled id="contractor-edit" class="btn btn-outline-warning" style="margin-left:5px;margin-top:29px;height:38px;width:100px;" type="button"><i class="fas fa-edit"></i> Edytuj</button>
             </div>
-            <div class="col-sm-6">
-                <div style="display:flex;width:100%;">
-                    <div style="width:calc(100% - 105px);">
-                        {% include 'forms/field.html' with field=form.visible_fields.2 %}
-                    </div>
-                    <button disabled id="contractor-edit" class="btn btn-outline-warning" style="margin-left:5px;margin-top:29px;height:38px;width:100px;" type="button"><i class="fas fa-edit"></i> Edytuj</button>
-                </div>
-                <small data-url="{% url 'invoicing:contractor_gus' %}" data-nip="{{ object.contractor.nip }}" id="gus-data" style="margin-top: -16px;{% if not object.contractor.nip %}display:none;{% endif %}">Pokaż wszystkie dane z GUS</small>
-                {% include 'invoicing/contractor/gus_modal.html' %}
-            </div>
-            <div class="col-sm-6">
-                {% include 'forms/field.html' with field=form.visible_fields.4 %}
-            </div>
-            <div class="col-sm-6">
-                {% include 'forms/field.html' with field=form.visible_fields.7 %}
-            </div>
-            <div class="col-sm-6">
-                {% include 'forms/field.html' with field=form.visible_fields.5 %}
-            </div>
-            <div class="col-sm-6">
-                {% include 'forms/field.html' with field=form.visible_fields.6 %}
-            </div>
-            <div class="col-sm-12">
-                {% include 'forms/field.html' with field=form.visible_fields.3 %}
-            </div>
-        {% endif %}
+            <small data-url="{% url 'invoicing:contractor_gus' %}" data-nip="{{ object.contractor.nip }}" id="gus-data" style="margin-top: -16px;{% if not object.contractor.nip %}display:none;{% endif %}">Pokaż wszystkie dane z GUS</small>
+            {% include 'invoicing/contractor/gus_modal.html' %}
+        </div>
+        <div class="col-sm-6">
+            {% include 'forms/field.html' with field=form.visible_fields.4 pretty_select=True %}
+        </div>
+        <div class="col-sm-6">
+            {% include 'forms/field.html' with field=form.visible_fields.5 %}
+        </div>
+        <div class="col-sm-6">
+            {% include 'forms/field.html' with field=form.visible_fields.6 %}
+        </div>
+        <div class="col-sm-12">
+            {% include 'forms/field.html' with field=form.visible_fields.3 %}
+        </div>
     </div>
 
     <div class="row">
