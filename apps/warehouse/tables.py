@@ -88,7 +88,7 @@ class SupplierTable(tables.Table):
 
     def order_all_invoices_value(self, queryset, is_descending):
         queryset = queryset.annotate(
-            max_price=Sum('invoice__invoiceitem__price')).order_by(('-' if is_descending else '') + 'max_price')
+            max_price=Sum(F('invoice__invoiceitem__price') * F('invoice__invoiceitem__quantity'), output_field=FloatField())).order_by(('-' if is_descending else '') + 'max_price')
         return (queryset, True)
 
     class Meta:
