@@ -47,9 +47,12 @@ $(function () {
     });
 
     $('.filter-tabs > a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+        const today = moment().format('DD.MM.YYYY') + ' - ' + moment().format('DD.MM.YYYY');
         if ($(e.target).data('value') === $('.filter-tabs').data('done')) {
-            $('#id_end_date').val(moment().format('DD.MM.YYYY') + ' - ' + moment().format('DD.MM.YYYY'));
-        } else {
+            if ($('#id_end_date').val() === '') {
+                $('#id_end_date').val(today);
+            }
+        } else if ($('#id_end_date').val() === today) {
             $('#id_end_date').val('');
         }
     })
