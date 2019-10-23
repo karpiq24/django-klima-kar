@@ -53,7 +53,9 @@ function calculateInvoiceTotals() {
 function checkEndDate() {
     if ($('input[type=radio][name=status]:checked').val() === 'DO') {
         $('#id_end_date').prop('disabled', false);
-        $('#id_end_date').val(moment().format('DD.MM.YYYY'))
+        if ($('#id_end_date').val() === '') {
+            $('#id_end_date').val(moment().format('DD.MM.YYYY'));
+        }
     } else {
         $('#id_end_date').prop('disabled', true);
         $('#id_end_date').val('');
