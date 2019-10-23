@@ -71,7 +71,7 @@ class CommissionTable(tables.Table):
         verbose_name="Data przyjęcia")
     end_date = tables.Column(
         attrs={'th': {'width': '14%'}},
-        verbose_name="Data zakończenia")
+        verbose_name="Data zamknięcia")
     value_brutto = tables.Column(
         attrs={'th': {'width': '13%'}},
         verbose_name="Cena brutto")

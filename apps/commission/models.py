@@ -148,7 +148,7 @@ class Commission(models.Model):
     end_date = models.DateField(
         blank=True,
         null=True,
-        verbose_name='Data zakończenia')
+        verbose_name='Data zamknięcia')
     value_netto = models.DecimalField(
         max_digits=10,
         decimal_places=2,

@@ -65,7 +65,7 @@ class CommissionFilter(django_filters.FilterSet):
         widget=forms.TextInput(attrs={'class': 'date-range-input'}))
     end_date = django_filters.CharFilter(
         method='end_date_filter',
-        label="Data zakończenia",
+        label="Data zamknięcia",
         widget=forms.TextInput(attrs={'class': 'date-range-input'}))
 
     class Meta:

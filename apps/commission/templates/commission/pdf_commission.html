@@ -47,7 +47,7 @@
             <div class="date">Pojazd/podzespół: {{ commission.vc_name }}</div>
           {% endif %}
           <div class="date">Data przyjęcia: {{ commission.start_date|date:"d.m.Y" }}</div>
-          <div class="date">Data zakończenia: {{ commission.end_date|date:"d.m.Y"|default:"—" }}</div>
+          <div class="date">Data zamknięcia: {{ commission.end_date|date:"d.m.Y"|default:"—" }}</div>
 		      <div class="date">Status: {{ commission.get_status_display }}</div>
         </div>
       </div>

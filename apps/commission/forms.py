@@ -70,7 +70,7 @@ class CommissionModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.commission_type = kwargs.pop('commission_type', None)
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.commission_type:
+        if not self.commission_type and self.instance and self.instance.commission_type:
             self.commission_type = self.instance.commission_type
         self.fields['vc_name'].widget.attrs.update(
             {'placeholder': 'Podaj nazwę'})

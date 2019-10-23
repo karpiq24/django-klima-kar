@@ -175,15 +175,13 @@ $(function () {
         $('#contractor-edit').prop('disabled', false);
     }
 
-    if ($('#id_component').val() === '') {
+    if ($('#id_component').length && $('#id_component').val() === '') {
         $('#id_vc_name').prop('readonly', false);
-    } else {
+    } else if ($('#id_component').length) {
         $('#id_vc_name').prop('readonly', true);
-    }
-
-    if ($('#id_vehicle').val() === '') {
+    } else if ($('#id_vehicle').length && $('#id_vehicle').val() === '') {
         $('#id_vc_name').prop('readonly', false);
-    } else {
+    } else if ($('#id_vehicle').length) {
         $('#id_vc_name').prop('readonly', true);
     }
 
