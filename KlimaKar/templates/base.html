@@ -37,8 +37,13 @@
     {% if user.is_authenticated %}
     <li class="left-line" style="float:right">
         <a href="{% url 'logout' %}" title="Wyloguj">
-            <i class="fa fa-sign-out-alt fa-lg" style="cursor: pointer;"></i> Wyloguj
+            <i class="fa fa-sign-out-alt fa-lg" style="cursor: pointer;"></i> <span>Wyloguj</span>
         </a>
+    </li>
+    <li class="left-line" style="float:right">
+        <button href="#" title="Zgłoszenie" data-toggle="modal" data-target="#issue_modal">
+            <i class="fas fa-exclamation-triangle" style="cursor: pointer;"></i>
+        </button>
     </li>
     {% endif %}
     {% if request.user|has_group:"boss" %}
@@ -62,6 +67,7 @@
                     </div>
             </div>
         </div>
+        {% include 'issue_modal.html' %}
     </div>
 </div>
 
@@ -85,6 +91,7 @@
 
     <script src="{% static 'js/base/daterangepicker-init.js' %}"></script>
     <script src="{% static 'js/base/dynamic-table.js' %}"></script>
+    <script src="{% static 'js/base/submit-issue.js' %}"></script>
 
     <script>
         var MESSAGES = {{messages|to_list|safe}};

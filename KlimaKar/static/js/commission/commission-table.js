@@ -4,9 +4,6 @@ function toCurrency(value) {
 
 function submitFastCommission(url) {
     var data = $('#fast_commission_form').serialize();
-    var spinner = document.createElement("i");
-    spinner.className = 'fas fa-spinner fa-spin fa-8x'
-    spinner.style = 'margin-bottom: 26px;color: #00a0df;'
     $.ajax({
         url: url,
         type: 'POST',

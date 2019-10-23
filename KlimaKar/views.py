@@ -1,7 +1,7 @@
 import six
 import datetime
 
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.urls import reverse
 from django.db.models import Sum, F
@@ -10,7 +10,11 @@ from django.core.exceptions import ImproperlyConfigured
 from dateutil.relativedelta import relativedelta
 from django_tables2 import SingleTableView
 from dal import autocomplete
+from github import Github
 
+from KlimaKar import settings
+from KlimaKar.forms import IssueForm
+from KlimaKar.email import get_email_message
 from apps.warehouse.models import Ware, Invoice, Supplier
 from apps.invoicing.models import SaleInvoice, Contractor, RefrigerantWeights
 
@@ -230,6 +234,29 @@ class HomeView(TemplateView):
 
         context['stats'] = data
         return context
+
+
+class SendIssueView(View):
+    def post(self, request, *args, **kwargs):
+        issue_form = IssueForm(data=request.POST)
+        if issue_form.is_valid():
+            data = issue_form.cleaned_data
+            g = Github(settings.GITHUB_TOKEN)
+            repo = g.get_repo(settings.GITHUB_REPOSITORY)
+            repo.create_issue(
+                title=data['title'],
+                body=data['body'],
+                labels=[data['label']],
+                assignee=settings.GITHUB_USERNAME)
+
+            if settings.ADMINS:
+                get_email_message(
+                    subject='Nowe zgłoszenie: {}'.format(data['title']),
+                    body='{}\n\n{}'.format(data['body'], data.get('secret')),
+                    to=[admin[1] for admin in settings.ADMINS]
+                ).send(fail_silently=True)
+            return JsonResponse({'status': 'success', 'message': 'Zgłoszenie zostało wysłane'}, status=200)
+        return JsonResponse({'status': 'error', 'message': 'Wystąpił błąd. Spróbuj ponownie.'}, status=400)
 
 
 class CustomSelect2QuerySetView(autocomplete.Select2QuerySetView):

@@ -70,6 +70,11 @@ DROPBOX_TOKEN = ''
 GUS_SANDBOX = False
 GUS_KEY = ''
 
+# GitHub
+GITHUB_USERNAME = ''
+GITHUB_TOKEN = ''
+GITHUB_REPOSITORY = 'karpiq24/django-klima-kar'
+
 # Ware price changes alerts
 PRICE_CHHANGE_PERCENTAGE = 5
 

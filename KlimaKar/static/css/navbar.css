@@ -123,23 +123,30 @@ ul.topnav li {
   float: left;
 }
 
-ul.topnav li span {
+ul.topnav li > span,
+ul.topnav li > a,
+ul.topnav li > button {
   display: block;
   color: #ffffff;
+  background-color: transparent;
+  border: none;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-  font-style: italic;
+  cursor: pointer;
 }
 
-ul.topnav li a {
-  display: block;
-  color: #ffffff;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
+ul.topnav li > span {
+  font-style: italic;
+  cursor: default;
 }
 
 ul.topnav .active {
   font-weight: bold;
+}
+
+@media screen and (max-width: 768px) {
+  ul.topnav li > a > span {
+    display: none;
+  }
 }

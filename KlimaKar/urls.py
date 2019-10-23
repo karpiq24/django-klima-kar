@@ -2,7 +2,7 @@
 from django.urls import include, path
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from KlimaKar.views import HomeView
+from KlimaKar.views import HomeView, SendIssueView
 
 urlpatterns = [
     path('', HomeView.as_view(), name="home"),
@@ -14,5 +14,7 @@ urlpatterns = [
     path('fakturowanie/', include('apps.invoicing.urls')),
     path('zlecenia/', include('apps.commission.urls')),
     path('stats/', include('apps.stats.urls')),
-    path('ustawienia/', include('apps.settings.urls'))
+    path('ustawienia/', include('apps.settings.urls')),
+
+    path('send_issue', SendIssueView.as_view(), name='send_issue')
 ]
