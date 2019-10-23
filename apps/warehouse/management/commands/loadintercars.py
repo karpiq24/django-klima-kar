@@ -8,7 +8,7 @@ from django.core.mail import mail_admins
 
 from apps.warehouse.models import Invoice, InvoiceItem, Supplier, Ware
 from apps.warehouse.functions import check_ware_price_changes
-from KlimaKar.settings import IC_CLIENT_NUMBER, IC_TOKEN, IC_API_URL
+from KlimaKar.settings import IC_CLIENT_NUMBER, IC_TOKEN, IC_API_URL, IC_PK
 
 
 class Command(BaseCommand):
@@ -66,14 +66,14 @@ class Command(BaseCommand):
             invoice_number = getData(invoice, 'numer')
             invoice_date = dateutil.parser.parse(getData(invoice, 'dat_w'))
             try:
-                Invoice.objects.get(number=invoice_number)
+                Invoice.objects.get(number=invoice_number, supplier__pk=IC_PK)
                 continue
             except Invoice.DoesNotExist:
                 new_invoices += 1
                 invoice_obj = Invoice.objects.create(
                     date=invoice_date.date(),
                     number=invoice_number,
-                    supplier=Supplier.objects.get(name="Inter Cars")
+                    supplier=Supplier.objects.get(pk=IC_PK)
                 )
                 new_wares += self.get_invoice_detail(invoice_obj, invoice_id)
                 check_ware_price_changes(invoice_obj)

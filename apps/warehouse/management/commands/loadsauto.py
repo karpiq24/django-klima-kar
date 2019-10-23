@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand
 from django.core.mail import mail_admins
 from django.db.models import Q
 
-from KlimaKar.settings import SAUTO_LOGIN, SAUTO_PASSWORD
+from KlimaKar.settings import SAUTO_LOGIN, SAUTO_PASSWORD, SAUTO_PK
 from apps.warehouse.models import Invoice, Ware, InvoiceItem, Supplier
 from apps.warehouse.functions import check_ware_price_changes
 
@@ -75,7 +75,7 @@ class Command(BaseCommand):
             if soup.find('tbody'):
                 for row in soup.find('tbody').find_all('tr'):
                     number = row.find_all('td')[1].find('a').text.strip()
-                    if number and not Invoice.objects.filter(number=number).exists():
+                    if number and not Invoice.objects.filter(number=number, supplier__pk=SAUTO_PK).exists():
                         invoice_id = row.find('a')['href'].split('/')[-1]
                         url = 'https://s-auto.profiauto.net/Klient/faktury/EksportXML/{}'.format(invoice_id)
                         r = s.get(url, headers=headers)
@@ -92,16 +92,11 @@ class Command(BaseCommand):
         issue_date = dateutil.parser.parse(self.getData(invoice_xml, 'dat_w')).date()
         netto_price = float(self.getData(invoice_xml, 'war_n'))
 
-        try:
-            Invoice.objects.get(number=number)
-            return 0, 0
-        except Invoice.DoesNotExist:
-            invoice = Invoice.objects.create(
-                number=number,
-                date=issue_date,
-                supplier=Supplier.objects.get(name="S-auto"),
-                total_value=netto_price
-            )
+        invoice = Invoice.objects.create(
+            number=number,
+            date=issue_date,
+            supplier=Supplier.objects.get(pk=SAUTO_PK),
+            total_value=netto_price)
 
         new_wares = 0
         for item in xml_doc.getElementsByTagName('poz'):
