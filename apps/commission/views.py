@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.http import JsonResponse, HttpResponse
 from django.views.generic import DetailView, UpdateView, CreateView, View
 from django.template import Template, Context
+from django.template.defaultfilters import date as str_date
 from django.db.models import Q
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
@@ -411,10 +412,12 @@ class ChangeCommissionStatus(View):
         except Commission.DoesNotExist:
             return JsonResponse({}, status=400)
         commission.status = status
-        if not commission.end_date and status == Commission.DONE:
+        if not commission.end_date and status in [Commission.DONE, Commission.CANCELLED]:
             commission.end_date = datetime.date.today()
+        if status not in [Commission.DONE, Commission.CANCELLED]:
+            commission.end_date = None
         commission.save()
-        return JsonResponse({})
+        return JsonResponse({'end_date': str_date(commission.end_date) if commission.end_date else '—'})
 
 
 class PrepareInvoiceUrl(View):

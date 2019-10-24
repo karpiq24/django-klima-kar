@@ -854,7 +854,7 @@ class Metrics(View):
             response['r404_sum'] = "{} g".format(r404)
 
             commissions = Commission.objects.filter(
-                    end_date__gte=date_from, end_date__lte=date_to)
+                    end_date__gte=date_from, end_date__lte=date_to, status=Commission.DONE)
             response['commission_count'] = commissions.count()
             if has_permission:
                 commissions_sum = 0

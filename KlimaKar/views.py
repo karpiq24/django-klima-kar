@@ -181,20 +181,20 @@ class HomeView(TemplateView):
         metrics.append({
             'icon': 'fa-tasks',
             'color': '#427BD2',
-            'title': 'Liczba dodanych zleceń',
+            'title': 'Liczba zakończonych zleceń',
             'class': 'commission_count'
         })
         if has_permission:
             metrics.append({
                 'icon': 'fa-tasks',
                 'color': '#427BD2',
-                'title': 'Kwota netto dodanych zleceń',
+                'title': 'Kwota netto zakończonych zleceń',
                 'class': 'commission_sum_netto'
             })
             metrics.append({
                 'icon': 'fa-tasks',
                 'color': '#427BD2',
-                'title': 'Kwota brutto dodanych zleceń',
+                'title': 'Kwota brutto zakończonych zleceń',
                 'class': 'commission_sum_brutto'
             })
 

@@ -77,35 +77,54 @@ $(function () {
         print_pdf();
     });
 
+    var last_status = $('#status-select input:checked');
+
     $('#status-select input').on('change', function () {
-        const status = $(this).data('value');
-        $.ajax({
-            url: $('#status-select').data('url'),
-            type: 'post',
-            dataType: 'json',
-            data: {
-                status: status,
-                pk: $(this).data('pk'),
-                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-            },
-            success: async function () {
-                if (status === $('#status-select').data('done')) {
-                    $('#commission_done').hide();
-                    Swal.fire({
-                        title: "Czy chcesz wystawić fakturę?",
-                        type: "question",
-                        showCancelButton: true,
-                        focusCancel: false,
-                        confirmButtonText: 'Tak',
-                        cancelButtonText: 'Nie'
-                    }).then((make_invoice) => {
-                        if (make_invoice.value) {
-                            $('#add_invoice').click();
+        const that = this;
+        Swal.fire({
+            title: "Czy na pewno chcesz zmienić status?",
+            type: "question",
+            showCancelButton: true,
+            focusCancel: false,
+            confirmButtonText: 'Tak',
+            cancelButtonText: 'Nie'
+        }).then((change) => {
+            if (change.value) {
+                const status = $(this).data('value');
+                last_status = that;
+                $.ajax({
+                    url: $('#status-select').data('url'),
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        status: status,
+                        pk: $(this).data('pk'),
+                        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                    },
+                    success: function (data) {
+                        $('#end_date').text(data.end_date);
+                        if (status === $('#status-select').data('done')) {
+                            $('#commission_done').hide();
+                            Swal.fire({
+                                title: "Czy chcesz wystawić fakturę?",
+                                type: "question",
+                                showCancelButton: true,
+                                focusCancel: false,
+                                confirmButtonText: 'Tak',
+                                cancelButtonText: 'Nie'
+                            }).then((make_invoice) => {
+                                if (make_invoice.value) {
+                                    $('#add_invoice').click();
+                                }
+                            });
+                        } else {
+                            $('#commission_done').show();
                         }
-                    });
-                } else {
-                    $('#commission_done').show();
-                }
+                    }
+                });
+            } else {
+                $(that).parent().removeClass('active');
+                $(last_status).parent().addClass('active');
             }
         });
     })

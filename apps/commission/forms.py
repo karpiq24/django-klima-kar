@@ -1,3 +1,5 @@
+import datetime
+
 from dal import autocomplete
 from extra_views import InlineFormSet
 
@@ -94,6 +96,14 @@ class CommissionModelForm(forms.ModelForm):
             self.fields.pop('vehicle')
             self.fields.pop('component')
             self.fields['vc_name'].label = 'Nazwa'
+
+    def clean(self):
+        cleaned_data = super().clean()
+        status = cleaned_data['status']
+        end_date = cleaned_data['end_date']
+        if status in [Commission.DONE, Commission.CANCELLED] and not end_date:
+            cleaned_data['end_date'] = str(datetime.date.today())
+        return cleaned_data
 
     class Meta:
         model = Commission
