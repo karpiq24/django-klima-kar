@@ -12,23 +12,21 @@ from django.core.management.base import BaseCommand
 from KlimaKar.settings import DROPBOX_TOKEN
 from apps.warehouse import models as warehouse
 from apps.invoicing import models as invoicing
+from apps.commission import models as commission
 
 
 class Command(BaseCommand):
     help = 'Loads backup from dropbox'
-    apps_to_load = ['warehouse', 'invoicing']
-
-    def add_arguments(self, parser):
-        parser.add_argument('--clear', action='store_true')
+    apps_to_load = ['warehouse', 'invoicing', 'commission']
 
     def handle(self, *args, **options):
-        print("Are you sure you want to load backup? (Y/n)")
+        print("Are you sure you want to load backup?\nThis process will replace all data (Y/n)")
         if input() != 'Y':
             return
 
-        if options['clear']:
-            self._clear_warehouse()
-            self._clear_invocing()
+        self._clear_warehouse()
+        self._clear_invocing()
+        self._clear_commission()
 
         dbx = dropbox.Dropbox(DROPBOX_TOKEN)
         try:
@@ -62,3 +60,9 @@ class Command(BaseCommand):
         print(' ' * 4, invoicing.SaleInvoice.objects.all().delete())
         print(' ' * 4, invoicing.Contractor.objects.all().delete())
         print(' ' * 4, invoicing.ServiceTemplate.objects.all().delete())
+
+    def _clear_commission(self):
+        print('Deleted from commission:')
+        print(' ' * 4, commission.Commission.objects.all().delete())
+        print(' ' * 4, commission.Component.objects.all().delete())
+        print(' ' * 4, commission.Vehicle.objects.all().delete())
