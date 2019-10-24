@@ -26,7 +26,7 @@ class SaleInvoiceModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['number'].widget.attrs.update({'placeholder': 'Podaj numer faktury'})
-        self.fields['contractor'].widget.attrs.update({'data-placeholder': 'Wybierz kontrahenta'})
+        self.fields['contractor'].widget.attrs.update({'data-placeholder': 'Podaj nazwę, NIP albo numer telefonu'})
         self.fields['issue_date'].widget.attrs.update({'placeholder': 'Wybierz datę'})
         self.fields['issue_date'].widget.attrs.update({'class': 'date-input'})
         self.fields['completion_date'].widget.attrs.update({'placeholder': 'Wybierz datę'})

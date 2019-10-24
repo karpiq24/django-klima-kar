@@ -75,11 +75,11 @@ class CommissionModelForm(forms.ModelForm):
         self.fields['vc_name'].widget.attrs.update(
             {'placeholder': 'Podaj nazwę'})
         self.fields['contractor'].widget.attrs.update(
-            {'data-placeholder': 'Wybierz kontrahenta'})
+            {'data-placeholder': 'Podaj nazwę, NIP albo numer telefonu'})
         self.fields['vehicle'].widget.attrs.update(
-            {'data-placeholder': 'Wybierz pojazd'})
+            {'data-placeholder': 'Podaj numer rejestracyjny albo zeskanuj dowód'})
         self.fields['component'].widget.attrs.update(
-            {'data-placeholder': 'Wybierz podzespół'})
+            {'data-placeholder': 'Podaj model, numer seryjny albo katalogowy'})
         self.fields['start_date'].widget.attrs.update(
             {'class': 'date-input', 'placeholder': 'Wybierz datę'})
         self.fields['end_date'].widget.attrs.update(

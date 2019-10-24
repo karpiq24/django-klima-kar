@@ -73,6 +73,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
 
                 'KlimaKar.context_processors.issue_form',
+                'KlimaKar.context_processors.debug',
             ],
         },
     },

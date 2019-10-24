@@ -80,7 +80,8 @@ $(function () {
         $.ajax({
             url: GET_CONTRACTOR_DATA,
             data: {
-                'pk': contractor_pk
+                'pk': contractor_pk,
+                'validate_vat': true
             },
             dataType: 'json',
             success: function (result) {
@@ -90,16 +91,37 @@ $(function () {
                 } else {
                     $('#gus-data').hide();
                 }
+                if (result.contractor.vat_valid === false) {
+                    $(parent).find('div.vat-failed').remove();
+                    $("#id_contractor").addClass('is-invalid');
+                        if ($(parent).find('div.vat-invalid').length == 0) {
+                            $(parent).append('<div class="invalid-feedback vat-invalid">Wybrany kontrahent nie jest płatnikiem VAT. <a href="' + result.contractor.vat_url + '" target="_blank">(sprawdź tutaj)</a></div>')
+                        }
+                } else if (result.contractor.vat_valid === 'failed') {
+                    $(parent).find('div.vat-invalid').remove();
+                    $("#id_contractor").addClass('is-invalid');
+                    if ($(parent).find('div.vat-failed').length == 0) {
+                        $(parent).append('<div class="invalid-feedback vat-failed">Nie udało się sprawdzić statusu płatnika VAT. Sprawdź ręcznie.</div>')
+                    }
+                } else {
+                    $(parent).find('div.vat-failed').remove();
+                    $(parent).find('div.vat-invalid').remove();
+                    if ($(parent).find('div.invalid-feedback').length == 0) {
+                        $("#id_contractor").removeClass('is-invalid');
+                    }
+                }
                 if (INVOICE_TYPE === '4' || INVOICE_TYPE === '5') {
                     if (result.contractor.nip_prefix == null) {
                         $("#id_contractor").addClass('is-invalid');
-                        if ($(parent).find('div.invalid-feedback').length == 0) {
-                            $(parent).append('<div class="invalid-feedback">Wybrany kontrahent nie ma podanego prefixu NIP.</div>')
-                        }    
+                        if ($(parent).find('div.no-prefix').length == 0) {
+                            $(parent).append('<div class="invalid-feedback no-prefix">Wybrany kontrahent nie ma podanego prefixu NIP.</div>')
+                        }
                     }
                     else {
-                        $("#id_contractor").removeClass('is-invalid');
-                        $(parent).find('div.invalid-feedback').remove();
+                        $(parent).find('div.no-prefix').remove();
+                        if ($(parent).find('div.invalid-feedback').length == 0) {
+                            $("#id_contractor").removeClass('is-invalid');
+                        }
                     }
                 }
             }
@@ -260,5 +282,9 @@ $(function () {
             $(item_form).find(".item-brutto").change();
         }
     })
+
+    if ($("#id_contractor").val() !== '') {
+        $("#id_contractor").change();
+    }
     calculateInvoiceTotals();
 });

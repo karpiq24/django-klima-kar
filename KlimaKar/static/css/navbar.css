@@ -145,6 +145,10 @@ ul.topnav .active {
   font-weight: bold;
 }
 
+ul.topnav li.debug-info {
+  background-color: red;
+}
+
 @media screen and (max-width: 768px) {
   ul.topnav li > a > span {
     display: none;

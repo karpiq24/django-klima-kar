@@ -1,7 +1,11 @@
+import datetime
+import requests
+
 from urllib.parse import urlencode
 from django_tables2.export.views import ExportMixin
 from smtplib import SMTPRecipientsRefused
 from extra_views import CreateWithInlinesView, UpdateWithInlinesView
+from zeep import Client as ZeepClient
 
 from django.views.generic import DetailView, UpdateView, CreateView, View
 from django.forms.models import model_to_dict
@@ -469,7 +473,8 @@ class ContractorAutocomplete(CustomSelect2QuerySetView):
     def get_queryset(self):
         qs = Contractor.objects.all()
         if self.q:
-            qs = qs.filter(Q(name__icontains=self.q) | Q(nip__icontains=self.q))
+            qs = qs.filter(Q(name__icontains=self.q) | Q(nip__icontains=self.q) |
+                           Q(phone_1__icontains=self.q) | Q(phone_2__icontains=self.q))
         return qs
 
 
@@ -495,6 +500,7 @@ class ContractorGUS(View):
 class ContractorGetDataView(View):
     def get(self, *args, **kwargs):
         contractor_pk = self.request.GET.get('pk', None)
+        validate_vat = self.request.GET.get('validate_vat', False)
         if contractor_pk:
             contractor = Contractor.objects.get(pk=contractor_pk)
             response = {
@@ -506,9 +512,28 @@ class ContractorGetDataView(View):
                 'city': contractor.city,
                 'postal_code': contractor.postal_code,
                 'email': contractor.email,
-                'phone': contractor.phone_1 or contractor.phone_2 or None
+                'phone': contractor.phone_1 or contractor.phone_2 or None,
+                'vat_valid': None
             }
-            return JsonResponse({'status': 'ok',
+            if validate_vat:
+                try:
+                    if contractor.nip:
+                        if contractor.nip_prefix:
+                            client = ZeepClient('http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl')
+                            vat = client.service.checkVat(contractor.nip_prefix, contractor.nip)
+                            response['vat_valid'] = vat['valid']
+                            response['vat_url'] = 'http://ec.europa.eu/taxation_customs/vies/?locale=pl'
+                        else:
+                            url = 'https://wl-api.mf.gov.pl/api/search/nip/{}?date={}'.format(
+                                contractor.nip, str(datetime.date.today()))
+                            r = requests.get(url)
+                            vat_valid = r.json().get('result', {}).get('subject', {}).get('statusVat')
+                            response['vat_url'] = 'https://www.podatki.gov.pl/wykaz-podatnikow-vat-wyszukiwarka'
+                            if vat_valid:
+                                response['vat_valid'] = vat_valid == 'Czynny'
+                except Exception:
+                    response['vat_valid'] = 'failed'
+            return JsonResponse({'status': 'success',
                                  'contractor': response})
         return JsonResponse({'status': 'error', 'contractor': {}})
 

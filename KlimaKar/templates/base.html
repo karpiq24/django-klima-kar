@@ -27,7 +27,11 @@
 <body>
 
 <ul class="topnav">
-    <li><a class="active right-line" href="{% url 'home' %}">Klima-Kar</a></li>
+    {% if DEBUG %}
+        <li class="debug-info"><a class="active right-line" href="{% url 'home' %}">SERWER DEWELOPERSKI</a></li>
+    {% else %}
+        <li><a class="active right-line" href="{% url 'home' %}">Klima-Kar</a></li>
+    {% endif %}
     <li><span class="motto">komfortowy klimat w zasięgu ręki</span></li>
     <li class="left-line" style="float:right">
         <a href="#" title="Menu" id="toggleMenu">

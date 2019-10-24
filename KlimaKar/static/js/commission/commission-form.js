@@ -106,7 +106,11 @@ $(function () {
 
         e.preventDefault();
         if (isInt(data.id)) {
-            var initial = {'nip': data.id};
+            if (data.id.length === 9) {
+                var initial = {'phone_1': data.id};
+            } else {
+                var initial = {'nip': data.id};
+            }
         }
         else {
             var initial = {'name': data.id};
@@ -201,6 +205,7 @@ $(function () {
         $.ajax({
             url: CREATE_VEHICLE,
             type: 'get',
+            data: {'registration_plate': data.id},
             dataType: 'json',
             beforeSend: function () {
                 $("#modal-generic").modal("show");
@@ -471,4 +476,8 @@ $(function () {
         checkEndDate();
     })
     checkEndDate();
+
+    if ($("#id_contractor").val() !== '') {
+        $("#id_contractor").change();
+    }
 });

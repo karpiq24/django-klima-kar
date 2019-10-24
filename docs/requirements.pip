@@ -20,3 +20,4 @@ beautifulsoup4==4.8.1
 django_compressor==2.3
 psycopg2==2.8.4
 PyGithub==1.44
+zeep==3.4.0

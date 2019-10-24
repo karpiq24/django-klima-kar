@@ -12,3 +12,7 @@ def issue_form(request):
         'issue_submit_url': reverse('send_issue'),
         'issue_list_url': os.path.join('https://github.com', settings.GITHUB_REPOSITORY, 'issues')
     }
+
+
+def debug(request):
+    return {'DEBUG': settings.DEBUG}
