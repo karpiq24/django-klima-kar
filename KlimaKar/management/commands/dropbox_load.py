@@ -25,8 +25,8 @@ class Command(BaseCommand):
             return
 
         self._clear_warehouse()
-        self._clear_invocing()
         self._clear_commission()
+        self._clear_invocing()
 
         dbx = dropbox.Dropbox(DROPBOX_TOKEN)
         try:
