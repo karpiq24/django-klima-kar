@@ -14,6 +14,7 @@ from KlimaKar.mixins import GroupAccessControlMixin
 from KlimaKar.templatetags.slugify import slugify
 from apps.warehouse.models import Invoice, Ware, WarePriceChange, Supplier
 from apps.invoicing.models import SaleInvoice, Contractor, RefrigerantWeights
+from apps.commission.models import Commission
 from apps.stats.dictionaries import MONTHS, COLORS, DAYS
 
 
@@ -291,7 +292,7 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
 
     def get(self, *args, **kwargs):
         date_option = self.request.GET.get('date_select', 'week')
-        metric = self.request.GET.get('custom_select', 'Sum')
+        metric = self.request.GET.get('custom_select', 'SumNetto')
         now = datetime.datetime.today()
         if date_option == 'week':
             date = now - relativedelta(days=6)
@@ -302,7 +303,7 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
         else:
             date = None
 
-        invoices = SaleInvoice.objects.exclude(invoice_type__in=['2', '3'])
+        invoices = SaleInvoice.objects.exclude(invoice_type__in=['2', '3', '5'])
         if date:
             invoices = invoices.filter(issue_date__gte=date)
 
@@ -310,10 +311,14 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
 
         if date_option == 'week':
             invoices = invoices.values('issue_date')
-            if metric == 'Sum':
+            if metric == 'SumNetto':
                 invoices = invoices.annotate(total=Sum('total_value_netto'))
-            elif metric == 'Avg':
+            elif metric == 'SumBrutto':
+                invoices = invoices.annotate(total=Sum('total_value_brutto'))
+            elif metric == 'AvgNetto':
                 invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
+            elif metric == 'AvgBrutto':
+                invoices = invoices.annotate(total=Round(Avg('total_value_brutto')))
             elif metric == 'Count':
                 invoices = invoices.annotate(total=Count('id'))
                 response_data['custom']['values_appendix'] = ''
@@ -332,10 +337,14 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
 
         if date_option == 'month':
             invoices = invoices.values('issue_date')
-            if metric == 'Sum':
+            if metric == 'SumNetto':
                 invoices = invoices.annotate(total=Sum('total_value_netto'))
-            elif metric == 'Avg':
+            elif metric == 'SumBrutto':
+                invoices = invoices.annotate(total=Sum('total_value_brutto'))
+            elif metric == 'AvgNetto':
                 invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
+            elif metric == 'AvgBrutto':
+                invoices = invoices.annotate(total=Round(Avg('total_value_brutto')))
             elif metric == 'Count':
                 invoices = invoices.annotate(total=Count('id'))
                 response_data['custom']['values_appendix'] = ''
@@ -355,10 +364,14 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
         if date_option == 'year':
             invoices = invoices.annotate(
                 month=ExtractMonth('issue_date'), year=ExtractYear('issue_date')).values('year', 'month')
-            if metric == 'Sum':
+            if metric == 'SumNetto':
                 invoices = invoices.annotate(total=Sum('total_value_netto'))
-            elif metric == 'Avg':
+            elif metric == 'SumBrutto':
+                invoices = invoices.annotate(total=Sum('total_value_brutto'))
+            elif metric == 'AvgNetto':
                 invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
+            elif metric == 'AvgBrutto':
+                invoices = invoices.annotate(total=Round(Avg('total_value_brutto')))
             elif metric == 'Count':
                 invoices = invoices.annotate(total=Count('id'))
                 response_data['custom']['values_appendix'] = ''
@@ -379,10 +392,14 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
             for i, year in enumerate(years):
                 year_invoices = invoices.filter(issue_date__year=year)
                 year_invoices = year_invoices.annotate(month=ExtractMonth('issue_date')).values('month')
-                if metric == 'Sum':
+                if metric == 'SumNetto':
                     year_invoices = year_invoices.annotate(total=Sum('total_value_netto'))
-                elif metric == 'Avg':
+                elif metric == 'SumBrutto':
+                    year_invoices = year_invoices.annotate(total=Sum('total_value_brutto'))
+                elif metric == 'AvgNetto':
                     year_invoices = year_invoices.annotate(total=Round(Avg('total_value_netto')))
+                elif metric == 'AvgBrutto':
+                    year_invoices = year_invoices.annotate(total=Round(Avg('total_value_brutto')))
                 elif metric == 'Count':
                     year_invoices = year_invoices.annotate(total=Count('id'))
                     response_data['custom']['values_appendix'] = ''
@@ -400,10 +417,14 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
 
         if date_option == 'all_yearly':
             invoices = invoices.annotate(year=ExtractYear('issue_date')).values('year')
-            if metric == 'Sum':
+            if metric == 'SumNetto':
                 invoices = invoices.annotate(total=Sum('total_value_netto'))
-            elif metric == 'Avg':
+            elif metric == 'SumBrutto':
+                invoices = invoices.annotate(total=Sum('total_value_brutto'))
+            elif metric == 'AvgNetto':
                 invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
+            elif metric == 'AvgBrutto':
+                invoices = invoices.annotate(total=Round(Avg('total_value_brutto')))
             elif metric == 'Count':
                 invoices = invoices.annotate(total=Count('id'))
                 response_data['custom']['values_appendix'] = ''
@@ -433,7 +454,7 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
         else:
             date = None
 
-        invoices = SaleInvoice.objects.exclude(invoice_type__in=['2', '3'])
+        invoices = SaleInvoice.objects.exclude(invoice_type__in=['2', '3', '5'])
         if date:
             invoices = invoices.filter(issue_date__gte=date)
 
@@ -516,6 +537,158 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
         return JsonResponse(response_data)
 
 
+class CommissionHistory(GroupAccessControlMixin, ChartDataMixin, View):
+    allowed_groups = ['boss']
+    how_many_shown = 4
+
+    def get(self, *args, **kwargs):
+        date_option = self.request.GET.get('date_select', 'week')
+        metric = self.request.GET.get('custom_select', 'SumNetto')
+        now = datetime.datetime.today()
+        if date_option == 'week':
+            date = now - relativedelta(days=6)
+        elif date_option == 'month':
+            date = now - relativedelta(months=1)
+        elif date_option == 'year':
+            date = (now - relativedelta(years=1, months=-1)).replace(day=1)
+        else:
+            date = None
+
+        commissions = Commission.objects.filter(status=Commission.DONE)
+        if date:
+            commissions = commissions.filter(end_date__gte=date)
+
+        response_data = self.get_response_data_template(legend_display=False, values_appendix=' zł')
+
+        if date_option == 'week':
+            commissions = commissions.values('end_date')
+            if metric == 'SumNetto':
+                commissions = commissions.annotate(total=Sum('value_netto'))
+            elif metric == 'SumBrutto':
+                commissions = commissions.annotate(total=Sum('value_brutto'))
+            elif metric == 'AvgNetto':
+                commissions = commissions.annotate(total=Round(Avg('value_netto')))
+            elif metric == 'AvgBrutto':
+                commissions = commissions.annotate(total=Round(Avg('value_brutto')))
+            elif metric == 'Count':
+                commissions = commissions.annotate(total=Count('id'))
+                response_data['custom']['values_appendix'] = ''
+            commissions = commissions.values_list('total', 'end_date').order_by('end_date')
+            values = list(commissions.values_list('total', flat=True))
+            days_between = (now - date).days
+            for i in range(days_between + 1):
+                x = date + relativedelta(days=i)
+                if x.date() not in commissions.values_list('end_date', flat=True):
+                    values.insert(i, 0)
+
+            response_data['data']['labels'] = [DAYS[(date + relativedelta(days=i)).weekday()]
+                                               for i in range(days_between + 1)]
+            response_data['data']['datasets'].append(self.get_dataset(
+                values, COLORS[0]))
+
+        if date_option == 'month':
+            commissions = commissions.values('end_date')
+            if metric == 'SumNetto':
+                commissions = commissions.annotate(total=Sum('value_netto'))
+            elif metric == 'SumBrutto':
+                commissions = commissions.annotate(total=Sum('value_brutto'))
+            elif metric == 'AvgNetto':
+                commissions = commissions.annotate(total=Round(Avg('value_netto')))
+            elif metric == 'AvgBrutto':
+                commissions = commissions.annotate(total=Round(Avg('value_brutto')))
+            elif metric == 'Count':
+                commissions = commissions.annotate(total=Count('id'))
+                response_data['custom']['values_appendix'] = ''
+            commissions = commissions.values_list('total', 'end_date').order_by('end_date')
+            values = list(commissions.values_list('total', flat=True))
+            days_between = (now - date).days
+            for i in range(days_between + 1):
+                x = date + relativedelta(days=i)
+                if x.date() not in commissions.values_list('end_date', flat=True):
+                    values.insert(i, 0)
+
+            response_data['data']['labels'] = [(date + relativedelta(days=i)).strftime('%d/%m')
+                                               for i in range(days_between + 1)]
+            response_data['data']['datasets'].append(self.get_dataset(
+                values, COLORS[0]))
+
+        if date_option == 'year':
+            commissions = commissions.annotate(
+                month=ExtractMonth('end_date'), year=ExtractYear('end_date')).values('year', 'month')
+            if metric == 'SumNetto':
+                commissions = commissions.annotate(total=Sum('value_netto'))
+            elif metric == 'SumBrutto':
+                commissions = commissions.annotate(total=Sum('value_brutto'))
+            elif metric == 'AvgNetto':
+                commissions = commissions.annotate(total=Round(Avg('value_netto')))
+            elif metric == 'AvgBrutto':
+                commissions = commissions.annotate(total=Round(Avg('value_brutto')))
+            elif metric == 'Count':
+                commissions = commissions.annotate(total=Count('id'))
+                response_data['custom']['values_appendix'] = ''
+            commissions = commissions.values_list('year', 'month', 'total').order_by('year', 'month')
+            values = list(commissions.values_list('total', flat=True))
+            months = list(commissions.values_list('month', flat=True))
+            response_data['data']['labels'] = [MONTHS[i - 1] for i in months]
+            response_data['data']['datasets'].append(self.get_dataset(
+                values, COLORS[0]))
+
+        if date_option == 'all_monthly':
+            years = commissions.annotate(year=ExtractYear('end_date')).values_list(
+                'year', flat=True).distinct().order_by('year')
+            response_data['data']['labels'] = MONTHS
+            response_data['options']['legend']['display'] = True
+
+            colors = COLORS[len(years)-1::-1]
+            for i, year in enumerate(years):
+                year_commissions = commissions.filter(end_date__year=year)
+                year_commissions = year_commissions.annotate(month=ExtractMonth('end_date')).values('month')
+                if metric == 'SumNetto':
+                    year_commissions = year_commissions.annotate(total=Sum('value_netto'))
+                elif metric == 'SumBrutto':
+                    year_commissions = year_commissions.annotate(total=Sum('value_brutto'))
+                elif metric == 'AvgNetto':
+                    year_commissions = year_commissions.annotate(total=Round(Avg('value_netto')))
+                elif metric == 'AvgBrutto':
+                    year_commissions = year_commissions.annotate(total=Round(Avg('value_brutto')))
+                elif metric == 'Count':
+                    year_commissions = year_commissions.annotate(total=Count('id'))
+                    response_data['custom']['values_appendix'] = ''
+                year_commissions = year_commissions.values_list('month', 'total').order_by('month')
+                values = list(year_commissions.values_list('total', flat=True))
+                for j in range(1, 13):
+                    if j not in year_commissions.values_list('month', flat=True):
+                        values.insert(j - 1, 0)
+                hidden = False
+                if i < len(years) - self.how_many_shown:
+                    hidden = True
+                if sum(values) > 0:
+                    response_data['data']['datasets'].append(self.get_dataset(
+                        values, colors[i], label=year, fill=False, borderColor=colors[i], hidden=hidden))
+
+        if date_option == 'all_yearly':
+            commissions = commissions.annotate(year=ExtractYear('end_date')).values('year')
+            if metric == 'SumNetto':
+                commissions = commissions.annotate(total=Sum('value_netto'))
+            elif metric == 'SumBrutto':
+                commissions = commissions.annotate(total=Sum('value_brutto'))
+            elif metric == 'AvgNetto':
+                commissions = commissions.annotate(total=Round(Avg('value_netto')))
+            elif metric == 'AvgBrutto':
+                commissions = commissions.annotate(total=Round(Avg('value_brutto')))
+            elif metric == 'Count':
+                commissions = commissions.annotate(total=Count('id'))
+                response_data['custom']['values_appendix'] = ''
+            commissions = commissions.values_list('year', 'total').exclude(total=0).order_by('year')
+
+            response_data['data']['labels'] = list(commissions.values_list('year', flat=True))
+            response_data['data']['datasets'].append(self.get_dataset(
+                list(commissions.values_list('total', flat=True)),
+                COLORS[0]))
+
+        return JsonResponse(response_data)
+
+
 class WarePurchaseCost(ChartDataMixin, View):
     min_count = 3
 
@@ -577,7 +750,7 @@ class DuePayments(GroupAccessControlMixin, View):
     allowed_groups = ['boss']
 
     def get(self, *args, **kwargs):
-        invoices = SaleInvoice.objects.exclude(invoice_type='2').filter(payed=False).order_by('payment_date')
+        invoices = SaleInvoice.objects.exclude(invoice_type__in=['2', '5']).filter(payed=False).order_by('payment_date')
         response = {'invoices': []}
         for invoice in invoices:
             if not invoice.payment_date:
@@ -618,7 +791,7 @@ class Metrics(View):
         date_from = date_parser.parse(self.request.GET.get('date_from')).date()
         date_to = date_parser.parse(self.request.GET.get('date_to')).date()
 
-        if group == 'warehouse':
+        if group == 'purchase':
             response = {
                 'ware_count': Ware.objects.filter(
                     created_date__date__gte=date_from, created_date__date__lte=date_to).count(),
@@ -634,7 +807,7 @@ class Metrics(View):
                     invoices_sum = invoices.aggregate(Sum('total_value'))['total_value__sum']
                 response['invoice_sum'] = "{0:.2f} zł".format(invoices_sum).replace('.', ',')
 
-        if group == 'invoicing':
+        if group == 'sale':
             response = {
                 'contractor_count': Contractor.objects.filter(
                     created_date__date__gte=date_from, created_date__date__lte=date_to).count(),
@@ -643,12 +816,14 @@ class Metrics(View):
             }
             if has_permission:
                 invoices = SaleInvoice.objects.filter(
-                    issue_date__gte=date_from, issue_date__lte=date_to).exclude(invoice_type__in=['2', '3'])
+                    issue_date__gte=date_from, issue_date__lte=date_to).exclude(invoice_type__in=['2', '3', '5'])
                 invoices_sum = 0
+                invoices_sum_brutto = 0
                 tax_sum = 0
                 person_tax_sum = 0
                 if invoices:
                     invoices_sum = invoices.aggregate(Sum('total_value_netto'))['total_value_netto__sum']
+                    invoices_sum_brutto = invoices.aggregate(Sum('total_value_brutto'))['total_value_brutto__sum']
                     tax_sum = invoices.annotate(
                         vat=F('total_value_brutto') - F('total_value_netto')).aggregate(Sum('vat'))['vat__sum']
                 invoices = invoices.filter(contractor__nip=None)
@@ -657,11 +832,11 @@ class Metrics(View):
                         vat=F('total_value_brutto') - F('total_value_netto')).aggregate(Sum('vat'))['vat__sum']
 
                 response['sale_invoice_sum'] = "{0:.2f} zł".format(invoices_sum).replace('.', ',')
+                response['sale_invoice_sum_brutto'] = "{0:.2f} zł".format(invoices_sum_brutto).replace('.', ',')
                 response['vat_sum'] = "{0:.2f} zł".format(tax_sum).replace('.', ',')
                 response['person_vat_sum'] = "{0:.2f} zł".format(person_tax_sum).replace('.', ',')
                 response['company_vat_sum'] = "{0:.2f} zł".format(tax_sum - person_tax_sum).replace('.', ',')
 
-        if group == 'refrigerant':
             weight_objects = RefrigerantWeights.objects.filter(
                 sale_invoice__issue_date__gte=date_from, sale_invoice__issue_date__lte=date_to)
             r134a = 0
@@ -673,10 +848,20 @@ class Metrics(View):
                 r1234yf = weight_objects.aggregate(Sum('r1234yf'))['r1234yf__sum']
                 r12 = weight_objects.aggregate(Sum('r12'))['r12__sum']
                 r404 = weight_objects.aggregate(Sum('r404'))['r404__sum']
-            response = {
-                'r134a_sum': "{} g".format(r134a),
-                'r1234yf_sum': "{} g".format(r1234yf),
-                'r12_sum': "{} g".format(r12),
-                'r404_sum': "{} g".format(r404)
-            }
+            response['r134a_sum'] = "{} g".format(r134a)
+            response['r1234yf_sum'] = "{} g".format(r1234yf)
+            response['r12_sum'] = "{} g".format(r12)
+            response['r404_sum'] = "{} g".format(r404)
+
+            commissions = Commission.objects.filter(
+                    end_date__gte=date_from, end_date__lte=date_to)
+            response['commission_count'] = commissions.count()
+            if has_permission:
+                commissions_sum = 0
+                commissions_sum_brutto = 0
+                if commissions:
+                    commissions_sum = commissions.aggregate(Sum('value_netto'))['value_netto__sum']
+                    commissions_sum_brutto = commissions.aggregate(Sum('value_brutto'))['value_brutto__sum']
+                response['commission_sum_netto'] = "{0:.2f} zł".format(commissions_sum).replace('.', ',')
+                response['commission_sum_brutto'] = "{0:.2f} zł".format(commissions_sum_brutto).replace('.', ',')
         return JsonResponse(response)

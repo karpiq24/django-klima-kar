@@ -17,4 +17,6 @@ urlpatterns = [
     path('due_payments', views.DuePayments.as_view(), name='due_payments'),
 
     path('refrigerant_history', views.RefrigerantWeightsHistory.as_view(), name='refrigerant_history'),
+
+    path('commission_history', views.CommissionHistory.as_view(), name='commission_history'),
 ]

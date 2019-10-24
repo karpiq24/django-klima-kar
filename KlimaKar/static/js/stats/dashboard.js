@@ -36,12 +36,6 @@ $(function () {
     $('#ware-change-date-range').data('daterangepicker').setEndDate(moment());
     $('#ware-change-date-range').data('daterangepicker').clickApply();
 
-    $('.metrics-date-range').each(function () {
-        $(this).data('daterangepicker').setStartDate(moment().startOf('week').add(1, 'days'));
-        $(this).data('daterangepicker').setEndDate(moment().endOf('week').add(1, 'days'));
-        $(this).data('daterangepicker').clickApply();
-    })
-
     $('.metrics-date-range').on('apply.daterangepicker', function(ev, picker) {
         var url = $(this).attr('data-url');
         $.ajax({
@@ -58,6 +52,12 @@ $(function () {
             }
         });
     });
+
+    $('.metrics-date-range').each(function () {
+        $(this).data('daterangepicker').setStartDate(moment().startOf('week').add(1, 'days'));
+        $(this).data('daterangepicker').setEndDate(moment().endOf('week').add(1, 'days'));
+        $(this).data('daterangepicker').clickApply();
+    })
 
     var url = $('#due-payments-list').attr('data-url');
     if (url) {
