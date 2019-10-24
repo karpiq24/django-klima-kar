@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="col-xs-12 col-sm-offset-1 col-sm-10 col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6">
-        <form action="{% url 'login' %}" method="post" class="form-horizontal" role="form">{% csrf_token %}
+        <form action="{% url 'login' %}?next={{ request.GET.next }}" method="post" class="form-horizontal" role="form">{% csrf_token %}
             <h1><span class="col-sm-offset-1">Zaloguj się</span></h1>
             {% if form.errors %}
                 <div class="alert alert-danger">
