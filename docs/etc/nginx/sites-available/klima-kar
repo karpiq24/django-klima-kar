@@ -4,6 +4,7 @@ server {
     include snippets/self-signed.conf;
     include snippets/ssl-params.conf;
     server_name 192.168.1.29 klima-kar.local;
+    client_max_body_size 500M;
 
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
