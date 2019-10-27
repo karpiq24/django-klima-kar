@@ -1,5 +1,8 @@
 server {
-    listen 80;
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    include snippets/self-signed.conf;
+    include snippets/ssl-params.conf;
     server_name 192.168.1.29 klima-kar.local;
 
     location = /favicon.ico { access_log off; log_not_found off; }
@@ -9,6 +12,15 @@ server {
 
     location / {
         include proxy_params;
-        proxy_pass http://unix:/home/bartosz/klima-kar/django-klima-kar/KlimaKar.sock;
+        proxy_pass http://unix:/run/gunicorn.sock;
     }
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name 192.168.1.29 klima-kar.local;
+
+    return 301 https://klima-kar.local$request_uri;
 }

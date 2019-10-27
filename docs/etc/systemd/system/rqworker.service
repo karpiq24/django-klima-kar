@@ -1,0 +1,12 @@
+[Unit]
+Description=Django-RQ Worker
+After=network.target
+
+[Service]
+WorkingDirectory=/home/bartosz/klima-kar/django-klima-kar
+ExecStart=/home/bartosz/klima-kar/venv-klima-kar/bin/python \
+    /home/bartosz/klima-kar/django-klima-kar/manage.py \
+    rqworker high default low
+
+[Install]
+WantedBy=multi-user.target

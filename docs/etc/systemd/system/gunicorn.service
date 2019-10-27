@@ -1,5 +1,6 @@
 [Unit]
 Description=gunicorn daemon
+Requires=gunicorn.socket
 After=network.target
 
 [Service]
@@ -7,7 +8,10 @@ Environment="SECRET_KEY="
 User=bartosz
 Group=www-data
 WorkingDirectory=/home/bartosz/klima-kar/django-klima-kar
-ExecStart=/home/bartosz/klima-kar/venv-klima-kar/bin/gunicorn --access-logfile - --workers 3 --bind unix:/home/bartosz/klima-kar/django-klima-kar/KlimaKar.sock KlimaKar.wsgi:application
-
+ExecStart=/home/bartosz/klima-kar/venv-klima-kar/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/gunicorn.sock \
+          KlimaKar.wsgi:application
 [Install]
 WantedBy=multi-user.target

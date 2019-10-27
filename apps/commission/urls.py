@@ -26,6 +26,7 @@ urlpatterns = [
 
     path('', views.CommissionTableView.as_view(), name='commissions'),
     path('<str:desc>,<int:pk>', views.CommissionDetailView.as_view(), name='commission_detail'),
+    path('<str:desc>,<int:pk>/pliki/<str:name>', views.CommissionFileDownloadView.as_view(), name='commission_file_download'),
     path('<str:desc>,<int:pk>/edycja', views.CommissionUpdateView.as_view(), name='commission_update'),
     path('<str:desc>,<int:pk>.pdf', views.CommissionPDFView.as_view(), name='commission_pdf'),
     path('<str:desc>,<int:pk>.pdf/drukuj', views.CommissionPDFView.as_view(print_version=True), name='commission_print_pdf'),
@@ -35,4 +36,7 @@ urlpatterns = [
     path('prepare_invoice_url', views.PrepareInvoiceUrl.as_view(), name='prepare_invoice_url'),
     path('commission_email', views.CommissionSendEmailView.as_view(), name='commission_email'),
     path('fast_commission', views.FastCommissionCreateView.as_view(), name='fast_commission'),
+    path('commission_file_upload', views.CommissionFileUplaodView.as_view(), name='commission_file_upload'),
+    path('delete_temp_file', views.DeleteTempFile.as_view(), name='delete_temp_file'),
+    path('delete_commission_file', views.DeleteCommissionFile.as_view(), name='delete_commission_file'),
 ]

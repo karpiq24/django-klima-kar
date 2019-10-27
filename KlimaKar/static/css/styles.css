@@ -286,3 +286,23 @@ small#gus-data:hover {
     display: block;
     border-bottom: 1px solid #000;
 }
+
+/* 
+    File input
+*/
+
+ul#previous-file-list > li > i.delete-previous-file,
+ul#file-list > li > i.delete-file {
+    color: red;
+    cursor: pointer;
+}
+
+.custom-file.is-dragover .custom-file-label {
+    background-color: #c3e6cb;
+    border: 1px solid #155724;
+}
+
+.custom-file .progress {
+    margin-top: 1rem;
+    display: none;
+}

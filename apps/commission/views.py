@@ -1,5 +1,8 @@
 import subprocess
 import datetime
+import os
+import json
+import django_rq
 
 from urllib.parse import urlencode
 from smtplib import SMTPRecipientsRefused
@@ -12,6 +15,7 @@ from django.template.defaultfilters import date as str_date
 from django.db.models import Q
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
+from django.core.files.storage import default_storage
 
 from django_tables2.export.views import ExportMixin
 from extra_views import CreateWithInlinesView, UpdateWithInlinesView
@@ -19,13 +23,15 @@ from extra_views import CreateWithInlinesView, UpdateWithInlinesView
 from KlimaKar.email import get_email_message
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
 from KlimaKar.mixins import AjaxFormMixin, SingleTableAjaxMixin
+from KlimaKar import settings
 from KlimaKar.templatetags.slugify import slugify
 from apps.settings.models import SiteSettings
-from apps.commission.models import Vehicle, Component, Commission, CommissionItem
+from apps.commission.models import Vehicle, Component, Commission, CommissionItem, CommissionFile
 from apps.commission.tables import VehicleTable, ComponentTable, CommissionTable, CommissionItemTable
 from apps.commission.filters import VehicleFilter, ComponentFilter, CommissionFilter
 from apps.commission.forms import VehicleModelForm, ComponentModelForm, CommissionModelForm, CommissionItemInline, \
     CommissionEmailForm, CommissionFastModelForm
+from apps.commission.functions import process_uploads, check_uploaded_files, get_temporary_files
 from apps.invoicing.dictionaries import INVOICE_TYPES
 
 
@@ -301,7 +307,12 @@ class CommissionCreateView(CreateWithInlinesView):
             url = 'commission:commission_create_component'
         messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejne zlecenie.</a>'.format(
             reverse(url)))
-        return super().forms_valid(form, inlines)
+        response = super().forms_valid(form, inlines)
+        if check_uploaded_files(form.data['upload_key']):
+            self.object.upload = True
+            self.object.save()
+            django_rq.enqueue(process_uploads, self.object.pk, form.data['upload_key'])
+        return response
 
     def get_success_url(self, **kwargs):
         return '{}{}'.format(
@@ -320,12 +331,20 @@ class CommissionUpdateView(UpdateWithInlinesView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Edycja zlecenia ({})".format(str(self.get_object()))
+        upload_key = self.request.POST.get('upload_key')
+        if upload_key:
+            context['temp_files'] = get_temporary_files(upload_key)
         return context
 
     def forms_valid(self, form, inlines):
         self.generate_pdf = 'generate_pdf' in form.data
         messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
-        return super().forms_valid(form, inlines)
+        response = super().forms_valid(form, inlines)
+        if check_uploaded_files(form.data['upload_key']):
+            self.object.upload = True
+            self.object.save()
+            django_rq.enqueue(process_uploads, self.object.pk, form.data['upload_key'])
+        return response
 
     def get_success_url(self, **kwargs):
         return '{}{}'.format(
@@ -374,6 +393,19 @@ class CommissionPDFView(View):
         return response
 
 
+class CommissionFileDownloadView(View):
+
+    def get(self, request, *args, **kwargs):
+        get_object_or_404(Commission, pk=kwargs.get('pk'))
+        commission_file = get_object_or_404(CommissionFile, file_name=kwargs.get('name'))
+        response = HttpResponse(content_type=commission_file.mime_type)
+        response.write(commission_file.file_contents)
+        response['Content-Disposition'] = 'filename="{}"'.format(commission_file.file_name)
+        response['Content-Encoding'] = None
+        response['Content-Type'] = commission_file.mime_type
+        return response
+
+
 class CommissionSendEmailView(View):
     def post(self, request, *args, **kwargs):
         commission = get_object_or_404(Commission, pk=request.POST.get('commission'))
@@ -399,6 +431,60 @@ class CommissionSendEmailView(View):
             return JsonResponse({
                 'status': 'error',
                 'message': 'Bład przy wysyłaniu wiadomości. Sprawdź konfigurację serwera e-mail.'}, status=500)
+
+
+class CommissionFileUplaodView(View):
+    def post(self, request, *args, **kwargs):
+        upload_key = request.POST.get('key')
+        if not upload_key:
+            return JsonResponse({'status': 'error', 'message': 'Coś poszło nie tak. Spróbuj ponownie.'}, status=400)
+
+        directory = os.path.join(settings.TEMPORARY_UPLOAD_DIRECTORY, upload_key)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        with open(os.path.join(directory, 'timestamp'), 'w') as timefile:
+            timefile.write(str(datetime.datetime.now()))
+        for key, file_obj in request.FILES.items():
+            with open(os.path.join(directory, '{}.meta'.format(file_obj.name)), 'w') as metafile:
+                metafile.write(json.dumps(
+                    {'name': file_obj.name, 'size': file_obj.size, 'type': file_obj.content_type}))
+            with default_storage.open('{}/{}'.format(directory, key), 'wb+') as destination:
+                for chunk in file_obj.chunks():
+                    destination.write(chunk)
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Pliki zostały zapisane.',
+            'files': get_temporary_files(upload_key)
+            }, status=200)
+
+
+class DeleteTempFile(View):
+    def post(self, request, *args, **kwargs):
+        upload_key = request.POST.get('key')
+        fname = request.POST.get('file')
+        if not upload_key or not fname:
+            return JsonResponse({'status': 'error', 'message': 'Coś poszło nie tak. Spróbuj ponownie.'}, status=400)
+        fpath = os.path.join(settings.TEMPORARY_UPLOAD_DIRECTORY, upload_key, fname)
+        if os.path.exists(fpath):
+            os.remove(fpath)
+        metapath = '{}.meta'.format(fpath)
+        if os.path.exists(metapath):
+            os.remove(metapath)
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Plik został usunięty.',
+            }, status=200)
+
+
+class DeleteCommissionFile(View):
+    def post(self, request, *args, **kwargs):
+        get_object_or_404(Commission, pk=request.POST.get('object'))
+        commission_file = get_object_or_404(CommissionFile, pk=request.POST.get('file'))
+        commission_file.delete()
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Plik został usunięty.',
+            }, status=200)
 
 
 class ChangeCommissionStatus(View):

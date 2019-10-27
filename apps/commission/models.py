@@ -4,7 +4,9 @@ from weasyprint import HTML, CSS
 
 from django.db import models
 from django.template.loader import get_template
+from django.dispatch import receiver
 
+from KlimaKar.models import MyCloudHome
 from apps.invoicing.models import Contractor, SaleInvoice
 from apps.warehouse.models import Ware
 
@@ -160,6 +162,9 @@ class Commission(models.Model):
     tax_percent = models.FloatField(
         verbose_name="Procent podatku VAT",
         default=23)
+    upload = models.BooleanField(
+        verbose_name='Pliki są wgrywane',
+        default=False)
 
     def __str__(self):
         return self.vc_name
@@ -226,3 +231,39 @@ class CommissionItem(models.Model):
     @property
     def total_brutto(self):
         return self.price_brutto * self.quantity
+
+
+class CommissionFile(models.Model):
+    commission = models.ForeignKey(
+        Commission,
+        on_delete=models.CASCADE,
+        verbose_name='Zlecenie')
+    file_name = models.CharField(
+        max_length=256,
+        verbose_name='Nazwa pliku')
+    file_size = models.PositiveIntegerField(
+        verbose_name='Rozmiar pliku')
+    mime_type = models.CharField(
+        max_length=64,
+        verbose_name='Typ pliku')
+    mch_id = models.CharField(
+        max_length=128,
+        blank=True,
+        null=True)
+
+    def __str__(self):
+        return self.file_name
+
+    @property
+    def file_contents(self):
+        if not self.mch_id:
+            return None
+        cloud = MyCloudHome.load()
+        return cloud.download_file(self.mch_id)
+
+
+@receiver(models.signals.pre_delete, sender=CommissionFile)
+def file_pre_delete(sender, instance, **kwargs):
+    if instance.mch_id:
+        cloud = MyCloudHome.load()
+        return cloud.delete_file(instance.mch_id)

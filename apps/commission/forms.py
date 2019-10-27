@@ -4,6 +4,7 @@ from dal import autocomplete
 from extra_views import InlineFormSet
 
 from django import forms
+from django.utils.crypto import get_random_string
 
 from KlimaKar.widgets import PrettySelect
 from apps.commission.models import Vehicle, Component, Commission, CommissionItem
@@ -69,6 +70,8 @@ class CommissionModelForm(forms.ModelForm):
         required=False
     )
 
+    upload_key = forms.CharField(label='Klucz wysyłania plików', widget=forms.HiddenInput())
+
     def __init__(self, *args, **kwargs):
         self.commission_type = kwargs.pop('commission_type', None)
         super().__init__(*args, **kwargs)
@@ -96,6 +99,7 @@ class CommissionModelForm(forms.ModelForm):
             self.fields.pop('vehicle')
             self.fields.pop('component')
             self.fields['vc_name'].label = 'Nazwa'
+        self.fields['upload_key'].initial = get_random_string(length=32)
 
     def clean(self):
         cleaned_data = super().clean()

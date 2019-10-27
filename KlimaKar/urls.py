@@ -16,5 +16,7 @@ urlpatterns = [
     path('stats/', include('apps.stats.urls')),
     path('ustawienia/', include('apps.settings.urls')),
 
-    path('send_issue', SendIssueView.as_view(), name='send_issue')
+    path('send_issue', SendIssueView.as_view(), name='send_issue'),
+
+    path('django-rq/', include('django_rq.urls'))
 ]

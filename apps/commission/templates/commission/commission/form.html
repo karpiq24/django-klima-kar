@@ -62,6 +62,35 @@
             {% include 'forms/field.html' with field=form.visible_fields.3 %}
         </div>
     </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group">
+                <div class="custom-file" data-url="{% url 'commission:commission_file_upload' %}" data-delete-temp-url="{% url 'commission:delete_temp_file' %}" data-delete-previous-url="{% url 'commission:delete_commission_file' %}">
+                    <input type="file" class="custom-file-input" id="customFile" name="files[]" multiple lang="pl">
+                    <label class="custom-file-label" for="customFile" data-browse="Przeglądaj" data-label="Wybierz albo przeciągnij pliki">Wybierz albo przeciągnij pliki</label>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <ul id="file-list" class="simple-list">
+                    {% for file in temp_files %}
+                        <li>
+                            {{ file.name }} - {{ file.size|filesizeformat }} <i class="fa fa-times delete-file" data-file="{{ file.name }}" title="Usuń plik"></i>
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% if object %}
+                    <ul id="previous-file-list" class="simple-list">
+                        {% for file in object.commissionfile_set.all %}
+                            <li>
+                                {{ file.file_name }} - {{ file.file_size|filesizeformat }} <i class="fa fa-times delete-previous-file" data-object="{{ object.pk }}" data-file="{{ file.pk }}" title="Usuń plik"></i>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-12">
@@ -181,4 +210,5 @@
 {% block scripts %}
 <script src="{% static 'js/commission/commission-form.js' %}"></script>
 <script src="{% static 'js/invoicing/contractor-gus-allinfo.js' %}"></script>
+<script src="{% static 'js/base/custom-file.js' %}"></script>
 {% endblock %}

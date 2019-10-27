@@ -38,16 +38,21 @@ Django project used in my family buisness. It provides warehouse management and 
     ```
     sudo apt-get install build-essential python3-dev python3-pip python3-setuptools python3-wheel python3-cffi libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
     ```
-2. docs/requirements.pip
+2. Install Redis
+    ```
+    sudo apt-get install redis-server
+    sudo systemctl enable redis-server.service
+    ```
+3. docs/requirements.pip
    ```
    pip install -r docs/requirements.pip
    ```
-3. Install fonts
+4. Install fonts
    ```
    sudo cp KlimaKar/static/fonts/* /usr/local/share/fonts/
    sudo fc-cache -fv
    ```
-4. Compile aztec code decoder
+5. Compile aztec code decoder
    ```
    g++ -o scripts/aztec scripts/aztec.cpp
    ```

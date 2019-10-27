@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django_filters',
     'widget_tweaks',
     'compressor',
+    'django_rq',
 
     'KlimaKar',
     'apps.settings',
@@ -154,6 +155,18 @@ COMPRESS_FILTERS = {
 COMPRESS_OUTPUT_DIR = 'compressed'
 
 DJANGO_TABLES2_TEMPLATE = 'tables2/table.html'
+
+TEMPORARY_UPLOAD_DIRECTORY = os.path.join(BASE_DIR, 'temp')
+HOURS_TO_REMOVE_STALE_FILES = 2
+
+
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+    }
+}
 
 
 def FILTERS_VERBOSE_LOOKUPS():

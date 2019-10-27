@@ -480,4 +480,5 @@ $(function () {
     if ($("#id_contractor").val() !== '') {
         $("#id_contractor").change();
     }
+    bsCustomFileInput.init();
 });
