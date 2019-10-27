@@ -1,7 +1,7 @@
 # django-klima-kar
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/karpiq24/django-klima-kar/blob/master/LICENSE)
 
-Django project used in my family buisness. It provides warehouse management and invoicing with advanced statistics.
+Django project used in my family buisness. It provides warehouse management, invoicing and commission tracking with advanced statistics.
 
 
 ## Features
