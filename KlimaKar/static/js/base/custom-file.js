@@ -59,7 +59,7 @@ function uploadFiles(files) {
             }, 800);
         },
         error: function() {
-            addAlert('Błąd!', 'error', data.responseJSON.message);
+            addAlert('Błąd!', 'error', 'Coś poszło nie tak. Spróbuj ponownie.');
             $('.custom-file-input').val('');
             $('.custom-file-label').text($('.custom-file-label').data('label'));
             setTimeout(function() {
@@ -104,7 +104,7 @@ $(function () {
                 }
             },
             error: function() {
-                addAlert('Błąd!', 'error', data.responseJSON.message);
+                addAlert('Błąd!', 'error', 'Coś poszło nie tak. Spróbuj ponownie.');
             }
         });
     })
@@ -129,7 +129,7 @@ $(function () {
                 }
             },
             error: function() {
-                addAlert('Błąd!', 'error', data.responseJSON.message);
+                addAlert('Błąd!', 'error', 'Coś poszło nie tak. Spróbuj ponownie.');
             }
         });
     })
