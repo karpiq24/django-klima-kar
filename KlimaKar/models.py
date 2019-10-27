@@ -2,6 +2,7 @@ import os
 import requests
 
 from django.db import models
+from django.core.mail import mail_admins
 
 from KlimaKar import settings
 from KlimaKar.functions import encode_media_related
@@ -158,6 +159,9 @@ class MyCloudHome(SingletonModel):
         url = os.path.join(self._get_endpoint('service.auth0.url'), 'userinfo')
         r = requests.get(url, headers=self._get_auth_headers(check=False))
         if r.text == 'Unauthorized':
+            return False
+        if r.json().get('error') == 'unauthorized':
+            mail_admins('WD My Cloud Home is unauthorized', r.text)
             return False
         return True
 
