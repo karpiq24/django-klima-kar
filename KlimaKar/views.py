@@ -1,4 +1,5 @@
 import six
+import unicodedata
 
 from django.views.generic import TemplateView, View
 from django.http import JsonResponse, HttpResponseBadRequest
@@ -8,10 +9,12 @@ from django.core.exceptions import ImproperlyConfigured
 from django_tables2 import SingleTableView
 from dal import autocomplete
 from github import Github
+from smsapi.client import SmsApiPlClient
 
 from KlimaKar import settings
 from KlimaKar.forms import IssueForm
 from KlimaKar.email import get_email_message
+from django.core.mail import mail_admins
 
 
 class HomeView(TemplateView):
@@ -331,3 +334,26 @@ class FilteredSingleTableView(SingleTableView):
             return JsonResponse({"table": table.as_html(request)})
         else:
             return super().get(request, args, kwargs)
+
+
+class SendSMSView(View):
+    def post(self, request, *args, **kwargs):
+        phone = request.POST.get('phone')
+        message = request.POST.get('message')
+        message = self._strip_accents(message)
+
+        if not phone or not message or not len(phone) == 9:
+            return JsonResponse({'status': 'error', 'message': 'Coś poszło nie tak. Spróbuj ponownie.'}, status=400)
+
+        client = SmsApiPlClient(access_token=settings.SMSAPI_TOKEN)
+        if int(client.account.balance().pro_count) < settings.SMSAPI_LOW_BALANCE_COUNT:
+            mail_admins('SMSAPI low balance', str(client.account.balance()))
+        client.sms.send(to=phone, message=message)
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Wiadomość została wysłana.',
+            }, status=200)
+
+    def _strip_accents(self, text):
+        return ''.join(c for c in unicodedata.normalize(
+            'NFKD', text) if unicodedata.category(c) != 'Mn').replace('ł', 'l').replace('Ł', 'L')

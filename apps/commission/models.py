@@ -81,7 +81,7 @@ class Component(models.Model):
 
     def __str__(self):
         return '{}{}{}{}'.format(
-            self.get_component_type_display(),
+            self.get_component_type_display() if self.component_type != self.OTHER else '',
             ' {}'.format(self.model) if self.model else '',
             ' {}'.format(self.serial_number) if self.serial_number else '',
             ' {}'.format(self.catalog_number) if self.catalog_number else '')

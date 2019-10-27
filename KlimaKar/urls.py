@@ -2,7 +2,7 @@
 from django.urls import include, path
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from KlimaKar.views import HomeView, SendIssueView
+from KlimaKar.views import HomeView, SendIssueView, SendSMSView
 
 urlpatterns = [
     path('', HomeView.as_view(), name="home"),
@@ -17,6 +17,7 @@ urlpatterns = [
     path('ustawienia/', include('apps.settings.urls')),
 
     path('send_issue', SendIssueView.as_view(), name='send_issue'),
+    path('send_sms', SendSMSView.as_view(), name='send_sms'),
 
     path('django-rq/', include('django_rq.urls'))
 ]

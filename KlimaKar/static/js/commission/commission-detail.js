@@ -86,6 +86,7 @@ $(function () {
             type: "question",
             showCancelButton: true,
             focusCancel: false,
+            focusConfirm: true,
             confirmButtonText: 'Tak',
             cancelButtonText: 'Nie'
         }).then((change) => {
@@ -110,6 +111,7 @@ $(function () {
                                 type: "question",
                                 showCancelButton: true,
                                 focusCancel: false,
+                                focusConfirm: true,
                                 confirmButtonText: 'Tak',
                                 cancelButtonText: 'Nie'
                             }).then((make_invoice) => {
@@ -117,6 +119,56 @@ $(function () {
                                     $('#add_invoice').click();
                                 }
                             });
+                        } else if (status === $('#status-select').data('ready')) {
+                            $('#commission_done').show();
+                            const phone1 = $('#status-select').data('phone1');
+                            const phone2 = $('#status-select').data('phone2');
+                            options = {};
+                            if (phone2 !== undefined && phone2 !== 'None') {
+                                options[phone2] = phone2
+                            }
+                            if (phone1 !== undefined && phone1 !== 'None') {
+                                options[phone1] = phone1
+                            }
+                            if (!$.isEmptyObject(options)) {
+                                Swal.fire({
+                                    title: "Czy chcesz wysłać powiadomienie SMS do klienta?",
+                                    text: $('#sms').val(),
+                                    type: "question",
+                                    input: 'radio',
+                                    inputOptions: options,
+                                    inputValue: ((phone1 !== undefined && phone1 !== 'None') ? phone1 : phone2),
+                                    inputValidator: (value) => {
+                                        if (!value) {
+                                            return 'Wybierz numer telefonu.'
+                                        }
+                                    },
+                                    showCancelButton: true,
+                                    focusCancel: false,
+                                    focusConfirm: true,
+                                    confirmButtonText: 'Tak',
+                                    cancelButtonText: 'Nie'
+                                }).then((send_sms) => {
+                                    if (send_sms.value) {
+                                        $.ajax({
+                                            url: $('#status-select').data('sms-url'),
+                                            type: 'post',
+                                            dataType: 'json',
+                                            data: {
+                                                phone: send_sms.value,
+                                                message: $('#sms').val(),
+                                                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+                                            },
+                                            success: function (data) {
+                                                addAlert('Sukces!', 'success', data.message);
+                                            },
+                                            error: function () {
+                                                addAlert('Błąd!', 'error', 'Coś poszło nie tak. Spróbuj ponownie.');
+                                            }
+                                        });
+                                    }
+                                });
+                            }
                         } else {
                             $('#commission_done').show();
                         }

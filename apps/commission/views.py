@@ -3,6 +3,7 @@ import datetime
 import os
 import json
 import django_rq
+import unicodedata
 
 from urllib.parse import urlencode
 from smtplib import SMTPRecipientsRefused
@@ -268,7 +269,16 @@ class CommissionDetailView(SingleTableAjaxMixin, DetailView):
         }
         context['email_form'] = CommissionEmailForm(initial=email_data)
         context['email_url'] = reverse('commission:commission_email')
+
+        sms = ''
+        if site_settings.COMMISSION_SMS_BODY:
+            sms = Template(site_settings.COMMISSION_SMS_BODY).render(Context({'commission': self.object}))
+        context['sms'] = self._strip_accents(sms)
         return context
+
+    def _strip_accents(self, text):
+        return ''.join(c for c in unicodedata.normalize(
+            'NFKD', text) if unicodedata.category(c) != 'Mn').replace('ł', 'l').replace('Ł', 'L')
 
     def get_table_data(self):
         return CommissionItem.objects.filter(commission=self.object)

@@ -33,8 +33,9 @@ class CommissionSettingsModelForm(forms.ModelForm):
     class Meta:
         model = SiteSettings
         fields = ['COMMISSION_TAX_PERCENT', 'COMMISSION_EMAIL_TITLE',
-                  'COMMISSION_EMAIL_BODY']
+                  'COMMISSION_EMAIL_BODY', 'COMMISSION_SMS_BODY']
         help_texts = {
-            'COMMISSION_EMAIL_TITLE': 'Zawiera dostęp do kontekstu faktury np. {{ commission.number }}',
-            'COMMISSION_EMAIL_BODY': 'Zawiera dostęp do kontekstu faktury np. {{ commission.contractor }}',
+            'COMMISSION_EMAIL_TITLE': 'Zawiera dostęp do kontekstu zlecenia np. {{ commission.number }}',
+            'COMMISSION_EMAIL_BODY': 'Zawiera dostęp do kontekstu zlecenia np. {{ commission.contractor }}',
+            'COMMISSION_SMS_BODY': 'Zawiera dostęp do kontekstu zlecenia np. {{ commission.vc_name }}',
         }
