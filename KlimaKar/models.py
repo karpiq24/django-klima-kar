@@ -79,21 +79,29 @@ class MyCloudHome(SingletonModel):
         if not self.DEVICE_ID or not self.DEVICE_NAME or not self.DEVICE_INTERNAL_URL or not self.DEVICE_EXTERNAL_URL:
             self.get_user_devices()
         if not self.APP_DIR_ID:
-            self.create_folder(self.APP_DIR_NAME)
-            files = self.get_files()['files']
-            for f in files:
-                if f['name'] == self.APP_DIR_NAME:
-                    self.APP_DIR_ID = f['id']
-                    self.save()
-                    break
+            r = self.create_folder(self.APP_DIR_NAME)
+            if r.status_code == 201:
+                self.APP_DIR_ID = r.headers['Location'].split('/')[-1]
+                self.save()
+            else:
+                files = self.get_files()['files']
+                for f in files:
+                    if f['name'] == self.APP_DIR_NAME:
+                        self.APP_DIR_ID = f['id']
+                        self.save()
+                        break
         if not self.COMMISSION_DIR_ID:
-            self.create_folder(self.COMMISSION_DIR_NAME, self.APP_DIR_ID)
-            files = self.get_files(self.APP_DIR_ID)['files']
-            for f in files:
-                if f['name'] == self.COMMISSION_DIR_NAME:
-                    self.COMMISSION_DIR_ID = f['id']
-                    self.save()
-                    break
+            r = self.create_folder(self.COMMISSION_DIR_NAME, self.APP_DIR_ID)
+            if r.status_code == 201:
+                self.COMMISSION_DIR_ID = r.headers['Location'].split('/')[-1]
+                self.save()
+            else:
+                files = self.get_files(self.APP_DIR_ID)['files']
+                for f in files:
+                    if f['name'] == self.COMMISSION_DIR_NAME:
+                        self.COMMISSION_DIR_ID = f['id']
+                        self.save()
+                        break
 
     def _get_endpoint(self, endpoint):
         url = 'http://config.mycloud.com/config/v1/config'

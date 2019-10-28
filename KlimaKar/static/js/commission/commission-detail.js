@@ -77,6 +77,29 @@ $(function () {
         print_pdf();
     });
 
+    if ($('#file-data').data('upload') == 'True') {
+        let check = setInterval(function () {
+            $.ajax({
+                url: $('#file-data').data('check-url'),
+                type: 'get',
+                data: {
+                    pk: $('#file-data').data('commission')
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if (data.status == 'success') {
+                        $('#file-data').empty();
+                        let fileList = $('#file-data').append($('<ul class="simple-list"></ul>')).find('ul');
+                        $.each(data.files, function (i, file) {
+                            var li = $('<li><a href="' + file.url + '" target="_blank">' + file.name + ' - ' + file.size + '</a></li>').appendTo(fileList);
+                        })
+                        clearInterval(check);
+                    }
+                }
+            });
+        }, 2000)
+    }
+
     var last_status = $('#status-select input:checked');
 
     $('#status-select input').on('change', function () {

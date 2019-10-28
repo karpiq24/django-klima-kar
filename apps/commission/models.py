@@ -165,6 +165,10 @@ class Commission(models.Model):
     upload = models.BooleanField(
         verbose_name='Pliki są wgrywane',
         default=False)
+    mch_id = models.CharField(
+        max_length=128,
+        blank=True,
+        null=True)
 
     def __str__(self):
         return self.vc_name

@@ -288,7 +288,7 @@ small#gus-data:hover {
 }
 
 /* 
-    File input
+    Files
 */
 
 ul#previous-file-list > li > i.delete-previous-file,
@@ -305,4 +305,18 @@ ul#file-list > li > i.delete-file {
 .custom-file .progress {
     margin-top: 1rem;
     display: none;
+}
+
+#file-data .card-body {
+    display: flex;
+    align-items: center;
+}
+
+#file-data .card-body i {
+    color: #007bff;
+}
+
+#file-data .card-body > div {
+    width: 100%;
+    margin-left: 1rem;
 }

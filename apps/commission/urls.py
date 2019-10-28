@@ -39,4 +39,5 @@ urlpatterns = [
     path('commission_file_upload', views.CommissionFileUplaodView.as_view(), name='commission_file_upload'),
     path('delete_temp_file', views.DeleteTempFile.as_view(), name='delete_temp_file'),
     path('delete_commission_file', views.DeleteCommissionFile.as_view(), name='delete_commission_file'),
+    path('check_upload', views.CheckUploadFinishedView.as_view(), name='check_upload'),
 ]

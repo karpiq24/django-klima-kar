@@ -103,11 +103,19 @@
             </tr>
             <tr>
                 <td class="detail-label">Pliki</td>
-                <td>
+                <td id="file-data" data-upload="{{ object.upload }}" data-commission="{{ object.pk }}" data-check-url="{% url 'commission:check_upload' %}">
                     {% if object.upload %}
-                        <div class="alert alert-info" role="alert">
-                            Dodane pliki są jeszcze przetwarzane.
-                        </div>   
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <i class="fas fa-info-circle fa-4x"></i>
+                                <div>
+                                    Dodane pliki są jeszcze przetwarzane. Będą dostępne za chwilę.
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     {% endif %}
                     {% if object.commissionfile_set.all.exists %}
                         <ul class="simple-list">

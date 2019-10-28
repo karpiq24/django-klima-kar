@@ -13,6 +13,7 @@ from django.http import JsonResponse, HttpResponse
 from django.views.generic import DetailView, UpdateView, CreateView, View
 from django.template import Template, Context
 from django.template.defaultfilters import date as str_date
+from django.template.defaultfilters import filesizeformat
 from django.db.models import Q
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
@@ -404,7 +405,6 @@ class CommissionPDFView(View):
 
 
 class CommissionFileDownloadView(View):
-
     def get(self, request, *args, **kwargs):
         get_object_or_404(Commission, pk=kwargs.get('pk'))
         commission_file = get_object_or_404(CommissionFile, file_name=kwargs.get('name'))
@@ -466,6 +466,22 @@ class CommissionFileUplaodView(View):
             'message': 'Pliki zostały zapisane.',
             'files': get_temporary_files(upload_key)
             }, status=200)
+
+
+class CheckUploadFinishedView(View):
+    def get(self, request, *args, **kwargs):
+        commission = get_object_or_404(Commission, pk=request.GET.get('pk'))
+        if commission.upload:
+            return JsonResponse({'status': 'progress'}, status=200)
+        return JsonResponse({'status': 'success', 'files': [{
+            'name': f.file_name,
+            'size': filesizeformat(f.file_size),
+            'url': reverse('commission:commission_file_download', kwargs={
+                'pk': commission.pk,
+                'desc': slugify(str(commission)),
+                'name': f.file_name
+            })}
+            for f in commission.commissionfile_set.all()]}, status=200)
 
 
 class DeleteTempFile(View):

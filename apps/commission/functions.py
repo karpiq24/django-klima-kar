@@ -29,6 +29,22 @@ def get_temporary_files(upload_key):
 
 
 def process_uploads(commission_pk, upload_key):
+
+    def _get_commission_directory(commission):
+        if commission.mch_id:
+            return commission.mch_id
+        else:
+            r = cloud.create_folder(str(commission.pk), cloud.COMMISSION_DIR_ID)
+            if r.status_code == 201:
+                commission.mch_id = r.headers['Location'].split('/')[-1]
+            else:
+                for f in cloud.get_files(cloud.COMMISSION_DIR_ID)['files']:
+                    if f['name'] == str(commission.pk):
+                        commission.mch_id = f['id']
+                        break
+            commission.save()
+        return commission.mch_id
+
     files_added = 0
     directory = os.path.join(settings.TEMPORARY_UPLOAD_DIRECTORY, upload_key)
     metafiles = get_temporary_files(upload_key)
@@ -41,33 +57,23 @@ def process_uploads(commission_pk, upload_key):
         shutil.rmtree(directory)
         return files_added
     cloud = MyCloudHome.load()
-    cloud.create_folder(str(commission.pk), cloud.COMMISSION_DIR_ID)
-    pk_dir = None
-    for f in cloud.get_files(cloud.COMMISSION_DIR_ID)['files']:
-        if f['name'] == str(commission.pk):
-            pk_dir = f['id']
-            break
+    commission_dir = _get_commission_directory(commission)
     for meta in metafiles:
         file_path = os.path.join(directory, meta['name'])
         if not os.path.exists(file_path):
             continue
-        r = cloud.create_file(meta['name'], open(file_path, 'rb').read(), pk_dir)
-        if r.status_code == 409:
+        r = cloud.create_file(meta['name'], open(file_path, 'rb').read(), commission_dir)
+        if r.status_code == 409 or r.status_code != 201:
             continue
-        mch_id = None
-        for f in cloud.get_files(pk_dir)['files']:
-            if f['name'] == meta['name']:
-                mch_id = f['id']
-                break
-        if mch_id:
-            CommissionFile.objects.create(
-                commission=commission,
-                file_name=meta['name'],
-                file_size=meta['size'],
-                mime_type=meta['type'],
-                mch_id=mch_id
-            )
-            files_added += 1
+        mch_id = r.headers['Location'].split('/')[-1]
+        CommissionFile.objects.create(
+            commission=commission,
+            file_name=meta['name'],
+            file_size=meta['size'],
+            mime_type=meta['type'],
+            mch_id=mch_id
+        )
+        files_added += 1
     shutil.rmtree(directory)
     commission.upload = False
     commission.save()
