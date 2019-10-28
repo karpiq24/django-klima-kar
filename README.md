@@ -1,7 +1,7 @@
 # django-klima-kar
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/karpiq24/django-klima-kar/blob/master/LICENSE)
 
-Django project used in my family buisness. It provides warehouse management and invoicing with advanced statistics.
+Django project used in my family buisness. It provides warehouse management, invoicing and commission tracking with advanced statistics.
 
 
 ## Features
@@ -22,8 +22,10 @@ Django project used in my family buisness. It provides warehouse management and 
   - decode AZTEC code from registration papers to get vehicle information
   - export commission to PDF
   - print commission
-  - email commission to contracotr
+  - email commission to contractor
   - generate invoice based on commission
+  - handle file uploads using WD My Cloud Home API
+  - Send SMS notifications to contractors
 - Advanced statistics
   - rich interactive charts and metrics
   - detect purchased ware price changes
