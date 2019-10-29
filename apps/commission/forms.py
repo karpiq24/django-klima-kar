@@ -106,7 +106,7 @@ class CommissionModelForm(forms.ModelForm):
         status = cleaned_data['status']
         end_date = cleaned_data['end_date']
         if status in [Commission.DONE, Commission.CANCELLED] and not end_date:
-            cleaned_data['end_date'] = str(datetime.date.today())
+            cleaned_data['end_date'] = datetime.date.today()
         return cleaned_data
 
     class Meta:
