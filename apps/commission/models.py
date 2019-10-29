@@ -174,7 +174,6 @@ class Commission(models.Model):
         return self.vc_name
 
     def save(self, *args, **kwargs):
-        print('s', self.status, self.end_date)
         if self.status in [self.DONE, self.CANCELLED] and not self.end_date:
             self.end_date = datetime.date.today()
         super().save(*args, **kwargs)
