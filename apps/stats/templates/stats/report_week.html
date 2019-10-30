@@ -171,7 +171,7 @@
                 </tr>
                 {% for invoice in purchase_invoices %}
                     <tr>
-                        <td><a href="{{ absolute_url }}{% url 'warehouse:invoice_detail' change.invoice.supplier.name|slugify change.invoice.number|slugify invoice.pk %}">{{ invoice }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'warehouse:invoice_detail' invoice.invoice.supplier.name|slugify invoice.invoice.number|slugify invoice.pk %}">{{ invoice }}</a></td>
                         <td><a href="{{ absolute_url }}{% url 'warehouse:supplier_detail' invoice.supplier.name|slugify invoice.supplier.pk %}">{{ invoice.supplier }}</a></td>
                         <td>{{ invoice.date|date:"d.m.Y" }}</td>
                         <td>{{ invoice.total_value|floatformat:2 }} zł</td>
