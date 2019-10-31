@@ -112,10 +112,10 @@ class CommissionModelForm(forms.ModelForm):
     class Meta:
         model = Commission
         fields = ['vc_name', 'vehicle', 'component', 'contractor', 'description', 'status', 'start_date', 'end_date',
-                  'value_brutto', 'commission_type']
+                  'value', 'commission_type']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
-            'value_brutto': forms.HiddenInput(),
+            'value': forms.HiddenInput(),
             'commission_type': forms.HiddenInput(),
             'status': PrettySelect()
         }
@@ -126,13 +126,13 @@ class CommissionFastModelForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['vc_name'].widget.attrs.update(
             {'placeholder': 'Podaj nazwę'})
-        self.fields['value_brutto'].label = 'Cena'
+        self.fields['value'].label = 'Cena'
         self.fields['description'].required = True
 
     class Meta:
         model = Commission
         fields = ['commission_type', 'vc_name', 'description', 'status', 'start_date', 'end_date',
-                  'value_brutto']
+                  'value']
         widgets = {
             'description': forms.TextInput(attrs={'placeholder': 'Podaj krótki opis'}),
             'status': forms.HiddenInput(),
@@ -160,8 +160,8 @@ class CommissionItemModelForm(forms.ModelForm):
             {'placeholder': 'Podaj opis', 'class': 'item-description'})
         self.fields['quantity'].widget.attrs.update(
             {'placeholder': 'Ilość', 'class': 'item-quantity'})
-        self.fields['price_brutto'].widget.attrs.update(
-            {'placeholder': 'Cena', 'class': 'item-brutto'})
+        self.fields['price'].widget.attrs.update(
+            {'placeholder': 'Cena', 'class': 'item-price'})
         self.fields['ware'].widget.attrs.update(
             {'data-placeholder': 'Wybierz towar', 'class': 'item-ware'})
         self.fields['service'].widget.attrs.update(
@@ -169,7 +169,7 @@ class CommissionItemModelForm(forms.ModelForm):
 
     class Meta:
         model = CommissionItem
-        fields = ['name', 'description', 'quantity', 'price_brutto', 'ware', 'service']
+        fields = ['name', 'description', 'quantity', 'price', 'ware', 'service']
 
 
 class CommissionItemInline(InlineFormSet):

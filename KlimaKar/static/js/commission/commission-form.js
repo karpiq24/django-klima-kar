@@ -28,7 +28,7 @@ function calculateInvoiceTotals() {
     let invoice_total = 0.00;
     $('.item-formset-row').not('.readonly').each(function() {
         if (!$(this).hasClass('d-none')) {
-            let price = toCurrency($(this).find(".item-brutto").val());
+            let price = toCurrency($(this).find(".item-price").val());
             if (isNaN(price)) {
                 price = 0;
             }
@@ -40,7 +40,7 @@ function calculateInvoiceTotals() {
     if (isNaN(invoice_total)) {
         invoice_total = 0;
     }
-    $('#id_value_brutto').val(invoice_total);
+    $('#id_value').val(invoice_total);
     $('#invoice-total').text(invoice_total.toFixed(2).replace(".", ",") + " zł");
 }
 
@@ -301,14 +301,14 @@ $(function () {
         $(item_form).find(".item-description").val('');
         $(item_form).find(".item-ware").val('').change();
         $(item_form).find(".item-quantity").val(1);
-        $(item_form).find(".item-brutto").val('');
+        $(item_form).find(".item-price").val('');
         $(item_form).find(".item-DELETE").children('input').prop('checked', true);
         calculateInvoiceTotals();
     });
 
-    $(".item-brutto").change(function () {
+    $(".item-price").change(function () {
         let item_form = $(this).parents('.item-formset-row');
-        const price = toCurrency($(item_form).find(".item-brutto").val());
+        const price = toCurrency($(item_form).find(".item-price").val());
         const quantity = parseInt($(item_form).find(".item-quantity").val());
         const total = toCurrency(price * quantity);
         $(item_form).find(".item-total").text(total.toFixed(2).replace(".", ",") + ' zł');
@@ -317,7 +317,7 @@ $(function () {
 
     $(".item-quantity").change(function () {
         let item_form = $(this).parents('.item-formset-row');
-        const price = toCurrency($(item_form).find(".item-brutto").val());
+        const price = toCurrency($(item_form).find(".item-price").val());
         const quantity = parseInt($(item_form).find(".item-quantity").val());
         const total = toCurrency(price * quantity);
         $(item_form).find(".item-total").text(total.toFixed(2).replace(".", ",") + ' zł');
@@ -339,7 +339,7 @@ $(function () {
             success: function (result) {
                 $(item_form).find(".item-name").val(result.service.name);
                 $(item_form).find(".item-description").val(result.service.description);
-                $(item_form).find(".item-brutto").val(result.service.price_brutto);
+                $(item_form).find(".item-price").val(result.service.price_brutto);
                 $(item_form).find(".item-quantity").val(result.service.quantity);
 
                 if (result.service.ware) {
@@ -347,7 +347,7 @@ $(function () {
                     let $sel2 = $(item_form).find(".item-ware");
                     $sel2.append($option).trigger('change');
                 }
-                $(item_form).find(".item-brutto").change();
+                $(item_form).find(".item-price").change();
             }
         });
     });
@@ -356,10 +356,10 @@ $(function () {
     $('.item-formset-row').each(function() {
         let item_form = $(this);
         if ($(item_form).find(".item-name").val() || $(item_form).find(".item-description").val() ||
-            $(item_form).find(".item-ware").val() || $(item_form).find(".item-brutto").val() != 0 ||
+            $(item_form).find(".item-ware").val() || $(item_form).find(".item-price").val() != 0 ||
             $(item_form).find(".item-quantity").val() != 1 || $(item_form).find(".invalid-feedback").length > 0) {
             item_form.removeClass('d-none');
-            $(item_form).find(".item-brutto").change();
+            $(item_form).find(".item-price").change();
         }
     })
     calculateInvoiceTotals();

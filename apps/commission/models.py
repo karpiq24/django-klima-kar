@@ -151,7 +151,7 @@ class Commission(models.Model):
         blank=True,
         null=True,
         verbose_name='Data zamknięcia')
-    value_brutto = models.DecimalField(
+    value = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         verbose_name='Wartość')
@@ -204,7 +204,7 @@ class CommissionItem(models.Model):
     quantity = models.IntegerField(
         default=1,
         verbose_name='Ilość')
-    price_brutto = models.DecimalField(
+    price = models.DecimalField(
         max_digits=7,
         decimal_places=2,
         verbose_name='Cena')
@@ -219,8 +219,8 @@ class CommissionItem(models.Model):
         return "{} - {}".format(self.commission.id, self.name)
 
     @property
-    def total_brutto(self):
-        return self.price_brutto * self.quantity
+    def total(self):
+        return self.price * self.quantity
 
 
 class CommissionFile(models.Model):

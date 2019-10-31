@@ -196,7 +196,9 @@ class SaleInvoiceItemsInline(InlineFormSet):
     def _commission_item_to_dict(self, item):
         d = model_to_dict(item, exclude=['id', 'commission'])
         if self.value_type == 'netto':
-            d['price_netto'] = d.pop('price_brutto')
+            d['price_netto'] = d.pop('price')
+        else:
+            d['price_brutto'] = d.pop('price')
         return d
 
 

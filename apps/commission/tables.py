@@ -72,9 +72,9 @@ class CommissionTable(tables.Table):
     end_date = tables.Column(
         attrs={'th': {'width': '14%'}},
         verbose_name="Data zamknięcia")
-    value_brutto = tables.Column(
+    value = tables.Column(
         attrs={'th': {'width': '13%'}},
-        verbose_name="Cena brutto")
+        verbose_name="Cena")
     actions = tables.TemplateColumn(
         attrs={'th': {'width': '7%'}},
         verbose_name="Akcje",
@@ -82,7 +82,7 @@ class CommissionTable(tables.Table):
         orderable=False,
         exclude_from_export=True)
 
-    def render_value_brutto(self, value):
+    def render_value(self, value):
         return "{0:.2f} zł".format(value).replace('.', ',')
 
     def render_phone(self, record):
@@ -101,7 +101,7 @@ class CommissionTable(tables.Table):
     class Meta:
         model = Commission
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['pk', 'vc_name', 'contractor', 'phone', 'start_date', 'end_date', 'value_brutto']
+        fields = ['pk', 'vc_name', 'contractor', 'phone', 'start_date', 'end_date', 'value']
         order_by = '-pk'
         empty_text = 'Brak zleceń'
 
@@ -115,14 +115,14 @@ class CommissionItemTable(tables.Table):
         attrs={'th': {'width': '10%'}})
     quantity = tables.Column(
         attrs={'th': {'width': '10%'}})
-    price_brutto = tables.Column(
+    price = tables.Column(
         attrs={'th': {'width': '20%'}})
 
-    def render_price_brutto(self, value):
+    def render_price(self, value):
         return "{0:.2f} zł".format(value).replace('.', ',')
 
     class Meta:
         model = CommissionItem
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['name', 'description', 'ware', 'quantity', 'price_brutto']
+        fields = ['name', 'description', 'ware', 'quantity', 'price']
         empty_text = 'Brak pozycji'

@@ -563,9 +563,9 @@ class CommissionHistory(GroupAccessControlMixin, ChartDataMixin, View):
         if date_option == 'week':
             commissions = commissions.values('end_date')
             if metric == 'Sum':
-                commissions = commissions.annotate(total=Sum('value_brutto'))
+                commissions = commissions.annotate(total=Sum('value'))
             elif metric == 'Avg':
-                commissions = commissions.annotate(total=Round(Avg('value_brutto')))
+                commissions = commissions.annotate(total=Round(Avg('value')))
             elif metric == 'Count':
                 commissions = commissions.annotate(total=Count('id'))
                 response_data['custom']['values_appendix'] = ''
@@ -585,9 +585,9 @@ class CommissionHistory(GroupAccessControlMixin, ChartDataMixin, View):
         if date_option == 'month':
             commissions = commissions.values('end_date')
             if metric == 'Sum':
-                commissions = commissions.annotate(total=Sum('value_brutto'))
+                commissions = commissions.annotate(total=Sum('value'))
             elif metric == 'Avg':
-                commissions = commissions.annotate(total=Round(Avg('value_brutto')))
+                commissions = commissions.annotate(total=Round(Avg('value')))
             elif metric == 'Count':
                 commissions = commissions.annotate(total=Count('id'))
                 response_data['custom']['values_appendix'] = ''
@@ -608,9 +608,9 @@ class CommissionHistory(GroupAccessControlMixin, ChartDataMixin, View):
             commissions = commissions.annotate(
                 month=ExtractMonth('end_date'), year=ExtractYear('end_date')).values('year', 'month')
             if metric == 'Sum':
-                commissions = commissions.annotate(total=Sum('value_brutto'))
+                commissions = commissions.annotate(total=Sum('value'))
             elif metric == 'Avg':
-                commissions = commissions.annotate(total=Round(Avg('value_brutto')))
+                commissions = commissions.annotate(total=Round(Avg('value')))
             elif metric == 'Count':
                 commissions = commissions.annotate(total=Count('id'))
                 response_data['custom']['values_appendix'] = ''
@@ -632,9 +632,9 @@ class CommissionHistory(GroupAccessControlMixin, ChartDataMixin, View):
                 year_commissions = commissions.filter(end_date__year=year)
                 year_commissions = year_commissions.annotate(month=ExtractMonth('end_date')).values('month')
                 if metric == 'Sum':
-                    year_commissions = year_commissions.annotate(total=Sum('value_brutto'))
+                    year_commissions = year_commissions.annotate(total=Sum('value'))
                 elif metric == 'Avg':
-                    year_commissions = year_commissions.annotate(total=Round(Avg('value_brutto')))
+                    year_commissions = year_commissions.annotate(total=Round(Avg('value')))
                 elif metric == 'Count':
                     year_commissions = year_commissions.annotate(total=Count('id'))
                     response_data['custom']['values_appendix'] = ''
@@ -653,9 +653,9 @@ class CommissionHistory(GroupAccessControlMixin, ChartDataMixin, View):
         if date_option == 'all_yearly':
             commissions = commissions.annotate(year=ExtractYear('end_date')).values('year')
             if metric == 'Sum':
-                commissions = commissions.annotate(total=Sum('value_brutto'))
+                commissions = commissions.annotate(total=Sum('value'))
             elif metric == 'Avg':
-                commissions = commissions.annotate(total=Round(Avg('value_brutto')))
+                commissions = commissions.annotate(total=Round(Avg('value')))
             elif metric == 'Count':
                 commissions = commissions.annotate(total=Count('id'))
                 response_data['custom']['values_appendix'] = ''
@@ -837,8 +837,8 @@ class Metrics(View):
                     end_date__gte=date_from, end_date__lte=date_to, status=Commission.DONE)
             response['commission_count'] = commissions.count()
             if has_permission:
-                commissions_sum_brutto = 0
+                commissions_sum = 0
                 if commissions:
-                    commissions_sum_brutto = commissions.aggregate(Sum('value_brutto'))['value_brutto__sum']
-                response['commission_sum'] = "{0:.2f} zł".format(commissions_sum_brutto).replace('.', ',')
+                    commissions_sum = commissions.aggregate(Sum('value'))['value__sum']
+                response['commission_sum'] = "{0:.2f} zł".format(commissions_sum).replace('.', ',')
         return JsonResponse(response)

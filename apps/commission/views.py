@@ -370,7 +370,7 @@ class FastCommissionCreateView(View):
         CommissionItem.objects.create(
             commission=commission,
             name=commission.description,
-            price_brutto=commission.value_brutto
+            price=commission.value
         )
         return JsonResponse({
             'status': 'success',
