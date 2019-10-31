@@ -124,10 +124,8 @@ class HomeView(TemplateView):
                     'extra': True
                 },
                 'custom_select': [
-                    ('SumNetto', 'Suma netto'),
-                    ('SumBrutto', 'Suma brutto'),
-                    ('AvgNetto', 'Średnia netto'),
-                    ('AvgBrutto', 'Średnia brutto'),
+                    ('Sum', 'Suma'),
+                    ('Avg', 'Średnia'),
                     ('Count', 'Ilość')]
             })
         charts.append({
@@ -191,16 +189,16 @@ class HomeView(TemplateView):
             metrics.append({
                 'icon': 'fa-tasks',
                 'color': '#427BD2',
-                'title': 'Kwota netto zakończonych zleceń',
+                'title': 'Kwota zakończonych zleceń',
                 'class': 'commission_sum_netto'
             })
-            metrics.append({
-                'icon': 'fa-tasks',
-                'color': '#427BD2',
-                'title': 'Kwota brutto zakończonych zleceń',
-                'class': 'commission_sum_brutto'
-            })
 
+        metrics.append({
+            'icon': 'fa-users',
+            'color': '#00A0DF',
+            'title': 'Liczba dodanych kontrahentów',
+            'class': 'contractor_count'
+        })
         metrics.append({
             'icon': 'fa-flask',
             'color': '#F8640B',
@@ -224,12 +222,6 @@ class HomeView(TemplateView):
             'color': '#F8640B',
             'title': 'Sprzedaż czynnika R404',
             'class': 'r404_sum'
-        })
-        metrics.append({
-            'icon': 'fa-users',
-            'color': '#00A0DF',
-            'title': 'Liczba dodanych kontrahentów',
-            'class': 'contractor_count'
         })
         return metrics
 

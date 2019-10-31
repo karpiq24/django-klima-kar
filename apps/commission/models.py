@@ -151,17 +151,10 @@ class Commission(models.Model):
         blank=True,
         null=True,
         verbose_name='Data zamknięcia')
-    value_netto = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name='Wartość netto')
     value_brutto = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        verbose_name='Wartość brutto')
-    tax_percent = models.FloatField(
-        verbose_name="Procent podatku VAT",
-        default=23)
+        verbose_name='Wartość')
     upload = models.BooleanField(
         verbose_name='Pliki są wgrywane',
         default=False)
@@ -177,10 +170,6 @@ class Commission(models.Model):
         if self.status in [self.DONE, self.CANCELLED] and not self.end_date:
             self.end_date = datetime.date.today()
         super().save(*args, **kwargs)
-
-    @property
-    def value_tax(self):
-        return self.value_brutto - self.value_netto
 
     @property
     def number(self):
@@ -215,14 +204,10 @@ class CommissionItem(models.Model):
     quantity = models.IntegerField(
         default=1,
         verbose_name='Ilość')
-    price_netto = models.DecimalField(
-        max_digits=7,
-        decimal_places=2,
-        verbose_name='Cena netto')
     price_brutto = models.DecimalField(
         max_digits=7,
         decimal_places=2,
-        verbose_name='Cena brutto')
+        verbose_name='Cena')
     ware = models.ForeignKey(
         Ware,
         on_delete=models.SET_NULL,
@@ -232,10 +217,6 @@ class CommissionItem(models.Model):
 
     def __str__(self):
         return "{} - {}".format(self.commission.id, self.name)
-
-    @property
-    def total_netto(self):
-        return self.price_netto * self.quantity
 
     @property
     def total_brutto(self):

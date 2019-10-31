@@ -279,7 +279,12 @@ $(function () {
             $(item_form).find(".invalid-feedback").length > 0) {
 
             item_form.removeClass('d-none');
-            $(item_form).find(".item-brutto").change();
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('value_type') && urlParams.get('value_type') === 'netto') {
+                $(item_form).find(".item-netto").change();
+            } else {
+                $(item_form).find(".item-brutto").change();
+            }
         }
     })
 

@@ -115,13 +115,8 @@ class CommissionItemTable(tables.Table):
         attrs={'th': {'width': '10%'}})
     quantity = tables.Column(
         attrs={'th': {'width': '10%'}})
-    price_netto = tables.Column(
-        attrs={'th': {'width': '20%'}})
     price_brutto = tables.Column(
         attrs={'th': {'width': '20%'}})
-
-    def render_price_netto(self, value):
-        return "{0:.2f} zł".format(value).replace('.', ',')
 
     def render_price_brutto(self, value):
         return "{0:.2f} zł".format(value).replace('.', ',')
@@ -129,5 +124,5 @@ class CommissionItemTable(tables.Table):
     class Meta:
         model = CommissionItem
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['name', 'description', 'ware', 'quantity', 'price_netto', 'price_brutto']
+        fields = ['name', 'description', 'ware', 'quantity', 'price_brutto']
         empty_text = 'Brak pozycji'

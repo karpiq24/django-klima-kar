@@ -16,12 +16,24 @@
     </div>
 {% endif %}
 <hr>
+<h6>Typ faktury:</h6>
 <div class="form-group">
     <select class="form-control" id="invoice_type" name="invoice_type">
         {% for key, value in types.items %}
             <option value="{{ key }}">{{ value }}</option>
         {% endfor %}
     </select>
+</div>
+<div class="form-group">
+    <h6>Kwota ze zlecenia to:</h6>
+    <div class="btn-group btn-group-toggle" data-toggle="buttons" style="width: 100%;">
+        <label class="btn btn-outline-primary active">
+            <input type="radio" name="value_type" value="brutto" autocomplete="off" checked> Brutto
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="value_type" value="netto" autocomplete="off"> Netto
+        </label>
+    </div>
 </div>
 <div class="form-group form-check" id="commission_done"{% if commission.status == commission.DONE %} style="display: none;"{% endif %}>
     <input type="checkbox" class="form-check-input" id="checkCommissionDone" checked value="{{ commission.DONE }}" name="done">

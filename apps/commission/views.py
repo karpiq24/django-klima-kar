@@ -229,12 +229,10 @@ class CommissionTableView(ExportMixin, FilteredSingleTableView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        site_settings = SiteSettings.load()
         commission_data = {
             'status': Commission.DONE,
             'start_date': datetime.date.today(),
             'end_date': datetime.date.today(),
-            'tax_percent': site_settings.COMMISSION_TAX_PERCENT
         }
         context['status_done'] = Commission.DONE
         context['fast_commission_form'] = CommissionFastModelForm(initial=commission_data)
@@ -300,8 +298,6 @@ class CommissionCreateView(CreateWithInlinesView):
 
     def get_initial(self):
         initial = dict()
-        site_settings = SiteSettings.load()
-        initial['tax_percent'] = site_settings.COMMISSION_TAX_PERCENT
         initial['commission_type'] = self.commission_type
         return initial
 
@@ -374,7 +370,6 @@ class FastCommissionCreateView(View):
         CommissionItem.objects.create(
             commission=commission,
             name=commission.description,
-            price_netto=commission.value_netto,
             price_brutto=commission.value_brutto
         )
         return JsonResponse({
@@ -538,6 +533,7 @@ class PrepareInvoiceUrl(View):
         pk = request.POST.get('pk')
         done = request.POST.get('done')
         invoice_type = request.POST.get('invoice_type')
+        value_type = request.POST.get('value_type')
 
         try:
             commission = Commission.objects.get(pk=pk)
@@ -547,14 +543,15 @@ class PrepareInvoiceUrl(View):
             commission.status = Commission.DONE
             commission.save()
 
-        url = '{}{}'.format(
+        url = '{}{}{}'.format(
             reverse('invoicing:sale_invoice_commission_create', kwargs={
                 'kind': dict(INVOICE_TYPES)[invoice_type],
                 'type': invoice_type,
                 'slug': slugify(commission),
                 'pk': pk
             }),
-            '?desc={}'.format(desc) if desc else '')
+            '?value_type={}'.format(value_type),
+            '&desc={}'.format(desc) if desc else '')
         return JsonResponse({'url': url})
 
 

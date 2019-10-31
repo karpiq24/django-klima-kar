@@ -134,6 +134,7 @@ class SaleInvoiceCommissionCreateView(SaleInvoiceCreateView):
         try:
             self.commission = Commission.objects.get(pk=kwargs.get('pk'))
             self.desc = self.request.GET.get('desc', '')
+            self.kwargs['value_type'] = self.request.GET.get('value_type')
             self.kwargs['commission'] = self.commission
         except Commission.DoesNotExist:
             raise Http404()

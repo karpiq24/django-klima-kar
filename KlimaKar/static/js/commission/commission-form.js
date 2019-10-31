@@ -9,17 +9,15 @@ function toCurrency(value) {
 }
 
 function customSuccessCreate(data, identifier) {
+    const $option = $("<option selected></option>").val(data['pk']).text(data['text']);
     if (identifier == '1') {
-        var $option = $("<option selected></option>").val(data['pk']).text(data['text']);
         $('#id_contractor').append($option).trigger('change');
         $('#contractor-edit').prop('disabled', false);
     } else if (identifier == '2') {
-        var $option = $("<option selected></option>").val(data['pk']).text(data['text']);
         $('#id_vehicle').append($option).trigger('change');
         $('#vehicle-component-edit').prop('disabled', false);
         $('#id_vc_name').val(data['text']);
     } else if (identifier == '3') {
-        var $option = $("<option selected></option>").val(data['pk']).text(data['text']);
         $('#id_component').append($option).trigger('change');
         $('#vehicle-component-edit').prop('disabled', false);
         $('#id_vc_name').val(data['text']);
@@ -27,27 +25,23 @@ function customSuccessCreate(data, identifier) {
 }
 
 function calculateInvoiceTotals() {
-    var invoice_total_netto = 0.00;
-    var tax_multiplier = $("#id_tax_percent").val() / 100;
+    let invoice_total = 0.00;
     $('.item-formset-row').not('.readonly').each(function() {
         if (!$(this).hasClass('d-none')) {
-            var price_netto = toCurrency($(this).find(".item-netto").val());
-            if (isNaN(price_netto)) {
-                price_netto = 0;
+            let price = toCurrency($(this).find(".item-brutto").val());
+            if (isNaN(price)) {
+                price = 0;
             }
-            var quantity = parseInt($(this).find(".item-quantity").val());
-            var total_netto = toCurrency(quantity * price_netto);
-            invoice_total_netto = toCurrency(invoice_total_netto + total_netto);
+            const quantity = parseInt($(this).find(".item-quantity").val());
+            const total_row = toCurrency(quantity * price);
+            invoice_total = toCurrency(invoice_total + total_row);
         }
     });
-    if (isNaN(invoice_total_netto)) {
-        invoice_total_netto = 0;
+    if (isNaN(invoice_total)) {
+        invoice_total = 0;
     }
-    var invoice_total_brutto = toCurrency(invoice_total_netto + invoice_total_netto * tax_multiplier);
-    $('#id_value_netto').val(invoice_total_netto);
-    $('#id_value_brutto').val(invoice_total_brutto);
-    $('#invoice-total-netto').text(invoice_total_netto.toFixed(2).replace(".", ",") + " zł");
-    $('#invoice-total-brutto').text(invoice_total_brutto.toFixed(2).replace(".", ",") + " zł");
+    $('#id_value_brutto').val(invoice_total);
+    $('#invoice-total').text(invoice_total.toFixed(2).replace(".", ",") + " zł");
 }
 
 function checkEndDate() {
@@ -63,9 +57,8 @@ function checkEndDate() {
 }
 
 $(function () {
-
-    var debounce = (function() {
-        var timer = 0;
+    let debounce = (function() {
+        let timer = 0;
         return function(callback, ms){
             clearTimeout(timer);
             timer = setTimeout(callback, ms);
@@ -75,15 +68,15 @@ $(function () {
     $('.sidenav #nav-commissions').children(':first').addClass('active');
     $('.sidenav #nav-commission').collapse('show');
 
-    var CREATE_CONTRACTOR = $('#create_contractor_url').val();
-    var UPDATE_CONTRACTOR = $('#update_contractor_url').val();
-    var GET_CONTRACTOR_DATA = $('#contractor_detail_url').val();
-    var GET_SERVICE_DATA = $('#service_detail_url').val();
-    var CREATE_VEHICLE = $('#create_vehicle_url').val();
-    var UPDATE_VEHICLE = $('#update_vehicle_url').val();
-    var CREATE_COMPONENT = $('#create_component_url').val();
-    var UPDATE_COMPONENT = $('#update_component_url').val();
-    var DECODE_AZTEC = $('#decode_aztec_url').val();
+    const CREATE_CONTRACTOR = $('#create_contractor_url').val();
+    const UPDATE_CONTRACTOR = $('#update_contractor_url').val();
+    const GET_CONTRACTOR_DATA = $('#contractor_detail_url').val();
+    const GET_SERVICE_DATA = $('#service_detail_url').val();
+    const CREATE_VEHICLE = $('#create_vehicle_url').val();
+    const UPDATE_VEHICLE = $('#update_vehicle_url').val();
+    const CREATE_COMPONENT = $('#create_component_url').val();
+    const UPDATE_COMPONENT = $('#update_component_url').val();
+    const DECODE_AZTEC = $('#decode_aztec_url').val();
 
     $('#optionName').on('change', function () {
         $('#vehicle-component-container').hide();
@@ -96,7 +89,7 @@ $(function () {
     })
 
     $('#id_contractor').on('select2:selecting', function (e) {
-        var data = e.params.args.data;
+        const data = e.params.args.data;
 
         if (data.create_id !== true) {
             $('#contractor-edit').prop('disabled', false);
@@ -105,15 +98,16 @@ $(function () {
         $('#contractor-edit').prop('disabled', true);
 
         e.preventDefault();
+        let initial = {};
         if (isInt(data.id)) {
             if (data.id.length === 9) {
-                var initial = {'phone_1': data.id};
+                initial = {'phone_1': data.id};
             } else {
-                var initial = {'nip': data.id};
+                initial = {'nip': data.id};
             }
         }
         else {
-            var initial = {'name': data.id};
+            initial = {'name': data.id};
         }
         $.ajax({
             url: CREATE_CONTRACTOR,
@@ -130,8 +124,8 @@ $(function () {
     });
 
     $("#id_contractor").change(function () {
-        var parent = $("#id_contractor").parent();
-        var contractor_pk = $('#id_contractor').val();
+        let parent = $("#id_contractor").parent();
+        const contractor_pk = $('#id_contractor').val();
         $.ajax({
             url: GET_CONTRACTOR_DATA,
             data: {
@@ -160,8 +154,8 @@ $(function () {
     });
 
     $("#contractor-edit").click(function() {
-        var contractor_pk = $('#id_contractor').val();
-        var url = UPDATE_CONTRACTOR.replace('0', contractor_pk);
+        const contractor_pk = $('#id_contractor').val();
+        const url = UPDATE_CONTRACTOR.replace('0', contractor_pk);
         $.ajax({
             url: url,
             type: 'get',
@@ -192,7 +186,7 @@ $(function () {
     }
 
     $('#id_vehicle').on('select2:selecting', function (e) {
-        var data = e.params.args.data;
+        const data = e.params.args.data;
 
         if (data.create_id !== true) {
             $('#vehicle-component-edit').prop('disabled', false);
@@ -217,7 +211,7 @@ $(function () {
     });
 
     $("#id_vehicle").change(function () {
-        var vehicle_pk = $('#id_vehicle').val();
+        const vehicle_pk = $('#id_vehicle').val();
         if (!isInt(vehicle_pk)) {
             $('#id_vc_name').val('');
             $('#vehicle-component-edit').prop('disabled', true);
@@ -228,7 +222,7 @@ $(function () {
     })
 
     $('#id_component').on('select2:selecting', function (e) {
-        var data = e.params.args.data;
+        const data = e.params.args.data;
 
         if (data.create_id !== true) {
             $('#vehicle-component-edit').prop('disabled', false);
@@ -252,7 +246,7 @@ $(function () {
     });
 
     $("#id_component").change(function () {
-        var component_pk = $('#id_component').val();
+        const component_pk = $('#id_component').val();
         if (!isInt(component_pk)) {
             $('#id_vc_name').val('');
             $('#vehicle-component-edit').prop('disabled', true);
@@ -263,8 +257,8 @@ $(function () {
     })
 
     $("#vehicle-component-edit").click(function() {
-        var pk = null;
-        var url = null;
+        let pk = null;
+        let url = null;
         if ($('#id_commission_type').val() === 'VH'){
             pk = $('#id_vehicle').val();
             url = UPDATE_VEHICLE.replace('0', pk);
@@ -293,7 +287,7 @@ $(function () {
     }
 
     $("#add_item_formset").click(function(){
-        var item_form = $('#item-rows').children('.d-none').first();
+        let item_form = $('#item-rows').children('.d-none').first();
         $(item_form).find(".item-DELETE").children('input').prop('checked', false);
         $(item_form).removeClass('d-none');
         $(item_form).insertAfter($("#item-rows tr:not('.d-none'):last"));
@@ -301,76 +295,38 @@ $(function () {
     });
 
     $(".remove_item_formset").click(function(){
-        var item_form = $(this).parents(".item-formset-row");
+        let item_form = $(this).parents(".item-formset-row");
         $(item_form).addClass('d-none');
         $(item_form).find(".item-name").val('');
         $(item_form).find(".item-description").val('');
         $(item_form).find(".item-ware").val('').change();
         $(item_form).find(".item-quantity").val(1);
-        $(item_form).find(".item-netto").val('');
         $(item_form).find(".item-brutto").val('');
         $(item_form).find(".item-DELETE").children('input').prop('checked', true);
         calculateInvoiceTotals();
     });
 
-    $(".item-netto").change(function () {
-        var item_form = $(this).parents('.item-formset-row');
-        $(item_form).find(".item-brutto").removeClass('is-invalid');
-        var tax_multiplier = parseFloat($("#id_tax_percent").val()) / 100;
-        var price_netto = toCurrency($(item_form).find(".item-netto").val());
-        var price_brutto = toCurrency(price_netto + (price_netto * tax_multiplier));
-        var quantity = parseInt($(item_form).find(".item-quantity").val());
-        var total_netto = toCurrency(price_netto * quantity);
-        $(item_form).find(".item-brutto").val(price_brutto);
-        $(item_form).find(".item-total-netto").text(total_netto.toFixed(2).replace(".", ",") + ' zł');
-        calculateInvoiceTotals();
-    });
-
     $(".item-brutto").change(function () {
-        var item_form = $(this).parents('.item-formset-row');
-        var tax_multiplier = parseFloat($("#id_tax_percent").val()) / 100;
-        var price_brutto = toCurrency($(item_form).find(".item-brutto").val());
-        var price_netto = toCurrency(price_brutto / (1 + tax_multiplier));
-        var quantity = parseInt($(item_form).find(".item-quantity").val());
-        var total_netto = toCurrency(price_netto * quantity);
-        $(item_form).find(".item-netto").val(price_netto);
-        $(item_form).find(".item-total-netto").text(total_netto.toFixed(2).replace(".", ",") + ' zł');
-
-        var price_brutto_check = toCurrency(price_netto + (price_netto * tax_multiplier));
-        if (price_brutto != price_brutto_check) {
-            $(item_form).find(".item-brutto").addClass('is-invalid');
-        }
-        else {
-            $(item_form).find(".item-brutto").removeClass('is-invalid');
-        }
+        let item_form = $(this).parents('.item-formset-row');
+        const price = toCurrency($(item_form).find(".item-brutto").val());
+        const quantity = parseInt($(item_form).find(".item-quantity").val());
+        const total = toCurrency(price * quantity);
+        $(item_form).find(".item-total").text(total.toFixed(2).replace(".", ",") + ' zł');
         calculateInvoiceTotals();
     });
 
     $(".item-quantity").change(function () {
-        var item_form = $(this).parents('.item-formset-row');
-        var price_netto = toCurrency($(item_form).find(".item-netto").val());
-        var quantity = parseInt($(item_form).find(".item-quantity").val());
-        var total_netto = toCurrency(price_netto * quantity);
-        $(item_form).find(".item-total-netto").text(total_netto.toFixed(2).replace(".", ",") + ' zł');
-        calculateInvoiceTotals();
-    });
-
-    $("#id_tax_percent").change(function () {
-        var tax_multiplier = parseFloat($(this).val()) / 100;
-        $('.item-formset-row').each(function() {
-            $(this).find(".item-brutto").removeClass('is-invalid');
-            if (!$(this).hasClass('d-none')) {
-                var price_netto = toCurrency($(this).find(".item-netto").val());
-                var price_brutto = toCurrency(price_netto + (price_netto * tax_multiplier));
-                $(this).find(".item-brutto").val(price_brutto.toFixed(2));
-            }
-        });
+        let item_form = $(this).parents('.item-formset-row');
+        const price = toCurrency($(item_form).find(".item-brutto").val());
+        const quantity = parseInt($(item_form).find(".item-quantity").val());
+        const total = toCurrency(price * quantity);
+        $(item_form).find(".item-total").text(total.toFixed(2).replace(".", ",") + ' zł');
         calculateInvoiceTotals();
     });
 
     $(".choose_service").click(function() {
-        var item_form = $(this).parents(".item-formset-row");
-        var service_pk = $(item_form).find(".item-service").val();
+        let item_form = $(this).parents(".item-formset-row");
+        const service_pk = $(item_form).find(".item-service").val();
         if (service_pk === '') {
             return;
         }
@@ -383,33 +339,25 @@ $(function () {
             success: function (result) {
                 $(item_form).find(".item-name").val(result.service.name);
                 $(item_form).find(".item-description").val(result.service.description);
-                $(item_form).find(".item-netto").val(result.service.price_netto);
                 $(item_form).find(".item-brutto").val(result.service.price_brutto);
                 $(item_form).find(".item-quantity").val(result.service.quantity);
 
                 if (result.service.ware) {
-                    var $option = $("<option selected></option>").val(result.service.ware.pk).text(result.service.ware.index);
-                    var $sel2 = $(item_form).find(".item-ware");
+                    let $option = $("<option selected></option>").val(result.service.ware.pk).text(result.service.ware.index);
+                    let $sel2 = $(item_form).find(".item-ware");
                     $sel2.append($option).trigger('change');
                 }
-                if (result.service.price_brutto) {
-                    $(item_form).find(".item-brutto").change();
-                }
-                else {
-                    $(item_form).find(".item-netto").change();
-                }
+                $(item_form).find(".item-brutto").change();
             }
         });
     });
 
     $('#item-rows tr:first').removeClass('d-none');
     $('.item-formset-row').each(function() {
-        var item_form = $(this);
+        let item_form = $(this);
         if ($(item_form).find(".item-name").val() || $(item_form).find(".item-description").val() ||
-            $(item_form).find(".item-ware").val() ||  $(item_form).find(".item-netto").val() != 0 ||
-            $(item_form).find(".item-brutto").val() != 0 || $(item_form).find(".item-quantity").val() != 1 ||
-            $(item_form).find(".invalid-feedback").length > 0) {
-
+            $(item_form).find(".item-ware").val() || $(item_form).find(".item-brutto").val() != 0 ||
+            $(item_form).find(".item-quantity").val() != 1 || $(item_form).find(".invalid-feedback").length > 0) {
             item_form.removeClass('d-none');
             $(item_form).find(".item-brutto").change();
         }
@@ -445,7 +393,7 @@ $(function () {
                         }
                     });
                 } else {
-                    var $option = $("<option selected></option>").val(data['pk']).text(data['label']);
+                    const $option = $("<option selected></option>").val(data['pk']).text(data['label']);
                     $('#id_vehicle').append($option).trigger('change');
                     $('#vehicle-component-edit').prop('disabled', false);
                     $('#id_vc_name').val(data['label']);
@@ -455,7 +403,7 @@ $(function () {
     }
 
     $(document).on('input', '.select2-search__field.vehicle', function (e) {
-        var code = $(this).val();
+        const code = $(this).val();
         if (code.length > 350) {
             debounce(function () {
                 decode_aztec(code);
@@ -464,7 +412,7 @@ $(function () {
     })
 
     $(document).on('paste', '.select2-search__field.vehicle', function (e) {
-        var code = e.originalEvent.clipboardData.getData('Text');
+        const code = e.originalEvent.clipboardData.getData('Text');
         if (code.length > 350) {
             debounce(function () {
                 decode_aztec(code);

@@ -100,10 +100,9 @@
                     <thead>
                         <tr>
                             <th style="min-width:15rem;">Usługa/Towar</th>
-                            <th style="min-width:8rem;width:10rem;">Cena netto</th>
-                            <th style="min-width:8rem;width:10rem;">Cena brutto</th>
+                            <th style="min-width:8rem;width:10rem;">Cena</th>
                             <th style="min-width:4rem;width:6rem;">Ilość</th>
-                            <th style="min-width:8rem;width:8rem;">Wartość netto</th>
+                            <th style="min-width:8rem;width:8rem;">Wartość</th>
                             <th style="min-width:4rem;width:8rem;">Akcje</th>
                         </tr>
                     </thead>
@@ -123,15 +122,12 @@
                                     </div>
                                 </td>
                                 <td>
-                                    {% include 'forms/field.html' with field=item_form.price_netto hide_label=True %}
-                                </td>
-                                <td>
                                     {% include 'forms/field.html' with field=item_form.price_brutto hide_label=True %}
                                 </td>
                                 <td>
                                     {% include 'forms/field.html' with field=item_form.quantity hide_label=True %}
                                 </td>
-                                <td class="item-total-netto">
+                                <td class="item-total">
                                     0,00 zł
                                 </td>
                                 <td>
@@ -166,23 +162,16 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="2" rowspan="2" class="no-right-border">
+                            <td colspan="2" class="no-right-border">
                                 <button type="button" class="btn btn-outline-info" id="add_item_formset">
                                     Kolejna pozycja
                                 </button>
+                            </td>      
+                            <td colspan="1" class="no-left-border no-right-border no-top-border">
+                                <span style="float:right">Razem:</span>
                             </td>
-                            <td colspan="2" class="no-left-border no-right-border no-bottom-border">
-                                <span style="float:right">Razem netto:</span>
-                            </td>
-                            <td colspan="2" id="invoice-total-netto" class="no-left-border no-bottom-border">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="no-left-border no-right-border no-top-border">
-                                    <span style="float:right">Razem brutto:</span>
-                            </td>
-                            <td colspan="2" id="invoice-total-brutto" class="no-left-border no-top-border">
-                            </td>
+                            <td colspan="2" id="invoice-total" class="no-left-border no-top-border">
+                            </td>                      
                         </tr>
                     </tfoot>
                 </table>

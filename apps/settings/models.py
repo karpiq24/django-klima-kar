@@ -59,10 +59,6 @@ class SiteSettings(SingletonModel):
         verbose_name='Treść wiadomości ze zleceniem',
         blank=True,
         null=True)
-    COMMISSION_TAX_PERCENT = models.FloatField(
-        verbose_name="Procent podatku VAT w zleceniu", default=23,
-        blank=True,
-        null=True)
     COMMISSION_SMS_BODY = models.TextField(
         verbose_name='Treść powiadomienia SMS',
         blank=True,

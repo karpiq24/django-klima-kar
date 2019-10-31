@@ -112,13 +112,11 @@ class CommissionModelForm(forms.ModelForm):
     class Meta:
         model = Commission
         fields = ['vc_name', 'vehicle', 'component', 'contractor', 'description', 'status', 'start_date', 'end_date',
-                  'value_netto', 'value_brutto', 'tax_percent', 'commission_type']
+                  'value_brutto', 'commission_type']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
-            'value_netto': forms.HiddenInput(),
             'value_brutto': forms.HiddenInput(),
             'commission_type': forms.HiddenInput(),
-            'tax_percent': forms.HiddenInput(),
             'status': PrettySelect()
         }
 
@@ -128,21 +126,19 @@ class CommissionFastModelForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['vc_name'].widget.attrs.update(
             {'placeholder': 'Podaj nazwę'})
-        self.fields['value_brutto'].label = 'Cena brutto'
+        self.fields['value_brutto'].label = 'Cena'
         self.fields['description'].required = True
 
     class Meta:
         model = Commission
         fields = ['commission_type', 'vc_name', 'description', 'status', 'start_date', 'end_date',
-                  'value_netto', 'value_brutto', 'tax_percent']
+                  'value_brutto']
         widgets = {
             'description': forms.TextInput(attrs={'placeholder': 'Podaj krótki opis'}),
             'status': forms.HiddenInput(),
             'start_date': forms.HiddenInput(),
             'end_date': forms.HiddenInput(),
-            'tax_percent': forms.HiddenInput(),
             'commission_type': PrettySelect(),
-            'value_netto': forms.HiddenInput()
         }
 
 
@@ -164,10 +160,8 @@ class CommissionItemModelForm(forms.ModelForm):
             {'placeholder': 'Podaj opis', 'class': 'item-description'})
         self.fields['quantity'].widget.attrs.update(
             {'placeholder': 'Ilość', 'class': 'item-quantity'})
-        self.fields['price_netto'].widget.attrs.update({
-            'placeholder': 'Netto', 'class': 'item-netto'})
         self.fields['price_brutto'].widget.attrs.update(
-            {'placeholder': 'Brutto', 'class': 'item-brutto'})
+            {'placeholder': 'Cena', 'class': 'item-brutto'})
         self.fields['ware'].widget.attrs.update(
             {'data-placeholder': 'Wybierz towar', 'class': 'item-ware'})
         self.fields['service'].widget.attrs.update(
@@ -175,7 +169,7 @@ class CommissionItemModelForm(forms.ModelForm):
 
     class Meta:
         model = CommissionItem
-        fields = ['name', 'description', 'quantity', 'price_netto', 'price_brutto', 'ware', 'service']
+        fields = ['name', 'description', 'quantity', 'price_brutto', 'ware', 'service']
 
 
 class CommissionItemInline(InlineFormSet):

@@ -179,6 +179,7 @@ class SaleInvoiceItemsInline(InlineFormSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.commission = self.kwargs.get('commission', None)
+        self.value_type = self.kwargs.get('value_type', None)
         self.original_invoice = self.kwargs.get('original_invoice', None)
 
     def get_initial(self):
@@ -188,9 +189,15 @@ class SaleInvoiceItemsInline(InlineFormSet):
             return initial
         if not self.object and self.commission:
             items = CommissionItem.objects.filter(commission=self.commission)
-            initial = [model_to_dict(item, exclude=['id', 'commission']) for item in items]
+            initial = [self._commission_item_to_dict(item) for item in items]
             return initial
         return self.initial[:]
+
+    def _commission_item_to_dict(self, item):
+        d = model_to_dict(item, exclude=['id', 'commission'])
+        if self.value_type == 'netto':
+            d['price_netto'] = d.pop('price_brutto')
+        return d
 
 
 class AlwaysChangedModelForm(forms.ModelForm):

@@ -88,18 +88,10 @@
             <tr>
                 <td class="detail-label">Data zamknięcia</td>
                 <td id="end_date">{{ object.end_date|default:"—" }}</td>
-            </tr>
+            </tr>      
             <tr>
-                <td class="detail-label">Łączna wartość netto</td>
-                <td>{{ object.value_netto|floatformat:2 }} zł</td>
-            </tr>            
-            <tr>
-                <td class="detail-label">Łączna wartość brutto</td>
+                <td class="detail-label">Łączna wartość</td>
                 <td>{{ object.value_brutto|floatformat:2 }} zł</td>
-            </tr>
-            <tr>
-                <td class="detail-label">Procent podatku VAT</td>
-                <td>{{ object.tax_percent|floatformat:0 }}%</td>
             </tr>
             <tr>
                 <td class="detail-label">Pliki</td>
@@ -172,7 +164,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Anuluj</button>
-                    <button type="submit" class="btn btn-outline-success">Dodaj</button>
+                    <button type="submit" class="btn btn-outline-success"><i class="fa fa-book"></i> Dodaj</button>
                 </div>
             </form>
         </div>
