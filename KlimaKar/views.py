@@ -190,7 +190,7 @@ class HomeView(TemplateView):
                 'icon': 'fa-tasks',
                 'color': '#427BD2',
                 'title': 'Kwota zakończonych zleceń',
-                'class': 'commission_sum_netto'
+                'class': 'commission_sum'
             })
 
         metrics.append({
