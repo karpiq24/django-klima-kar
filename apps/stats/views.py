@@ -781,7 +781,7 @@ class Metrics(View):
                     created_date__date__gte=date_from, created_date__date__lte=date_to).count()
             }
             if has_permission:
-                invoices = Invoice.objects.filter(date__date__gte=date_from, date__date__lte=date_to)
+                invoices = Invoice.objects.filter(date__gte=date_from, date__lte=date_to)
                 invoices_sum = 0
                 if invoices:
                     invoices_sum = invoices.aggregate(Sum('total_value'))['total_value__sum']
