@@ -14,6 +14,7 @@ from apps.warehouse.models import Ware
 class Vehicle(models.Model):
     registration_plate = models.CharField(
         max_length=32,
+        unique=True,
         verbose_name='Numer rejestracyjny')
     vin = models.CharField(
         max_length=32,
