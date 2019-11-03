@@ -54,8 +54,8 @@ $(function () {
     });
 
     $('.metrics-date-range').each(function () {
-        $(this).data('daterangepicker').setStartDate(moment().startOf('week').add(1, 'days'));
-        $(this).data('daterangepicker').setEndDate(moment().endOf('week').add(1, 'days'));
+        $(this).data('daterangepicker').setStartDate(moment().startOf('isoWeek'));
+        $(this).data('daterangepicker').setEndDate(moment().endOf('isoWeek'));
         $(this).data('daterangepicker').clickApply();
     })
 
