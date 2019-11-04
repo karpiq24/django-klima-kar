@@ -1,3 +1,9 @@
+function isInt(value) {
+    return !isNaN(value) && 
+            parseInt(Number(value), 10) == value && 
+            !isNaN(parseInt(value, 10));
+}
+
 function submitInvoiceForm(url, commission_pk) {
     var data = $('#invoice_form').serialize() + '&pk=' + commission_pk;
     $.ajax({
@@ -202,5 +208,83 @@ $(function () {
                 $(last_status).parent().addClass('active');
             }
         });
+    })
+
+    $('#assign_invoice').on('click', function() {
+        $('#invoice-select').show();
+        $('#id_sale_invoice').select2('open')
+    })
+
+    $("#id_sale_invoice").change(function() {
+        const invoice_pk = $(this).val();
+        if (isInt(invoice_pk)) {
+            $.ajax({
+                url: $('#invoice-select').data('assign-url'),
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                    'invoice': invoice_pk,
+                    'commission': $('#invoice-select').data('commission')
+                },
+                success: function(data) {
+                    if (data.status === 'success') {
+                        addAlert('Sukces!', data.status, data.message);
+                        $('#invoice-list').find('.li-none').remove();
+                        $('#invoice-list').append('<li><a href="' + data.sale_invoice.url + '">' + data.sale_invoice.name + '</a> <i class="fa fa-times unassign-invoice" data-name="' + data.sale_invoice.name + '" data-pk="' + invoice_pk + '" title="Odłącz fakturę"></i></li>');
+                    } else {
+                        addAlert('Uwaga!', data.status, data.message);
+                    }
+                },
+                error: function(data) {
+                    addAlert('Błąd!', 'error', data.responseJSON.message);
+                }
+            });
+            $("#id_sale_invoice").val('').change();
+        }
+        $('#invoice-select').hide();
+    })
+
+    $('#id_sale_invoice').on('select2:close', function (e) {
+        $('#invoice-select').hide();
+    })
+
+    $(document).on('click', '.unassign-invoice', function() {
+        let container = $(this).parent();
+        Swal.fire({
+            title: "Czy na pewno chcesz odłączyć fakturę od zlecenia?",
+            text: $(this).data('name'),
+            type: "question",
+            showCancelButton: true,
+            focusCancel: true,
+            focusConfirm: false,
+            confirmButtonText: 'Tak',
+            cancelButtonText: 'Nie'
+        }).then((change) => {
+            if (change.value) {
+                $.ajax({
+                    url: $('#invoice-select').data('unassign-url'),
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                        'invoice': $(this).data('pk'),
+                        'commission': $('#invoice-select').data('commission')
+                    },
+                    success: function(data) {
+                        if (data.status === 'success') {
+                            addAlert('Sukces!', data.status, data.message);
+                            container.remove();
+                            if ($('#invoice-list').children().length === 0) {
+                                $('#invoice-list').append('<li class="li-none">—</li>');
+                            }
+                        } else {
+                            addAlert('Uwaga!', data.status, data.message);
+                        }
+                    },
+                    error: function(data) {
+                        addAlert('Błąd!', 'error', data.responseJSON.message);
+                    }
+                });
+            }
+        })
     })
 })

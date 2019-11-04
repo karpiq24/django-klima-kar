@@ -132,6 +132,12 @@ span.required {
     box-shadow: 0 0 0 .2rem rgba(220, 53, 69, 0.5);
 }
 
+#invoice-select,
+#commission-select {
+    display: none;
+    margin-top: 1rem;
+}
+
 /*
     MISC
 */
@@ -328,7 +334,8 @@ small#gus-data:hover {
 */
 
 ul#previous-file-list > li > i.delete-previous-file,
-ul#file-list > li > i.delete-file {
+ul#file-list > li > i.delete-file,
+.unassign-invoice {
     color: red;
     cursor: pointer;
 }

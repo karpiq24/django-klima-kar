@@ -34,17 +34,27 @@
             <tr>
                 <td class="detail-label">Zlecenia</td>
                 <td>
-                    {% if object.commission_set.all.exists %}
-                        <ul class="simple-list">
+                    <ul class="simple-list" id="commission-list">
+                        {% if object.commission_set.all.exists %}
                             {% for commission in object.commission_set.all %}
                                 <li>
-                                    <a href="{% url 'commission:commission_detail' commission|slugify commission.pk %}">{{ commission }}</a>
+                                    <a href="{% url 'commission:commission_detail' commission|slugify commission.pk %}">{{ commission }}</a> <i class="fa fa-times unassign-invoice" data-name="{{ commission }}" data-pk="{{ commission.pk }}" title="Odłącz zlecenie"></i>
                                 </li>
                             {% endfor %}
-                        </ul>
-                    {% else %}
-                        —
-                    {% endif %}
+                        {% else %}
+                            <li class="li-none">—</li>
+                        {% endif %}
+                    </ul>
+                    <hr>
+                    <div class="detail-footer">
+                        <button class="btn btn-outline-success" id="assign_commission"><i class="fa fa-tasks"></i> Przypisz istniejące zlecenie</button>
+
+                        <div id="commission-select" data-invoice="{{ object.pk }}" data-assign-url="{% url 'commission:assign_invoice' %}" data-unassign-url="{% url 'commission:unassign_invoice' %}">
+                            <select name="commission" data-placeholder="Podaj numer lub nazwę zlecenia" class="form-control" id="id_commission" data-autocomplete-light-language="pl" data-autocomplete-light-url="{% url 'commission:commission_autocomplete' %}" data-autocomplete-light-function="select2">
+                                <option value="" selected>---------</option>
+                            </select>
+                        </div>
+                    </div>
                 </td>
             </tr>
             <tr>

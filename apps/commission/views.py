@@ -35,6 +35,7 @@ from apps.commission.forms import VehicleModelForm, ComponentModelForm, Commissi
     CommissionEmailForm, CommissionFastModelForm
 from apps.commission.functions import process_uploads, check_uploaded_files, get_temporary_files
 from apps.invoicing.dictionaries import INVOICE_TYPES
+from apps.invoicing.models import SaleInvoice
 
 
 class VehicleTableView(ExportMixin, FilteredSingleTableView):
@@ -383,6 +384,18 @@ class FastCommissionCreateView(View):
             'desc': slugify(str(commission))})
 
 
+class CommissionAutocomplete(CustomSelect2QuerySetView):
+    def get_queryset(self):
+        commissions = Commission.objects.all().order_by('-pk')
+        qs = commissions
+        if self.q:
+            try:
+                qs = commissions.filter(pk=self.q)
+            except ValueError:
+                qs = commissions.filter(vc_name__icontains=self.q)
+        return qs
+
+
 class CommissionPDFView(View):
     print_version = False
 
@@ -553,6 +566,69 @@ class PrepareInvoiceUrl(View):
             '?value_type={}'.format(value_type),
             '&desc={}'.format(desc) if desc else '')
         return JsonResponse({'url': url})
+
+
+class AssignInoiceView(View):
+    def post(self, request, *args, **kwargs):
+        commission = request.POST.get('commission')
+        invoice = request.POST.get('invoice')
+        try:
+            commission = Commission.objects.get(pk=commission)
+        except Commission.DoesNotExist:
+            return JsonResponse({'message': 'Takie zlecenie nie istnieje.'}, status=400)
+        try:
+            invoice = SaleInvoice.objects.get(pk=invoice)
+        except SaleInvoice.DoesNotExist:
+            return JsonResponse({'message': 'Taka faktura nie istnieje.'}, status=400)
+        if invoice in commission.sale_invoices.all():
+            return JsonResponse({
+                'status': 'warning',
+                'message': 'Ta faktura była już wcześniej przypisana do tego zlecenia.'
+            }, status=200)
+        commission.sale_invoices.add(invoice)
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Faktura została przypisana do zlecenia.',
+            'commission': {
+                'name': str(commission),
+                'url': reverse("commission:commission_detail", kwargs={
+                    'pk': commission.pk,
+                    'desc': slugify(str(commission))
+                })
+            },
+            'sale_invoice': {
+                'name': str(invoice),
+                'url': reverse("invoicing:sale_invoice_detail", kwargs={
+                    'pk': invoice.pk,
+                    'kind': slugify(invoice.get_invoice_type_display()),
+                    'number': slugify(invoice.number)
+                })
+            }
+            }, status=200)
+
+
+class UnassignInoiceView(View):
+    def post(self, request, *args, **kwargs):
+        commission = request.POST.get('commission')
+        invoice = request.POST.get('invoice')
+        try:
+            commission = Commission.objects.get(pk=commission)
+        except Commission.DoesNotExist:
+            return JsonResponse({'message': 'Takie zlecenie nie istnieje.'}, status=400)
+        try:
+            invoice = SaleInvoice.objects.get(pk=invoice)
+        except SaleInvoice.DoesNotExist:
+            return JsonResponse({'message': 'Taka faktura nie istnieje.'}, status=400)
+        if invoice not in commission.sale_invoices.all():
+            return JsonResponse({
+                'status': 'warning',
+                'message': 'Ta faktura nie jest przypisana do wskazanego zlecenia.'
+            }, status=200)
+        commission.sale_invoices.remove(invoice)
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Faktura odłączona od zlecenia.',
+            }, status=200)
 
 
 class DecodeAztecCode(View):

@@ -50,7 +50,7 @@ class SaleInvoice(models.Model):
     created_date = models.DateTimeField(auto_now_add=True, verbose_name=('Data dodania'))
 
     def __str__(self):
-        return self.number
+        return '{} {}'.format(self.get_invoice_type_display(), self.number)
 
     @property
     def total_value_tax(self):

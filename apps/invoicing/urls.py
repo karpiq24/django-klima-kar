@@ -16,6 +16,7 @@ urlpatterns = [
     path('faktury/sprzedaz-czynnikow', views.ExportRefrigerantWeights.as_view(), name='export_refrigerant_weights'),
     path('sale_invoice_email', views.SendEmailView.as_view(), name='sale_invoice_email'),
     path('sale_invoice_set_payed/<int:pk>', views.SaleInvoiceSetPayed.as_view(), name='sale_invoice_set_payed'),
+    path('sale_invoice_autocomplete', views.SaleInvoiceAutocomplete.as_view(), name='sale_invoice_autocomplete'),
 
     path('uslugi', views.ServiceTemplateTableView.as_view(), name='service_templates'),
     path('uslugi/<str:name>,<int:pk>', views.ServiceTemplateDetailView.as_view(), name='service_template_detail'),

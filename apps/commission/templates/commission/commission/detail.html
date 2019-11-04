@@ -64,17 +64,28 @@
             <tr>
                 <td class="detail-label">Faktury sprzedażowe</td>
                 <td>
-                    {% if object.sale_invoices.all.exists %}
-                        <ul class="simple-list">
+                    <ul class="simple-list" id="invoice-list">
+                        {% if object.sale_invoices.all.exists %}
                             {% for invoice in object.sale_invoices.all %}
                                 <li>
-                                    <a href="{% url 'invoicing:sale_invoice_detail' invoice.get_invoice_type_display|slugify invoice.number|slugify invoice.pk %}">{{ invoice }}</a>
+                                    <a href="{% url 'invoicing:sale_invoice_detail' invoice.get_invoice_type_display|slugify invoice.number|slugify invoice.pk %}">{{ invoice }}</a> <i class="fa fa-times unassign-invoice" data-name="{{ invoice }}" data-pk="{{ invoice.pk }}" title="Odłącz fakturę"></i>
                                 </li>
                             {% endfor %}
-                        </ul>
-                    {% else %}
-                        —
-                    {% endif %}
+                        {% else %}
+                            <li class="li-none">—</li>
+                        {% endif %}
+                    </ul>
+                    <hr>
+                    <div class="detail-footer">
+                        <button type="button" id="add_invoice" class="btn btn-outline-success" data-toggle="modal" data-target="#invoice_modal"><i class="far fa-plus-square"></i> Dodaj nową fakturę</button>
+                        <button class="btn btn-outline-success" id="assign_invoice"><i class="fa fa-book"></i> Przypisz istniejącą fakturę</button>
+
+                        <div id="invoice-select" data-commission="{{ object.pk }}" data-assign-url="{% url 'commission:assign_invoice' %}" data-unassign-url="{% url 'commission:unassign_invoice' %}">
+                            <select name="sale_invoice" data-placeholder="Podaj numer faktury" class="form-control" id="id_sale_invoice" data-autocomplete-light-language="pl" data-autocomplete-light-url="{% url 'invoicing:sale_invoice_autocomplete' %}" data-autocomplete-light-function="select2">
+                                <option value="" selected>---------</option>
+                            </select>
+                        </div>
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -134,7 +145,6 @@
                     <button id="print-btn" class="btn btn-outline-primary btn-lg" data-url="{% url 'commission:commission_print_pdf' object|slugify object.pk %}"><i class="fas fa-print"></i> Drukuj</button>
                     <a class="btn btn-outline-primary btn-lg" href="{% url 'commission:commission_pdf' object|slugify object.pk %}"><i class="far fa-file-pdf"></i> PDF</a>
                     <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#email_modal"><i class="far fa-envelope"></i> E-mail</button>
-                    <button type="button" id="add_invoice" class="btn btn-outline-success btn-lg" data-toggle="modal" data-target="#invoice_modal"><i class="fa fa-book"></i> Dodaj fakturę</button>
                     <a class="btn btn-outline-warning btn-lg" href="{% url 'commission:commission_update' object|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
                     <a class="btn btn-outline-dark btn-lg" href="{{ back_url }}">Powrót</a>
                 </div>
@@ -164,7 +174,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Anuluj</button>
-                    <button type="submit" class="btn btn-outline-success"><i class="fa fa-book"></i> Dodaj</button>
+                    <button type="submit" class="btn btn-outline-success"><i class="far fa-plus-square"></i> Dodaj</button>
                 </div>
             </form>
         </div>

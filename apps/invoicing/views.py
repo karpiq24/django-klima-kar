@@ -242,6 +242,17 @@ class CorrectiveSaleInvoiceUpdateView(SaleInvoiceUpdateView):
         return super().dispatch(*args, **kwargs)
 
 
+class SaleInvoiceAutocomplete(CustomSelect2QuerySetView):
+    def get_queryset(self):
+        invoices = SaleInvoice.objects.all().order_by('-number_year', '-number_value')
+        qs = invoices
+        if self.q:
+            qs = invoices.filter(number__iexact=self.q)
+            if qs.count() < 1:
+                qs = invoices.filter(number__icontains=self.q)
+        return qs
+
+
 class SaleInvoicePDFView(View):
     print_version = False
 

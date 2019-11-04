@@ -40,4 +40,7 @@ urlpatterns = [
     path('delete_temp_file', views.DeleteTempFile.as_view(), name='delete_temp_file'),
     path('delete_commission_file', views.DeleteCommissionFile.as_view(), name='delete_commission_file'),
     path('check_upload', views.CheckUploadFinishedView.as_view(), name='check_upload'),
+    path('assign_invoice', views.AssignInoiceView.as_view(), name='assign_invoice'),
+    path('unassign_invoice', views.UnassignInoiceView.as_view(), name='unassign_invoice'),
+    path('commission_autocomplete', views.CommissionAutocomplete.as_view(), name='commission_autocomplete'),
 ]
