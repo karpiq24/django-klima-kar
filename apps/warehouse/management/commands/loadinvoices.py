@@ -25,4 +25,4 @@ class Command(BaseCommand):
                 self.report_admins(command, traceback.format_exc())
 
     def report_admins(self, command, message):
-        mail_admins('{} invoice download failed!', command, message)
+        mail_admins('{} invoice download failed!'.format(command), message)
