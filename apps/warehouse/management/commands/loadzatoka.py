@@ -32,7 +32,7 @@ class Command(BaseCommand):
                 'User-Agent': ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)'
                                ' Chrome/75.0.3770.80 Safari/537.36')
             }
-            ajax_headers = {'X-Requested-With': 'XMLHttpRequest'} 
+            ajax_headers = {'X-Requested-With': 'XMLHttpRequest'}
             r = s.get(url, headers=headers)
             if r.status_code != 200:
                 message = "Initial get invalid.\n{}".format(r.content)
