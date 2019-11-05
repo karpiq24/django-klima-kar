@@ -22,8 +22,8 @@
 # m h  dom mon dow   command
 
 30 * * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py cleanfiles
-40 7-22/2 * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py loadinvoices >> /home/bartosz/klima-kar/logs/loadinvoices.log 2>&1
-50 07,16 * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py dropbox_backup >> /home/bartosz/klima-kar/logs/dropbox_backup.log 2>&1
+00 8-20 * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py loadinvoices >> /home/bartosz/klima-kar/logs/loadinvoices.log 2>&1
+05 08,17 * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py dropbox_backup >> /home/bartosz/klima-kar/logs/dropbox_backup.log 2>&1
 00 08 * * 1 /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py send_report week $(date -d "-1 days" +\%Y-\%m-\%d) >> /home/bartosz/klima-kar/logs/email_report.log 2>&1
 00 08 01 * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py send_report month $(date -d "-1 days" +\%Y-\%m-\%d) >> /home/bartosz/klima-kar/logs/email_report.log 2>&1
-00 23 * * * /home/bartosz/klima-kar/suspend_until.sh 07:30
+00 23 * * * /home/bartosz/klima-kar/suspend_until.sh 07:45
