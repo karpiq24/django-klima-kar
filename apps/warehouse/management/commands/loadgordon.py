@@ -13,7 +13,7 @@ from apps.warehouse.functions import check_ware_price_changes
 
 
 class Command(BaseCommand):
-    help = 'Loads invoices from DEKO'
+    help = 'Loads invoices from GORDON'
 
     def add_arguments(self, parser):
         parser.add_argument('date_from', nargs='?',

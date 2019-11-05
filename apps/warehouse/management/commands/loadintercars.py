@@ -15,12 +15,16 @@ class Command(BaseCommand):
     help = 'Loads invoices from Inter Cars API'
 
     def add_arguments(self, parser):
-        parser.add_argument('date')
+        parser.add_argument('date_from', nargs='?',
+                            default=(datetime.date.today() - datetime.timedelta(7)).strftime('%Y-%m-%d'))
+        parser.add_argument('date_to', nargs='?',
+                            default=(datetime.date.today() + datetime.timedelta(1)).strftime('%Y-%m-%d'))
 
     def handle(self, *args, **options):
         try:
-            start_date = dateutil.parser.parse(options['date'])
-            print("Loading invoices from date: {}".format(options['date']))
+            date_from = dateutil.parser.parse(options['date_from'])
+            date_to = dateutil.parser.parse(options['date_to'])
+            print("Loading invoices from date: {} to: {}".format(options['date_from'], options['date_to']))
         except ValueError:
             print("Invalid date format.\n")
             return
@@ -29,15 +33,15 @@ class Command(BaseCommand):
             print("Inter Cars client number is not specified.\n")
             return
         if not IC_TOKEN:
-            print("Inter Cars client number is not specified.\n")
+            print("Inter Cars client token is not specified.\n")
             return
 
-        today = datetime.datetime.today()
-        current_date = start_date
+        current_date = date_from
         new_invoices = 0
         new_wares = 0
 
-        for end_date in month_year_iter(start_date, today):
+        for end_date in month_year_iter(date_from, date_to):
+            print(current_date, end_date)
             new_objects = self.get_invoices(current_date, end_date)
             new_invoices += new_objects[0]
             new_wares += new_objects[1]
