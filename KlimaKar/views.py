@@ -1,4 +1,3 @@
-import six
 import unicodedata
 
 from django.views.generic import TemplateView, View
@@ -290,7 +289,7 @@ class CustomSelect2QuerySetView(autocomplete.Select2QuerySetView):
 
         return JsonResponse({
             'id': result.pk,
-            'text': six.text_type(result),
+            'text': str(result),
         })
 
 
