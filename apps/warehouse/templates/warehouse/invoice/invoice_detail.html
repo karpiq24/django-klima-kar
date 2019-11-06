@@ -33,6 +33,9 @@
                 <div class="card-body">
                     <h5 class="card-title">Akcje</h5>
                     <a class="btn btn-outline-warning btn-lg" href="{% url 'warehouse:invoice_update' object.supplier.name|slugify object.number|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
+                    {% if request.user.is_superuser %}
+                        <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:warehouse_invoice_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
+                    {% endif %}
                     <a class="btn btn-outline-dark btn-lg" href="{{ back_url }}">Powrót</a>
                 </div>
             </div>
