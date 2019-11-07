@@ -58,9 +58,11 @@ $(function () {
         });
     });
 
-    $('#ptu-date-range').data('daterangepicker').setStartDate(moment().startOf('isoWeek'));
-    $('#ptu-date-range').data('daterangepicker').setEndDate(moment().endOf('isoWeek'));
-    $('#ptu-date-range').data('daterangepicker').clickApply();
+    if ($('#ptu-date-range').length > 0) {
+        $('#ptu-date-range').data('daterangepicker').setStartDate(moment().startOf('isoWeek'));
+        $('#ptu-date-range').data('daterangepicker').setEndDate(moment().endOf('isoWeek'));
+        $('#ptu-date-range').data('daterangepicker').clickApply();
+    }
 
     $('#id_ptu_date').on('apply.daterangepicker', function(ev, picker) {
         $.ajax({
@@ -73,7 +75,9 @@ $(function () {
             }
         });
     });
-    $('#id_ptu_date').data('daterangepicker').clickApply();
+    if ($('#id_ptu_date').length > 0) {
+        $('#id_ptu_date').data('daterangepicker').clickApply();
+    }
 
     $('.metrics-date-range').on('apply.daterangepicker', function(ev, picker) {
         var url = $(this).attr('data-url');

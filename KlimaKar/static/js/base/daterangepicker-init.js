@@ -75,9 +75,12 @@ var date_input_settings = {
     $('.date-inline').on('apply.daterangepicker', function(ev, picker) {
       $(this).val(picker.startDate.format('DD.MM.YYYY'));
     });
-    $('.date-inline').data('daterangepicker').hide = function () {};
-    $('.date-inline').data('daterangepicker').setStartDate(moment());
-    $('.date-inline').data('daterangepicker').setEndDate(moment());
-    $('.date-inline').data('daterangepicker').clickApply();
-    $('.date-inline').data('daterangepicker').show();
+    
+    if ($('.date-inline').length > 0) {
+      $('.date-inline').data('daterangepicker').hide = function () {};
+      $('.date-inline').data('daterangepicker').setStartDate(moment());
+      $('.date-inline').data('daterangepicker').setEndDate(moment());
+      $('.date-inline').data('daterangepicker').clickApply();
+      $('.date-inline').data('daterangepicker').show();
+    }
   });
