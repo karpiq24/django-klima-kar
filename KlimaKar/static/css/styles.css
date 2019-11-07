@@ -91,6 +91,40 @@ span.required {
     opacity: 1;
 }
 
+.date-inline {
+    display: none;
+}
+.date-inline-container .daterangepicker::before,
+.date-inline-container .daterangepicker::after {
+    display: none;
+}
+
+.date-inline-container .daterangepicker {
+    position: initial !important;
+    top: auto !important;
+    left: auto !important;
+    float: left;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 1010px;
+    min-width: 240px;
+}
+
+.date-inline-container .daterangepicker .drp-calendar,
+.date-inline-container .daterangepicker .drp-calendar .calendar-table {
+    width: 100%;
+    max-width: 1000px;
+    min-width: 230px;
+    z-index: 0;
+}
+
+#id_ptu_value {
+    width: 100%;
+    max-width: 1000px;
+    min-width: 240px;
+}
+
 .simple-list {
     margin: 0;
     padding: 0;

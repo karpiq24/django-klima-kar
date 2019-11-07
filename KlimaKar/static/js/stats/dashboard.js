@@ -36,6 +36,45 @@ $(function () {
     $('#ware-change-date-range').data('daterangepicker').setEndDate(moment());
     $('#ware-change-date-range').data('daterangepicker').clickApply();
 
+    $('#ptu-date-range').on('apply.daterangepicker', function(ev, picker) {
+        $.ajax({
+            url: $(this).attr('data-url'),
+            data: {
+                date_from: picker.startDate.format('YYYY-MM-DD'),
+                date_to: picker.endDate.format('YYYY-MM-DD')
+            },
+            success: function (result) {
+                $('#ptu-list').html('');
+                result.ptu.forEach(function (ptu) {
+                    var row_class = ((ptu.warning) ? 'table-warning' : '');
+                    var result_row = '<tr class="' + row_class + '">\
+                        <td>' + ptu.date + '</td>\
+                        <td>' + ptu.value + '</td>\
+                        </tr>'
+                    $('#ptu-list').append(result_row);
+                });
+                $('#ptu-sum').text(result.sum)
+            }
+        });
+    });
+
+    $('#ptu-date-range').data('daterangepicker').setStartDate(moment().startOf('isoWeek'));
+    $('#ptu-date-range').data('daterangepicker').setEndDate(moment().endOf('isoWeek'));
+    $('#ptu-date-range').data('daterangepicker').clickApply();
+
+    $('#id_ptu_date').on('apply.daterangepicker', function(ev, picker) {
+        $.ajax({
+            url: $(this).attr('data-url'),
+            data: {
+                date: picker.startDate.format('YYYY-MM-DD'),
+            },
+            success: function (result) {
+                $('#id_ptu_value').val(result.value);
+            }
+        });
+    });
+    $('#id_ptu_date').data('daterangepicker').clickApply();
+
     $('.metrics-date-range').on('apply.daterangepicker', function(ev, picker) {
         var url = $(this).attr('data-url');
         $.ajax({
@@ -110,4 +149,27 @@ $(function () {
             }
           });
     });
+
+    $('#ptu-save').on('click', function() {
+        $.ajax({
+            url: $(this).data('url'),
+            type: 'POST',
+            data: {
+                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                'date': $('#id_ptu_date').val(),
+                'value': $('#id_ptu_value').val()
+            },
+            success: function(data) {
+                if (data.status === 'success') {
+                    addAlert('Sukces!', data.status, data.message);
+                } else {
+                    addAlert('Uwaga!', data.status, data.message);
+                }
+                $('#ptu-date-range').data('daterangepicker').clickApply();
+            },
+            error: function(data) {
+                addAlert('Błąd!', 'error', data.responseJSON.message);
+            }
+        });
+    })
 });

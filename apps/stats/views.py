@@ -1,5 +1,4 @@
-import datetime
-
+from datetime import date, timedelta, datetime
 from dateutil.relativedelta import relativedelta
 from dateutil import parser as date_parser
 
@@ -15,6 +14,7 @@ from KlimaKar.templatetags.slugify import slugify
 from apps.warehouse.models import Invoice, Ware, WarePriceChange, Supplier
 from apps.invoicing.models import SaleInvoice, Contractor, RefrigerantWeights
 from apps.commission.models import Commission
+from apps.stats.models import ReceiptPTU
 from apps.stats.dictionaries import MONTHS, COLORS, DAYS
 
 
@@ -63,7 +63,7 @@ class SupplierPurchaseHistory(GroupAccessControlMixin, ChartDataMixin, View):
     def get(self, *args, **kwargs):
         date_option = self.request.GET.get('date_select', 'week')
         metric = self.request.GET.get('custom_select', 'Sum')
-        now = datetime.datetime.today()
+        now = datetime.today()
         if date_option == 'week':
             date = now - relativedelta(days=6)
         elif date_option == 'month':
@@ -117,7 +117,7 @@ class WarePurchaseHistory(ChartDataMixin, View):
     def get(self, *args, **kwargs):
         date_option = self.request.GET.get('date_select', 'week')
         metric = self.request.GET.get('custom_select', 'Count')
-        now = datetime.datetime.today()
+        now = datetime.today()
         if date_option == 'week':
             date = now - relativedelta(days=6)
         elif date_option == 'month':
@@ -159,7 +159,7 @@ class PurchaseInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
         supplier = kwargs.get('supplier')
         date_option = self.request.GET.get('date_select', 'week' if not supplier else 'year')
         metric = self.request.GET.get('custom_select', 'Sum')
-        now = datetime.datetime.today()
+        now = datetime.today()
         if date_option == 'week':
             date = now - relativedelta(days=6)
         elif date_option == 'month':
@@ -293,7 +293,7 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
     def get(self, *args, **kwargs):
         date_option = self.request.GET.get('date_select', 'week')
         metric = self.request.GET.get('custom_select', 'SumNetto')
-        now = datetime.datetime.today()
+        now = datetime.today()
         if date_option == 'week':
             date = now - relativedelta(days=6)
         elif date_option == 'month':
@@ -444,7 +444,7 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
     def get(self, *args, **kwargs):
         date_option = self.request.GET.get('date_select', 'week')
         refrigerant = self.request.GET.get('custom_select', 'r134a')
-        now = datetime.datetime.today()
+        now = datetime.today()
         if date_option == 'week':
             date = now - relativedelta(days=6)
         elif date_option == 'month':
@@ -544,7 +544,7 @@ class CommissionHistory(GroupAccessControlMixin, ChartDataMixin, View):
     def get(self, *args, **kwargs):
         date_option = self.request.GET.get('date_select', 'week')
         metric = self.request.GET.get('custom_select', 'SumNetto')
-        now = datetime.datetime.today()
+        now = datetime.today()
         if date_option == 'week':
             date = now - relativedelta(days=6)
         elif date_option == 'month':
@@ -746,7 +746,7 @@ class DuePayments(GroupAccessControlMixin, View):
                 'number': invoice.number,
                 'brutto_price': "{0:.2f} zł".format(invoice.total_value_brutto).replace('.', ','),
                 'payment_date': _date(invoice.payment_date, "d E Y"),
-                'is_exceeded': invoice.payment_date < datetime.date.today(),
+                'is_exceeded': invoice.payment_date < date.today(),
                 'contractor': {
                     'url': reverse('invoicing:contractor_detail', kwargs={
                         'pk': invoice.contractor.pk,
@@ -842,3 +842,67 @@ class Metrics(View):
                     commissions_sum = commissions.aggregate(Sum('value'))['value__sum']
                 response['commission_sum'] = "{0:.2f} zł".format(commissions_sum).replace('.', ',')
         return JsonResponse(response)
+
+
+class PTUList(GroupAccessControlMixin, View):
+    allowed_groups = ['boss']
+
+    def get(self, *args, **kwargs):
+        try:
+            date_from = date_parser.parse(self.request.GET.get('date_from')).date()
+            date_to = date_parser.parse(self.request.GET.get('date_to')).date()
+        except TypeError:
+            return JsonResponse({'status': 'error', 'message': 'Niepoprawny zakres dat.'}, status=400)
+        delta = date_to - date_from
+        response = {'ptu': []}
+        ptu_sum = 0
+        for i in range(delta.days + 1):
+            date = date_from + timedelta(days=i)
+            try:
+                ptu = ReceiptPTU.objects.get(date=date)
+                ptu_sum += ptu.value
+                response['ptu'].append({
+                    'date': _date(ptu.date, "d E Y (l)"),
+                    'value': "{0:.2f} zł".format(ptu.value).replace('.', ','),
+                    'warning': ptu.value == 0
+                })
+            except ReceiptPTU.DoesNotExist:
+                response['ptu'].append({
+                    'date': _date(date, "d E Y (l)"),
+                    'value': '0,00 zł',
+                    'warning': True
+                })
+        response['sum'] = "{0:.2f} zł".format(ptu_sum).replace('.', ','),
+        return JsonResponse(response)
+
+
+class GetPTUValue(GroupAccessControlMixin, View):
+    allowed_groups = ['boss']
+
+    def get(self, *args, **kwargs):
+        try:
+            date = date_parser.parse(self.request.GET.get('date')).date()
+        except TypeError:
+            return JsonResponse({'status': 'error', 'message': 'Niepoprawna data.'}, status=400)
+        try:
+            ptu = ReceiptPTU.objects.get(date=date)
+            return JsonResponse({'value': ptu.value})
+        except ReceiptPTU.DoesNotExist:
+            return JsonResponse({'value': 0})
+
+
+class SavePTU(GroupAccessControlMixin, View):
+    allowed_groups = ['boss']
+
+    def post(self, *args, **kwargs):
+        date = date_parser.parse(self.request.POST.get('date'), dayfirst=True).date()
+        value = self.request.POST.get('value')
+        if not date or not value:
+            return JsonResponse({'status': 'error', 'message': 'Niepoprawne dane.'}, status=400)
+        try:
+            ptu = ReceiptPTU.objects.get(date=date)
+        except ReceiptPTU.DoesNotExist:
+            ptu = ReceiptPTU(date=date)
+        ptu.value = value
+        ptu.save()
+        return JsonResponse({'status': 'success', 'message': 'Poprawnie zapisano PTU.'})

@@ -17,7 +17,7 @@ from apps.commission import models as commission
 
 class Command(BaseCommand):
     help = 'Loads backup from dropbox'
-    apps_to_load = ['warehouse', 'invoicing', 'commission']
+    apps_to_load = ['warehouse', 'invoicing', 'commission', 'stats']
 
     def handle(self, *args, **options):
         print("Are you sure you want to load backup?\nThis process will replace all data (Y/n)")
