@@ -47,7 +47,7 @@ $(function () {
                 $('#ptu-list').html('');
                 result.ptu.forEach(function (ptu) {
                     var row_class = ((ptu.warning) ? 'table-warning' : '');
-                    var result_row = '<tr class="' + row_class + '">\
+                    var result_row = '<tr class="ptu-date-row ' + row_class + '" data-date="' + ptu.date_value + '">\
                         <td>' + ptu.date + '</td>\
                         <td>' + ptu.value + '</td>\
                         </tr>'
@@ -78,6 +78,12 @@ $(function () {
     if ($('#id_ptu_date').length > 0) {
         $('#id_ptu_date').data('daterangepicker').clickApply();
     }
+
+    $('#id_ptu_value').on('keyup', function (e) {
+        if (e.keyCode === 13) {
+            $('#ptu-save').click();
+        }
+    });
 
     $('.metrics-date-range').on('apply.daterangepicker', function(ev, picker) {
         var url = $(this).attr('data-url');
@@ -175,5 +181,12 @@ $(function () {
                 addAlert('Błąd!', 'error', data.responseJSON.message);
             }
         });
+    })
+
+    $(document).on('click', '.ptu-date-row', function () {
+        $('#id_ptu_date').data('daterangepicker').setStartDate($(this).data('date'));
+        $('#id_ptu_date').data('daterangepicker').setEndDate($(this).data('date'));
+        $('#id_ptu_date').data('daterangepicker').clickApply();
+        $('#id_ptu_date').data('daterangepicker').updateView();
     })
 });

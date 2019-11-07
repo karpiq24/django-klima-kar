@@ -863,12 +863,14 @@ class PTUList(GroupAccessControlMixin, View):
                 ptu_sum += ptu.value
                 response['ptu'].append({
                     'date': _date(ptu.date, "d E Y (l)"),
+                    'date_value': _date(ptu.date, "d.m.Y"),
                     'value': "{0:.2f} zł".format(ptu.value).replace('.', ','),
-                    'warning': ptu.value == 0
+                    'warning': False
                 })
             except ReceiptPTU.DoesNotExist:
                 response['ptu'].append({
                     'date': _date(date, "d E Y (l)"),
+                    'date_value': _date(date, "d.m.Y"),
                     'value': '0,00 zł',
                     'warning': True
                 })

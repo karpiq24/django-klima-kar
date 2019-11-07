@@ -125,6 +125,10 @@ span.required {
     min-width: 240px;
 }
 
+.ptu-date-row {
+    cursor: pointer;
+}
+
 .simple-list {
     margin: 0;
     padding: 0;
