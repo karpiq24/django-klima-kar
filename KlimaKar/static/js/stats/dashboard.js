@@ -72,6 +72,8 @@ $(function () {
             },
             success: function (result) {
                 $('#id_ptu_value').val(result.value);
+                $('#id_ptu_value').focus();
+                $('#id_ptu_value').select();
             }
         });
     });
