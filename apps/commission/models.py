@@ -6,7 +6,7 @@ from django.db import models
 from django.template.loader import get_template
 from django.dispatch import receiver
 
-from KlimaKar.models import MyCloudHome
+from apps.settings.models import MyCloudHome
 from apps.invoicing.models import Contractor, SaleInvoice
 from apps.warehouse.models import Ware
 

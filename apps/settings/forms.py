@@ -1,6 +1,6 @@
 from django import forms
 
-from apps.settings.models import SiteSettings
+from apps.settings.models import SiteSettings, MyCloudHome
 
 
 class EmailSettingsModelForm(forms.ModelForm):
@@ -37,4 +37,23 @@ class CommissionSettingsModelForm(forms.ModelForm):
             'COMMISSION_EMAIL_TITLE': 'Zawiera dostęp do kontekstu zlecenia np. {{ commission.number }}',
             'COMMISSION_EMAIL_BODY': 'Zawiera dostęp do kontekstu zlecenia np. {{ commission.contractor }}',
             'COMMISSION_SMS_BODY': 'Zawiera dostęp do kontekstu zlecenia np. {{ commission.vc_name }}',
+        }
+
+
+class MyCloudHomeModelForm(forms.ModelForm):
+
+    class Meta:
+        model = MyCloudHome
+        fields = '__all__'
+        widgets = {
+            'WD_CLIENT_SECRET': forms.PasswordInput(render_value=True),
+            'REFRESH_TOKEN': forms.PasswordInput(render_value=True, attrs={'readonly': 'readonly'}),
+            'ACCESS_TOKEN': forms.PasswordInput(render_value=True, attrs={'readonly': 'readonly'}),
+            'USER_ID': forms.TextInput(attrs={'readonly': 'readonly'}),
+            'DEVICE_ID': forms.TextInput(attrs={'readonly': 'readonly'}),
+            'DEVICE_NAME': forms.TextInput(attrs={'readonly': 'readonly'}),
+            'DEVICE_INTERNAL_URL': forms.TextInput(attrs={'readonly': 'readonly'}),
+            'DEVICE_EXTERNAL_URL': forms.TextInput(attrs={'readonly': 'readonly'}),
+            'APP_DIR_ID': forms.TextInput(attrs={'readonly': 'readonly'}),
+            'COMMISSION_DIR_ID': forms.TextInput(attrs={'readonly': 'readonly'}),
         }

@@ -11,6 +11,9 @@
                 <a class="nav-link" id="nav-settings-email" href="{% url 'settings:email' %}" role="tab">Serwer E-mail</a>
                 <a class="nav-link" id="nav-settings-invoicing" href="{% url 'settings:invoicing' %}" role="tab">Fakturowanie</a>
                 <a class="nav-link" id="nav-settings-commission" href="{% url 'settings:commission' %}" role="tab">Zlecenia</a>
+                {% if request.user.is_superuser %}
+                    <a class="nav-link" id="nav-settings-mycloud" href="{% url 'settings:mycloud' %}" role="tab">WD MyClud Home</a>
+                {% endif %}
             </div>
         </div>
         <div class="col-xs-12 col-sm-9 col-md-10">

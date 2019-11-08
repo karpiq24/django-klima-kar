@@ -3,7 +3,7 @@ import json
 import shutil
 
 from KlimaKar import settings
-from KlimaKar.models import MyCloudHome
+from apps.settings.models import MyCloudHome
 from apps.commission.models import Commission, CommissionFile
 
 
