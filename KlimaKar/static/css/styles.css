@@ -8,6 +8,46 @@ body {
 .container-fluid {
     margin-top: 49px;
 }
+
+@media screen and (max-width: 1240px) {
+    .pretty-select.btn-group {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+    }
+    .pretty-select.btn-group > .btn {
+        width: 100%;
+    }
+    .pretty-select.btn-group > .pretty-select.btn-group:not(:first-child),
+    .pretty-select.btn-group > .btn:not(:first-child) {
+        margin-top: -1px;
+    }
+    .pretty-select.btn-group > .btn:not(:first-child) {
+        margin-left: 0;
+    }
+    .pretty-select.btn-group > .btn:not(:last-child):not(.dropdown-toggle) {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: .25rem;
+        border-top-right-radius: .25rem;
+    }
+    .pretty-select.btn-group > .btn:not(:first-child):not(:last-child) {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+    .pretty-select.btn-group > .btn:not(:first-child) {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        border-bottom-left-radius: .25rem;
+        border-bottom-right-radius: .25rem;
+    }
+    .pretty-select.form-control {
+        height: auto;
+    }
+}
+
 @media screen and (max-width: 992px) {
     .container-fluid {
         padding: 4px;

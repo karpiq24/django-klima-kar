@@ -93,10 +93,12 @@ class Commission(models.Model):
     READY = 'RE'
     DONE = 'DO'
     CANCELLED = 'CA'
+    ON_HOLD = 'HO'
     STATUS_CHOICES = [
         (OPEN, 'Otwarte'),
         (READY, 'Gotowe'),
         (DONE, 'Zamknięte'),
+        (ON_HOLD, 'Wstrzymane'),
         (CANCELLED, 'Anulowane')
     ]
     VEHICLE = 'VH'
