@@ -28,7 +28,8 @@ class InvoiceModelForm(forms.ModelForm):
     supplier = forms.ModelChoiceField(
         label="Dostawca",
         queryset=Supplier.objects.all(),
-        widget=autocomplete.ModelSelect2(url='warehouse:supplier_autocomplete_create')
+        widget=autocomplete.ModelSelect2(
+            url='warehouse:supplier_autocomplete_create')
     )
 
     def __init__(self, *args, **kwargs):
@@ -59,7 +60,8 @@ class SupplierModelForm(forms.ModelForm):
 class InvoiceItemModelForm(forms.ModelForm):
     ware = forms.ModelChoiceField(
         queryset=Ware.objects.all(),
-        widget=autocomplete.ModelSelect2(url='warehouse:ware_autocomplete_create')
+        widget=autocomplete.ModelSelect2(
+            url='warehouse:ware_autocomplete_create')
     )
 
     def __init__(self, *args, **kwargs):

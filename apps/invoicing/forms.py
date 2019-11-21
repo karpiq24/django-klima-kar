@@ -20,7 +20,8 @@ class SaleInvoiceModelForm(forms.ModelForm):
     contractor = forms.ModelChoiceField(
         label="Kontrahent",
         queryset=Contractor.objects.all(),
-        widget=autocomplete.ModelSelect2(url='invoicing:contractor_autocomplete_create')
+        widget=autocomplete.ModelSelect2(
+            url='invoicing:contractor_autocomplete_create')
     )
 
     def __init__(self, *args, **kwargs):
@@ -145,12 +146,18 @@ class ContractorModelForm(forms.ModelForm):
 
 class SaleInvoiceItemModelForm(forms.ModelForm):
     ware = forms.ModelChoiceField(
-        label="Towar", queryset=Ware.objects.all(), required=False,
-        widget=autocomplete.ModelSelect2(url='warehouse:ware_autocomplete')
+        label="Towar",
+        queryset=Ware.objects.all(),
+        required=False,
+        widget=autocomplete.ModelSelect2(
+            url='warehouse:ware_autocomplete')
     )
     service = forms.ModelChoiceField(
-        label="Usługa", queryset=ServiceTemplate.objects.all(), required=False,
-        widget=autocomplete.ModelSelect2(url='invoicing:service_template_autocomplete')
+        label="Usługa",
+        queryset=ServiceTemplate.objects.all(),
+        required=False,
+        widget=autocomplete.ModelSelect2(
+            url='invoicing:service_template_autocomplete')
     )
 
     def __init__(self, *args, **kwargs):
@@ -223,8 +230,11 @@ class RefrigerantWeightsInline(InlineFormSet):
 
 class ServiceTemplateModelForm(forms.ModelForm):
     ware = forms.ModelChoiceField(
-        label="Towar", queryset=Ware.objects.all(), required=False,
-        widget=autocomplete.ModelSelect2(url='warehouse:ware_autocomplete')
+        label="Towar",
+        queryset=Ware.objects.all(),
+        required=False,
+        widget=autocomplete.ModelSelect2(
+            url='warehouse:ware_autocomplete')
     )
 
     def __init__(self, *args, **kwargs):
@@ -248,10 +258,16 @@ class ServiceTemplateModelForm(forms.ModelForm):
 
 
 class EmailForm(forms.Form):
-    recipient = forms.EmailField(label='Do')
-    subject = forms.CharField(label='Temat')
-    message = forms.CharField(widget=forms.Textarea, label='Treść')
-    sale_invoice = forms.ModelChoiceField(queryset=SaleInvoice.objects.none(), widget=forms.HiddenInput())
+    recipient = forms.EmailField(
+        label='Do')
+    subject = forms.CharField(
+        label='Temat')
+    message = forms.CharField(
+        widget=forms.Textarea,
+        label='Treść')
+    sale_invoice = forms.ModelChoiceField(
+        queryset=SaleInvoice.objects.none(),
+        widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

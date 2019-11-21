@@ -16,18 +16,34 @@ class WareFilter(django_filters.FilterSet):
         (NOT_IN_STOCK, 'Brak na stanie')
     )
 
-    index = django_filters.CharFilter(method='index_filter', widget=forms.TextInput())
-    name = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    description = django_filters.CharFilter(lookup_expr='icontains',
-                                            widget=forms.TextInput())
-    stock = django_filters.ChoiceFilter(choices=STOCK_CHOICES, method='stock_filter',
-                                        widget=forms.Select())
-    supplier = django_filters.ModelChoiceFilter(method='supplier_filter', queryset=Supplier.objects.all(),
-                                                widget=autocomplete.ModelSelect2(url='warehouse:supplier_autocomplete'),
-                                                label="Zakup od dostawcy")
-    purchase_date = django_filters.CharFilter(method='purchase_date_filter', label="Data zakupu",
-                                              widget=forms.TextInput(attrs={'class': 'date-range-input'}))
-    created_date = django_filters.CharFilter(method='created_date_filter', label="", widget=forms.HiddenInput())
+    index = django_filters.CharFilter(
+        method='index_filter',
+        widget=forms.TextInput())
+    name = django_filters.CharFilter(
+        lookup_expr='icontains',
+        widget=forms.TextInput())
+    description = django_filters.CharFilter(
+        lookup_expr='icontains',
+        widget=forms.TextInput())
+    stock = django_filters.ChoiceFilter(
+        choices=STOCK_CHOICES,
+        method='stock_filter',
+        widget=forms.Select())
+    supplier = django_filters.ModelChoiceFilter(
+        method='supplier_filter',
+        queryset=Supplier.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='warehouse:supplier_autocomplete'),
+        label="Zakup od dostawcy")
+    purchase_date = django_filters.CharFilter(
+        method='purchase_date_filter',
+        label="Data zakupu",
+        widget=forms.TextInput(
+            attrs={'class': 'date-range-input'}))
+    created_date = django_filters.CharFilter(
+        method='created_date_filter',
+        label="",
+        widget=forms.HiddenInput())
 
     class Meta:
         model = Ware
@@ -67,12 +83,22 @@ class WareFilter(django_filters.FilterSet):
 
 
 class InvoiceFilter(django_filters.FilterSet):
-    supplier = django_filters.ModelChoiceFilter(queryset=Supplier.objects.all(),
-                                                widget=autocomplete.ModelSelect2(url='warehouse:supplier_autocomplete'))
-    number = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    date = django_filters.CharFilter(method='purchase_date_filter', label="Data zakupu",
-                                     widget=forms.TextInput(attrs={'class': 'date-range-input'}))
-    created_date = django_filters.CharFilter(method='created_date_filter', label="", widget=forms.HiddenInput())
+    supplier = django_filters.ModelChoiceFilter(
+        queryset=Supplier.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='warehouse:supplier_autocomplete'))
+    number = django_filters.CharFilter(
+        lookup_expr='icontains',
+        widget=forms.TextInput())
+    date = django_filters.CharFilter(
+        method='purchase_date_filter',
+        label="Data zakupu",
+        widget=forms.TextInput(
+            attrs={'class': 'date-range-input'}))
+    created_date = django_filters.CharFilter(
+        method='created_date_filter',
+        label="",
+        widget=forms.HiddenInput())
 
     class Meta:
         model = Invoice
@@ -98,8 +124,13 @@ class InvoiceFilter(django_filters.FilterSet):
 
 
 class SupplierFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    created_date = django_filters.CharFilter(method='created_date_filter', label="", widget=forms.HiddenInput())
+    name = django_filters.CharFilter(
+        lookup_expr='icontains',
+        widget=forms.TextInput())
+    created_date = django_filters.CharFilter(
+        method='created_date_filter',
+        label="",
+        widget=forms.HiddenInput())
 
     class Meta:
         model = Supplier

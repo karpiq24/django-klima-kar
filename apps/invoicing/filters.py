@@ -16,17 +16,30 @@ class SaleInvoiceFilter(django_filters.FilterSet):
         (NO, 'Nie')
     ]
 
-    invoice_type = django_filters.CharFilter(widget=forms.HiddenInput())
+    invoice_type = django_filters.CharFilter(
+        widget=forms.HiddenInput())
     contractor = django_filters.ModelChoiceFilter(
-        queryset=Contractor.objects.all(), widget=autocomplete.ModelSelect2(
+        queryset=Contractor.objects.all(),
+        widget=autocomplete.ModelSelect2(
             url='invoicing:contractor_autocomplete'))
-    number = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    payment_type = django_filters.ChoiceFilter(choices=SaleInvoice.PAYMENT_TYPES)
+    number = django_filters.CharFilter(
+        lookup_expr='icontains',
+        widget=forms.TextInput())
+    payment_type = django_filters.ChoiceFilter(
+        choices=SaleInvoice.PAYMENT_TYPES)
     refrigerant_filled = django_filters.ChoiceFilter(
-        choices=REFRIGERANT_FILLED, label="Uzupełniono czynnik", method='refrigerant_filled_filter')
-    issue_date = django_filters.CharFilter(method='issue_date_filter', label="Data wystawienia",
-                                           widget=forms.TextInput(attrs={'class': 'date-range-input'}))
-    created_date = django_filters.CharFilter(method='created_date_filter', label="", widget=forms.HiddenInput())
+        choices=REFRIGERANT_FILLED,
+        label="Uzupełniono czynnik",
+        method='refrigerant_filled_filter')
+    issue_date = django_filters.CharFilter(
+        method='issue_date_filter',
+        label="Data wystawienia",
+        widget=forms.TextInput(
+            attrs={'class': 'date-range-input'}))
+    created_date = django_filters.CharFilter(
+        method='created_date_filter',
+        label="",
+        widget=forms.HiddenInput())
 
     class Meta:
         model = SaleInvoice
@@ -65,13 +78,28 @@ class SaleInvoiceFilter(django_filters.FilterSet):
 
 
 class ContractorFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    nip = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    address_1 = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    city = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    postal_code = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    email = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    created_date = django_filters.CharFilter(method='created_date_filter', label="", widget=forms.HiddenInput())
+    name = django_filters.CharFilter(
+        lookup_expr='icontains',
+        widget=forms.TextInput())
+    nip = django_filters.CharFilter(
+        lookup_expr='icontains',
+        widget=forms.TextInput())
+    address_1 = django_filters.CharFilter(
+        lookup_expr='icontains',
+        widget=forms.TextInput())
+    city = django_filters.CharFilter(
+        lookup_expr='icontains',
+        widget=forms.TextInput())
+    postal_code = django_filters.CharFilter(
+        lookup_expr='icontains',
+        widget=forms.TextInput())
+    email = django_filters.CharFilter(
+        lookup_expr='icontains',
+        widget=forms.TextInput())
+    created_date = django_filters.CharFilter(
+        method='created_date_filter',
+        label="",
+        widget=forms.HiddenInput())
 
     class Meta:
         model = Contractor
@@ -88,8 +116,12 @@ class ContractorFilter(django_filters.FilterSet):
 
 
 class ServiceTemplateFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    description = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
+    name = django_filters.CharFilter(
+        lookup_expr='icontains',
+        widget=forms.TextInput())
+    description = django_filters.CharFilter(
+        lookup_expr='icontains',
+        widget=forms.TextInput())
 
     class Meta:
         model = ServiceTemplate
