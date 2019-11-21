@@ -40,21 +40,59 @@ Django project used in my family buisness. It provides warehouse management, inv
     ```
     sudo apt-get install build-essential python3-dev python3-pip python3-setuptools python3-wheel python3-cffi libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info
     ```
-2. Install Redis
+2. Install pip and virtualenv
+    ```
+    sudo apt install virtualenv python3-pip
+    ```
+3. Install Postgres and configure
+    ```
+    sudo apt install libpq-dev postgresql postgresql-contrib
+    sudo service postgresql start
+    sudo -u postgres psql
+    CREATE DATABASE klimakar;
+    CREATE USER admin WITH PASSWORD '';
+    ALTER ROLE admin SET client_encoding TO 'utf8';
+    ALTER ROLE admin SET default_transaction_isolation TO 'read committed';
+    ALTER ROLE admin SET timezone TO 'UTC';
+    GRANT ALL PRIVILEGES ON DATABASE klimakar TO admin;
+    ```
+4. Install Redis
     ```
     sudo apt-get install redis-server
     sudo systemctl enable redis-server.service
     ```
-3. docs/requirements.pip
+5. Create and activate virtual envoirment
+    ```
+    virtualenv -p python3 venv
+    source venv/bin/activate
+    ```
+6. Install python requirements
    ```
    pip install -r docs/requirements.pip
    ```
-4. Install fonts
+7. Install fonts
    ```
    sudo cp KlimaKar/static/fonts/* /usr/local/share/fonts/
    sudo fc-cache -fv
    ```
-5. Compile aztec code decoder
+8. Compile aztec code decoder
    ```
    g++ -o scripts/aztec scripts/aztec.cpp
    ```
+9. Prepare settings
+    ```
+    cp docs/settings_local.py KlimaKar
+    ```
+10. Migrate database, create superuser and run local server
+    ```
+    ./manage.py makemigrations
+    ./manage.py makemigrations commission
+    ./manage.py makemigrations invoicing
+    ./manage.py makemigrations settings
+    ./manage.py makemigrations stats
+    ./manage.py makemigrations warehouse
+    ./manage.py makemigrations KlimaKar
+    ./manage.py migrate
+    ./manage.py createsuperuser
+    ./manage.py runserver
+    ```

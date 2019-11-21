@@ -69,8 +69,13 @@
 
 <div>
     <h2>Faktury tego kontrahenta</h2>
+    {% render_table tables.sale_invoice %}
 </div>
-{% render_table table %}
+
+<div>
+    <h2>Zlecenia tego kontrahenta</h2>
+    {% render_table tables.commission %}
+</div>
 
 {% include 'invoicing/contractor/gus_modal.html' %}
 

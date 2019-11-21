@@ -1,5 +1,5 @@
 $(function() {
-    function reload_table ({page = 1, sort = null}) {
+    function reload_table ({page = 1, sort = null, table_id = null}) {
         $('body').css('cursor', 'progress');
         var url = [location.protocol, '//', location.host, location.pathname].join('');
         var data = $('#filters > form').serialize() + '&page=' + page;
@@ -8,13 +8,21 @@ $(function() {
         } else {
             data += '&sort=' + $('.orderable.desc, .orderable.asc').data('sort');
         }
+        if (table_id !== null) {
+            data += '&table_id=' + table_id;
+        }
         $.ajax({
             url: url,
             type: 'get',
             dataType: 'json',
             data: data,
             success: function (data) {
-                $('.table-container').replaceWith(data.table)
+                if (table_id !== null) {
+                    $('.table-container[data-table_id="' + table_id + '"').replaceWith(data.table)
+                }
+                else {
+                    $('.table-container').replaceWith(data.table)
+                }
                 $('body').css('cursor', 'default');
             },
             error: function() {
@@ -50,11 +58,22 @@ $(function() {
     });
 
     $('.content').on('click', '.page-link', function() {
-        reload_table({page:$(this).data('page')});
+        let table_id = $(this).parents('.table-container').data('table_id');
+        if (table_id !== undefined) {
+            reload_table({page:$(this).data('page'), table_id:table_id});
+        }
+        else {
+            reload_table({page:$(this).data('page')});
+        }
     });
 
     $('.content').on('click', '.orderable > a', function() {
-        reload_table({sort:$(this).data('query')});
+        let table_id = $(this).parents('.table-container').data('table_id');
+        if (table_id !== undefined) {
+            reload_table({sort:$(this).data('query'), table_id:table_id});
+        } else {
+            reload_table({sort:$(this).data('query')});
+        }
     });
 
     $('.clear-filters').on('click', function() {

@@ -1,11 +1,5 @@
-import os
-import requests
 
 from django.db import models
-from django.core.mail import mail_admins
-
-from KlimaKar import settings
-from KlimaKar.functions import encode_media_related
 
 
 class SingletonModel(models.Model):

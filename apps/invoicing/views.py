@@ -18,7 +18,7 @@ from django.contrib import messages
 
 from KlimaKar.email import get_email_message
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
-from KlimaKar.mixins import AjaxFormMixin, GroupAccessControlMixin, SingleTableAjaxMixin
+from KlimaKar.mixins import AjaxFormMixin, GroupAccessControlMixin, SingleTableAjaxMixin, MultiTableAjaxMixin
 from KlimaKar.templatetags.slugify import slugify
 from apps.invoicing.models import SaleInvoice, Contractor, SaleInvoiceItem, ServiceTemplate, CorrectiveSaleInvoice
 from apps.invoicing.forms import SaleInvoiceModelForm, ContractorModelForm, SaleInvoiceItemsInline,\
@@ -30,6 +30,7 @@ from apps.invoicing.functions import get_next_invoice_number, generate_refrigera
 from apps.invoicing.gus import get_gus_address, get_gus_pkd, get_gus_data
 from apps.settings.models import SiteSettings
 from apps.commission.models import Commission
+from apps.commission.tables import CommissionTable
 
 
 class SaleInvoiceTableView(ExportMixin, FilteredSingleTableView):
@@ -411,10 +412,16 @@ class ContractorTableView(ExportMixin, FilteredSingleTableView):
     export_name = 'Kontrahenci'
 
 
-class ContractorDetailView(SingleTableAjaxMixin, DetailView):
+class ContractorDetailView(MultiTableAjaxMixin, DetailView):
+    SALE_INVOIDE_ID = 'sale_invoice'
+    COMMISSION_ID = 'commission'
+
     model = Contractor
     template_name = 'invoicing/contractor/detail.html'
-    table_class = SaleInvoiceTable
+    table_classes = {
+        'sale_invoice': SaleInvoiceTable,
+        'commission': CommissionTable
+    }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -422,8 +429,11 @@ class ContractorDetailView(SingleTableAjaxMixin, DetailView):
         context['back_url'] = reverse('invoicing:contractors') + '?' + urlencode(self.request.session.get(key, ''))
         return context
 
-    def get_table_data(self):
-        return SaleInvoice.objects.filter(contractor=self.object)
+    def get_tables_data(self):
+        return {
+            self.SALE_INVOIDE_ID: SaleInvoice.objects.filter(contractor=self.get_object()),
+            self.COMMISSION_ID: Commission.objects.filter(contractor=self.get_object())
+        }
 
 
 class ContractorCreateView(CreateView):

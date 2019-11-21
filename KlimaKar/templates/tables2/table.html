@@ -1,7 +1,7 @@
 {% load django_tables2 %}
 
 {% block table-wrapper %}
-<div class="table-container">
+<div class="table-container" {% if table.table_id %}data-table_id="{{ table.table_id }}"{% endif %}>
     {% include 'tables2/pagination.html' %}
     <div class="table-responsive">
         {% block table %}
