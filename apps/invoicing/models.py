@@ -7,7 +7,6 @@ from django.core.validators import RegexValidator
 from django.template.loader import get_template
 
 from apps.warehouse.models import Ware
-from apps.invoicing.dictionaries import PAYMENT_TYPES, INVOICE_TYPES
 
 
 class Contractor(models.Model):
@@ -28,6 +27,28 @@ class Contractor(models.Model):
 
 
 class SaleInvoice(models.Model):
+    CASH = '1'
+    CARD = '2'
+    TRANSFER = '3'
+    PAYMENT_TYPES = [
+        (CASH, 'gotówka'),
+        (CARD, 'karta'),
+        (TRANSFER, 'przelew')
+    ]
+
+    TYPE_VAT = '1'
+    TYPE_PRO_FORMA = '2'
+    TYPE_CORRECTIVE = '3'
+    TYPE_WDT = '4'
+    TYPE_WDT_PRO_FORMA = '5'
+    INVOICE_TYPES = [
+        (TYPE_VAT, 'Faktura VAT'),
+        (TYPE_PRO_FORMA, 'Pro forma'),
+        (TYPE_CORRECTIVE, 'Korekta'),
+        (TYPE_WDT, 'Faktura VAT WDT'),
+        (TYPE_WDT_PRO_FORMA, 'Pro forma WDT'),
+    ]
+
     issue_date = models.DateField(verbose_name=('Data wystawienia'), default=datetime.date.today)
     completion_date = models.DateField(verbose_name=('Data wykonania'), default=datetime.date.today)
     invoice_type = models.CharField(max_length=1, verbose_name=('Rodzaj faktury'), choices=INVOICE_TYPES)
@@ -63,14 +84,18 @@ class SaleInvoice(models.Model):
     def save(self, *args, **kwargs):
         invoice_type = self.invoice_type
         invoices = SaleInvoice.objects.filter(invoice_type=invoice_type)
-        if invoice_type == '1':
-            invoices = (invoices | SaleInvoice.objects.filter(invoice_type='4')).distinct()
-        elif invoice_type == '4':
-            invoices = (invoices | SaleInvoice.objects.filter(invoice_type='1')).distinct()
-        elif invoice_type == '2':
-            invoices = (invoices | SaleInvoice.objects.filter(invoice_type='5')).distinct()
-        elif invoice_type == '5':
-            invoices = (invoices | SaleInvoice.objects.filter(invoice_type='2')).distinct()
+        if invoice_type == SaleInvoice.TYPE_VAT:
+            invoices = (invoices | SaleInvoice.objects.filter(
+                invoice_type=SaleInvoice.TYPE_WDT)).distinct()
+        elif invoice_type == SaleInvoice.TYPE_WDT:
+            invoices = (invoices | SaleInvoice.objects.filter(
+                invoice_type=SaleInvoice.TYPE_VAT)).distinct()
+        elif invoice_type == SaleInvoice.TYPE_PRO_FORMA:
+            invoices = (invoices | SaleInvoice.objects.filter(
+                invoice_type=SaleInvoice.TYPE_WDT_PRO_FORMA)).distinct()
+        elif invoice_type == SaleInvoice.TYPE_WDT_PRO_FORMA:
+            invoices = (invoices | SaleInvoice.objects.filter(
+                invoice_type=SaleInvoice.TYPE_PRO_FORMA)).distinct()
         if self.pk:
             invoices = invoices.exclude(pk=self.pk)
         if invoices.filter(number=self.number).exists():
@@ -84,7 +109,7 @@ class SaleInvoice(models.Model):
         super().save(*args, **kwargs)
 
     def generate_pdf(self, print_version=False):
-        if self.invoice_type == '3':
+        if self.invoice_type == self.TYPE_CORRECTIVE:
             template = get_template('invoicing/corrective_invoice.html')
         else:
             template = get_template('invoicing/invoice.html')

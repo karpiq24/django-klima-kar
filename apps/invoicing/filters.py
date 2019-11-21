@@ -6,16 +6,22 @@ from dal import autocomplete
 from dateutil import parser as date_parser
 
 from apps.invoicing.models import SaleInvoice, Contractor, ServiceTemplate
-from apps.invoicing.dictionaries import PAYMENT_TYPES, REFRIGERANT_FILLED
 
 
 class SaleInvoiceFilter(django_filters.FilterSet):
+    YES = 'yes'
+    NO = 'no'
+    REFRIGERANT_FILLED = [
+        (YES, 'Tak'),
+        (NO, 'Nie')
+    ]
+
     invoice_type = django_filters.CharFilter(widget=forms.HiddenInput())
     contractor = django_filters.ModelChoiceFilter(
         queryset=Contractor.objects.all(), widget=autocomplete.ModelSelect2(
             url='invoicing:contractor_autocomplete'))
     number = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    payment_type = django_filters.ChoiceFilter(choices=PAYMENT_TYPES)
+    payment_type = django_filters.ChoiceFilter(choices=SaleInvoice.PAYMENT_TYPES)
     refrigerant_filled = django_filters.ChoiceFilter(
         choices=REFRIGERANT_FILLED, label="Uzupełniono czynnik", method='refrigerant_filled_filter')
     issue_date = django_filters.CharFilter(method='issue_date_filter', label="Data wystawienia",
@@ -27,12 +33,12 @@ class SaleInvoiceFilter(django_filters.FilterSet):
         fields = ['invoice_type', 'contractor', 'number']
 
     def refrigerant_filled_filter(self, queryset, name, value):
-        if value == '1':
+        if value == self.YES:
             return queryset.filter(Q(refrigerantweights__r134a__gt=0) |
                                    Q(refrigerantweights__r1234yf__gt=0) |
                                    Q(refrigerantweights__r12__gt=0) |
                                    Q(refrigerantweights__r404__gt=0))
-        elif value == '2':
+        elif value == self.NO:
             return queryset.exclude(Q(refrigerantweights__r134a__gt=0) |
                                     Q(refrigerantweights__r1234yf__gt=0) |
                                     Q(refrigerantweights__r12__gt=0) |

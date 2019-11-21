@@ -46,14 +46,18 @@ class SaleInvoiceModelForm(forms.ModelForm):
         else:
             invoice_type = cleaned_data['invoice_type']
             invoices = SaleInvoice.objects.filter(invoice_type=invoice_type)
-            if invoice_type == '1':
-                invoices = (invoices | SaleInvoice.objects.filter(invoice_type='4')).distinct()
-            elif invoice_type == '4':
-                invoices = (invoices | SaleInvoice.objects.filter(invoice_type='1')).distinct()
-            elif invoice_type == '2':
-                invoices = (invoices | SaleInvoice.objects.filter(invoice_type='5')).distinct()
-            elif invoice_type == '5':
-                invoices = (invoices | SaleInvoice.objects.filter(invoice_type='2')).distinct()
+            if invoice_type == SaleInvoice.TYPE_VAT:
+                invoices = (invoices | SaleInvoice.objects.filter(
+                    invoice_type=SaleInvoice.TYPE_WDT)).distinct()
+            elif invoice_type == SaleInvoice.TYPE_WDT:
+                invoices = (invoices | SaleInvoice.objects.filter(
+                    invoice_type=SaleInvoice.TYPE_VAT)).distinct()
+            elif invoice_type == SaleInvoice.TYPE_PRO_FORMA:
+                invoices = (invoices | SaleInvoice.objects.filter(
+                    invoice_type=SaleInvoice.TYPE_WDT_PRO_FORMA)).distinct()
+            elif invoice_type == SaleInvoice.TYPE_WDT_PRO_FORMA:
+                invoices = (invoices | SaleInvoice.objects.filter(
+                    invoice_type=SaleInvoice.TYPE_PRO_FORMA)).distinct()
             if invoices.filter(number=number).exists():
                 self.add_error('number', 'Faktura o tym numerze już istnieje.')
         return cleaned_data

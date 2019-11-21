@@ -303,7 +303,8 @@ class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
         else:
             date = None
 
-        invoices = SaleInvoice.objects.exclude(invoice_type__in=['2', '3', '5'])
+        invoices = SaleInvoice.objects.exclude(invoice_type__in=[
+            SaleInvoice.TYPE_PRO_FORMA, SaleInvoice.TYPE_CORRECTIVE, SaleInvoice.TYPE_WDT_PRO_FORMA])
         if date:
             invoices = invoices.filter(issue_date__gte=date)
 
@@ -454,7 +455,8 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
         else:
             date = None
 
-        invoices = SaleInvoice.objects.exclude(invoice_type__in=['2', '3', '5'])
+        invoices = SaleInvoice.objects.exclude(invoice_type__in=[
+            SaleInvoice.TYPE_PRO_FORMA, SaleInvoice.TYPE_CORRECTIVE, SaleInvoice.TYPE_WDT_PRO_FORMA])
         if date:
             invoices = invoices.filter(issue_date__gte=date)
 
@@ -730,7 +732,9 @@ class DuePayments(GroupAccessControlMixin, View):
     allowed_groups = ['boss']
 
     def get(self, *args, **kwargs):
-        invoices = SaleInvoice.objects.exclude(invoice_type__in=['2', '5']).filter(payed=False).order_by('payment_date')
+        invoices = SaleInvoice.objects.exclude(invoice_type__in=[
+            SaleInvoice.TYPE_PRO_FORMA, SaleInvoice.TYPE_WDT_PRO_FORMA]).filter(
+                payed=False).order_by('payment_date')
         response = {'invoices': []}
         for invoice in invoices:
             if not invoice.payment_date:
@@ -796,7 +800,8 @@ class Metrics(View):
             }
             if has_permission:
                 invoices = SaleInvoice.objects.filter(
-                    issue_date__gte=date_from, issue_date__lte=date_to).exclude(invoice_type__in=['2', '3', '5'])
+                    issue_date__gte=date_from, issue_date__lte=date_to).exclude(invoice_type__in=[
+                        SaleInvoice.TYPE_PRO_FORMA, SaleInvoice.TYPE_CORRECTIVE, SaleInvoice.TYPE_WDT_PRO_FORMA])
                 invoices_sum = 0
                 invoices_sum_brutto = 0
                 tax_sum = 0

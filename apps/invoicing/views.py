@@ -25,7 +25,6 @@ from apps.invoicing.forms import SaleInvoiceModelForm, ContractorModelForm, Sale
     ServiceTemplateModelForm, EmailForm, RefrigerantWeightsInline, CorrectiveSaleInvoiceModelForm
 from apps.invoicing.tables import SaleInvoiceTable, ContractorTable, SaleInvoiceItemTable, ServiceTemplateTable
 from apps.invoicing.filters import SaleInvoiceFilter, ContractorFilter, ServiceTemplateFilter
-from apps.invoicing.dictionaries import INVOICE_TYPES
 from apps.invoicing.functions import get_next_invoice_number, generate_refrigerant_weights_report
 from apps.invoicing.gus import get_gus_address, get_gus_pkd, get_gus_data
 from apps.settings.models import SiteSettings
@@ -40,8 +39,8 @@ class SaleInvoiceTableView(ExportMixin, FilteredSingleTableView):
     template_name = 'invoicing/sale_invoice/table.html'
     export_name = 'Zakupy sprzedazowe'
     tab_filter = 'invoice_type'
-    tab_filter_default = '1'
-    tab_filter_choices = INVOICE_TYPES
+    tab_filter_default = SaleInvoice.TYPE_VAT
+    tab_filter_choices = SaleInvoice.INVOICE_TYPES
 
 
 class SaleInvoiceDetailView(SingleTableAjaxMixin, DetailView):
@@ -83,7 +82,7 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Nowa faktura sprzedażowa ({})".format(
-            dict(INVOICE_TYPES)[self.invoice_type])
+            dict(SaleInvoice.INVOICE_TYPES)[self.invoice_type])
         return context
 
     def get_initial(self):
@@ -92,23 +91,23 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
         initial['number'] = get_next_invoice_number(self.invoice_type)
         site_settings = SiteSettings.load()
         initial['tax_percent'] = site_settings.SALE_INVOICE_TAX_PERCENT
-        if self.invoice_type in ['4', '5']:
+        if self.invoice_type in [SaleInvoice.TYPE_WDT, SaleInvoice.TYPE_WDT_PRO_FORMA]:
             initial['tax_percent'] = site_settings.SALE_INVOICE_TAX_PERCENT_WDT
         return initial
 
     def dispatch(self, *args, **kwargs):
         self.invoice_type = kwargs.get('type')
-        if not self.invoice_type or self.invoice_type not in dict(INVOICE_TYPES):
+        if not self.invoice_type or self.invoice_type not in dict(SaleInvoice.INVOICE_TYPES):
             raise Http404()
         return super().dispatch(*args, **kwargs)
 
     def forms_valid(self, form, inlines):
         self.generate_pdf = 'generate_pdf' in form.data
-        if self.invoice_type != '3':
+        if self.invoice_type != SaleInvoice.TYPE_CORRECTIVE:
             messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejną fakturę.</a>'.format(
                 reverse('invoicing:sale_invoice_create', kwargs={
                     'type': self.invoice_type,
-                    'kind': slugify(dict(INVOICE_TYPES)[self.invoice_type])
+                    'kind': slugify(dict(SaleInvoice.INVOICE_TYPES)[self.invoice_type])
                 })))
         else:
             messages.add_message(self.request, messages.SUCCESS, 'Zapisano fakturę.')
@@ -150,7 +149,7 @@ class SaleInvoiceCommissionCreateView(SaleInvoiceCreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = "Nowa faktura sprzedażowa ({}) dla zlecenia {}".format(
-            dict(INVOICE_TYPES)[self.invoice_type], str(self.commission.pk))
+            dict(SaleInvoice.INVOICE_TYPES)[self.invoice_type], str(self.commission.pk))
         return context
 
     def forms_valid(self, form, inlines):
@@ -167,7 +166,7 @@ class SaleInvoiceUpdateView(UpdateWithInlinesView):
 
     def dispatch(self, *args, **kwargs):
         dispatch = super().dispatch(*args, **kwargs)
-        if self.model == SaleInvoice and self.object.invoice_type == '3':
+        if self.model == SaleInvoice and self.object.invoice_type == SaleInvoice.TYPE_CORRECTIVE:
             return redirect('invoicing:sale_invoice_update_corrective', **kwargs)
         return dispatch
 
@@ -209,8 +208,8 @@ class CorrectiveSaleInvoiceCreateView(SaleInvoiceCreateView):
         return context
 
     def dispatch(self, *args, **kwargs):
-        kwargs['type'] = '3'
-        self.invoice_type = '3'
+        kwargs['type'] = SaleInvoice.TYPE_CORRECTIVE
+        self.invoice_type = SaleInvoice.TYPE_CORRECTIVE
         self.original_invoice = SaleInvoice.objects.get(pk=kwargs.get('pk'))
         self.kwargs['original_invoice'] = self.original_invoice
         return super().dispatch(*args, **kwargs)

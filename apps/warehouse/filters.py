@@ -6,10 +6,16 @@ from dal import autocomplete
 from dateutil import parser as date_parser
 
 from apps.warehouse.models import Ware, Invoice, Supplier
-from apps.warehouse.dictionaries import STOCK_CHOICES
 
 
 class WareFilter(django_filters.FilterSet):
+    IN_STOCK = 'in'
+    NOT_IN_STOCK = 'not_in'
+    STOCK_CHOICES = (
+        (IN_STOCK, 'Na stanie'),
+        (NOT_IN_STOCK, 'Brak na stanie')
+    )
+
     index = django_filters.CharFilter(method='index_filter', widget=forms.TextInput())
     name = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
     description = django_filters.CharFilter(lookup_expr='icontains',
@@ -54,9 +60,9 @@ class WareFilter(django_filters.FilterSet):
         return queryset.filter(invoiceitem__invoice__supplier=value).distinct()
 
     def stock_filter(self, queryset, name, value):
-        if value == '1':
+        if value == self.IN_STOCK:
             return queryset.filter(stock__gte=1)
-        elif value == '2':
+        elif value == self.NOT_IN_STOCK:
             return queryset.filter(stock__lte=0)
 
 

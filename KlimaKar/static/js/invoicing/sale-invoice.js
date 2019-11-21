@@ -77,6 +77,11 @@ $(function () {
     $("#id_contractor").change(function () {
         var parent = $("#id_contractor").parent();
         var contractor_pk = $('#id_contractor').val();
+        $("#id_contractor").removeClass('is-valid');
+        $("#id_contractor").removeClass('is-invalid');
+        $(parent).find('div.valid-feedback').remove();
+        $(parent).find('div.invalid-feedback').remove();
+        $(parent).append('<small id="loding-contractor" class="form-text text-muted"><i class="fas fa-spinner fa-spin"></i> Sprawdzam kontrahenta..</small>')
         $.ajax({
             url: GET_CONTRACTOR_DATA,
             data: {
@@ -85,6 +90,7 @@ $(function () {
             },
             dataType: 'json',
             success: function (result) {
+                $(parent).find('#loding-contractor').remove();
                 if (result.contractor.nip) {
                     $('#gus-data').data('nip', result.contractor.nip);
                     $('#gus-data').show();
@@ -92,35 +98,25 @@ $(function () {
                     $('#gus-data').hide();
                 }
                 if (result.contractor.vat_valid === false) {
-                    $(parent).find('div.vat-failed').remove();
                     $("#id_contractor").addClass('is-invalid');
-                        if ($(parent).find('div.vat-invalid').length == 0) {
-                            $(parent).append('<div class="invalid-feedback vat-invalid">Wybrany kontrahent nie jest płatnikiem VAT. <a href="' + result.contractor.vat_url + '" target="_blank">(sprawdź tutaj)</a></div>')
-                        }
+                    $(parent).append('<div class="invalid-feedback vat-invalid">Wybrany kontrahent nie jest płatnikiem VAT. <a href="' + result.contractor.vat_url + '" target="_blank">(sprawdź tutaj)</a></div>')
                 } else if (result.contractor.vat_valid === 'failed') {
-                    $(parent).find('div.vat-invalid').remove();
                     $("#id_contractor").addClass('is-invalid');
-                    if ($(parent).find('div.vat-failed').length == 0) {
-                        $(parent).append('<div class="invalid-feedback vat-failed">Nie udało się sprawdzić statusu płatnika VAT. Sprawdź ręcznie.</div>')
-                    }
+                    $(parent).append('<div class="invalid-feedback vat-failed">Nie udało się sprawdzić statusu płatnika VAT. Sprawdź ręcznie.</div>');
                 } else {
-                    $(parent).find('div.vat-failed').remove();
-                    $(parent).find('div.vat-invalid').remove();
-                    if ($(parent).find('div.invalid-feedback').length == 0) {
-                        $("#id_contractor").removeClass('is-invalid');
-                    }
+                    $("#id_contractor").addClass('is-valid');
+                    $(parent).append('<div class="valid-feedback">Kontrahent jest płatnikiem VAT</div>')
                 }
                 if (INVOICE_TYPE === '4' || INVOICE_TYPE === '5') {
                     if (result.contractor.nip_prefix == null) {
                         $("#id_contractor").addClass('is-invalid');
-                        if ($(parent).find('div.no-prefix').length == 0) {
-                            $(parent).append('<div class="invalid-feedback no-prefix">Wybrany kontrahent nie ma podanego prefixu NIP.</div>')
-                        }
+                        $("#id_contractor").removeClass('is-valid');
+                        $(parent).append('<div class="invalid-feedback no-prefix">Wybrany kontrahent nie ma podanego prefiksu NIP.</div>')
                     }
                     else {
-                        $(parent).find('div.no-prefix').remove();
                         if ($(parent).find('div.invalid-feedback').length == 0) {
-                            $("#id_contractor").removeClass('is-invalid');
+                            $("#id_contractor").addClass('is-valid');
+                            $(parent).append('<div class="valid-feedback">Wybrany kontrahent ma podany prefiks NIP.</div>')
                         }
                     }
                 }

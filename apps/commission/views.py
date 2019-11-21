@@ -34,7 +34,6 @@ from apps.commission.filters import VehicleFilter, ComponentFilter, CommissionFi
 from apps.commission.forms import VehicleModelForm, ComponentModelForm, CommissionModelForm, CommissionItemInline, \
     CommissionEmailForm, CommissionFastModelForm
 from apps.commission.functions import process_uploads, check_uploaded_files, get_temporary_files
-from apps.invoicing.dictionaries import INVOICE_TYPES
 from apps.invoicing.models import SaleInvoice
 
 
@@ -250,8 +249,8 @@ class CommissionDetailView(SingleTableAjaxMixin, DetailView):
         context = super().get_context_data(**kwargs)
         key = "{}_params".format(self.model.__name__)
         context['back_url'] = reverse('commission:commissions') + '?' + urlencode(self.request.session.get(key, ''))
-        types = dict(INVOICE_TYPES)
-        types.pop('3')
+        types = dict(SaleInvoice.INVOICE_TYPES)
+        types.pop(SaleInvoice.TYPE_CORRECTIVE)
         context['invoice_types'] = types
 
         site_settings = SiteSettings.load()
@@ -558,7 +557,7 @@ class PrepareInvoiceUrl(View):
 
         url = '{}{}{}'.format(
             reverse('invoicing:sale_invoice_commission_create', kwargs={
-                'kind': dict(INVOICE_TYPES)[invoice_type],
+                'kind': dict(SaleInvoice.INVOICE_TYPES)[invoice_type],
                 'type': invoice_type,
                 'slug': slugify(commission),
                 'pk': pk

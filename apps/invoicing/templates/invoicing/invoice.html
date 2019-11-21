@@ -13,7 +13,7 @@
 		    <span>komfortowy klimat w zasięgu ręki</span>
       </div>
       <div id="company">
-        <div class="nip">NIP {% if invoice.invoice_type == '4' or invoice.invoice_type == '5' %}PL8991071777{% else %}899-107-17-77{% endif %}</div>
+        <div class="nip">NIP {% if invoice.invoice_type == invoice.TYPE_WDT or invoice.invoice_type == invoice.TYPE_WDT_PRO_FORMA %}PL8991071777{% else %}899-107-17-77{% endif %}</div>
 		    <h2 class="name">Klima-Kar Renata Karpińska</h2>
         <div>52-214 Wrocław ul. Grota Roweckiego 129</div>        
 		    <div>PKO Inteligo 50 1020 5558 1111 1223 8400 0094</div>
@@ -85,13 +85,13 @@
         </tr>
         <tr>
           <td colspan="2"></td>
-          <td colspan="2">RAZEM {% if invoice.invoice_type != '4' and invoice.invoice_type != '5'%} BRUTTO{% endif %}</td>
+          <td colspan="2">RAZEM {% if invoice.invoice_type != invoice.TYPE_WDT and invoice.invoice_type != invoice.TYPE_WDT_PRO_FORMA %} BRUTTO{% endif %}</td>
           <td>{{ invoice.total_value_brutto|floatformat:2 }} zł</td>
         </tr>
       </tfoot>
     </table>
   
-    {% if invoice.invoice_type == '4' or invoice.invoice_type == '5' %}
+    {% if invoice.invoice_type == invoice.TYPE_WDT or invoice.invoice_type == invoice.TYPE_WDT_PRO_FORMA %}
       <div id="reverse-charge">Do rozliczenia podatku VAT zobowiązany jest nabywca (reverse charge).</div>
     {% endif %}
     <div id="podpisy">
