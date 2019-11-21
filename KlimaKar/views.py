@@ -177,6 +177,12 @@ class HomeView(TemplateView):
                 'title': 'Podatek VAT od osób fizycznych',
                 'class': 'person_vat_sum'
             })
+            metrics.append({
+                'icon': 'fa-hand-holding-usd',
+                'color': '#E21E00',
+                'title': 'Kwota PTU',
+                'class': 'ptu_sum'
+            })
 
         metrics.append({
             'icon': 'fa-tasks',

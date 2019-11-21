@@ -817,6 +817,12 @@ class Metrics(View):
                 response['person_vat_sum'] = "{0:.2f} zł".format(person_tax_sum).replace('.', ',')
                 response['company_vat_sum'] = "{0:.2f} zł".format(tax_sum - person_tax_sum).replace('.', ',')
 
+                ptu_sum = 0
+                ptu_objects = ReceiptPTU.objects.filter(date__gte=date_from, date__lte=date_to)
+                if ptu_objects:
+                    ptu_sum = ptu_objects.aggregate(Sum('value'))['value__sum']
+                response['ptu_sum'] = "{0:.2f} zł".format(ptu_sum).replace('.', ',')
+
             weight_objects = RefrigerantWeights.objects.filter(
                 sale_invoice__issue_date__gte=date_from, sale_invoice__issue_date__lte=date_to)
             r134a = 0
