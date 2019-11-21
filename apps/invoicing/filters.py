@@ -15,6 +15,10 @@ class SaleInvoiceFilter(django_filters.FilterSet):
         (YES, 'Tak'),
         (NO, 'Nie')
     ]
+    HAS_COMMISSION = [
+        (YES, 'Tak'),
+        (NO, 'Nie')
+    ]
 
     invoice_type = django_filters.CharFilter(
         widget=forms.HiddenInput())
@@ -31,6 +35,10 @@ class SaleInvoiceFilter(django_filters.FilterSet):
         choices=REFRIGERANT_FILLED,
         label="Uzupełniono czynnik",
         method='refrigerant_filled_filter')
+    has_commission = django_filters.ChoiceFilter(
+        choices=HAS_COMMISSION,
+        label="Przypisano zlecenie",
+        method='has_commission_filter')
     issue_date = django_filters.CharFilter(
         method='issue_date_filter',
         label="Data wystawienia",
@@ -56,6 +64,12 @@ class SaleInvoiceFilter(django_filters.FilterSet):
                                     Q(refrigerantweights__r1234yf__gt=0) |
                                     Q(refrigerantweights__r12__gt=0) |
                                     Q(refrigerantweights__r404__gt=0))
+
+    def has_commission_filter(self, queryset, name, value):
+        if value == self.YES:
+            return queryset.exclude(commission=None)
+        elif value == self.NO:
+            return queryset.filter(commission=None)
 
     def issue_date_filter(self, queryset, name, value):
         try:
