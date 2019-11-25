@@ -298,6 +298,18 @@ class CustomSelect2QuerySetView(autocomplete.Select2QuerySetView):
             'text': str(result),
         })
 
+    def get_results(self, context):
+        return [
+            dict(self.extend_result_data(result), **{
+                'id': self.get_result_value(result),
+                'text': self.get_result_label(result),
+                'selected_text': self.get_selected_result_label(result),
+            }) for result in context['object_list']
+        ]
+
+    def extend_result_data(self, data):
+        return {}
+
 
 class FilteredSingleTableView(SingleTableView):
     filter_class = None

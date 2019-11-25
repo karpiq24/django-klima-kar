@@ -70,7 +70,6 @@ $(function () {
 
     const CREATE_CONTRACTOR = $('#create_contractor_url').val();
     const UPDATE_CONTRACTOR = $('#update_contractor_url').val();
-    const GET_CONTRACTOR_DATA = $('#contractor_detail_url').val();
     const GET_SERVICE_DATA = $('#service_detail_url').val();
     const CREATE_VEHICLE = $('#create_vehicle_url').val();
     const UPDATE_VEHICLE = $('#update_vehicle_url').val();
@@ -124,33 +123,34 @@ $(function () {
     });
 
     $("#id_contractor").change(function () {
-        let parent = $("#id_contractor").parent();
-        const contractor_pk = $('#id_contractor').val();
-        $.ajax({
-            url: GET_CONTRACTOR_DATA,
-            data: {
-                'pk': contractor_pk
-            },
-            dataType: 'json',
-            success: function (result) {
-                if (result.contractor.nip) {
-                    $('#gus-data').data('nip', result.contractor.nip);
-                    $('#gus-data').show();
-                } else {
-                    $('#gus-data').hide();
-                }
-                if (result.contractor.phone == null) {
-                    $("#id_contractor").addClass('is-invalid');
-                    if ($(parent).find('div.invalid-feedback').length == 0) {
-                        $(parent).append('<div class="invalid-feedback">Wybrany kontrahent nie ma podanego numeru telefonu.</div>')
-                    }    
-                }
-                else {
-                    $("#id_contractor").removeClass('is-invalid');
-                    $(parent).find('div.invalid-feedback').remove();
-                }
-            }
-        });
+        const extra = $(this).find(":selected").data('extra')
+        const data = (typeof extra === 'object') ? extra : $(this).find(":selected").data('data');
+        const parent = $("#id_contractor").parent();
+
+        if (data.id === "") {
+            $('#contractor-edit').prop('disabled', true);
+            $('#gus-data').hide();
+            $("#id_contractor").removeClass('is-invalid');
+            $(parent).find('div.invalid-feedback').remove();
+            return;
+        }
+
+        if (data.nip) {
+            $('#gus-data').data('nip', data.nip);
+            $('#gus-data').show();
+        } else {
+            $('#gus-data').hide();
+        }
+        if (data.phone == null) {
+            $("#id_contractor").addClass('is-invalid');
+            if ($(parent).find('div.invalid-feedback').length == 0) {
+                $(parent).append('<div class="invalid-feedback">Wybrany kontrahent nie ma podanego numeru telefonu.</div>')
+            }    
+        }
+        else {
+            $("#id_contractor").removeClass('is-invalid');
+            $(parent).find('div.invalid-feedback').remove();
+        }
     });
 
     $("#contractor-edit").click(function() {
@@ -191,6 +191,25 @@ $(function () {
         if (data.create_id !== true) {
             $('#vehicle-component-edit').prop('disabled', false);
             $('#id_vc_name').val(data['text']);
+            if (data.contractor) {
+                Swal.fire({
+                    title: "Ustawić kontrahenta?",
+                    text: data.contractor.text,
+                    type: "question",
+                    showCancelButton: true,
+                    focusCancel: false,
+                    focusConfirm: true,
+                    confirmButtonText: 'Tak',
+                    cancelButtonText: 'Nie'
+                }).then((change) => {
+                    if (change.value) {
+                        const $option = $("<option selected></option>").val(data.contractor.id).text(data.contractor.text).data(
+                            'extra', {'phone': data.contractor.phone, 'nip': data.contractor.nip});
+                        $('#id_contractor').append($option).trigger('change');
+                        $('#contractor-edit').prop('disabled', false);
+                    }
+                })
+            }
             return;
         }
         $('#vehicle-component-edit').prop('disabled', true);
@@ -227,6 +246,25 @@ $(function () {
         if (data.create_id !== true) {
             $('#vehicle-component-edit').prop('disabled', false);
             $('#id_vc_name').val(data['text']);
+            if (data.contractor) {
+                Swal.fire({
+                    title: "Ustawić kontrahenta?",
+                    text: data.contractor.text,
+                    type: "question",
+                    showCancelButton: true,
+                    focusCancel: false,
+                    focusConfirm: true,
+                    confirmButtonText: 'Tak',
+                    cancelButtonText: 'Nie'
+                }).then((change) => {
+                    if (change.value) {
+                        const $option = $("<option selected></option>").val(data.contractor.id).text(data.contractor.text).data(
+                            'extra', {'phone': data.contractor.phone, 'nip': data.contractor.nip});
+                        $('#id_contractor').append($option).trigger('change');
+                        $('#contractor-edit').prop('disabled', false);
+                    }
+                })
+            }
             return;
         }
         $('#vehicle-component-edit').prop('disabled', true);

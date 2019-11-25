@@ -498,6 +498,12 @@ class ContractorAutocomplete(CustomSelect2QuerySetView):
                            Q(phone_1__icontains=self.q) | Q(phone_2__icontains=self.q))
         return qs
 
+    def extend_result_data(self, contractor):
+        return {
+            'nip': contractor.nip,
+            'phone': contractor.phone_1 or contractor.phone_2
+        }
+
 
 class ContractorGUS(View):
     def get(self, request, *args, **kwargs):
