@@ -44,7 +44,7 @@ class ComponentFilter(django_filters.FilterSet):
 
 class CommissionFilter(django_filters.FilterSet):
     status = django_filters.CharFilter(
-        widget=forms.HiddenInput(attrs={'value': Commission.OPEN}))
+        widget=forms.HiddenInput())
     pk = django_filters.CharFilter(
         lookup_expr='iexact',
         widget=forms.TextInput(),

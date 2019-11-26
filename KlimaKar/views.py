@@ -316,31 +316,61 @@ class FilteredSingleTableView(SingleTableView):
     tab_filter = None
     tab_filter_default = None
     tab_filter_choices = None
+    tab_filter_all_choice = ('__ALL__', 'Wszystkie')
 
     def get_table_data(self):
-        data = super(FilteredSingleTableView, self).get_table_data()
+        self.data = super(FilteredSingleTableView, self).get_table_data()
+        self.filter = self.filter_class(self.get_filter_params(), queryset=self.data)
+        return self.filter.qs
+
+    def get_filter_params(self):
         params = self.request.GET.copy()
         if self.tab_filter and self.tab_filter not in params:
             params[self.tab_filter] = self.tab_filter_default
-        self.filter = self.filter_class(params, queryset=data)
-        return self.filter.qs
+        if params.get(self.tab_filter) == self.tab_filter_all_choice[0]:
+            params.pop(self.tab_filter)
+        return params
+
+    def get_tab_counts(self):
+        counts = {}
+        params = self.get_filter_params()
+        for choice in self.get_tab_filter_choices():
+            params = self.process_params_per_choice(params, choice)
+            params.pop(self.tab_filter, None)
+            tab_filter = self.filter_class(params, queryset=self.data)
+            if choice[0] == self.tab_filter_all_choice[0]:
+                counts[choice[0]] = tab_filter.qs.count()
+            else:
+                counts[choice[0]] = self.get_tab_filter_count(choice[0], tab_filter.qs)
+        return counts
+
+    def process_params_per_choice(self, params, choice):
+        return params
 
     def get_context_data(self, **kwargs):
         context = super(FilteredSingleTableView, self).get_context_data(**kwargs)
         context['filter'] = self.filter
         if self.tab_filter:
             context['current_tab_filter'] = self.request.GET.get(self.tab_filter, self.tab_filter_default)
-            context['{}_data'.format(self.tab_filter)] = [(
-                *data, self.model.objects.filter(
-                    **{self.tab_filter: data[0]}).count()) for data in self.tab_filter_choices]
+            context['{}_data'.format(self.tab_filter)] = self.get_tab_filter_choices()
         return context
+
+    def get_tab_filter_choices(self):
+        return self.tab_filter_choices + [(*self.tab_filter_all_choice, )]
+
+    def get_tab_filter_count(self, choice, qs):
+        return qs.filter(
+            **{self.tab_filter: choice}).count()
 
     def get(self, request, *args, **kwargs):
         key = "{}_params".format(self.model.__name__)
         self.request.session[key] = self.request.GET
         if self.request.is_ajax():
             table = self.get_table(**self.get_table_kwargs())
-            return JsonResponse({"table": table.as_html(request)})
+            return JsonResponse({
+                'table': table.as_html(request),
+                'tab_counts': self.get_tab_counts() if self.tab_filter else None
+            })
         else:
             return super().get(request, args, kwargs)
 

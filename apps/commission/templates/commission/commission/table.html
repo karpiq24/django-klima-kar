@@ -40,7 +40,7 @@
 <nav>
     <div class="nav nav-tabs filter-tabs" id="nav-tab" role="tablist" data-done="{{ status_done }}">
         {% for status in status_data %}
-            <a class="nav-item nav-link {% if status.0 == current_tab_filter %}active{% endif %}" id="nav-{{ status.0 }}-tab" data-filter="id_status" data-value="{{ status.0 }}" data-toggle="tab" role="tab" aria-controls="nav-{{ status.0 }}" aria-selected="{% if forloop.counter == 1 %}true{% else %}false{% endif %}">{{ status.1 }} <span class="badge badge-primary">{{ status.2 }}</span></a>
+            <a class="nav-item nav-link {% if status.0 == current_tab_filter %}active{% endif %}" id="nav-{{ status.0 }}-tab" data-filter="id_status" data-value="{{ status.0 }}" data-toggle="tab" role="tab" aria-controls="nav-{{ status.0 }}" aria-selected="{% if forloop.counter == 1 %}true{% else %}false{% endif %}">{{ status.1 }} <span class="badge badge-primary"><i class="fas fa-spinner fa-spin"></i></span></a>
         {% endfor %}
     </div>
 </nav>

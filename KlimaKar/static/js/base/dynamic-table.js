@@ -1,5 +1,5 @@
 $(function() {
-    function reload_table ({page = 1, sort = null, table_id = null}) {
+    function reload_table ({page = 1, sort = null, table_id = null, counts_only = false}) {
         $('body').css('cursor', 'progress');
         var url = [location.protocol, '//', location.host, location.pathname].join('');
         var data = $('#filters > form').serialize() + '&page=' + page;
@@ -17,11 +17,18 @@ $(function() {
             dataType: 'json',
             data: data,
             success: function (data) {
-                if (table_id !== null) {
-                    $('.table-container[data-table_id="' + table_id + '"').replaceWith(data.table)
+                if (!counts_only) {
+                    if (table_id !== null) {
+                        $('.table-container[data-table_id="' + table_id + '"').replaceWith(data.table)
+                    }
+                    else {
+                        $('.table-container').replaceWith(data.table)
+                    }
                 }
-                else {
-                    $('.table-container').replaceWith(data.table)
+                if (data.tab_counts.length !== null) {
+                    Object.keys(data.tab_counts).forEach(function(key, index) {
+                        $('#nav-' + key +'-tab').find('span').text(data.tab_counts[key]);
+                    });
                 }
                 $('body').css('cursor', 'default');
             },
@@ -88,4 +95,8 @@ $(function() {
     $('.filter-tabs > a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         $('#' + $(e.target).data('filter')).val($(e.target).data('value')).change();
     })
+
+    debounce(function () {
+        reload_table({counts_only:true});
+    }, 1000)
 });

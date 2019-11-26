@@ -265,6 +265,35 @@ class CommissionTableView(ExportMixin, FilteredSingleTableView):
         context['fast_commission_url'] = reverse('commission:fast_commission')
         return context
 
+    def get_tab_filter_choices(self):
+        as_dict = dict(super().get_tab_filter_choices())
+        as_dict[Commission.DONE] = 'Zamknięte dzisiaj'
+        return [(k, v) for k, v in as_dict.items()]
+
+    def get_filter_params(self):
+        params = super().get_filter_params()
+        if params.get(self.tab_filter) == Commission.DONE:
+            params['end_date'] = '{} - {}'.format(self._today_string(), self._today_string())
+        return params
+
+    def process_params_per_choice(self, params, choice):
+        date_range = '{} - {}'.format(self._today_string(), self._today_string())
+        if choice != Commission.DONE and params.get('end_date') == date_range:
+            params.pop('end_date', None)
+        return params
+
+    def get_tab_filter_count(self, choice, qs):
+        if choice == Commission.DONE:
+            filters = {
+                self.tab_filter: choice,
+                'end_date': self._today_string()
+            }
+            return qs.filter(**filters).count()
+        return super().get_tab_filter_count(choice, qs)
+
+    def _today_string(self):
+        return datetime.date.today().strftime('%Y-%m-%d')
+
 
 class CommissionDetailView(SingleTableAjaxMixin, DetailView):
     model = Commission

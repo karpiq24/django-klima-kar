@@ -121,9 +121,12 @@ span.required {
 }
 
 .date-input.form-control[readonly],
-.date-range-input.form-control:disabled,
 .date-range-input.form-control[readonly] {
     background-color: #fff;
+}
+
+.date-range-input.form-control:disabled {
+    background-color: #e9ecef;
 }
 
 .date-input.form-control:disabled {
@@ -312,7 +315,8 @@ small#gus-data:hover {
 .select2-selection__clear {
     margin-left: 5px;
 }
-.select2-container {
+
+.select2.select2-container {
     width: 100% !important;
     min-width: 0px !important;
 }
