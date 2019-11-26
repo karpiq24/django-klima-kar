@@ -96,7 +96,9 @@ $(function() {
         $('#' + $(e.target).data('filter')).val($(e.target).data('value')).change();
     })
 
-    debounce(function () {
-        reload_table({counts_only:true});
-    }, 1000)
+    if ($('.filter-tabs').length > 0) {
+        debounce(function () {
+            reload_table({counts_only:true});
+        }, 200)
+    }
 });

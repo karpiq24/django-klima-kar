@@ -396,6 +396,11 @@ class CommissionUpdateView(UpdateWithInlinesView):
         upload_key = self.request.POST.get('upload_key')
         if upload_key:
             context['temp_files'] = get_temporary_files(upload_key)
+        if self.object.contractor:
+            context['contractor'] = {
+                'nip': self.object.contractor.nip,
+                'phone': self.object.contractor.phone_1 or self.object.contractor.phone_2
+            }
         return context
 
     def forms_valid(self, form, inlines):

@@ -124,7 +124,7 @@ $(function () {
 
     $("#id_contractor").change(function () {
         const extra = $(this).find(":selected").data('extra')
-        const data = (typeof extra === 'object') ? extra : $(this).find(":selected").data('data');
+        let data = (typeof extra === 'object') ? extra : $(this).find(":selected").data('data');
         const parent = $("#id_contractor").parent();
 
         if (data.id === "") {
@@ -135,13 +135,20 @@ $(function () {
             return;
         }
 
-        if (data.nip) {
+        if (data.nip === undefined && $('#contractor_nip').length > 0) {
+            data.nip = $('#contractor_nip').val()
+        }
+        if (data.phone === undefined && $('#contractor_phone').length > 0) {
+            data.phone = $('#contractor_phone').val()
+        }
+
+        if (data.nip && data.nip !== "None") {
             $('#gus-data').data('nip', data.nip);
             $('#gus-data').show();
         } else {
             $('#gus-data').hide();
         }
-        if (data.phone == null) {
+        if (data.phone == null || data.phone === "None") {
             $("#id_contractor").addClass('is-invalid');
             if ($(parent).find('div.invalid-feedback').length == 0) {
                 $(parent).append('<div class="invalid-feedback">Wybrany kontrahent nie ma podanego numeru telefonu.</div>')
