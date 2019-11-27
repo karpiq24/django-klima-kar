@@ -300,11 +300,11 @@ class CustomSelect2QuerySetView(autocomplete.Select2QuerySetView):
 
     def get_results(self, context):
         return [
-            dict(self.extend_result_data(result), **{
+            dict({
                 'id': self.get_result_value(result),
                 'text': self.get_result_label(result),
                 'selected_text': self.get_selected_result_label(result),
-            }) for result in context['object_list']
+            }, **self.extend_result_data(result)) for result in context['object_list']
         ]
 
     def extend_result_data(self, data):

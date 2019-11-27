@@ -9,8 +9,9 @@ function toCurrency(value) {
 }
 
 function customSuccessCreate(data, identifier) {
-    const $option = $("<option selected></option>").val(data['pk']).text(data['text']);
+    let $option = $("<option selected></option>").val(data['pk']).text(data['text']);
     if (identifier == '1') {
+        $option.data('extra', {'phone': data.phone, 'nip': data.nip});
         $('#id_contractor').append($option).trigger('change');
         $('#contractor-edit').prop('disabled', false);
     } else if (identifier == '2') {

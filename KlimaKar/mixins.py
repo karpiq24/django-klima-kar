@@ -58,13 +58,16 @@ class AjaxFormMixin(object):
     def form_valid(self, form):
         response = super().form_valid(form)
         if self.request.is_ajax():
-            data = {
+            data = dict({
                 'pk': self.object.pk,
                 'text': str(self.object)
-            }
+            }, **self.extend_result_data(self.object))
             return JsonResponse(data)
         else:
             return response
+
+    def extend_result_data(self, data):
+        return {}
 
     def get_success_url(self, **kwargs):
         return None

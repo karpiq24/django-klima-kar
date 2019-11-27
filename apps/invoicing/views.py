@@ -483,11 +483,23 @@ class ContractorCreateAjaxView(AjaxFormMixin, CreateView):
     form_class = ContractorModelForm
     title = "Nowy kontrahent"
 
+    def extend_result_data(self, contractor):
+        return {
+            'nip': contractor.nip,
+            'phone': contractor.phone_1 or contractor.phone_2
+        }
+
 
 class ContractorUpdateAjaxView(AjaxFormMixin, UpdateView):
     model = Contractor
     form_class = ContractorModelForm
     title = "Edycja kontrahenta"
+
+    def extend_result_data(self, contractor):
+        return {
+            'nip': contractor.nip,
+            'phone': contractor.phone_1 or contractor.phone_2
+        }
 
 
 class ContractorAutocomplete(CustomSelect2QuerySetView):
