@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.db import models
 from django.db.models import Sum
 
@@ -38,7 +37,7 @@ class Ware(models.Model):
         return ''.join(e for e in value if e.isalnum()).lower()
 
     def __str__(self):
-        return self.index
+        return '{} - {}'.format(self.index, self.name)
 
     def save(self, *args, **kwargs):
         self.index_slug = self.slugify(self.index)
@@ -83,7 +82,7 @@ class Invoice(models.Model):
         verbose_name='Data dodania')
 
     def __str__(self):
-        return self.number
+        return '{}: {}'.format(str(self.supplier), self.number)
 
     def calculate_total_value(self):
         total = 0

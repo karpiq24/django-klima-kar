@@ -16,12 +16,12 @@
             {% if object.vehicle %}
                 <tr>
                     <td class="detail-label">Pojazd</td>
-                    <td><a href="{% url 'commission:vehicle_detail' object.vehicle.brand|slugify object.vehicle.pk %}">{{ object.vehicle }}</a></td>
+                    <td><a href="{% url 'commission:vehicle_detail' object.vehicle|slugify object.vehicle.pk %}">{{ object.vehicle }}</a></td>
                 </tr>
             {% elif object.component %}
                 <tr>
                     <td class="detail-label">Podzespół</td>
-                    <td><a href="{% url 'commission:component_detail' object.component.get_component_type_display|slugify object.component.pk %}">{{ object.component }}</a></td>
+                    <td><a href="{% url 'commission:component_detail' object.component|slugify object.component.pk %}">{{ object.component }}</a></td>
                 </tr>
             {% else %}
                 <tr>
@@ -47,7 +47,7 @@
                 <td class="detail-label">Kontrahent</td>
                 {% if object.contractor %}
                     <td>
-                        <a href="{% url 'invoicing:contractor_detail' object.contractor.name|slugify object.contractor.pk %}">{{ object.contractor }}</a>
+                        <a href="{% url 'invoicing:contractor_detail' object.contractor|slugify object.contractor.pk %}">{{ object.contractor }}</a>
                         {% if object.contractor.phone_1 %}
                             <br>
                             {{ object.contractor.phone_1 }}
@@ -68,7 +68,7 @@
                         {% if object.sale_invoices.all.exists %}
                             {% for invoice in object.sale_invoices.all %}
                                 <li>
-                                    <a href="{% url 'invoicing:sale_invoice_detail' invoice.get_invoice_type_display|slugify invoice.number|slugify invoice.pk %}">{{ invoice }}</a> <i class="fa fa-times unassign-invoice" data-name="{{ invoice }}" data-pk="{{ invoice.pk }}" title="Odłącz fakturę"></i>
+                                    <a href="{% url 'invoicing:sale_invoice_detail' invoice|slugify invoice.pk %}">{{ invoice }}</a> <i class="fa fa-times unassign-invoice" data-name="{{ invoice }}" data-pk="{{ invoice.pk }}" title="Odłącz fakturę"></i>
                                 </li>
                             {% endfor %}
                         {% else %}

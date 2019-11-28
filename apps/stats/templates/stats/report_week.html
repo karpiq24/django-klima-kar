@@ -103,9 +103,9 @@
                 </tr>
                 {% for change in ware_price_changes %}
                     <tr class="{% if change.is_discount %}change-discount{% else %}change-rise{% endif %}">
-                        <td><a href="{{ absolute_url }}{% url 'warehouse:ware_detail' change.ware.index|slugify change.ware.name|slugify change.ware.pk %}">{{ change.ware }}</a></td>
-                        <td><a href="{{ absolute_url }}{% url 'warehouse:invoice_detail' change.invoice.supplier.name|slugify change.invoice.number|slugify change.invoice.pk %}">{{ change.invoice }}</a></td>
-                        <td><a href="{{ absolute_url }}{% url 'warehouse:supplier_detail' change.invoice.supplier.name|slugify change.invoice.supplier.pk %}">{{ change.invoice.supplier }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'warehouse:ware_detail' change.ware|slugify change.ware.pk %}">{{ change.ware }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'warehouse:invoice_detail' change.invoice|slugify change.invoice.pk %}">{{ change.invoice }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'warehouse:supplier_detail' change.invoice.supplier|slugify change.invoice.supplier.pk %}">{{ change.invoice.supplier }}</a></td>
                         <td>{{ change.last_price|floatformat:2 }} zł</td>
                         <td>{{ change.new_price|floatformat:2 }} zł</td>
                         <td>{{ change.percent_change|floatformat:1 }}%</td>
@@ -128,7 +128,7 @@
                 </tr>
                 {% for ware in wares %}
                     <tr>
-                        <td><a href="{{ absolute_url }}{% url 'warehouse:ware_detail' ware.index|slugify ware.name|slugify ware.pk %}">{{ ware }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'warehouse:ware_detail' ware|slugify ware.pk %}">{{ ware }}</a></td>
                         <td>{{ ware.name }}</td>
                         <td>{{ ware.last_price|floatformat:2 }} zł</td>
                     </tr>
@@ -149,7 +149,7 @@
                 </tr>
                 {% for supplier in suppliers %}
                     <tr>
-                        <td><a href="{{ absolute_url }}{% url 'warehouse:supplier_detail' supplier.name|slugify supplier.pk %}">{{ supplier }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'warehouse:supplier_detail' supplier|slugify supplier.pk %}">{{ supplier }}</a></td>
                         <td>{{ supplier.all_invoices_value|floatformat:2 }} zł</td>
                     </tr>
                 {% empty %}
@@ -171,8 +171,8 @@
                 </tr>
                 {% for invoice in purchase_invoices %}
                     <tr>
-                        <td><a href="{{ absolute_url }}{% url 'warehouse:invoice_detail' invoice.invoice.supplier.name|slugify invoice.invoice.number|slugify invoice.pk %}">{{ invoice }}</a></td>
-                        <td><a href="{{ absolute_url }}{% url 'warehouse:supplier_detail' invoice.supplier.name|slugify invoice.supplier.pk %}">{{ invoice.supplier }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'warehouse:invoice_detail' invoice|slugify invoice.pk %}">{{ invoice }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'warehouse:supplier_detail' invoice.supplier|slugify invoice.supplier.pk %}">{{ invoice.supplier }}</a></td>
                         <td>{{ invoice.date|date:"d.m.Y" }}</td>
                         <td>{{ invoice.total_value|floatformat:2 }} zł</td>
                     </tr>
@@ -199,8 +199,8 @@
                 </tr>
                 {% for invoice in sale_invoices %}
                     <tr>
-                        <td><a href="{{ absolute_url }}{% url 'invoicing:sale_invoice_detail' invoice.get_invoice_type_display|slugify invoice.number|slugify invoice.pk %}">{{ invoice }}</a></td>
-                        <td><a href="{{ absolute_url }}{% url 'invoicing:contractor_detail' invoice.contractor.name|slugify invoice.contractor.pk %}">{{ invoice.contractor }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'invoicing:sale_invoice_detail' invoice|slugify invoice.pk %}">{{ invoice }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'invoicing:contractor_detail' invoice.contractor|slugify invoice.contractor.pk %}">{{ invoice.contractor }}</a></td>
                         <td>{{ invoice.issue_date|date:"d.m.Y" }}</td>
                         <td>{{ invoice.total_value_netto|floatformat:2 }} zł</td>
                     </tr>
@@ -225,7 +225,7 @@
                 </tr>
                 {% for contractor in contractors %}
                     <tr>
-                        <td><a href="{{ absolute_url }}{% url 'invoicing:contractor_detail' contractor.name|slugify contractor.pk %}">{{ contractor }}</a></td>
+                        <td><a href="{{ absolute_url }}{% url 'invoicing:contractor_detail' contractor|slugify contractor.pk %}">{{ contractor }}</a></td>
                         <td>{{ contractor.nip_prefix|default_if_none:"" }}{{ contractor.nip|default_if_none:"—" }}</td>
                     </tr>
                 {% empty %}

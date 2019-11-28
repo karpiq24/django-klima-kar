@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 
 # A boolean that turns on/off debug mode.

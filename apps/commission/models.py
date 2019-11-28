@@ -167,7 +167,8 @@ class Commission(models.Model):
         null=True)
 
     def __str__(self):
-        return self.vc_name
+        name = str(self.vehicle) if self.vehicle else str(self.component) if self.component else self.vc_name
+        return 'Zlecenie {}: {}'.format(self.number, name)
 
     def save(self, *args, **kwargs):
         if self.status in [self.DONE, self.CANCELLED] and not self.end_date:

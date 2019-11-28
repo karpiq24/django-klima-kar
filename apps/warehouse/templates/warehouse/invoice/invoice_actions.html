@@ -1,7 +1,7 @@
 {% load slugify %}
-<a class="btn btn-outline-primary btn-sm btn-table" href="{% url 'warehouse:invoice_detail' record.supplier.name|slugify record.number|slugify record.pk %}" title="Szczegóły">
+<a class="btn btn-outline-primary btn-sm btn-table" href="{% url 'warehouse:invoice_detail' record|slugify record.pk %}" title="Szczegóły">
     Szczegóły
 </a>
-<a class="btn btn-outline-warning btn-sm btn-table" href="{% url 'warehouse:invoice_update' record.supplier.name|slugify record.number|slugify record.pk %}" title="Edycja">
+<a class="btn btn-outline-warning btn-sm btn-table" href="{% url 'warehouse:invoice_update' record|slugify record.pk %}" title="Edycja">
     Edycja
 </a>

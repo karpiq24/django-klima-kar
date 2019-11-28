@@ -227,7 +227,7 @@
                 <button class="btn btn-outline-primary btn-lg" type="submit" name="generate_pdf"><i class="fas fa-print"></i> Zapisz i drukuj</button>
                 <button class="btn btn-outline-primary btn-lg" type="submit"><i class="far fa-save"></i> Zapisz</button>
                 {% if object.pk %}
-                    <a class="btn btn-outline-dark btn-lg" href="{% url 'invoicing:sale_invoice_detail' object.get_invoice_type_display|slugify object.number|slugify object.pk %}">Powrót</a>
+                    <a class="btn btn-outline-dark btn-lg" href="{% url 'invoicing:sale_invoice_detail' object|slugify object.pk %}">Powrót</a>
                 {% else %}
                     <a class="btn btn-outline-dark btn-lg" href="{% url 'invoicing:sale_invoices' %}">Powrót</a>
                 {% endif %}

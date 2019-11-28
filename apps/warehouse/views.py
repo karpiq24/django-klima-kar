@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from urllib.parse import urlencode
 
 from django.urls import reverse
@@ -45,8 +44,7 @@ class WareUpdateView(UpdateView):
     def get_success_url(self, **kwargs):
         return reverse("warehouse:ware_detail", kwargs={
             'pk': self.object.pk,
-            'index': slugify(self.object.index),
-            'name': slugify(self.object.name)})
+            'slug': slugify(self.object)})
 
 
 class WareCreateView(CreateView):
@@ -67,8 +65,7 @@ class WareCreateView(CreateView):
     def get_success_url(self, **kwargs):
         return reverse("warehouse:ware_detail", kwargs={
             'pk': self.object.pk,
-            'index': slugify(self.object.index),
-            'name': slugify(self.object.name)})
+            'slug': slugify(self.object)})
 
 
 class WareDetailView(SingleTableAjaxMixin, DetailView):
@@ -141,8 +138,7 @@ class InvoiceCreateView(CreateWithInlinesView):
     def get_success_url(self):
         return reverse("warehouse:invoice_detail", kwargs={
             'pk': self.object.pk,
-            'supplier': slugify(self.object.supplier.name),
-            'number': slugify(self.object.number)
+            'slug': slugify(self.object)
         })
 
 
@@ -164,8 +160,7 @@ class InvoiceUpdateView(UpdateWithInlinesView):
     def get_success_url(self):
         return reverse("warehouse:invoice_detail", kwargs={
             'pk': self.object.pk,
-            'supplier': slugify(self.object.supplier.name),
-            'number': slugify(self.object.number)
+            'slug': slugify(self.object)
         })
 
 
@@ -219,7 +214,7 @@ class SupplierUpdateView(UpdateView):
     def get_success_url(self, **kwargs):
         return reverse("warehouse:supplier_detail", kwargs={
             'pk': self.object.pk,
-            'name': slugify(self.object.name)
+            'slug': slugify(self.object)
         })
 
 
@@ -241,7 +236,7 @@ class SupplierCreateView(CreateView):
     def get_success_url(self, **kwargs):
         return reverse("warehouse:supplier_detail", kwargs={
             'pk': self.object.pk,
-            'name': slugify(self.object.name)
+            'slug': slugify(self.object)
         })
 
 

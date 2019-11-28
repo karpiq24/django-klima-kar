@@ -53,7 +53,7 @@
             <div class="card bg-light">
                 <div class="card-body">
                     <h5 class="card-title">Akcje</h5>
-                    <a class="btn btn-outline-warning btn-lg" href="{% url 'invoicing:service_template_update' object.name|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
+                    <a class="btn btn-outline-warning btn-lg" href="{% url 'invoicing:service_template_update' object|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
                     {% if request.user.is_superuser %}
                         <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:invoicing_servicetemplate_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
                     {% endif %}

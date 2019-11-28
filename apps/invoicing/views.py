@@ -78,6 +78,7 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
     form_class = SaleInvoiceModelForm
     inlines = [SaleInvoiceItemsInline, RefrigerantWeightsInline]
     template_name = 'invoicing/sale_invoice/form.html'
+    invoice_type = None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -96,7 +97,11 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
         return initial
 
     def dispatch(self, *args, **kwargs):
-        self.invoice_type = kwargs.get('type')
+        for invoice_type in SaleInvoice.INVOICE_TYPES:
+            if slugify(invoice_type[1]) == kwargs.get('type'):
+                self.invoice_type = invoice_type[0]
+                break
+
         if not self.invoice_type or self.invoice_type not in dict(SaleInvoice.INVOICE_TYPES):
             raise Http404()
         return super().dispatch(*args, **kwargs)
@@ -106,8 +111,7 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
         if self.invoice_type != SaleInvoice.TYPE_CORRECTIVE:
             messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejną fakturę.</a>'.format(
                 reverse('invoicing:sale_invoice_create', kwargs={
-                    'type': self.invoice_type,
-                    'kind': slugify(dict(SaleInvoice.INVOICE_TYPES)[self.invoice_type])
+                    'type': slugify(dict(SaleInvoice.INVOICE_TYPES)[self.invoice_type])
                 })))
         else:
             messages.add_message(self.request, messages.SUCCESS, 'Zapisano fakturę.')
@@ -117,14 +121,12 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
         if self.generate_pdf:
             return reverse("invoicing:sale_invoice_detail", kwargs={
                 'pk': self.object.pk,
-                'kind': slugify(self.object.get_invoice_type_display()),
-                'number': slugify(self.object.number)
+                'slug': slugify(self.object)
             }) + "?pdf"
         else:
             return reverse("invoicing:sale_invoice_detail", kwargs={
                 'pk': self.object.pk,
-                'kind': slugify(self.object.get_invoice_type_display()),
-                'number': slugify(self.object.number)
+                'slug': slugify(self.object)
             })
 
 
@@ -184,14 +186,12 @@ class SaleInvoiceUpdateView(UpdateWithInlinesView):
         if self.generate_pdf:
             return reverse("invoicing:sale_invoice_detail", kwargs={
                 'pk': self.object.pk,
-                'kind': slugify(self.object.get_invoice_type_display()),
-                'number': slugify(self.object.number)
+                'slug': slugify(self.object)
             }) + "?pdf"
         else:
             return reverse("invoicing:sale_invoice_detail", kwargs={
                 'pk': self.object.pk,
-                'kind': slugify(self.object.get_invoice_type_display()),
-                'number': slugify(self.object.number)
+                'slug': slugify(self.object)
             })
 
 
@@ -347,7 +347,7 @@ class ServiceTemplateCreateView(CreateView):
     def get_success_url(self, **kwargs):
         return reverse("invoicing:service_template_detail", kwargs={
             'pk': self.object.pk,
-            'name': slugify(self.object.name)
+            'slug': slugify(self.object)
         })
 
 
@@ -368,7 +368,7 @@ class ServiceTemplateUpdateView(UpdateView):
     def get_success_url(self, **kwargs):
         return reverse("invoicing:service_template_detail", kwargs={
             'pk': self.object.pk,
-            'name': slugify(self.object.name)
+            'slug': slugify(self.object)
         })
 
 
@@ -453,7 +453,7 @@ class ContractorCreateView(CreateView):
     def get_success_url(self, **kwargs):
         return reverse("invoicing:contractor_detail", kwargs={
             'pk': self.object.pk,
-            'name': slugify(self.object.name)
+            'slug': slugify(self.object)
         })
 
 
@@ -474,7 +474,7 @@ class ContractorUpdateView(UpdateView):
     def get_success_url(self, **kwargs):
         return reverse("invoicing:contractor_detail", kwargs={
             'pk': self.object.pk,
-            'name': slugify(self.object.name)
+            'slug': slugify(self.object)
         })
 
 

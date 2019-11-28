@@ -62,7 +62,7 @@ class VehicleUpdateView(UpdateView):
     def get_success_url(self, **kwargs):
         return reverse("commission:vehicle_detail", kwargs={
             'pk': self.object.pk,
-            'brand': slugify(self.object.brand)})
+            'slug': slugify(self.object)})
 
 
 class VehicleCreateView(CreateView):
@@ -83,7 +83,7 @@ class VehicleCreateView(CreateView):
     def get_success_url(self, **kwargs):
         return reverse("commission:vehicle_detail", kwargs={
             'pk': self.object.pk,
-            'brand': slugify(self.object.brand)})
+            'slug': slugify(self.object)})
 
 
 class VehicleDetailView(SingleTableAjaxMixin, DetailView):
@@ -165,7 +165,7 @@ class ComponentUpdateView(UpdateView):
     def get_success_url(self, **kwargs):
         return reverse("commission:component_detail", kwargs={
             'pk': self.object.pk,
-            'type': slugify(self.object.get_component_type_display())})
+            'slug': slugify(self.object)})
 
 
 class ComponentCreateView(CreateView):
@@ -186,7 +186,7 @@ class ComponentCreateView(CreateView):
     def get_success_url(self, **kwargs):
         return reverse("commission:component_detail", kwargs={
             'pk': self.object.pk,
-            'type': slugify(self.object.get_component_type_display())})
+            'slug': slugify(self.object)})
 
 
 class ComponentDetailView(SingleTableAjaxMixin, DetailView):
@@ -380,7 +380,7 @@ class CommissionCreateView(CreateWithInlinesView):
         return '{}{}'.format(
             reverse("commission:commission_detail", kwargs={
                 'pk': self.object.pk,
-                'desc': slugify(str(self.object))
+                'slug': slugify(self.object)
             }), '?pdf' if self.generate_pdf else '')
 
 
@@ -417,7 +417,7 @@ class CommissionUpdateView(UpdateWithInlinesView):
         return '{}{}'.format(
             reverse("commission:commission_detail", kwargs={
                 'pk': self.object.pk,
-                'desc': slugify(str(self.object))
+                'slug': slugify(self.object)
             }), '?pdf' if self.generate_pdf else '')
 
 
@@ -440,7 +440,7 @@ class FastCommissionCreateView(View):
     def get_success_url(self, commission):
         return reverse("commission:commission_detail", kwargs={
             'pk': commission.pk,
-            'desc': slugify(str(commission))})
+            'slug': slugify(commission)})
 
 
 class CommissionAutocomplete(CustomSelect2QuerySetView):
@@ -545,7 +545,7 @@ class CheckUploadFinishedView(View):
             'size': filesizeformat(f.file_size),
             'url': reverse('commission:commission_file_download', kwargs={
                 'pk': commission.pk,
-                'desc': slugify(str(commission)),
+                'slug': slugify(commission),
                 'name': f.file_name
             })}
             for f in commission.commissionfile_set.all()]}, status=200)
@@ -617,8 +617,7 @@ class PrepareInvoiceUrl(View):
 
         url = '{}{}{}'.format(
             reverse('invoicing:sale_invoice_commission_create', kwargs={
-                'kind': dict(SaleInvoice.INVOICE_TYPES)[invoice_type],
-                'type': invoice_type,
+                'type': slugify(dict(SaleInvoice.INVOICE_TYPES)[invoice_type]),
                 'slug': slugify(commission),
                 'pk': pk
             }),
@@ -652,15 +651,14 @@ class AssignInoiceView(View):
                 'name': str(commission),
                 'url': reverse("commission:commission_detail", kwargs={
                     'pk': commission.pk,
-                    'desc': slugify(str(commission))
+                    'slug': slugify(commission)
                 })
             },
             'sale_invoice': {
                 'name': str(invoice),
                 'url': reverse("invoicing:sale_invoice_detail", kwargs={
                     'pk': invoice.pk,
-                    'kind': slugify(invoice.get_invoice_type_display()),
-                    'number': slugify(invoice.number)
+                    'slug': slugify(invoice)
                 })
             }
             }, status=200)

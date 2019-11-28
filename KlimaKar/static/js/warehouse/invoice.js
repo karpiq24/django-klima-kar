@@ -54,7 +54,7 @@ $(function () {
     $('#item-rows tr:first').removeClass('d-none');
     $('#item-rows tr:first').find(".item-DELETE").children('input').prop('checked', false);
     $('.item-formset-row').each(function() {
-        var index = $(this).find(".item-ware option:selected").text();
+        var ware_pk = $(this).find(".item-ware option:selected").val();
         var item_form = $(this);
         var price = $(item_form).find(".item-price").val();
         var quantity = $(item_form).find(".item-quantity").val();
@@ -65,14 +65,14 @@ $(function () {
         var total = toCurrency(price * quantity);
         $(item_form).find(".item-total-value").text(total.toFixed(2).replace(".", ",") + ' zł');
 
-        if (index == '---------' || index == '') {
+        if (ware_pk == '') {
             return;
         }
         $(item_form).removeClass('d-none')
         $.ajax({
             url: GET_WARE_DATA,
             data: {
-                'index': index
+                'pk': ware_pk
             },
             dataType: 'json',
             success: function (result) {

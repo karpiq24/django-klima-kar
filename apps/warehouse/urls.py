@@ -7,8 +7,8 @@ urlpatterns = [
     path('towary', views.WareTableView.as_view(), name='wares'),
     path('towary/remanent', views.ExportWareInventory.as_view(), name='wares_inventory'),
     path('towary/nowy', views.WareCreateView.as_view(), name='ware_create'),
-    path('towary/<str:index>,<str:name>,<int:pk>', views.WareDetailView.as_view(), name='ware_detail'),
-    path('towary/<str:index>,<str:name>,<int:pk>/edycja', views.WareUpdateView.as_view(), name='ware_update'),
+    path('towary/<str:slug>,<int:pk>', views.WareDetailView.as_view(), name='ware_detail'),
+    path('towary/<str:slug>,<int:pk>/edycja', views.WareUpdateView.as_view(), name='ware_update'),
     path('towary/create_ajax', views.WareCreateAjaxView.as_view(), name='ware_create_ajax'),
     path('get_ware_data', views.GetWareData.as_view(), name='get_ware_data'),
     path('ware_autocomplete', views.WareAutocomplete.as_view(), name='ware_autocomplete'),
@@ -17,13 +17,13 @@ urlpatterns = [
 
     path('faktury', views.InvoiceTableView.as_view(), name='invoices'),
     path('faktury/nowa', views.InvoiceCreateView.as_view(), name='invoice_create'),
-    path('faktury/<str:supplier>,<str:number>,<int:pk>', views.InvoiceDetailView.as_view(), name='invoice_detail'),
-    path('faktury/<str:supplier>,<str:number>,<int:pk>/edycja', views.InvoiceUpdateView.as_view(), name='invoice_update'),
+    path('faktury/<str:slug>,<int:pk>', views.InvoiceDetailView.as_view(), name='invoice_detail'),
+    path('faktury/<str:slug>,<int:pk>/edycja', views.InvoiceUpdateView.as_view(), name='invoice_update'),
 
     path('dostawcy', views.SupplierTableView.as_view(), name="suppliers"),
     path('dostawcy/nowy', views.SupplierCreateView.as_view(), name='supplier_create'),
-    path('dostawcy/<str:name>,<int:pk>', views.SupplierDetailView.as_view(), name='supplier_detail'),
-    path('dostawcy/<str:name>,<int:pk>/edycja', views.SupplierUpdateView.as_view(), name='supplier_update'),
+    path('dostawcy/<str:slug>,<int:pk>', views.SupplierDetailView.as_view(), name='supplier_detail'),
+    path('dostawcy/<str:slug>,<int:pk>/edycja', views.SupplierUpdateView.as_view(), name='supplier_update'),
     path('supplier_autocomplete', views.SupplierAutocomplete.as_view(), name='supplier_autocomplete'),
     path('supplier_autocomplete_create', views.SupplierAutocomplete.as_view(create_field='name'), name='supplier_autocomplete_create'),
 ]

@@ -701,22 +701,20 @@ class WarePriceChanges(View):
                 'invoice': {
                     'url': reverse('warehouse:invoice_detail', kwargs={
                         'pk': change.invoice.pk,
-                        'supplier': slugify(change.invoice.supplier.name),
-                        'number': slugify(change.invoice.number),
+                        'slug': slugify(change.invoice),
                         }),
                     'number': change.invoice.number
                 },
                 'ware': {
                     'url': reverse('warehouse:ware_detail', kwargs={
                         'pk': change.ware.pk,
-                        'index': slugify(change.ware.index),
-                        'name': slugify(change.ware.name)}),
+                        'slug': slugify(change.ware)}),
                     'index': change.ware.index,
                 },
                 'supplier': {
                     'url': reverse('warehouse:supplier_detail', kwargs={
                         'pk': change.invoice.supplier.pk,
-                        'name': slugify(change.invoice.supplier.name)
+                        'slug': slugify(change.invoice.supplier)
                         }),
                     'name': change.invoice.supplier.name
                 },
@@ -744,8 +742,7 @@ class DuePayments(GroupAccessControlMixin, View):
             response['invoices'].append({
                 'url': reverse('invoicing:sale_invoice_detail', kwargs={
                     'pk': invoice.pk,
-                    'kind': slugify(invoice.get_invoice_type_display()),
-                    'number': slugify(invoice.number)
+                    'slug': slugify(invoice)
                 }),
                 'number': invoice.number,
                 'brutto_price': "{0:.2f} zł".format(invoice.total_value_brutto).replace('.', ','),
@@ -754,7 +751,7 @@ class DuePayments(GroupAccessControlMixin, View):
                 'contractor': {
                     'url': reverse('invoicing:contractor_detail', kwargs={
                         'pk': invoice.contractor.pk,
-                        'name': slugify(invoice.contractor.name)
+                        'slug': slugify(invoice.contractor)
                     }),
                     'name': invoice.contractor.name
                 },

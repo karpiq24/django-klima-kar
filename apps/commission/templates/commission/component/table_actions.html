@@ -1,7 +1,7 @@
 {% load slugify %}
-<a class="btn btn-outline-primary btn-sm btn-table" href="{% url 'commission:component_detail' record.get_component_type_display|slugify record.pk %}" title="Szczegóły">
+<a class="btn btn-outline-primary btn-sm btn-table" href="{% url 'commission:component_detail' record|slugify record.pk %}" title="Szczegóły">
     Szczegóły
 </a>
-<a class="btn btn-outline-warning btn-sm btn-table" href="{% url 'commission:component_update' record.get_component_type_display|slugify record.pk %}" title="Edycja">
+<a class="btn btn-outline-warning btn-sm btn-table" href="{% url 'commission:component_update' record|slugify record.pk %}" title="Edycja">
     Edycja
 </a>

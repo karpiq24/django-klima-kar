@@ -72,7 +72,7 @@
                 <h5 class="card-title">Akcje</h5>
                 <button class="btn btn-outline-primary btn-lg" type="submit"><i class="far fa-save"></i> Zapisz</button>
                 {% if object.pk %}
-                    <a class="btn btn-outline-dark btn-lg" href="{% url 'warehouse:invoice_detail' object.supplier.name|slugify object.number|slugify object.pk %}">Powrót</a>
+                    <a class="btn btn-outline-dark btn-lg" href="{% url 'warehouse:invoice_detail' object|slugify object.pk %}">Powrót</a>
                 {% else %}
                     <a class="btn btn-outline-dark btn-lg" href="{% url 'warehouse:invoices' %}">Powrót</a>
                 {% endif %}
