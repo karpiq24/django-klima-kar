@@ -6,3 +6,5 @@ pip install -r docs/requirements.pip
 ./manage.py collectstatic --noinput
 sudo crontab < docs/crontab.txt
 sudo service gunicorn restart
+sudo service redis restart
+sudo service rqworker restart
