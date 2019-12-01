@@ -43,6 +43,13 @@ class ComponentFilter(django_filters.FilterSet):
 
 
 class CommissionFilter(django_filters.FilterSet):
+    YES = 'yes'
+    NO = 'no'
+    HAS_FILES = [
+        (YES, 'Tak'),
+        (NO, 'Nie')
+    ]
+
     status = django_filters.CharFilter(
         widget=forms.HiddenInput())
     pk = django_filters.CharFilter(
@@ -59,6 +66,10 @@ class CommissionFilter(django_filters.FilterSet):
     description = django_filters.CharFilter(
         lookup_expr='icontains',
         widget=forms.TextInput())
+    has_files = django_filters.ChoiceFilter(
+        choices=HAS_FILES,
+        label="Załączono pliki",
+        method='has_files_filter')
     start_date = django_filters.CharFilter(
         method='start_date_filter',
         label="Data przyjęcia",
@@ -71,6 +82,12 @@ class CommissionFilter(django_filters.FilterSet):
     class Meta:
         model = Commission
         fields = ['status', 'pk', 'vc_name', 'contractor', 'description', 'start_date', 'end_date']
+
+    def has_files_filter(self, queryset, name, value):
+        if value == self.YES:
+            return queryset.exclude(commissionfile=None)
+        elif value == self.NO:
+            return queryset.filter(commissionfile=None)
 
     def start_date_filter(self, queryset, name, value):
         try:

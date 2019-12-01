@@ -26,7 +26,7 @@ from apps.invoicing.forms import SaleInvoiceModelForm, ContractorModelForm, Sale
 from apps.invoicing.tables import SaleInvoiceTable, ContractorTable, SaleInvoiceItemTable, ServiceTemplateTable
 from apps.invoicing.filters import SaleInvoiceFilter, ContractorFilter, ServiceTemplateFilter
 from apps.invoicing.functions import get_next_invoice_number, generate_refrigerant_weights_report
-from apps.invoicing.gus import get_gus_address, get_gus_pkd, get_gus_data
+from apps.invoicing.gus import GUS
 from apps.settings.models import SiteSettings
 from apps.commission.models import Commission
 from apps.commission.tables import CommissionTable
@@ -525,12 +525,12 @@ class ContractorGUS(View):
             return JsonResponse({}, status=400)
         response_data = None
         if request_type == 'address':
-            response_data = get_gus_address(nip)
+            response_data = GUS.get_gus_address(nip)
         elif request_type == 'pkd':
-            response_data = {'pkd': sorted(get_gus_pkd(nip), key=lambda k: k['main'], reverse=True)}
+            response_data = {'pkd': sorted(GUS.get_gus_pkd(nip), key=lambda k: k['main'], reverse=True)}
         elif request_type == 'all':
-            response_data = {'pkd': sorted(get_gus_pkd(nip), key=lambda k: k['main'], reverse=True),
-                             'info': get_gus_data(nip)}
+            response_data = {'pkd': sorted(GUS.get_gus_pkd(nip), key=lambda k: k['main'], reverse=True),
+                             'info': GUS.get_gus_data(nip)}
         if not response_data:
             return JsonResponse({}, status=404)
         return JsonResponse(response_data)

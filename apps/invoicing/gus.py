@@ -1,43 +1,49 @@
-from gusregon import GUS
+from gusregon import GUS as GUSREGON
 from KlimaKar import settings
 
 
-def reload_session():
-    if settings.GUS_SANDBOX or not settings.GUS_KEY:
-        gus_session = GUS(sandbox=True)
-    else:
-        gus_session = GUS(api_key=settings.GUS_KEY)
-    return gus_session
+class GUSSession(object):
+    session = None
+
+    def _initialize_session(self):
+        if not self.session:
+            self.reload_session()
+
+    def reload_session(self):
+        if settings.GUS_SANDBOX or not settings.GUS_KEY:
+            self.session = GUSREGON(sandbox=True)
+        else:
+            self.session = GUSREGON(api_key=settings.GUS_KEY)
+
+    def get_gus_address(self, nip):
+        self._initialize_session()
+        result = self.session.get_address(nip=nip)
+        if result:
+            return result
+        else:
+            self.reload_session()
+        return self.session.get_address(nip=nip)
+
+    def get_gus_pkd(self, nip):
+        self._initialize_session()
+        result = self.session.get_pkd(nip=nip)
+        if result:
+            return result
+        else:
+            self.reload_session()
+        return self.session.get_pkd(nip=nip)
+
+    def get_gus_data(self, nip):
+        self._initialize_session()
+        result = self.session.search(nip=nip)
+        if result:
+            return result
+        else:
+            self.reload_session()
+        return self.session.search(nip=nip)
 
 
-def get_gus_address(nip):
-    global gus_session
-    result = gus_session.get_address(nip=nip)
-    if result:
-        return result
-    else:
-        reload_session()
-    return gus_session.get_address(nip=nip)
+GUS = GUSSession()
 
-
-def get_gus_pkd(nip):
-    global gus_session
-    result = gus_session.get_pkd(nip=nip)
-    if result:
-        return result
-    else:
-        reload_session()
-    return gus_session.get_pkd(nip=nip)
-
-
-def get_gus_data(nip):
-    global gus_session
-    result = gus_session.search(nip=nip)
-    if result:
-        return result
-    else:
-        reload_session()
-    return gus_session.search(nip=nip)
-
-
-gus_session = reload_session()
+if not settings.DEBUG:
+    GUS.reload_session()
