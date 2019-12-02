@@ -2,7 +2,6 @@ import os
 import requests
 
 from django.db import models
-from django.core.mail import mail_admins
 
 from KlimaKar.models import SingletonModel
 from KlimaKar.functions import encode_media_related
@@ -128,12 +127,17 @@ class MyCloudHome(SingletonModel):
             self.authorize_connection()
         if not self.ACCESS_TOKEN:
             self._refresh_token()
-        if not self._check_access_token():
-            self._refresh_token()
         if not self.USER_ID:
-            self.get_user_info()
+            user = self.get_user_info()
+            self.USER_ID = user['sub']
+            self.save()
         if not self.DEVICE_ID or not self.DEVICE_NAME or not self.DEVICE_INTERNAL_URL or not self.DEVICE_EXTERNAL_URL:
-            self.get_user_devices()
+            device = self.get_user_devices()['data'][0]
+            self.DEVICE_ID = device['deviceId']
+            self.DEVICE_NAME = device['name']
+            self.DEVICE_INTERNAL_URL = device['network']['internalURL']
+            self.DEVICE_EXTERNAL_URL = device['network']['externalURI']
+            self.save()
         if not self.APP_DIR_ID:
             r = self.create_folder(self.APP_DIR_NAME)
             if r.status_code == 201:
@@ -177,7 +181,6 @@ class MyCloudHome(SingletonModel):
             'redirect_uri': 'http://localhost/',
             'client_id': self.WD_CLIENT_ID
         }
-        print(params)
         pr = requests.models.PreparedRequest()
         pr.prepare(method='get', url=url, params=params)
         return pr.url
@@ -219,40 +222,22 @@ class MyCloudHome(SingletonModel):
         self.save()
         return r.json()
 
-    def _check_access_token(self):
-        if not self.ACCESS_TOKEN:
-            return False
-        url = os.path.join(self._get_endpoint('service.auth0.url'), 'userinfo')
-        r = requests.get(url, headers=self._get_auth_headers(check=False))
-        if r.text == 'Unauthorized':
-            return False
-        if r.json().get('error') == 'unauthorized':
-            mail_admins('WD My Cloud Home is unauthorized', r.text)
-            return False
-        return True
-
-    def _get_auth_headers(self, check=True):
-        if check and not self._check_access_token():
-            self._refresh_token()
+    def _get_auth_headers(self):
         return {'Authorization': 'Bearer {}'.format(self.ACCESS_TOKEN)}
 
     def get_user_info(self):
         url = os.path.join(self._get_endpoint('service.auth0.url'), 'userinfo')
         r = requests.get(url, headers=self._get_auth_headers())
-        self.USER_ID = r.json()['sub']
-        self.save()
+        if self._has_auth_errors(r, refresh=False):
+            return None
         return r.json()
 
     def get_user_devices(self):
         url = os.path.join(
             self._get_endpoint('service.device.url'), 'device', 'v1', 'user', self.USER_ID)
         r = requests.get(url, headers=self._get_auth_headers())
-        data = r.json()['data'][0]
-        self.DEVICE_ID = data['deviceId']
-        self.DEVICE_NAME = data['name']
-        self.DEVICE_INTERNAL_URL = data['network']['internalURL']
-        self.DEVICE_EXTERNAL_URL = data['network']['externalURI']
-        self.save()
+        if self._has_auth_errors(r):
+            return self.get_user_devices()
         return r.json()
 
     def create_folder(self, name, directory='root'):
@@ -266,6 +251,8 @@ class MyCloudHome(SingletonModel):
         headers = self._get_auth_headers()
         headers['Content-Type'] = content_type
         r = requests.post(url, data=body, headers=headers)
+        if self._has_auth_errors(r):
+            return self.create_folder(name, directory)
         return r
 
     def create_file(self, name, contents, directory='root'):
@@ -278,6 +265,8 @@ class MyCloudHome(SingletonModel):
         headers = self._get_auth_headers()
         headers['Content-Type'] = content_type
         r = requests.post(url, data=body, headers=headers)
+        if self._has_auth_errors(r):
+            return self.create_file(name, contents, directory)
         return r
 
     def get_files(self, directory='root'):
@@ -286,6 +275,8 @@ class MyCloudHome(SingletonModel):
             'ids': directory
         }
         r = requests.get(url, params=params, headers=self._get_auth_headers())
+        if self._has_auth_errors(r):
+            return self.get_files(directory)
         return r.json()
 
     def delete_file(self, file_id):
@@ -293,6 +284,8 @@ class MyCloudHome(SingletonModel):
             return False
         url = os.path.join(self.DEVICE_INTERNAL_URL, 'sdk', 'v2', 'files', file_id)
         r = requests.delete(url, headers=self._get_auth_headers())
+        if self._has_auth_errors(r):
+            return self.delete_file(file_id)
         return r
 
     def download_file(self, file_id):
@@ -300,4 +293,25 @@ class MyCloudHome(SingletonModel):
             return None
         url = os.path.join(self.DEVICE_INTERNAL_URL, 'sdk', 'v2', 'files', file_id, 'content')
         r = requests.get(url, headers=self._get_auth_headers())
+        if self._has_auth_errors(r):
+            return self.download_file(file_id)
         return r.content
+
+    def _has_auth_errors(self, response, refresh=True):
+        has_error = False
+        if response.text == 'Unauthorized':
+            has_error = True
+        else:
+            try:
+                json_data = response.json()
+                if json_data.get('key') == 'unauthenticated':
+                    has_error = True
+                elif json_data.get('error', {}).get('label') == 'UNAUTHORIZED':
+                    has_error = True
+                elif json_data.get('error') == 'unauthorized':
+                    has_error = True
+            except ValueError:
+                pass
+        if has_error and refresh:
+            self._refresh_token()
+        return has_error
