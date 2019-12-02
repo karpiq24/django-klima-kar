@@ -105,16 +105,15 @@ $(function () {
     });
 
     $(".item-ware").change(function () {
-        var index = $("option:selected", this).text();
+        var ware_pk = $("option:selected", this).val();
         var item_form = $(this).parents(".item-formset-row");
-        if (index == '---------') {
+        if (ware_pk == '') {
             $(item_form).find(".item-name").text('');
-            return;
         }
         $.ajax({
             url: GET_WARE_DATA,
             data: {
-                'index': index
+                'pk': ware_pk
             },
             dataType: 'json',
             success: function (result) {

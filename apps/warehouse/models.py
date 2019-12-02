@@ -37,7 +37,7 @@ class Ware(models.Model):
         return ''.join(e for e in value if e.isalnum()).lower()
 
     def __str__(self):
-        return '{} - {}'.format(self.index, self.name)
+        return self.index
 
     def save(self, *args, **kwargs):
         self.index_slug = self.slugify(self.index)
