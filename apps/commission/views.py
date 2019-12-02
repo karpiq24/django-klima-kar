@@ -286,13 +286,15 @@ class CommissionTableView(ExportMixin, FilteredSingleTableView):
         if choice == Commission.DONE:
             filters = {
                 self.tab_filter: choice,
-                'end_date': self._today_string()
+                'end_date': self._today_string(db_format=True)
             }
             return qs.filter(**filters).count()
         return super().get_tab_filter_count(choice, qs)
 
-    def _today_string(self):
-        return datetime.date.today().strftime('%Y-%m-%d')
+    def _today_string(self, db_format=False):
+        if db_format:
+            return datetime.date.today().strftime('%Y-%m-%d')
+        return datetime.date.today().strftime('%d.%m.%Y')
 
 
 class CommissionDetailView(SingleTableAjaxMixin, DetailView):
