@@ -7,39 +7,47 @@ class GUSSession(object):
 
     def _initialize_session(self):
         if not self.session:
-            self.reload_session()
+            return self.reload_session()
+        return True
 
     def reload_session(self):
-        if settings.GUS_SANDBOX or not settings.GUS_KEY:
-            self.session = GUSREGON(sandbox=True)
-        else:
-            self.session = GUSREGON(api_key=settings.GUS_KEY)
+        try:
+            if settings.GUS_SANDBOX or not settings.GUS_KEY:
+                self.session = GUSREGON(sandbox=True)
+            else:
+                self.session = GUSREGON(api_key=settings.GUS_KEY)
+            return True
+        except Exception:
+            return False
 
-    def get_gus_address(self, nip):
-        self._initialize_session()
-        result = self.session.get_address(nip=nip)
-        if result:
+    def gus_initialize(func):
+        def wrapper(self, *args, **kwargs):
+            if not self._initialize_session():
+                return None
+            try:
+                result = func(self, *args, **kwargs)
+            except Exception:
+                return None
+            if not result:
+                if not self.reload_session():
+                    return None
+                try:
+                    result = func(self, *args, **kwargs)
+                except Exception:
+                    return None
             return result
-        else:
-            self.reload_session()
+        return wrapper
+
+    @gus_initialize
+    def get_gus_address(self, nip):
         return self.session.get_address(nip=nip)
 
+    @gus_initialize
     def get_gus_pkd(self, nip):
-        self._initialize_session()
-        result = self.session.get_pkd(nip=nip)
-        if result:
-            return result
-        else:
-            self.reload_session()
         return self.session.get_pkd(nip=nip)
 
+    @gus_initialize
     def get_gus_data(self, nip):
-        self._initialize_session()
-        result = self.session.search(nip=nip)
-        if result:
-            return result
-        else:
-            self.reload_session()
         return self.session.search(nip=nip)
 
 
