@@ -9,17 +9,22 @@ from dropbox.exceptions import ApiError, AuthError
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.utils.six import StringIO
+from django.core.mail import mail_admins
 
 from KlimaKar.settings import DROPBOX_TOKEN
+from apps.settings.models import MyCloudHome
 
 
 class Command(BaseCommand):
     help = 'Backups database to dropbox'
     apps_to_backup = ['warehouse', 'invoicing', 'commission', 'stats']
 
+    def add_arguments(self, parser):
+        parser.add_argument('--mycloud', action='store_true')
+
     def handle(self, *args, **options):
         print("Backing up database for: {}".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-        zip_name = "{}-django-klimakar-backup.zip".format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+        zip_name = "{}-django-klimakar-jsondump.zip".format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
         temp_zip_file = zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED)
         dbx = dropbox.Dropbox(DROPBOX_TOKEN)
         try:
@@ -47,5 +52,14 @@ class Command(BaseCommand):
             else:
                 print(err)
                 return
+
+        if options['mycloud']:
+            self.upload_to_mycloud(zip_name, zip_name)
         os.remove(zip_name)
         print("Database backup uploaded to Dropbox.")
+
+    def upload_to_mycloud(self, file_name, file_path):
+        cloud = MyCloudHome.load()
+        r = cloud.create_file(file_name, open(file_path, 'rb').read(), cloud.BACKUP_DIR_ID)
+        if r.status_code == 409 or r.status_code != 201:
+            mail_admins('Postgres backup save failed!', r.text)

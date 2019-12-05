@@ -76,6 +76,9 @@ class MyCloudHome(SingletonModel):
     APP_DIR_NAME = models.CharField(
         max_length=255,
         null=True)
+    BACKUP_DIR_NAME = models.CharField(
+        max_length=255,
+        null=True)
     COMMISSION_DIR_NAME = models.CharField(
         max_length=255,
         null=True)
@@ -121,6 +124,10 @@ class MyCloudHome(SingletonModel):
         max_length=128,
         blank=True,
         null=True)
+    BACKUP_DIR_ID = models.CharField(
+        max_length=128,
+        blank=True,
+        null=True)
 
     def initialize(self):
         if not self.REFRESH_TOKEN:
@@ -160,6 +167,18 @@ class MyCloudHome(SingletonModel):
                 for f in files:
                     if f['name'] == self.COMMISSION_DIR_NAME:
                         self.COMMISSION_DIR_ID = f['id']
+                        self.save()
+                        break
+        if not self.BACKUP_DIR_ID:
+            r = self.create_folder(self.BACKUP_DIR_NAME, self.APP_DIR_ID)
+            if r.status_code == 201:
+                self.BACKUP_DIR_ID = r.headers['Location'].split('/')[-1]
+                self.save()
+            else:
+                files = self.get_files(self.APP_DIR_ID)['files']
+                for f in files:
+                    if f['name'] == self.BACKUP_DIR_NAME:
+                        self.BACKUP_DIR_ID = f['id']
                         self.save()
                         break
 
