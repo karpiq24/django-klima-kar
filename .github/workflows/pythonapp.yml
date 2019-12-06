@@ -27,8 +27,6 @@ jobs:
     - name: Finish up PostgreSQL and Redis
       run: |
         sudo apt install libpq-dev postgresql postgresql-contrib
-        sudo service postgresql start
-        sudo systemctl enable redis-server.service
     - name: Install fonts
       run: |
         sudo cp KlimaKar/static/fonts/* /usr/local/share/fonts/
