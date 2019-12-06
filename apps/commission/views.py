@@ -206,7 +206,7 @@ class ComponentDetailView(SingleTableAjaxMixin, DetailView):
 
 class ComponentAutocomplete(CustomSelect2QuerySetView):
     always_show_create = True
-    create_empty_label = 'Nowy pojazd'
+    create_empty_label = 'Nowy komponent'
 
     def get_queryset(self):
         qs = Component.objects.all()

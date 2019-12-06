@@ -281,6 +281,7 @@ $(function () {
         $.ajax({
             url: CREATE_COMPONENT,
             type: 'get',
+            data: {'model': data.id},
             dataType: 'json',
             beforeSend: function () {
                 $("#modal-generic").modal("show");
