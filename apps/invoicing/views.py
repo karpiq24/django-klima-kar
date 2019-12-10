@@ -566,10 +566,13 @@ class ContractorGetDataView(View):
                             url = 'https://wl-api.mf.gov.pl/api/search/nip/{}?date={}'.format(
                                 contractor.nip, str(datetime.date.today()))
                             r = requests.get(url)
-                            vat_valid = r.json().get('result', {}).get('subject', {}).get('statusVat')
+                            vat_subject = r.json().get('result', {}).get('subject', {})
+                            if vat_subject is None:
+                                vat_valid = False
+                            else:
+                                vat_valid = vat_subject.get('statusVat', False)
                             response['vat_url'] = 'https://www.podatki.gov.pl/wykaz-podatnikow-vat-wyszukiwarka'
-                            if vat_valid:
-                                response['vat_valid'] = vat_valid == 'Czynny'
+                            response['vat_valid'] = vat_valid == 'Czynny'
                 except Exception:
                     response['vat_valid'] = 'failed'
             return JsonResponse({'status': 'success',

@@ -45,7 +45,8 @@ var date_input_settings = {
         'Dzisiaj': [moment(), moment()],
         'Wczoraj': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
         'Ten tydzień': [moment().startOf('isoWeek'), moment().endOf('isoWeek')],
-        'Ostatnie 7 dni': [moment().subtract(6, 'days'), moment()],
+        'Poprzedni tydzień': [moment().subtract(1, 'week').startOf('isoWeek'), moment().subtract(1, 'week').endOf('isoWeek')],
+        'Dwa tygodnie': [moment().subtract(1, 'week').startOf('isoWeek'), moment().endOf('isoWeek')],
         'Ostatnie 30 dni': [moment().subtract(29, 'days'), moment()],
         'Ten miesiąc': [moment().startOf('month'), moment().endOf('month')],
         'Ostatni miesiąc': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]

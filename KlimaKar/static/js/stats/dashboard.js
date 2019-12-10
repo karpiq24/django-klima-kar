@@ -87,6 +87,32 @@ $(function () {
         }
     });
 
+    $('#summary-date-range').on('apply.daterangepicker', function(ev, picker) {
+        $.ajax({
+            url: $(this).attr('data-url'),
+            data: {
+                date_from: picker.startDate.format('YYYY-MM-DD'),
+                date_to: picker.endDate.format('YYYY-MM-DD')
+            },
+            success: function (result) {
+                const urls = result.urls;
+                delete result.urls;
+                for (const key in result) {
+                    $('#summary-' + key).text(result[key]);
+                }
+                for (const key in urls) {
+                    $('#summary-link-' + key).attr('href', urls[key]);
+                }
+            }
+        });
+    });
+
+    if ($('#summary-date-range').length > 0) {
+        $('#summary-date-range').data('daterangepicker').setStartDate(moment().startOf('isoWeek'));
+        $('#summary-date-range').data('daterangepicker').setEndDate(moment().endOf('isoWeek'));
+        $('#summary-date-range').data('daterangepicker').clickApply();
+    }
+
     $('.metrics-date-range').on('apply.daterangepicker', function(ev, picker) {
         var url = $(this).attr('data-url');
         $.ajax({

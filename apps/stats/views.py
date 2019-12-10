@@ -916,3 +916,73 @@ class SavePTU(GroupAccessControlMixin, View):
         ptu.value = value
         ptu.save()
         return JsonResponse({'status': 'success', 'message': 'Poprawnie zapisano PTU.'})
+
+
+class GetSummary(GroupAccessControlMixin, View):
+    allowed_groups = ['boss']
+
+    def get(self, *args, **kwargs):
+        try:
+            date_from = date_parser.parse(self.request.GET.get('date_from')).date()
+            date_to = date_parser.parse(self.request.GET.get('date_to')).date()
+        except TypeError:
+            return JsonResponse({'status': 'error', 'message': 'Niepoprawny zakres dat.'}, status=400)
+        response = {}
+        ptu_sum = self._get_ptu(date_from, date_to)
+        response['ptu'] = "{0:.2f} zł".format(ptu_sum).replace('.', ',')
+
+        commissions_sum = self._get_commissions(date_from, date_to)
+        response['commissions'] = "{0:.2f} zł".format(commissions_sum).replace('.', ',')
+
+        vat_sum = self._get_vat(date_from, date_to)
+        response['vat'] = "{0:.2f} zł".format(vat_sum).replace('.', ',')
+
+        purchase_sum = self._get_purchase(date_from, date_to)
+        response['purchase'] = "{0:.2f} zł".format(ptu_sum).replace('.', ',')
+
+        all_sum = commissions_sum - ptu_sum - vat_sum - purchase_sum
+        response['sum'] = "{0:.2f} zł".format(all_sum).replace('.', ',')
+        date_range = self._get_date_range(date_from, date_to)
+        response['urls'] = {
+            'commissions': '{}?end_date={}&status=__ALL__'.format(reverse('commission:commissions'), date_range),
+            'invoices': '{}?issue_date={}'.format(reverse('invoicing:sale_invoices'), date_range),
+            'purchase': '{}?date={}'.format(reverse('warehouse:invoices'), date_range),
+            'wares': '{}?purchase_date={}'.format(reverse('warehouse:wares'), date_range),
+        }
+        return JsonResponse(response)
+
+    def _get_date_range(self, date_from, date_to):
+        return '{}+-+{}'.format(
+            date_from.strftime('%d.%m.%Y'),
+            date_to.strftime('%d.%m.%Y'))
+
+    def _get_ptu(self, date_from, date_to):
+        ptu_sum = 0
+        ptu_objects = ReceiptPTU.objects.filter(date__gte=date_from, date__lte=date_to)
+        if ptu_objects:
+            ptu_sum = ptu_objects.aggregate(Sum('value'))['value__sum']
+        return ptu_sum
+
+    def _get_commissions(self, date_from, date_to):
+        commissions_sum = 0
+        commissions = Commission.objects.filter(
+                    end_date__gte=date_from, end_date__lte=date_to, status=Commission.DONE)
+        if commissions:
+            commissions_sum = commissions.aggregate(Sum('value'))['value__sum']
+        return commissions_sum
+
+    def _get_vat(self, date_from, date_to):
+        vat_sum = 0
+        invoices = SaleInvoice.objects.filter(
+            issue_date__gte=date_from, issue_date__lte=date_to).exclude(contractor__nip=None)
+        if invoices:
+            vat_sum = invoices.annotate(
+                vat=F('total_value_brutto') - F('total_value_netto')).aggregate(Sum('vat'))['vat__sum']
+        return vat_sum
+
+    def _get_purchase(self, date_from, date_to):
+        purchase_sum = 0
+        invoices = Invoice.objects.filter(date__gte=date_from, date__lte=date_to)
+        if invoices:
+            purchase_sum = invoices.aggregate(Sum('total_value'))['total_value__sum']
+        return purchase_sum

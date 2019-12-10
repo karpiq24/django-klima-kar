@@ -1,0 +1,75 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-light due-payment-card">
+            <h5 class="card-header">
+                <form class="form-inline flex-column flex-sm-row">
+                    <div class="flex-sm-fill">Podsumowanie</div>
+                    <div style="width:auto;" class="ml-sm-auto">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                            </div>
+                            <input type="text" class="date-range-input form-control" id="summary-date-range" data-url="{% url 'stats:summary' %}">
+                        </div>
+                    </div>
+                </form>
+            </h5>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width: 45%;">#</th>
+                                <th scope="col" style="width: 45%;">Kwota</th>
+                                <th scope="col" style="width: 10%;">Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">Zlecenia</th>
+                                <td id="summary-commissions"><i class="fas fa-spinner fa-spin"></i></td>
+                                <td>
+                                    <a class="btn btn-outline-dark btn-sm btn-table" href="#" title="Pokaż zlecenia" id="summary-link-commissions" target="_blank">
+                                        <span class="fa fa-tasks"></span> Pokaż zlecenia
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Suma PTU</th>
+                                <td id="summary-ptu"><i class="fas fa-spinner fa-spin"></i></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Podatek od firm</th>
+                                <td id="summary-vat"><i class="fas fa-spinner fa-spin"></i></td>
+                                <td>
+                                    <a class="btn btn-outline-dark btn-sm btn-table" href="#" title="Pokaż faktury" id="summary-link-invoices" target="_blank">
+                                        <span class="fa fa-book"></span> Pokaż faktury
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Faktury zakupowe</th>
+                                <td id="summary-purchase"><i class="fas fa-spinner fa-spin"></i></td>
+                                <td>
+                                    <a class="btn btn-outline-dark btn-sm btn-table" href="#" title="Pokaż faktury" id="summary-link-purchase" target="_blank">
+                                        <span class="fa fa-file-alt"></span> Pokaż faktury
+                                    </a>
+                                    <a class="btn btn-outline-dark btn-sm btn-table" href="#" title="Pokaż towary" id="summary-link-wares" target="_blank">
+                                        <span class="fa fa-tags"></span> Pokaż towary
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-success">
+                                <th scope="row">Utarg</th>
+                                <td id="summary-sum" colspan="2"><i class="fas fa-spinner fa-spin"></i></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

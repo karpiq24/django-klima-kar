@@ -5,6 +5,7 @@ from apps.stats import views
 app_name = 'stats'
 urlpatterns = [
     path('metrics', views.Metrics.as_view(), name='metrics'),
+    path('summary', views.GetSummary.as_view(), name='summary'),
 
     path('purchase_invoices_history', views.PurchaseInvoicesHistory.as_view(), name='purchase_invoices_history'),
     path('purchase_invoices_history/<int:supplier>', views.PurchaseInvoicesHistory.as_view(), name='purchase_invoices_history_per_supplier'),

@@ -1,0 +1,31 @@
+<div class="row">
+    <div class="col-12">
+        {% include 'stats/metrics.html' with metrics=stats.purchase.metrics group=stats.purchase.group %}
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-light price-change-card">
+            <h5 class="card-header">
+                <form class="form-inline flex-column flex-sm-row">
+                    <div class="flex-sm-fill">Zmiany cen towarów</div>
+                        <div style="width:auto;" class="ml-sm-auto">
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input type="text" class="date-range-input form-control" id="ware-change-date-range" data-url="{{ stats.purchase.ware_price_changes_url }}">
+                            </div>
+                        </div>
+                </form>
+            </h5>
+            <div class="card-body">
+                <div class="list-group" id="ware-price-changes-list">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    {% include 'stats/charts.html' with charts=stats.purchase.charts group=stats.purchase.group %}
+</div>
