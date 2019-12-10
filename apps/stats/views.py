@@ -938,7 +938,7 @@ class GetSummary(GroupAccessControlMixin, View):
         response['vat'] = "{0:.2f} zł".format(vat_sum).replace('.', ',')
 
         purchase_sum = self._get_purchase(date_from, date_to)
-        response['purchase'] = "{0:.2f} zł".format(ptu_sum).replace('.', ',')
+        response['purchase'] = "{0:.2f} zł".format(purchase_sum).replace('.', ',')
 
         all_sum = commissions_sum - ptu_sum - vat_sum - purchase_sum
         response['sum'] = "{0:.2f} zł".format(all_sum).replace('.', ',')
