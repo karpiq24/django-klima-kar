@@ -312,15 +312,17 @@ class MyCloudHome(SingletonModel):
             return None
         url = os.path.join(self.DEVICE_INTERNAL_URL, 'sdk', 'v2', 'files', file_id, 'content')
         r = requests.get(url, headers=self._get_auth_headers())
-        if self._has_auth_errors(r):
+        if self._has_auth_errors(r, check_text=False, check_json=False):
             return self.download_file(file_id)
         return r.content
 
-    def _has_auth_errors(self, response, refresh=True):
+    def _has_auth_errors(self, response, refresh=True, check_text=True, check_json=True):
         has_error = False
-        if response.text == 'Unauthorized':
+        if response.status_code == 401:
             has_error = True
-        else:
+        elif check_text and response.text == 'Unauthorized':
+            has_error = True
+        elif check_json:
             try:
                 json_data = response.json()
                 if json_data.get('key') == 'unauthenticated':
