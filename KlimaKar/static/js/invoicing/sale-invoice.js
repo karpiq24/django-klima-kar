@@ -103,7 +103,7 @@ $(function () {
                 } else if (result.contractor.vat_valid === 'failed') {
                     $("#id_contractor").addClass('is-invalid');
                     $(parent).append('<div class="invalid-feedback vat-failed">Nie udało się sprawdzić statusu płatnika VAT. Sprawdź ręcznie.</div>');
-                } else {
+                } else if (result.contractor.vat_valid !== null) {
                     $("#id_contractor").addClass('is-valid');
                     $(parent).append('<div class="valid-feedback">Kontrahent jest płatnikiem VAT</div>')
                 }

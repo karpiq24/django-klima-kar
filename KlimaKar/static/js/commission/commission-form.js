@@ -11,7 +11,6 @@ function toCurrency(value) {
 function customSuccessCreate(data, identifier) {
     let $option = $("<option selected></option>").val(data['pk']).text(data['text']);
     if (identifier == '1') {
-        $option.data('extra', {'phone': data.phone, 'nip': data.nip});
         $('#id_contractor').append($option).trigger('change');
         $('#contractor-edit').prop('disabled', false);
     } else if (identifier == '2') {
@@ -77,6 +76,7 @@ $(function () {
     const CREATE_COMPONENT = $('#create_component_url').val();
     const UPDATE_COMPONENT = $('#update_component_url').val();
     const DECODE_AZTEC = $('#decode_aztec_url').val();
+    const GET_CONTRACTOR_DATA = $('#get_contractor_data_url').val();
 
     $('#optionName').on('change', function () {
         $('#vehicle-component-container').hide();
@@ -124,41 +124,41 @@ $(function () {
     });
 
     $("#id_contractor").change(function () {
-        const extra = $(this).find(":selected").data('extra')
-        let data = (typeof extra === 'object') ? extra : $(this).find(":selected").data('data');
         const parent = $("#id_contractor").parent();
+        const contractor_pk = $('#id_contractor').val();
+        $.ajax({
+            url: GET_CONTRACTOR_DATA,
+            data: {
+                'pk': contractor_pk
+            },
+            dataType: 'json',
+            success: function (result) {
+                if (result.contractor.id === "") {
+                    $('#contractor-edit').prop('disabled', true);
+                    $('#gus-data').hide();
+                    $("#id_contractor").removeClass('is-invalid');
+                    $(parent).find('div.invalid-feedback').remove();
+                    return;
+                }
 
-        if (data.id === "") {
-            $('#contractor-edit').prop('disabled', true);
-            $('#gus-data').hide();
-            $("#id_contractor").removeClass('is-invalid');
-            $(parent).find('div.invalid-feedback').remove();
-            return;
-        }
-
-        if (data.nip === undefined && $('#contractor_nip').length > 0) {
-            data.nip = $('#contractor_nip').val()
-        }
-        if (data.phone === undefined && $('#contractor_phone').length > 0) {
-            data.phone = $('#contractor_phone').val()
-        }
-
-        if (data.nip && data.nip !== "None") {
-            $('#gus-data').data('nip', data.nip);
-            $('#gus-data').show();
-        } else {
-            $('#gus-data').hide();
-        }
-        if (data.phone == null || data.phone === "None") {
-            $("#id_contractor").addClass('is-invalid');
-            if ($(parent).find('div.invalid-feedback').length == 0) {
-                $(parent).append('<div class="invalid-feedback">Wybrany kontrahent nie ma podanego numeru telefonu.</div>')
-            }    
-        }
-        else {
-            $("#id_contractor").removeClass('is-invalid');
-            $(parent).find('div.invalid-feedback').remove();
-        }
+                if (result.contractor.nip) {
+                    $('#gus-data').data('nip', result.contractor.nip);
+                    $('#gus-data').show();
+                } else {
+                    $('#gus-data').hide();
+                }
+                if (result.contractor.phone == null) {
+                    $("#id_contractor").addClass('is-invalid');
+                    if ($(parent).find('div.invalid-feedback').length == 0) {
+                        $(parent).append('<div class="invalid-feedback">Wybrany kontrahent nie ma podanego numeru telefonu.</div>')
+                    }    
+                }
+                else {
+                    $("#id_contractor").removeClass('is-invalid');
+                    $(parent).find('div.invalid-feedback').remove();
+                }
+            }
+        });
     });
 
     $("#contractor-edit").click(function() {
@@ -211,8 +211,7 @@ $(function () {
                     cancelButtonText: 'Nie'
                 }).then((change) => {
                     if (change.value) {
-                        const $option = $("<option selected></option>").val(data.contractor.id).text(data.contractor.text).data(
-                            'extra', {'phone': data.contractor.phone, 'nip': data.contractor.nip});
+                        const $option = $("<option selected></option>").val(data.contractor.id).text(data.contractor.text);
                         $('#id_contractor').append($option).trigger('change');
                         $('#contractor-edit').prop('disabled', false);
                     }
@@ -266,8 +265,7 @@ $(function () {
                     cancelButtonText: 'Nie'
                 }).then((change) => {
                     if (change.value) {
-                        const $option = $("<option selected></option>").val(data.contractor.id).text(data.contractor.text).data(
-                            'extra', {'phone': data.contractor.phone, 'nip': data.contractor.nip});
+                        const $option = $("<option selected></option>").val(data.contractor.id).text(data.contractor.text);
                         $('#id_contractor').append($option).trigger('change');
                         $('#contractor-edit').prop('disabled', false);
                     }

@@ -15,10 +15,7 @@
     <input type="hidden" id="create_component_url" value="{% url 'commission:component_create_ajax' %}">
     <input type="hidden" id="update_component_url" value="{% url 'commission:component_update_ajax' 0 %}">
     <input type="hidden" id="decode_aztec_url" value="{% url 'commission:decode_aztec' %}">
-    {% if contractor %}
-        <input type="hidden" id="contractor_phone" value="{{ contractor.phone }}">
-        <input type="hidden" id="contractor_nip" value="{{ contractor.nip }}">
-    {% endif %}
+    <input type="hidden" id="get_contractor_data_url" value="{% url 'invoicing:get_contractor' %}">
     {% csrf_token %}
     <div class="row">
         {% for hidden_field in form.hidden_fields %}

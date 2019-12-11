@@ -483,23 +483,11 @@ class ContractorCreateAjaxView(AjaxFormMixin, CreateView):
     form_class = ContractorModelForm
     title = "Nowy kontrahent"
 
-    def extend_result_data(self, contractor):
-        return {
-            'nip': contractor.nip,
-            'phone': contractor.phone_1 or contractor.phone_2
-        }
-
 
 class ContractorUpdateAjaxView(AjaxFormMixin, UpdateView):
     model = Contractor
     form_class = ContractorModelForm
     title = "Edycja kontrahenta"
-
-    def extend_result_data(self, contractor):
-        return {
-            'nip': contractor.nip,
-            'phone': contractor.phone_1 or contractor.phone_2
-        }
 
 
 class ContractorAutocomplete(CustomSelect2QuerySetView):
@@ -509,12 +497,6 @@ class ContractorAutocomplete(CustomSelect2QuerySetView):
             qs = qs.filter(Q(name__icontains=self.q) | Q(nip__icontains=self.q) |
                            Q(phone_1__icontains=self.q) | Q(phone_2__icontains=self.q))
         return qs
-
-    def extend_result_data(self, contractor):
-        return {
-            'nip': contractor.nip,
-            'phone': contractor.phone_1 or contractor.phone_2
-        }
 
 
 class ContractorGUS(View):
@@ -555,29 +537,43 @@ class ContractorGetDataView(View):
                 'vat_valid': None
             }
             if validate_vat:
-                try:
-                    if contractor.nip:
-                        if contractor.nip_prefix:
-                            client = ZeepClient('http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl')
-                            vat = client.service.checkVat(contractor.nip_prefix, contractor.nip)
-                            response['vat_valid'] = vat['valid']
-                            response['vat_url'] = 'http://ec.europa.eu/taxation_customs/vies/?locale=pl'
-                        else:
-                            url = 'https://wl-api.mf.gov.pl/api/search/nip/{}?date={}'.format(
-                                contractor.nip, str(datetime.date.today()))
-                            r = requests.get(url)
-                            vat_subject = r.json().get('result', {}).get('subject', {})
-                            if vat_subject is None:
-                                vat_valid = False
-                            else:
-                                vat_valid = vat_subject.get('statusVat', False)
-                            response['vat_url'] = 'https://www.podatki.gov.pl/wykaz-podatnikow-vat-wyszukiwarka'
-                            response['vat_valid'] = vat_valid == 'Czynny'
-                except Exception:
-                    response['vat_valid'] = 'failed'
+                response.update(self._validate_vat(contractor))
             return JsonResponse({'status': 'success',
                                  'contractor': response})
         return JsonResponse({'status': 'error', 'contractor': {}})
+
+    def _validate_vat(self, contractor):
+        try:
+            if contractor.nip:
+                if contractor.nip_prefix:
+                    return self._check_ue_vat(contractor)
+                else:
+                    return self._check_polish_vat(contractor)
+        except Exception:
+            return {'vat_valid': 'failed'}
+        return {}
+
+    def _check_polish_vat(self, contractor):
+        url = 'https://wl-api.mf.gov.pl/api/search/nip/{}?date={}'.format(
+                        contractor.nip, str(datetime.date.today()))
+        r = requests.get(url)
+        vat_subject = r.json().get('result', {}).get('subject', {})
+        if vat_subject is None:
+            vat_valid = False
+        else:
+            vat_valid = vat_subject.get('statusVat', False)
+        return {
+            'vat_valid': vat_valid == 'Czynny',
+            'vat_url': 'https://www.podatki.gov.pl/wykaz-podatnikow-vat-wyszukiwarka'
+        }
+
+    def _check_ue_vat(self, contractor):
+        client = ZeepClient('http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl')
+        vat = client.service.checkVat(contractor.nip_prefix, contractor.nip)
+        return {
+            'vat_valid': vat['valid'],
+            'vat_url': 'http://ec.europa.eu/taxation_customs/vies/?locale=pl'
+        }
 
 
 class SaleInvoiceSetPayed(GroupAccessControlMixin, View):
