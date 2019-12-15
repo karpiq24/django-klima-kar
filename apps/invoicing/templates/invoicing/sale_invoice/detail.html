@@ -4,7 +4,7 @@
 
 {% block content %}
 <div>
-    <h1>Szczegóły faktury sprzedażowej</h1>
+    <h1 class="detail-header">Szczegóły faktury sprzedażowej <a class="btn btn-outline-dark" href="{{ back_url }}">Powrót</a></h1>
 </div>
 <div class="row">
     <div class="col-xs-12 col-lg-8">
@@ -130,17 +130,18 @@
                     {% if request.user.is_superuser %}
                         <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:invoicing_saleinvoice_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
                     {% endif %}
-                    <a class="btn btn-outline-dark btn-lg" href="{{ back_url }}">Powrót</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div>
-    <h2>Pozycje faktury</h2>
+<div class="row">
+    <div class="col-12">
+        <h2>Pozycje faktury</h2>
+        {% render_table table %}
+    </div>
 </div>
-{% render_table table %}
 
 <div class="modal fade" id="email_modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">

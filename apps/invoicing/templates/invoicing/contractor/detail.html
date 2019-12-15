@@ -4,7 +4,7 @@
 
 {% block content %}
 <div>
-    <h1>Szczegóły kontrahenta</h1>
+    <h1 class="detail-header">Szczegóły kontrahenta <a class="btn btn-outline-dark" href="{{ back_url }}">Powrót</a></h1>
 </div>
 <div class="row">
     <div class="col-xs-12 col-lg-8">
@@ -60,21 +60,24 @@
                     {% if request.user.is_superuser %}
                         <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:invoicing_contractor_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
                     {% endif %}
-                    <a class="btn btn-outline-dark btn-lg" href="{{ back_url }}">Powrót</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div>
-    <h2>Faktury tego kontrahenta</h2>
-    {% render_table tables.sale_invoice %}
+<div class="row">
+    <div class="col-12">
+        <h2>Faktury tego kontrahenta</h2>
+        {% render_table tables.sale_invoice %}
+    </div>
 </div>
 
-<div>
-    <h2>Zlecenia tego kontrahenta</h2>
-    {% render_table tables.commission %}
+<div class="row">
+    <div class="col-12">
+        <h2>Zlecenia tego kontrahenta</h2>
+        {% render_table tables.commission %}
+    </div>
 </div>
 
 {% include 'invoicing/contractor/gus_modal.html' %}

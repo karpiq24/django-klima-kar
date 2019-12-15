@@ -4,7 +4,7 @@
 
 {% block content %}
 <div>
-    <h1>Szczegóły faktury</h1>
+    <h1 class="detail-header">Szczegóły faktury zakupowej <a class="btn btn-outline-dark" href="{{ back_url }}">Powrót</a></h1>
 </div>
 <div class="row">
     <div class="col-xs-12 col-lg-8">
@@ -36,17 +36,19 @@
                     {% if request.user.is_superuser %}
                         <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:warehouse_invoice_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
                     {% endif %}
-                    <a class="btn btn-outline-dark btn-lg" href="{{ back_url }}">Powrót</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div >
-    <h2>Towary</h2>
+<div class="row">
+    <div class="col-12">
+        <h2>Towary</h2>
+        {% render_table table %}
+    </div>
 </div>
-{% render_table table %}
+
 {% endblock %}
 
 {% block scripts %}

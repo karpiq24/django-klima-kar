@@ -1,0 +1,32 @@
+{% load slugify %}
+<div class="card bg-light mb-4">
+    <h5 class="card-header">
+        Komponent
+    </h5>
+    <div class="card-body">
+        <h5 class="card-title">{{ component.get_component_type_display }}</h5>
+        <table class="table table-bordered">
+            {% if component.model %}
+            <tr>
+                <td class="detail-label">Model</td>
+                <td>{{ component.model }}</td>
+            </tr>
+            {% endif %}
+            {% if component.serial_number %}
+            <tr>
+                <td class="detail-label">Numer seryjny</td>
+                <td>{{ component.serial_number }}</td>
+            </tr>
+            {% endif %}
+            {% if component.catalog_number %}
+            <tr>
+                <td class="detail-label">Numer katalogowy</td>
+                <td>{{ component.catalog_number }}</td>
+            </tr>
+            {% endif %}
+    </table>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'commission:component_detail' component|slugify component.pk %}" class="btn btn-outline-primary"><i class="fa fa-microchip"></i> Szczegóły</a>
+    </div>
+</div>

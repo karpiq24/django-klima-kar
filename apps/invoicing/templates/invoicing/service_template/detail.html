@@ -4,7 +4,7 @@
 
 {% block content %}
 <div>
-    <h1>Szczegóły usługi</h1>
+    <h1 class="detail-header">Szczegóły usługi <a class="btn btn-outline-dark" href="{{ back_url }}">Powrót</a></h1>
 </div>
 <div class="row">
     <div class="col-xs-12 col-lg-8">
@@ -57,7 +57,6 @@
                     {% if request.user.is_superuser %}
                         <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:invoicing_servicetemplate_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
                     {% endif %}
-                    <a class="btn btn-outline-dark btn-lg" href="{{ back_url }}">Powrót</a>
                 </div>
             </div>
         </div>

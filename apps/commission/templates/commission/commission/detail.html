@@ -4,31 +4,21 @@
 
 {% block content %}
 <div>
-    <h1>Szczegóły zlecenia</h1>
+    <h1 class="detail-header">Szczegóły zlecenia <a class="btn btn-outline-dark" href="{{ back_url }}">Powrót</a></h1>
 </div>
 <div class="row">
     <div class="col-xs-12 col-lg-8">
         <table class="table table-bordered">
             <tr>
                 <td class="detail-label">Numer zlecenia</td>
-                <td>{{ object.pk }}</td>
-                </tr>
-            {% if object.vehicle %}
-                <tr>
-                    <td class="detail-label">Pojazd</td>
-                    <td><a href="{% url 'commission:vehicle_detail' object.vehicle|slugify object.vehicle.pk %}">{{ object.vehicle }}</a></td>
-                </tr>
-            {% elif object.component %}
-                <tr>
-                    <td class="detail-label">Podzespół</td>
-                    <td><a href="{% url 'commission:component_detail' object.component|slugify object.component.pk %}">{{ object.component }}</a></td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td class="detail-label">Pojazd/Podzespół</td>
-                    <td>{{ object.vc_name }}</td>
-                </tr>
-            {% endif%}
+                <td>{{ object.number }}</td>
+            </tr>
+            {% if not object.vehicle and not object.component %}
+            <tr>
+                <td class="detail-label">Pojazd/Podzespół</td>
+                <td>{{ object.vc_name }}</td>
+            </tr>
+            {% endif %}
             <tr>
                 <td class="detail-label">Status</td>
                 <td>
@@ -44,22 +34,16 @@
                 </td>
             </tr>
             <tr>
-                <td class="detail-label">Kontrahent</td>
-                {% if object.contractor %}
-                    <td>
-                        <a href="{% url 'invoicing:contractor_detail' object.contractor|slugify object.contractor.pk %}">{{ object.contractor }}</a>
-                        {% if object.contractor.phone_1 %}
-                            <br>
-                            {{ object.contractor.phone_1 }}
-                        {% endif %}
-                        {% if object.contractor.phone_2 %}
-                            <br>
-                            {{ object.contractor.phone_2 }}
-                        {% endif %}
-                    </td>
-                {% else %}
-                    <td>—</td>
-                {% endif %}
+                <td class="detail-label">Data przyjęcia</td>
+                <td>{{ object.start_date }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Data zamknięcia</td>
+                <td id="end_date">{{ object.end_date|default:"—" }}</td>
+            </tr>      
+            <tr>
+                <td class="detail-label">Łączna wartość</td>
+                <td>{{ object.value|floatformat:2 }} zł</td>
             </tr>
             <tr>
                 <td class="detail-label">Faktury sprzedażowe</td>
@@ -87,22 +71,6 @@
                         </div>
                     </div>
                 </td>
-            </tr>
-            <tr>
-                <td class="detail-label">Opis</td>
-                <td>{{ object.description|default:"—"|linebreaks }}</td>
-            </tr>
-            <tr>
-                <td class="detail-label">Data przyjęcia</td>
-                <td>{{ object.start_date }}</td>
-            </tr>
-            <tr>
-                <td class="detail-label">Data zamknięcia</td>
-                <td id="end_date">{{ object.end_date|default:"—" }}</td>
-            </tr>      
-            <tr>
-                <td class="detail-label">Łączna wartość</td>
-                <td>{{ object.value|floatformat:2 }} zł</td>
             </tr>
             <tr>
                 <td class="detail-label">Pliki</td>
@@ -135,10 +103,12 @@
                 </td>
             </tr>
         </table>
+        <div class="alert alert-primary detail-description-alert" role="alert">
+            <div class="detail-description"><i class="fas fa-exclamation-circle fa-3x"></i> {{ object.description|default:"—"|linebreaks }}</div>
+        </div>
     </div>
-
     <div class="col-xs-12 col-lg-4">
-        <div class="card-deck text-center">
+        <div class="card-deck text-center mb-4">
             <div class="card bg-light">
                 <div class="card-body">
                     <h5 class="card-title">Akcje</h5>
@@ -149,17 +119,30 @@
                     {% if request.user.is_superuser %}
                         <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:commission_commission_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
                     {% endif %}
-                    <a class="btn btn-outline-dark btn-lg" href="{{ back_url }}">Powrót</a>
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
+    <div class="col-xs-12 col-lg-8">
+        <div class="card-deck">
+            {% if object.contractor %}
+                {% include 'invoicing/contractor/contractor_card.html' with contractor=object.contractor %}
+            {% endif %}
+            {% if object.vehicle %}
+                {% include 'commission/vehicle/vehicle_card.html' with vehicle=object.vehicle %}
+            {% elif object.component %}
+                {% include 'commission/component/component_card.html' with component=object.component %}
+            {% endif%}
+        </div>
+    </div>
 </div>
 
-<div>
-    <h2>Pozycje zlecenia</h2>
+<div class="row">
+    <div class="col-12">
+        <h2>Pozycje zlecenia</h2>
+        {% render_table table %}
+    </div>
 </div>
-{% render_table table %}
 
 <div class="modal fade" id="invoice_modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">

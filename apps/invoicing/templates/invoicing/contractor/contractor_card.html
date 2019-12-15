@@ -1,0 +1,62 @@
+{% load slugify %}
+<div class="card bg-light mb-4">
+    <h5 class="card-header">
+        Kontrahent
+    </h5>
+    <div class="card-body">
+        <h5 class="card-title">{{ contractor.name }}</h5>
+        <table class="table table-bordered">
+            {% if contractor.nip %}
+                <tr>
+                    <td class="detail-label">NIP</td>
+                    <td>{% if contractor.nip_prefix %}{{ contractor.nip_prefix }}{% endif %}{{ contractor.nip }}</td>
+                </tr>
+            {% endif %}
+            {% if contractor.address_1 %}
+            <tr>
+                <td class="detail-label">Adres 1</td>
+                <td>{{ contractor.address_1 }}</td>
+            </tr>
+            {% endif %}
+            {% if contractor.address_2 %}
+            <tr>
+                <td class="detail-label">Adres 2</td>
+                <td>{{ contractor.address_2 }}</td>
+            </tr>
+            {% endif %}
+            {% if contractor.city %}
+            <tr>
+                <td class="detail-label">Miasto</td>
+                <td>{{ contractor.city }}</td>
+            </tr>
+            {% endif %}
+            {% if contractor.postal_code %}
+            <tr>
+                <td class="detail-label">Kod pocztowy</td>
+                <td>{{ contractor.postal_code }}</td>
+            </tr>
+            {% endif %}
+            {% if contractor.email %}
+            <tr>
+                <td class="detail-label">Adres e-mail</td>
+                <td>{{ contractor.email }}</td>
+            </tr>
+            {% endif %}
+            {% if contractor.phone_1 %}
+            <tr>
+                <td class="detail-label">Numer telefonu</td>
+                <td>{{ contractor.phone_1 }}</td>
+            </tr>
+            {% endif %}
+            {% if contractor.phone_2 %}
+            <tr>
+                <td class="detail-label">Numer telefonu 2</td>
+                <td>{{ contractor.phone_2 }}</td>
+            </tr>
+            {% endif %}
+    </table>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'invoicing:contractor_detail' contractor|slugify contractor.pk %}" class="btn btn-outline-primary"><i class="fa fa-users"></i> Szczegóły</a>
+    </div>
+</div>

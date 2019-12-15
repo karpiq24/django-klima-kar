@@ -219,6 +219,36 @@ span.required {
     margin-top: 1rem;
 }
 
+@keyframes shadow-pulse
+{
+     0% {
+          box-shadow: 0 0 0 0px rgba(0, 64, 133, 0.4);
+     }
+     100% {
+          box-shadow: 0 0 0 15px rgba(0, 64, 133, 0);
+     }
+}
+
+.detail-description-alert {
+    animation: shadow-pulse 1s 10;
+}
+
+.detail-description {
+    display: flex;
+    align-items: center;
+}
+
+.detail-description > p {
+    margin-bottom: 0;
+    margin-left: 1rem;
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
 /*
     MISC
 */

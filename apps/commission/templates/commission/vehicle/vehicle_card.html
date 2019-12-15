@@ -1,0 +1,44 @@
+{% load slugify %}
+<div class="card bg-light mb-4">
+    <h5 class="card-header">
+        Pojazd
+    </h5>
+    <div class="card-body">
+        <h5 class="card-title">{{ vehicle.brand }}{% if vehicle.model %} {{ vehicle.model }}{% endif %}</h5>
+        <table class="table table-bordered">
+            {% if vehicle.registration_plate %}
+            <tr>
+                <td class="detail-label">Numer rejestracyjny</td>
+                <td>{{ vehicle.registration_plate }}</td>
+            </tr>
+            {% endif %}
+            {% if vehicle.vin %}
+            <tr>
+                <td class="detail-label">Numer VIN</td>
+                <td>{{ vehicle.vin }}</td>
+            </tr>
+            {% endif %}
+            {% if vehicle.engine_volume %}
+            <tr>
+                <td class="detail-label">Pojemność silnika (cm3)</td>
+                <td>{{ vehicle.engine_volume }}</td>
+            </tr>
+            {% endif %}
+            {% if vehicle.engine_power %}
+            <tr>
+                <td class="detail-label">Moc silnika (kW)</td>
+                <td>{{ vehicle.engine_power }}</td>
+            </tr>
+            {% endif %}
+            {% if vehicle.production_year %}
+            <tr>
+                <td class="detail-label">Rok produkcji</td>
+                <td>{{ vehicle.production_year }}</td>
+            </tr>
+            {% endif %}
+    </table>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'commission:vehicle_detail' vehicle|slugify vehicle.pk %}" class="btn btn-outline-primary"><i class="fa fa-car"></i> Szczegóły</a>
+    </div>
+</div>
