@@ -80,9 +80,9 @@ class SupplierPurchaseHistory(GroupAccessControlMixin, ChartDataMixin, View):
         response_data = self.get_response_data_template(chart_type='doughnut', values_appendix=' zł')
         invoices = invoices.values('supplier')
         if metric == 'Sum':
-            invoices = invoices.annotate(total=Sum('total_value'))
+            invoices = invoices.annotate(total=Sum(F('invoiceitem__price') * F('invoiceitem__quantity')))
         if metric == 'Avg':
-            invoices = invoices.annotate(total=Round(Avg('total_value')))
+            invoices = invoices.annotate(total=Round(F('invoiceitem__price') * F('invoiceitem__quantity')))
         elif metric == 'Count':
             invoices = invoices.annotate(total=Count('id'))
             response_data['custom']['values_appendix'] = ''
@@ -151,292 +151,199 @@ class WarePurchaseHistory(ChartDataMixin, View):
         return JsonResponse(response_data)
 
 
-class PurchaseInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
-    allowed_groups = ['boss']
+class BigChartHistoryMixin(ChartDataMixin, View):
     how_many_shown = 4
+    model = None
+    date_field = None
+    price_field = None
+    quantity_field = None
 
     def get(self, *args, **kwargs):
+        self.date_option = self.request.GET.get(
+            'date_select', self._get_default_date_option(**kwargs))
+        self.metric = self.request.GET.get('custom_select', 'Sum')
+        self.objects = self.model.objects.all()
+        self._filter_objects(**kwargs)
+        self._generate_response_data()
+        return JsonResponse(self.response_data)
+
+    def _filter_objects(self, **kwargs):
+        pass
+
+    def _get_default_date_option(self, **kwargs):
+        return 'week'
+
+    def _annotate(self, qs):
+        annotate_functions = {
+            'Sum': self._annotate_sum,
+            'Avg': self._annotate_avg,
+            'Count': self._annotate_count,
+        }
+        return annotate_functions[self.metric](qs)
+
+    def _annotate_sum(self, qs):
+        return qs.annotate(total=Sum(
+            F(self.price_field) * F(self.quantity_field),
+            output_field=FloatField()))
+
+    def _annotate_avg(self, qs):
+        return qs.annotate(total=Round(Avg(
+            F(self.price_field) * F(self.quantity_field),
+            output_field=FloatField())))
+
+    def _annotate_count(self, qs):
+        self.response_data['custom']['values_appendix'] = ''
+        return qs.annotate(total=Count('id'))
+
+    def _generate_response_data(self):
+        self.response_data = self.get_response_data_template(legend_display=False, values_appendix=' zł')
+        data_functions = {
+            'week': self._get_week,
+            'month': self._get_month,
+            'year': self._get_year,
+            'all_monthly': self._get_all_monthly,
+            'all_yearly': self._get_all_yearly
+        }
+        data_functions[self.date_option]()
+
+    def _get_date_filter_kwargs(self, date):
+        return {
+            '{}__gte'.format(self.date_field): date
+        }
+
+    def _get_week(self):
+        date = datetime.today() - relativedelta(days=6)
+        self.objects = self.objects.filter(**self._get_date_filter_kwargs(date))
+        self.objects = self.objects.values(self.date_field)
+        self.objects = self._annotate(self.objects)
+        self.objects = self.objects.values_list('total', self.date_field).order_by(self.date_field)
+        values = list(self.objects.values_list('total', flat=True))
+        days_between = (datetime.today() - date).days
+        for i in range(days_between + 1):
+            x = date + relativedelta(days=i)
+            if x.date() not in self.objects.values_list(self.date_field, flat=True):
+                values.insert(i, 0)
+
+        self.response_data['data']['labels'] = [DAYS[(date + relativedelta(days=i)).weekday()]
+                                                for i in range(days_between + 1)]
+        self.response_data['data']['datasets'].append(self.get_dataset(values, COLORS[0]))
+
+    def _get_month(self):
+        date = datetime.today() - relativedelta(months=1)
+        self.objects = self.objects.filter(**self._get_date_filter_kwargs(date))
+        self.objects = self.objects.values(self.date_field)
+        self.objects = self._annotate(self.objects)
+        self.objects = self.objects.values_list('total', self.date_field).order_by(self.date_field)
+        values = list(self.objects.values_list('total', flat=True))
+        days_between = (date.today() - date).days
+        for i in range(days_between + 1):
+            x = date + relativedelta(days=i)
+            if x.date() not in self.objects.values_list(self.date_field, flat=True):
+                values.insert(i, 0)
+
+        self.response_data['data']['labels'] = [(date + relativedelta(days=i)).strftime('%d/%m')
+                                                for i in range(days_between + 1)]
+        self.response_data['data']['datasets'].append(self.get_dataset(
+            values, COLORS[0]))
+
+    def _get_year(self):
+        date = (datetime.today() - relativedelta(years=1, months=-1)).replace(day=1)
+        self.objects = self.objects.filter(**self._get_date_filter_kwargs(date))
+        self.objects = self.objects.annotate(
+                month=ExtractMonth(self.date_field), year=ExtractYear(self.date_field)).values('year', 'month')
+        self.objects = self._annotate(self.objects)
+        self.objects = self.objects.values_list('year', 'month', 'total').order_by('year', 'month')
+        values = list(self.objects.values_list('total', flat=True))
+        months = list(self.objects.values_list('month', flat=True))
+        self.response_data['data']['labels'] = [MONTHS[i - 1] for i in months]
+        self.response_data['data']['datasets'].append(self.get_dataset(
+            values, COLORS[0]))
+
+    def _get_all_monthly(self):
+        years = self.objects.annotate(year=ExtractYear(self.date_field)).values_list(
+                'year', flat=True).distinct().order_by('year')
+        self.response_data['data']['labels'] = MONTHS
+        self.response_data['options']['legend']['display'] = True
+
+        colors = COLORS[len(years)-1::-1]
+        for i, year in enumerate(years):
+            year_objects = self.objects.filter(**{'{}__year'.format(self.date_field): year})
+            year_objects = year_objects.annotate(month=ExtractMonth(self.date_field)).values('month')
+            year_objects = self._annotate(year_objects)
+            year_objects = year_objects.values_list('month', 'total').order_by('month')
+            values = list(year_objects.values_list('total', flat=True))
+            for j in range(1, 13):
+                if j not in year_objects.values_list('month', flat=True):
+                    values.insert(j - 1, 0)
+            hidden = False
+            if i < len(years) - self.how_many_shown:
+                hidden = True
+            if sum(values) > 0:
+                self.response_data['data']['datasets'].append(self.get_dataset(
+                    values, colors[i], label=year, fill=False, borderColor=colors[i], hidden=hidden))
+
+    def _get_all_yearly(self):
+        self.objects = self.objects.annotate(year=ExtractYear(self.date_field)).values('year')
+        self.objects = self._annotate(self.objects)
+        self.objects = self.objects.values_list('year', 'total').exclude(total=0).order_by('year')
+
+        self.response_data['data']['labels'] = list(self.objects.values_list('year', flat=True))
+        self.response_data['data']['datasets'].append(self.get_dataset(
+            list(self.objects.values_list('total', flat=True)),
+            COLORS[0]))
+
+
+class PurchaseInvoicesHistory(GroupAccessControlMixin, BigChartHistoryMixin):
+    allowed_groups = ['boss']
+    model = Invoice
+    date_field = 'date'
+    price_field = 'invoiceitem__price'
+    quantity_field = 'invoiceitem__quantity'
+
+    def _filter_objects(self, **kwargs):
         supplier = kwargs.get('supplier')
-        date_option = self.request.GET.get('date_select', 'week' if not supplier else 'year')
-        metric = self.request.GET.get('custom_select', 'Sum')
-        now = datetime.today()
-        if date_option == 'week':
-            date = now - relativedelta(days=6)
-        elif date_option == 'month':
-            date = now - relativedelta(months=1)
-        elif date_option == 'year':
-            date = (now - relativedelta(years=1, months=-1)).replace(day=1)
-        else:
-            date = None
-
-        invoices = Invoice.objects.all()
         if supplier:
-            invoices = invoices.filter(supplier__pk=supplier)
-        if date:
-            invoices = invoices.filter(date__gte=date)
+            self.objects = self.objects.filter(supplier__pk=supplier)
 
-        response_data = self.get_response_data_template(legend_display=False, values_appendix=' zł')
-
-        if date_option == 'week':
-            invoices = invoices.values('date')
-            if metric == 'Sum':
-                invoices = invoices.annotate(total=Sum('total_value'))
-            elif metric == 'Avg':
-                invoices = invoices.annotate(total=Round(Avg('total_value')))
-            elif metric == 'Count':
-                invoices = invoices.annotate(total=Count('id'))
-                response_data['custom']['values_appendix'] = ''
-            invoices = invoices.values_list('total', 'date').order_by('date')
-            values = list(invoices.values_list('total', flat=True))
-            days_between = (now - date).days
-            for i in range(days_between + 1):
-                x = date + relativedelta(days=i)
-                if x.date() not in invoices.values_list('date', flat=True):
-                    values.insert(i, 0)
-
-            response_data['data']['labels'] = [DAYS[(date + relativedelta(days=i)).weekday()]
-                                               for i in range(days_between + 1)]
-            response_data['data']['datasets'].append(self.get_dataset(
-                values, COLORS[0]))
-
-        if date_option == 'month':
-            invoices = invoices.values('date')
-            if metric == 'Sum':
-                invoices = invoices.annotate(total=Sum('total_value'))
-            elif metric == 'Avg':
-                invoices = invoices.annotate(total=Round(Avg('total_value')))
-            elif metric == 'Count':
-                invoices = invoices.annotate(total=Count('id'))
-                response_data['custom']['values_appendix'] = ''
-            invoices = invoices.values_list('total', 'date').order_by('date')
-            values = list(invoices.values_list('total', flat=True))
-            days_between = (now - date).days
-            for i in range(days_between + 1):
-                x = date + relativedelta(days=i)
-                if x.date() not in invoices.values_list('date', flat=True):
-                    values.insert(i, 0)
-
-            response_data['data']['labels'] = [(date + relativedelta(days=i)).strftime('%d/%m')
-                                               for i in range(days_between + 1)]
-            response_data['data']['datasets'].append(self.get_dataset(
-                values, COLORS[0]))
-
-        if date_option == 'year':
-            invoices = invoices.annotate(
-                month=ExtractMonth('date'), year=ExtractYear('date')).values('year', 'month')
-            if metric == 'Sum':
-                invoices = invoices.annotate(total=Sum('total_value'))
-            elif metric == 'Avg':
-                invoices = invoices.annotate(total=Round(Avg('total_value')))
-            elif metric == 'Count':
-                invoices = invoices.annotate(total=Count('id'))
-                response_data['custom']['values_appendix'] = ''
-            invoices = invoices.values_list('year', 'month', 'total').order_by('year', 'month')
-            values = list(invoices.values_list('total', flat=True))
-            months = list(invoices.values_list('month', flat=True))
-            response_data['data']['labels'] = [MONTHS[i - 1] for i in months]
-            response_data['data']['datasets'].append(self.get_dataset(
-                values, COLORS[0]))
-
-        if date_option == 'all_monthly':
-            years = invoices.annotate(year=ExtractYear('date')).values_list(
-                'year', flat=True).distinct().order_by('year')
-            response_data['data']['labels'] = MONTHS
-            response_data['options']['legend']['display'] = True
-
-            colors = COLORS[len(years)-1::-1]
-            for i, year in enumerate(years):
-                year_invoices = invoices.filter(date__year=year)
-                year_invoices = year_invoices.annotate(month=ExtractMonth('date')).values('month')
-                if metric == 'Sum':
-                    year_invoices = year_invoices.annotate(total=Sum('total_value'))
-                elif metric == 'Avg':
-                    year_invoices = year_invoices.annotate(total=Round(Avg('total_value')))
-                elif metric == 'Count':
-                    year_invoices = year_invoices.annotate(total=Count('id'))
-                    response_data['custom']['values_appendix'] = ''
-                year_invoices = year_invoices.values_list('month', 'total').order_by('month')
-                values = list(year_invoices.values_list('total', flat=True))
-                for j in range(1, 13):
-                    if j not in year_invoices.values_list('month', flat=True):
-                        values.insert(j - 1, 0)
-                hidden = False
-                if i < len(years) - self.how_many_shown:
-                    hidden = True
-                if sum(values) > 0:
-                    response_data['data']['datasets'].append(self.get_dataset(
-                        values, colors[i], label=year, fill=False, borderColor=colors[i], hidden=hidden))
-
-        if date_option == 'all_yearly':
-            invoices = invoices.annotate(year=ExtractYear('date')).values('year')
-            if metric == 'Sum':
-                invoices = invoices.annotate(total=Sum('total_value'))
-            elif metric == 'Avg':
-                invoices = invoices.annotate(total=Round(Avg('total_value')))
-            elif metric == 'Count':
-                invoices = invoices.annotate(total=Count('id'))
-                response_data['custom']['values_appendix'] = ''
-            invoices = invoices.values_list('year', 'total').exclude(total=0).order_by('year')
-
-            response_data['data']['labels'] = list(invoices.values_list('year', flat=True))
-            response_data['data']['datasets'].append(self.get_dataset(
-                list(invoices.values_list('total', flat=True)),
-                COLORS[0]))
-
-        return JsonResponse(response_data)
+    def _get_default_date_option(self, **kwargs):
+        supplier = kwargs.get('supplier')
+        if supplier:
+            return 'year'
+        return 'week'
 
 
-class SaleInvoicesHistory(GroupAccessControlMixin, ChartDataMixin, View):
+class SaleInvoicesHistory(GroupAccessControlMixin, BigChartHistoryMixin):
     allowed_groups = ['boss']
-    how_many_shown = 4
+    model = SaleInvoice
+    date_field = 'issue_date'
+    price_field = 'saleinvoiceitem__price_'
+    quantity_field = 'saleinvoiceitem__quantity'
 
-    def get(self, *args, **kwargs):
-        date_option = self.request.GET.get('date_select', 'week')
-        metric = self.request.GET.get('custom_select', 'SumNetto')
-        now = datetime.today()
-        if date_option == 'week':
-            date = now - relativedelta(days=6)
-        elif date_option == 'month':
-            date = now - relativedelta(months=1)
-        elif date_option == 'year':
-            date = (now - relativedelta(years=1, months=-1)).replace(day=1)
-        else:
-            date = None
+    def _annotate(self, qs):
+        if self.metric == 'SumBrutto':
+            self.metric = 'Sum'
+            self.price_field = '{}brutto'.format(self.price_field)
+        if self.metric == 'SumNetto':
+            self.metric = 'Sum'
+            self.price_field = '{}netto'.format(self.price_field)
+        if self.metric == 'AvgBrutto':
+            self.metric = 'Avg'
+            self.price_field = '{}brutto'.format(self.price_field)
+        if self.metric == 'AvgNetto':
+            self.metric = 'Avg'
+            self.price_field = '{}netto'.format(self.price_field)
+        return super()._annotate(qs)
 
-        invoices = SaleInvoice.objects.exclude(invoice_type__in=[
-            SaleInvoice.TYPE_PRO_FORMA, SaleInvoice.TYPE_CORRECTIVE, SaleInvoice.TYPE_WDT_PRO_FORMA])
-        if date:
-            invoices = invoices.filter(issue_date__gte=date)
 
-        response_data = self.get_response_data_template(legend_display=False, values_appendix=' zł')
+class CommissionHistory(GroupAccessControlMixin, BigChartHistoryMixin):
+    allowed_groups = ['boss']
+    model = Commission
+    date_field = 'end_date'
+    price_field = 'commissionitem__price'
+    quantity_field = 'commissionitem__quantity'
 
-        if date_option == 'week':
-            invoices = invoices.values('issue_date')
-            if metric == 'SumNetto':
-                invoices = invoices.annotate(total=Sum('total_value_netto'))
-            elif metric == 'SumBrutto':
-                invoices = invoices.annotate(total=Sum('total_value_brutto'))
-            elif metric == 'AvgNetto':
-                invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
-            elif metric == 'AvgBrutto':
-                invoices = invoices.annotate(total=Round(Avg('total_value_brutto')))
-            elif metric == 'Count':
-                invoices = invoices.annotate(total=Count('id'))
-                response_data['custom']['values_appendix'] = ''
-            invoices = invoices.values_list('total', 'issue_date').order_by('issue_date')
-            values = list(invoices.values_list('total', flat=True))
-            days_between = (now - date).days
-            for i in range(days_between + 1):
-                x = date + relativedelta(days=i)
-                if x.date() not in invoices.values_list('issue_date', flat=True):
-                    values.insert(i, 0)
-
-            response_data['data']['labels'] = [DAYS[(date + relativedelta(days=i)).weekday()]
-                                               for i in range(days_between + 1)]
-            response_data['data']['datasets'].append(self.get_dataset(
-                values, COLORS[0]))
-
-        if date_option == 'month':
-            invoices = invoices.values('issue_date')
-            if metric == 'SumNetto':
-                invoices = invoices.annotate(total=Sum('total_value_netto'))
-            elif metric == 'SumBrutto':
-                invoices = invoices.annotate(total=Sum('total_value_brutto'))
-            elif metric == 'AvgNetto':
-                invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
-            elif metric == 'AvgBrutto':
-                invoices = invoices.annotate(total=Round(Avg('total_value_brutto')))
-            elif metric == 'Count':
-                invoices = invoices.annotate(total=Count('id'))
-                response_data['custom']['values_appendix'] = ''
-            invoices = invoices.values_list('total', 'issue_date').order_by('issue_date')
-            values = list(invoices.values_list('total', flat=True))
-            days_between = (now - date).days
-            for i in range(days_between + 1):
-                x = date + relativedelta(days=i)
-                if x.date() not in invoices.values_list('issue_date', flat=True):
-                    values.insert(i, 0)
-
-            response_data['data']['labels'] = [(date + relativedelta(days=i)).strftime('%d/%m')
-                                               for i in range(days_between + 1)]
-            response_data['data']['datasets'].append(self.get_dataset(
-                values, COLORS[0]))
-
-        if date_option == 'year':
-            invoices = invoices.annotate(
-                month=ExtractMonth('issue_date'), year=ExtractYear('issue_date')).values('year', 'month')
-            if metric == 'SumNetto':
-                invoices = invoices.annotate(total=Sum('total_value_netto'))
-            elif metric == 'SumBrutto':
-                invoices = invoices.annotate(total=Sum('total_value_brutto'))
-            elif metric == 'AvgNetto':
-                invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
-            elif metric == 'AvgBrutto':
-                invoices = invoices.annotate(total=Round(Avg('total_value_brutto')))
-            elif metric == 'Count':
-                invoices = invoices.annotate(total=Count('id'))
-                response_data['custom']['values_appendix'] = ''
-            invoices = invoices.values_list('year', 'month', 'total').order_by('year', 'month')
-            values = list(invoices.values_list('total', flat=True))
-            months = list(invoices.values_list('month', flat=True))
-            response_data['data']['labels'] = [MONTHS[i - 1] for i in months]
-            response_data['data']['datasets'].append(self.get_dataset(
-                values, COLORS[0]))
-
-        if date_option == 'all_monthly':
-            years = invoices.annotate(year=ExtractYear('issue_date')).values_list(
-                'year', flat=True).distinct().order_by('year')
-            response_data['data']['labels'] = MONTHS
-            response_data['options']['legend']['display'] = True
-
-            colors = COLORS[len(years)-1::-1]
-            for i, year in enumerate(years):
-                year_invoices = invoices.filter(issue_date__year=year)
-                year_invoices = year_invoices.annotate(month=ExtractMonth('issue_date')).values('month')
-                if metric == 'SumNetto':
-                    year_invoices = year_invoices.annotate(total=Sum('total_value_netto'))
-                elif metric == 'SumBrutto':
-                    year_invoices = year_invoices.annotate(total=Sum('total_value_brutto'))
-                elif metric == 'AvgNetto':
-                    year_invoices = year_invoices.annotate(total=Round(Avg('total_value_netto')))
-                elif metric == 'AvgBrutto':
-                    year_invoices = year_invoices.annotate(total=Round(Avg('total_value_brutto')))
-                elif metric == 'Count':
-                    year_invoices = year_invoices.annotate(total=Count('id'))
-                    response_data['custom']['values_appendix'] = ''
-                year_invoices = year_invoices.values_list('month', 'total').order_by('month')
-                values = list(year_invoices.values_list('total', flat=True))
-                for j in range(1, 13):
-                    if j not in year_invoices.values_list('month', flat=True):
-                        values.insert(j - 1, 0)
-                hidden = False
-                if i < len(years) - self.how_many_shown:
-                    hidden = True
-                if sum(values) > 0:
-                    response_data['data']['datasets'].append(self.get_dataset(
-                        values, colors[i], label=year, fill=False, borderColor=colors[i], hidden=hidden))
-
-        if date_option == 'all_yearly':
-            invoices = invoices.annotate(year=ExtractYear('issue_date')).values('year')
-            if metric == 'SumNetto':
-                invoices = invoices.annotate(total=Sum('total_value_netto'))
-            elif metric == 'SumBrutto':
-                invoices = invoices.annotate(total=Sum('total_value_brutto'))
-            elif metric == 'AvgNetto':
-                invoices = invoices.annotate(total=Round(Avg('total_value_netto')))
-            elif metric == 'AvgBrutto':
-                invoices = invoices.annotate(total=Round(Avg('total_value_brutto')))
-            elif metric == 'Count':
-                invoices = invoices.annotate(total=Count('id'))
-                response_data['custom']['values_appendix'] = ''
-            invoices = invoices.values_list('year', 'total').exclude(total=0).order_by('year')
-
-            response_data['data']['labels'] = list(invoices.values_list('year', flat=True))
-            response_data['data']['datasets'].append(self.get_dataset(
-                list(invoices.values_list('total', flat=True)),
-                COLORS[0]))
-
-        return JsonResponse(response_data)
+    def _filter_objects(self, **kwargs):
+        self.objects = self.objects.filter(status=Commission.DONE)
 
 
 class RefrigerantWeightsHistory(ChartDataMixin, View):
@@ -534,138 +441,6 @@ class RefrigerantWeightsHistory(ChartDataMixin, View):
             response_data['data']['labels'] = list(invoices.values_list('year', flat=True))
             response_data['data']['datasets'].append(self.get_dataset(
                 list(invoices.values_list('total', flat=True)),
-                COLORS[0]))
-
-        return JsonResponse(response_data)
-
-
-class CommissionHistory(GroupAccessControlMixin, ChartDataMixin, View):
-    allowed_groups = ['boss']
-    how_many_shown = 4
-
-    def get(self, *args, **kwargs):
-        date_option = self.request.GET.get('date_select', 'week')
-        metric = self.request.GET.get('custom_select', 'SumNetto')
-        now = datetime.today()
-        if date_option == 'week':
-            date = now - relativedelta(days=6)
-        elif date_option == 'month':
-            date = now - relativedelta(months=1)
-        elif date_option == 'year':
-            date = (now - relativedelta(years=1, months=-1)).replace(day=1)
-        else:
-            date = None
-
-        commissions = Commission.objects.filter(status=Commission.DONE)
-        if date:
-            commissions = commissions.filter(end_date__gte=date)
-
-        response_data = self.get_response_data_template(legend_display=False, values_appendix=' zł')
-
-        if date_option == 'week':
-            commissions = commissions.values('end_date')
-            if metric == 'Sum':
-                commissions = commissions.annotate(total=Sum('value'))
-            elif metric == 'Avg':
-                commissions = commissions.annotate(total=Round(Avg('value')))
-            elif metric == 'Count':
-                commissions = commissions.annotate(total=Count('id'))
-                response_data['custom']['values_appendix'] = ''
-            commissions = commissions.values_list('total', 'end_date').order_by('end_date')
-            values = list(commissions.values_list('total', flat=True))
-            days_between = (now - date).days
-            for i in range(days_between + 1):
-                x = date + relativedelta(days=i)
-                if x.date() not in commissions.values_list('end_date', flat=True):
-                    values.insert(i, 0)
-
-            response_data['data']['labels'] = [DAYS[(date + relativedelta(days=i)).weekday()]
-                                               for i in range(days_between + 1)]
-            response_data['data']['datasets'].append(self.get_dataset(
-                values, COLORS[0]))
-
-        if date_option == 'month':
-            commissions = commissions.values('end_date')
-            if metric == 'Sum':
-                commissions = commissions.annotate(total=Sum('value'))
-            elif metric == 'Avg':
-                commissions = commissions.annotate(total=Round(Avg('value')))
-            elif metric == 'Count':
-                commissions = commissions.annotate(total=Count('id'))
-                response_data['custom']['values_appendix'] = ''
-            commissions = commissions.values_list('total', 'end_date').order_by('end_date')
-            values = list(commissions.values_list('total', flat=True))
-            days_between = (now - date).days
-            for i in range(days_between + 1):
-                x = date + relativedelta(days=i)
-                if x.date() not in commissions.values_list('end_date', flat=True):
-                    values.insert(i, 0)
-
-            response_data['data']['labels'] = [(date + relativedelta(days=i)).strftime('%d/%m')
-                                               for i in range(days_between + 1)]
-            response_data['data']['datasets'].append(self.get_dataset(
-                values, COLORS[0]))
-
-        if date_option == 'year':
-            commissions = commissions.annotate(
-                month=ExtractMonth('end_date'), year=ExtractYear('end_date')).values('year', 'month')
-            if metric == 'Sum':
-                commissions = commissions.annotate(total=Sum('value'))
-            elif metric == 'Avg':
-                commissions = commissions.annotate(total=Round(Avg('value')))
-            elif metric == 'Count':
-                commissions = commissions.annotate(total=Count('id'))
-                response_data['custom']['values_appendix'] = ''
-            commissions = commissions.values_list('year', 'month', 'total').order_by('year', 'month')
-            values = list(commissions.values_list('total', flat=True))
-            months = list(commissions.values_list('month', flat=True))
-            response_data['data']['labels'] = [MONTHS[i - 1] for i in months]
-            response_data['data']['datasets'].append(self.get_dataset(
-                values, COLORS[0]))
-
-        if date_option == 'all_monthly':
-            years = commissions.annotate(year=ExtractYear('end_date')).values_list(
-                'year', flat=True).distinct().order_by('year')
-            response_data['data']['labels'] = MONTHS
-            response_data['options']['legend']['display'] = True
-
-            colors = COLORS[len(years)-1::-1]
-            for i, year in enumerate(years):
-                year_commissions = commissions.filter(end_date__year=year)
-                year_commissions = year_commissions.annotate(month=ExtractMonth('end_date')).values('month')
-                if metric == 'Sum':
-                    year_commissions = year_commissions.annotate(total=Sum('value'))
-                elif metric == 'Avg':
-                    year_commissions = year_commissions.annotate(total=Round(Avg('value')))
-                elif metric == 'Count':
-                    year_commissions = year_commissions.annotate(total=Count('id'))
-                    response_data['custom']['values_appendix'] = ''
-                year_commissions = year_commissions.values_list('month', 'total').order_by('month')
-                values = list(year_commissions.values_list('total', flat=True))
-                for j in range(1, 13):
-                    if j not in year_commissions.values_list('month', flat=True):
-                        values.insert(j - 1, 0)
-                hidden = False
-                if i < len(years) - self.how_many_shown:
-                    hidden = True
-                if sum(values) > 0:
-                    response_data['data']['datasets'].append(self.get_dataset(
-                        values, colors[i], label=year, fill=False, borderColor=colors[i], hidden=hidden))
-
-        if date_option == 'all_yearly':
-            commissions = commissions.annotate(year=ExtractYear('end_date')).values('year')
-            if metric == 'Sum':
-                commissions = commissions.annotate(total=Sum('value'))
-            elif metric == 'Avg':
-                commissions = commissions.annotate(total=Round(Avg('value')))
-            elif metric == 'Count':
-                commissions = commissions.annotate(total=Count('id'))
-                response_data['custom']['values_appendix'] = ''
-            commissions = commissions.values_list('year', 'total').exclude(total=0).order_by('year')
-
-            response_data['data']['labels'] = list(commissions.values_list('year', flat=True))
-            response_data['data']['datasets'].append(self.get_dataset(
-                list(commissions.values_list('total', flat=True)),
                 COLORS[0]))
 
         return JsonResponse(response_data)
@@ -785,7 +560,8 @@ class Metrics(View):
                 invoices = Invoice.objects.filter(date__gte=date_from, date__lte=date_to)
                 invoices_sum = 0
                 if invoices:
-                    invoices_sum = invoices.aggregate(Sum('total_value'))['total_value__sum']
+                    invoices_sum = invoices.aggregate(
+                        total=Sum(F('invoiceitem__price') * F('invoiceitem__quantity')))['total']
                 response['invoice_sum'] = "{0:.2f} zł".format(invoices_sum).replace('.', ',')
 
         if group == 'sale':
@@ -984,5 +760,6 @@ class GetSummary(GroupAccessControlMixin, View):
         purchase_sum = 0
         invoices = Invoice.objects.filter(date__gte=date_from, date__lte=date_to)
         if invoices:
-            purchase_sum = invoices.aggregate(Sum('total_value'))['total_value__sum']
+            purchase_sum = invoices.aggregate(
+                total=Sum(F('invoiceitem__price') * F('invoiceitem__quantity')))['total']
         return purchase_sum
