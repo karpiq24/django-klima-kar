@@ -19,7 +19,7 @@
     {% if table.page.has_previous or table.page.has_next %}
         {% block pagination.current %}
             <li class="page-item cardinality">
-                <small>Strona {{ table.page.number }} z {{ table.paginator.num_pages }}</small>
+                <div><small>Strona </small><input class="form-control form-control-sm page-input" type="number" value="{{ table.page.number }}" min="1" max="{{ table.paginator.num_pages }}"><small> z {{ table.paginator.num_pages }}</small></div>
             </li>
         {% endblock pagination.current %}
     {% endif %}

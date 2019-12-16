@@ -25,7 +25,7 @@ $(function() {
                         $('.table-container').replaceWith(data.table)
                     }
                 }
-                if (data.tab_counts.length !== null) {
+                if (data.tab_counts && data.tab_counts.length !== null) {
                     Object.keys(data.tab_counts).forEach(function(key, index) {
                         $('#nav-' + key +'-tab').find('span').text(data.tab_counts[key]);
                     });
@@ -71,6 +71,16 @@ $(function() {
         }
         else {
             reload_table({page:$(this).data('page')});
+        }
+    });
+
+    $('.content').on('change', '.page-input', function() {
+        let table_id = $(this).parents('.table-container').data('table_id');
+        if (table_id !== undefined) {
+            reload_table({page:$(this).val(), table_id:table_id});
+        }
+        else {
+            reload_table({page:$(this).val()});
         }
     });
 

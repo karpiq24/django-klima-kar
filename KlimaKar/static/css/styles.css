@@ -314,7 +314,7 @@ small#gus-data:hover {
 .pagination .cardinality {
 	padding: 0 10px;
 	display:inline-block;
-	padding-top: 7px;
+	padding-top: 3px;
 }
 .pagination .next {
 	float: right;
@@ -328,6 +328,17 @@ small#gus-data:hover {
     margin-left: 8px;
     font-family: "Font Awesome 5 Free";
     content: "\f0d7";
+}
+
+.pagination .cardinality div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.pagination .cardinality div input {
+    width: 60px;
+    margin: 0 10px;
 }
 
 /* 
