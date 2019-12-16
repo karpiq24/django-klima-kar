@@ -103,9 +103,11 @@
                 </td>
             </tr>
         </table>
-        <div class="alert alert-primary detail-description-alert" role="alert">
-            <div class="detail-description"><i class="fas fa-exclamation-circle fa-3x"></i> {{ object.description|default:"—"|linebreaks }}</div>
-        </div>
+        {% if object.description %}
+            <div class="alert alert-primary detail-description-alert" role="alert">
+                <div class="detail-description"><i class="fas fa-exclamation-circle fa-3x"></i> {{ object.description|default:"—"|linebreaks }}</div>
+            </div>
+        {% endif %}
     </div>
     <div class="col-xs-12 col-lg-4">
         <div class="card-deck text-center mb-4">
