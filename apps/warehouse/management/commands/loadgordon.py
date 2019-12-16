@@ -95,8 +95,7 @@ class Command(BaseCommand):
         invoice = Invoice.objects.create(
             number=number,
             date=issue_date,
-            supplier=Supplier.objects.get(pk=GORDON_PK),
-            total_value=value_netto
+            supplier=Supplier.objects.get(pk=GORDON_PK)
         )
 
         new_wares = 0

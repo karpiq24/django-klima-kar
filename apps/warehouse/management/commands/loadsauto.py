@@ -90,13 +90,11 @@ class Command(BaseCommand):
         invoice_xml = xml_doc.getElementsByTagName('nag')[0]
         number = self.getData(invoice_xml, 'numer')
         issue_date = dateutil.parser.parse(self.getData(invoice_xml, 'dat_w')).date()
-        netto_price = float(self.getData(invoice_xml, 'war_n'))
 
         invoice = Invoice.objects.create(
             number=number,
             date=issue_date,
-            supplier=Supplier.objects.get(pk=SAUTO_PK),
-            total_value=netto_price)
+            supplier=Supplier.objects.get(pk=SAUTO_PK))
 
         new_wares = 0
         for item in xml_doc.getElementsByTagName('poz'):

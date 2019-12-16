@@ -41,10 +41,7 @@ class InvoiceModelForm(forms.ModelForm):
 
     class Meta:
         model = Invoice
-        fields = ['supplier', 'number', 'date', 'total_value']
-        widgets = {
-            'total_value': forms.HiddenInput()
-        }
+        fields = ['supplier', 'number', 'date']
 
 
 class SupplierModelForm(forms.ModelForm):

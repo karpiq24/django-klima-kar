@@ -1,5 +1,6 @@
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, F
+from django.db.models.fields import FloatField
 
 
 class Ware(models.Model):
@@ -58,7 +59,10 @@ class Supplier(models.Model):
 
     @property
     def all_invoices_value(self):
-        return Invoice.objects.filter(supplier=self).aggregate(Sum('total_value'))['total_value__sum']
+        total = InvoiceItem.objects.filter(invoice__supplier=self).aggregate(
+            total=Sum(F('price') * F('quantity'),
+                      output_field=FloatField()))['total']
+        return total
 
 
 class Invoice(models.Model):
@@ -71,12 +75,6 @@ class Invoice(models.Model):
         Supplier,
         on_delete=models.PROTECT,
         verbose_name='Dostawca')
-    total_value = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name='Łączna wartość',
-        null=True,
-        blank=True)
     created_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Data dodania')
@@ -84,12 +82,12 @@ class Invoice(models.Model):
     def __str__(self):
         return '{}: {}'.format(str(self.supplier), self.number)
 
-    def calculate_total_value(self):
-        total = 0
-        for item in self.invoiceitem_set.all():
-            total += item.quantity * item.price
-        self.total_value = total
-        self.save()
+    @property
+    def total_value(self):
+        total = InvoiceItem.objects.filter(invoice=self).aggregate(
+            total=Sum(F('price') * F('quantity'),
+                      output_field=FloatField()))['total']
+        return total
 
 
 class InvoiceItem(models.Model):

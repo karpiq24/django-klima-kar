@@ -89,13 +89,11 @@ class Command(BaseCommand):
         xml_invoice = parseString(xml_string).documentElement.getElementsByTagName('Invoice')[0]
         number = xml_invoice.getAttribute('Number')
         issue_date = dateutil.parser.parse(xml_invoice.getAttribute('IssueDate'), dayfirst=True).date()
-        netto_price = float(xml_invoice.getAttribute('Price').replace(',', '.'))
 
         invoice = Invoice.objects.create(
             number=number,
             date=issue_date,
-            supplier=Supplier.objects.get(pk=DEKO_PK),
-            total_value=netto_price)
+            supplier=Supplier.objects.get(pk=DEKO_PK))
 
         new_wares = 0
         for item in xml_invoice.getElementsByTagName('Item'):

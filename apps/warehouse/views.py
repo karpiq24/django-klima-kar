@@ -155,7 +155,7 @@ class InvoiceUpdateView(UpdateWithInlinesView):
 
     def forms_valid(self, form, inlines):
         messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
-        return super().form_valid(form)
+        return super().forms_valid(form, inlines)
 
     def get_success_url(self):
         return reverse("warehouse:invoice_detail", kwargs={

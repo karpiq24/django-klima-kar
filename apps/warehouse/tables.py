@@ -64,6 +64,13 @@ class InvoiceTable(tables.Table):
     def render_total_value(self, value):
         return "{0:.2f} zł".format(value).replace('.', ',')
 
+    def order_total_value(self, queryset, is_descending):
+        queryset = queryset.annotate(
+            total=Sum(
+                F('invoiceitem__price') * F('invoiceitem__quantity'),
+                output_field=FloatField())).order_by(('-' if is_descending else '') + 'total')
+        return (queryset, True)
+
     class Meta:
         model = Invoice
         attrs = {'class': 'table table-striped table-hover table-bordered'}

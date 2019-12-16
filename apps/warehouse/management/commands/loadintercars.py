@@ -113,7 +113,6 @@ class Command(BaseCommand):
                 quantity=getData(ware, 'ilosc'),
                 price=getData(ware, 'cena')
             )
-        invoice_obj.calculate_total_value()
         return new_wares
 
 
