@@ -45,4 +45,4 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=128 --statistics
     - name: Run tests
       run: |
-        ./manage.py test
+        python manage.py test
