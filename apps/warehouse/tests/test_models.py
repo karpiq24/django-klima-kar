@@ -2,7 +2,7 @@ import datetime
 
 from django.test import TestCase
 
-from apps.warehouse.models import Ware, Supplier, Invoice, InvoiceItem
+from apps.warehouse.models import Ware, Supplier, Invoice
 
 
 class WareModelTest(TestCase):

@@ -12,3 +12,8 @@ class ReceiptPTU(models.Model):
 
     def __str__(self):
         return "{} - {} zł".format(self.date, self.value)
+
+
+class Round(models.Func):
+    function = 'ROUND'
+    template = '%(function)s(%(expressions)s, 2)'
