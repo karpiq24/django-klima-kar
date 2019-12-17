@@ -146,41 +146,50 @@ class MyCloudHome(SingletonModel):
             self.DEVICE_EXTERNAL_URL = device['network']['externalURI']
             self.save()
         if not self.APP_DIR_ID:
-            r = self.create_folder(self.APP_DIR_NAME)
-            if r.status_code == 201:
-                self.APP_DIR_ID = r.headers['Location'].split('/')[-1]
-                self.save()
-            else:
-                files = self.get_files()['files']
-                for f in files:
-                    if f['name'] == self.APP_DIR_NAME:
-                        self.APP_DIR_ID = f['id']
-                        self.save()
-                        break
+            self._initialize_app_dir()
         if not self.COMMISSION_DIR_ID:
-            r = self.create_folder(self.COMMISSION_DIR_NAME, self.APP_DIR_ID)
-            if r.status_code == 201:
-                self.COMMISSION_DIR_ID = r.headers['Location'].split('/')[-1]
-                self.save()
-            else:
-                files = self.get_files(self.APP_DIR_ID)['files']
-                for f in files:
-                    if f['name'] == self.COMMISSION_DIR_NAME:
-                        self.COMMISSION_DIR_ID = f['id']
-                        self.save()
-                        break
+            self._initialize_commission_dir()
         if not self.BACKUP_DIR_ID:
-            r = self.create_folder(self.BACKUP_DIR_NAME, self.APP_DIR_ID)
-            if r.status_code == 201:
-                self.BACKUP_DIR_ID = r.headers['Location'].split('/')[-1]
-                self.save()
-            else:
-                files = self.get_files(self.APP_DIR_ID)['files']
-                for f in files:
-                    if f['name'] == self.BACKUP_DIR_NAME:
-                        self.BACKUP_DIR_ID = f['id']
-                        self.save()
-                        break
+            self._initialize_backup_dir()
+
+    def _initialize_app_dir(self):
+        r = self.create_folder(self.APP_DIR_NAME)
+        if r.status_code == 201:
+            self.APP_DIR_ID = r.headers['Location'].split('/')[-1]
+            self.save()
+        else:
+            files = self.get_files()['files']
+            for f in files:
+                if f['name'] == self.APP_DIR_NAME:
+                    self.APP_DIR_ID = f['id']
+                    self.save()
+                    break
+
+    def _initialize_commission_dir(self):
+        r = self.create_folder(self.COMMISSION_DIR_NAME, self.APP_DIR_ID)
+        if r.status_code == 201:
+            self.COMMISSION_DIR_ID = r.headers['Location'].split('/')[-1]
+            self.save()
+        else:
+            files = self.get_files(self.APP_DIR_ID)['files']
+            for f in files:
+                if f['name'] == self.COMMISSION_DIR_NAME:
+                    self.COMMISSION_DIR_ID = f['id']
+                    self.save()
+                    break
+
+    def _initialize_backup_dir(self):
+        r = self.create_folder(self.BACKUP_DIR_NAME, self.APP_DIR_ID)
+        if r.status_code == 201:
+            self.BACKUP_DIR_ID = r.headers['Location'].split('/')[-1]
+            self.save()
+        else:
+            files = self.get_files(self.APP_DIR_ID)['files']
+            for f in files:
+                if f['name'] == self.BACKUP_DIR_NAME:
+                    self.BACKUP_DIR_ID = f['id']
+                    self.save()
+                    break
 
     def _get_endpoint(self, endpoint):
         url = 'http://config.mycloud.com/config/v1/config'
