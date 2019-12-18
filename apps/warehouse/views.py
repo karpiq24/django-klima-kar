@@ -16,7 +16,7 @@ from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 from apps.warehouse.tables import WareTable, InvoiceTable, SupplierTable, InvoiceItemTable, InvoiceTableWithWare
 from apps.warehouse.filters import WareFilter, InvoiceFilter, SupplierFilter
 from apps.warehouse.forms import WareModelForm, InvoiceModelForm, SupplierModelForm, InvoiceItemsInline
-from apps.warehouse.functions import generate_ware_inventory, check_ware_price_changes
+from apps.warehouse.functions import generate_ware_inventory
 
 
 class WareTableView(ExportMixin, FilteredSingleTableView):
@@ -130,7 +130,7 @@ class InvoiceCreateView(CreateWithInlinesView):
 
     def forms_valid(self, form, inlines):
         response = super().forms_valid(form, inlines)
-        check_ware_price_changes(self.object)
+        self.object.check_ware_price_changes()
         messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejną fakturę.</a>'.format(
                 reverse('warehouse:invoice_create')))
         return response

@@ -10,7 +10,6 @@ from django.db.models import Q
 
 from KlimaKar.settings import ZATOKA_LOGIN, ZATOKA_PASSWORD, ZATOKA_PK
 from apps.warehouse.models import Invoice, Ware, InvoiceItem, Supplier
-from apps.warehouse.functions import check_ware_price_changes
 
 
 class Command(BaseCommand):
@@ -113,7 +112,7 @@ class Command(BaseCommand):
                 price=price
             )
 
-        check_ware_price_changes(invoice)
+        invoice.check_ware_price_changes()
         return 1, new_wares
 
     def report_admins(self, message):

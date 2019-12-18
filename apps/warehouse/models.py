@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Sum, F
 from django.db.models.fields import FloatField
+from django.conf import settings
 
 
 class Ware(models.Model):
@@ -88,6 +89,25 @@ class Invoice(models.Model):
             total=Sum(F('price') * F('quantity'),
                       output_field=FloatField()))['total']
         return total
+
+    def check_ware_price_changes(self):
+        for item in self.invoiceitem_set.all():
+            last_invoice = Invoice.objects.filter(
+                supplier=self.supplier,
+                invoiceitem__ware=item.ware).exclude(
+                pk=self.pk).order_by('-date').first()
+            if not last_invoice:
+                continue
+            last_price = last_invoice.invoiceitem_set.filter(
+                ware=item.ware).first().price
+            percent_change = ((item.price - last_price) / last_price) * 100
+            if percent_change >= settings.PRICE_CHHANGE_PERCENTAGE or \
+                    percent_change <= -settings.PRICE_CHHANGE_PERCENTAGE:
+                WarePriceChange.objects.create(
+                    invoice=self,
+                    ware=item.ware,
+                    last_price=last_price,
+                    new_price=item.price)
 
 
 class InvoiceItem(models.Model):

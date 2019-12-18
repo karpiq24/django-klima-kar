@@ -3,9 +3,6 @@ import datetime
 
 from xlsxwriter import Workbook
 
-from KlimaKar import settings
-from apps.warehouse.models import WarePriceChange, Invoice
-
 
 def generate_ware_inventory(queryset):
     output = io.BytesIO()
@@ -61,15 +58,3 @@ def generate_ware_inventory(queryset):
     workbook.close()
     output.seek(0)
     return output
-
-
-def check_ware_price_changes(invoice):
-    for item in invoice.invoiceitem_set.all():
-        last_invoice = Invoice.objects.filter(supplier=invoice.supplier, invoiceitem__ware=item.ware).exclude(
-            pk=invoice.pk).order_by('-date').first()
-        if not last_invoice:
-            continue
-        last_price = last_invoice.invoiceitem_set.filter(ware=item.ware).first().price
-        percent_change = ((item.price - last_price) / last_price) * 100
-        if percent_change >= settings.PRICE_CHHANGE_PERCENTAGE or percent_change <= -settings.PRICE_CHHANGE_PERCENTAGE:
-            WarePriceChange.objects.create(invoice=invoice, ware=item.ware, last_price=last_price, new_price=item.price)

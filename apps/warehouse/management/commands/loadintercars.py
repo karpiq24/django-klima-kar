@@ -7,7 +7,6 @@ from django.core.management.base import BaseCommand
 from django.core.mail import mail_admins
 
 from apps.warehouse.models import Invoice, InvoiceItem, Supplier, Ware
-from apps.warehouse.functions import check_ware_price_changes
 from KlimaKar.settings import IC_CLIENT_NUMBER, IC_TOKEN, IC_API_URL, IC_PK
 
 
@@ -80,7 +79,7 @@ class Command(BaseCommand):
                     supplier=Supplier.objects.get(pk=IC_PK)
                 )
                 new_wares += self.get_invoice_detail(invoice_obj, invoice_id)
-                check_ware_price_changes(invoice_obj)
+                invoice_obj.check_ware_price_changes()
         return (new_invoices, new_wares)
 
     def get_invoice_detail(self, invoice_obj, invoice_id):
