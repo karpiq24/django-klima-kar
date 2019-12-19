@@ -34,6 +34,7 @@ class SaleInvoiceModelForm(forms.ModelForm):
         self.fields['completion_date'].widget.attrs.update({'class': 'date-input'})
         self.fields['payment_date'].widget.attrs.update({'placeholder': 'Wybierz datę'})
         self.fields['payment_date'].widget.attrs.update({'class': 'date-input'})
+        self.fields['payment_type_other'].widget.attrs.update({'placeholder': 'Podaj rodzaj płatności'})
 
         contractor = self.initial.get('contractor')
         if contractor:
@@ -134,11 +135,12 @@ class ContractorModelForm(forms.ModelForm):
         self.fields['email'].widget.attrs.update({'placeholder': 'Podaj adres e-mail'})
         self.fields['phone_1'].widget.attrs.update({'placeholder': 'Podaj numer telefonu'})
         self.fields['phone_2'].widget.attrs.update({'placeholder': 'Podaj numer telefonu'})
+        self.fields['bdo_number'].widget.attrs.update({'placeholder': 'Podaj numer BDO'})
 
     class Meta:
         model = Contractor
         fields = ['nip_prefix', 'nip', 'name', 'city', 'postal_code', 'address_1', 'address_2', 'email',
-                  'phone_1', 'phone_2']
+                  'phone_1', 'phone_2', 'bdo_number']
         widgets = {
             'nip_prefix': forms.HiddenInput()
         }

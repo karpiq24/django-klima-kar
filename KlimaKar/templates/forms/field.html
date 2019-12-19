@@ -1,5 +1,5 @@
 {% load widget_tweaks %}
-<div class="form-group">
+<div class="form-group" {% if hidden %}style="display:none;"{% endif %}>
     {% if not hide_label %}
         {% if field.field.required %}{{ field.label_tag }}<span class="required">*</span>{% else %}{{ field.label_tag }}{% endif %}
     {% endif %}

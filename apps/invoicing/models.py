@@ -47,6 +47,11 @@ class Contractor(models.Model):
         verbose_name="Adres e-mail",
         blank=True,
         null=True)
+    bdo_number = models.CharField(
+        max_length=16,
+        verbose_name="Numer BDO",
+        blank=True,
+        null=True)
     phone_1 = models.CharField(
         max_length=16,
         verbose_name="Numer telefonu",
@@ -69,10 +74,12 @@ class SaleInvoice(models.Model):
     CASH = '1'
     CARD = '2'
     TRANSFER = '3'
+    OTHER = '4'
     PAYMENT_TYPES = [
         (CASH, 'gotówka'),
         (CARD, 'karta'),
-        (TRANSFER, 'przelew')
+        (TRANSFER, 'przelew'),
+        (OTHER, 'inny')
     ]
 
     TYPE_VAT = '1'
@@ -114,6 +121,11 @@ class SaleInvoice(models.Model):
         choices=PAYMENT_TYPES)
     payment_date = models.DateField(
         verbose_name='Termin płatności',
+        null=True,
+        blank=True)
+    payment_type_other = models.CharField(
+        max_length=128,
+        verbose_name='Inny rodzaj płatności',
         null=True,
         blank=True)
     payed = models.BooleanField(

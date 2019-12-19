@@ -54,6 +54,12 @@
                 <td>{{ contractor.phone_2 }}</td>
             </tr>
             {% endif %}
+            {% if contractor.bdo_number %}
+            <tr>
+                <td class="detail-label">Numer BDO</td>
+                <td>{{ contractor.bdo_number }}</td>
+            </tr>
+            {% endif %}
     </table>
     </div>
     <div class="card-footer">

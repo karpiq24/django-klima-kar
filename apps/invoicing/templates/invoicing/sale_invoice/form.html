@@ -20,18 +20,18 @@
             </div>
         {% endif %}
         <div class=col-sm-6>
-            {% include 'forms/field.html' with field=form.visible_fields.0 %}
+            {% include 'forms/field.html' with field=form.issue_date %}
         </div>
         <div class=col-sm-6>
-            {% include 'forms/field.html' with field=form.visible_fields.1 %}
+            {% include 'forms/field.html' with field=form.completion_date %}
         </div>
         <div class=col-sm-6>
-            {% include 'forms/field.html' with field=form.visible_fields.2 %}
+            {% include 'forms/field.html' with field=form.number %}
         </div>
         <div class=col-sm-6>
             <div style="display:flex;width:100%;">
                 <div style="width:calc(100% - 105px);">
-                    {% include 'forms/field.html' with field=form.visible_fields.3 %}
+                    {% include 'forms/field.html' with field=form.contractor %}
                 </div>
                 <button disabled id="contractor-edit" class="btn btn-outline-warning" style="margin-left:5px;margin-top:29px;height:38px;width:100px;" type="button"><i class="fas fa-edit"></i> Edytuj</button>
             </div>
@@ -39,13 +39,14 @@
             {% include 'invoicing/contractor/gus_modal.html' %}
         </div>
         <div class=col-sm-6>
-            {% include 'forms/field.html' with field=form.visible_fields.4 %}
+            {% include 'forms/field.html' with field=form.payment_type %}
+            {% include 'forms/field.html' with field=form.payment_type_other hide_label=True hidden=True %}
         </div>
         <div class=col-sm-6>
-            {% include 'forms/field.html' with field=form.visible_fields.5 %}
+            {% include 'forms/field.html' with field=form.payment_date %}
         </div>
         <div class=col-sm-12>
-            {% include 'forms/field.html' with field=form.visible_fields.6 %}
+            {% include 'forms/field.html' with field=form.comment %}
         </div>
     </div>
 

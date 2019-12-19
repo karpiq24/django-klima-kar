@@ -67,7 +67,8 @@ header {
   text-align: right;
 }
 
-#company .nip {
+#company .nip,
+#company .bdo {
   font-size: 1.15em;
 }
 
@@ -86,7 +87,7 @@ header {
   color: #696969;
 }
 
-#client .nip, .address {
+#client .nip, .address, .bdo {
   font-size: 1.15em;
 }
 

@@ -212,6 +212,20 @@ $(function () {
         }
     });
 
+    $("#id_payment_type").change(function(event, focus=true) {
+        if ($('input[type=radio][name=payment_type]:checked').val() === '4') {
+            $("#id_payment_type_other").parent().show();
+            if (focus) {
+                setTimeout(function(){
+                    $("#id_payment_type_other").focus();
+                }, 10)
+            }
+        } else {
+            $("#id_payment_type_other").parent().hide();
+            $("#id_payment_type_other").val('');
+        }
+    });
+
     $(".choose_service").click(function() {
         var item_form = $(this).parents(".item-formset-row");
         var service_pk = $(item_form).find(".item-service").val();
@@ -287,5 +301,6 @@ $(function () {
     if ($("#id_contractor").val() !== '') {
         $("#id_contractor").change();
     }
+    $("#id_payment_type").trigger("change", false);
     calculateInvoiceTotals();
 });
