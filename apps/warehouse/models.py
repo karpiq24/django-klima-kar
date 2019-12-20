@@ -100,6 +100,8 @@ class Invoice(models.Model):
                 continue
             last_price = last_invoice.invoiceitem_set.filter(
                 ware=item.ware).first().price
+            if last_price <= 0 or item.price <= 0:
+                continue
             percent_change = ((item.price - last_price) / last_price) * 100
             if percent_change >= settings.PRICE_CHHANGE_PERCENTAGE or \
                     percent_change <= -settings.PRICE_CHHANGE_PERCENTAGE:

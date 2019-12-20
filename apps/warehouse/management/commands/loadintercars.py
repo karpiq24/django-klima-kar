@@ -4,10 +4,12 @@ import dateutil.parser
 import xml.dom.minidom
 
 from django.core.management.base import BaseCommand
-from django.core.mail import mail_admins
+from django.core.mail import mail_admins, mail_managers
+from django.urls import reverse
 
 from apps.warehouse.models import Invoice, InvoiceItem, Supplier, Ware
-from KlimaKar.settings import IC_CLIENT_NUMBER, IC_TOKEN, IC_API_URL, IC_PK
+from KlimaKar.settings import IC_CLIENT_NUMBER, IC_TOKEN, IC_API_URL, IC_PK, ABSOLUTE_URL
+from KlimaKar.templatetags.slugify import slugify
 
 
 class Command(BaseCommand):
@@ -67,6 +69,7 @@ class Command(BaseCommand):
         for invoice in invoices:
             invoice_id = getData(invoice, 'id')
             invoice_number = getData(invoice, 'numer')
+            invoice_total = float(getData(invoice, 'war_n'))
             invoice_date = dateutil.parser.parse(getData(invoice, 'dat_w'))
             try:
                 Invoice.objects.get(number=invoice_number, supplier__pk=IC_PK)
@@ -79,6 +82,7 @@ class Command(BaseCommand):
                     supplier=Supplier.objects.get(pk=IC_PK)
                 )
                 new_wares += self.get_invoice_detail(invoice_obj, invoice_id)
+                self.check_total_price(invoice_obj, invoice_total)
                 invoice_obj.check_ware_price_changes()
         return (new_invoices, new_wares)
 
@@ -113,6 +117,25 @@ class Command(BaseCommand):
                 price=getData(ware, 'cena')
             )
         return new_wares
+
+    def check_total_price(self, invoice, total):
+        if invoice.total_value == total:
+            return
+        if invoice.total_value == -total:
+            for item in invoice.invoiceitem_set.all():
+                item.quantity = -item.quantity
+                item.save()
+        else:
+            mail_managers(
+                'Błąd w fakturze Inter Cars',
+                'Kwota całkowita faktury nie zgadza się z cenami pozycji. Proszę o sprawdzenie.\n\n{}{}'.format(
+                    ABSOLUTE_URL,
+                    reverse(
+                        'warehouse:invoice_detail',
+                        kwargs={
+                            'pk': invoice.pk,
+                            'slug': slugify(invoice)
+                        })))
 
 
 def month_year_iter(start_date, end_date):
