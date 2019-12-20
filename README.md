@@ -17,6 +17,7 @@ Django project used in my family buisness. It provides warehouse management, inv
   - export invoice to PDF
   - print invoice
   - email invoice to contractor
+  - validate contractor VAT payer status
 - Commissions
   - commissions, vehicles, components
   - decode AZTEC code from registration papers to get vehicle information
@@ -33,7 +34,7 @@ Django project used in my family buisness. It provides warehouse management, inv
 - Other
   - advanced filtering of all models
   - filtering and paginating tables using ajax
-  - automatic dropbox backup
+  - JSON dump and SQL dump backup with upload to dropbox and WD My Cloud Home
 
 ## Requirements
 1. [WeasyPrint dependecies](https://weasyprint.readthedocs.io/en/latest/install.html)
