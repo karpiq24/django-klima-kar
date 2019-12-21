@@ -66,6 +66,10 @@ class Contractor(models.Model):
         auto_now_add=True,
         verbose_name='Data dodania')
 
+    class Meta:
+        verbose_name = 'Kontrahent'
+        verbose_name_plural = 'Kontrahenci'
+
     def __str__(self):
         return self.name
 
@@ -152,6 +156,10 @@ class SaleInvoice(models.Model):
         auto_now_add=True,
         verbose_name='Data dodania')
 
+    class Meta:
+        verbose_name = 'Faktura sprzedażowa'
+        verbose_name_plural = 'Faktury sprzedażowe'
+
     def __str__(self):
         return '{} {}'.format(self.get_invoice_type_display(), self.number)
 
@@ -227,6 +235,10 @@ class RefrigerantWeights(models.Model):
         verbose_name="Czynnik R404",
         default=0)
 
+    class Meta:
+        verbose_name = 'Waga czynników'
+        verbose_name_plural = 'Wagi czynników'
+
     def __str__(self):
         return "Waga czynników dla faktury {}".format(self.sale_invoice)
 
@@ -261,6 +273,10 @@ class ServiceTemplate(models.Model):
         blank=True,
         null=True,
         verbose_name='Towar')
+
+    class Meta:
+        verbose_name = 'Szablon usługi'
+        verbose_name_plural = 'Szablony usług'
 
     def __str__(self):
         return self.name
@@ -297,6 +313,10 @@ class SaleInvoiceItem(models.Model):
         null=True,
         verbose_name='Towar')
 
+    class Meta:
+        verbose_name = 'Pozycja faktury sprzedażowej'
+        verbose_name_plural = 'Pozycje faktur sprzedażowych'
+
     def __str__(self):
         return "{} - {}".format(self.sale_invoice.number, self.name)
 
@@ -318,6 +338,10 @@ class CorrectiveSaleInvoice(SaleInvoice):
     reason = models.TextField(
         max_length=255,
         verbose_name='Powód wystawienia korekty')
+
+    class Meta:
+        verbose_name = 'Korekta faktury sprzedażowej'
+        verbose_name_plural = 'Korekty faktur sprzedażowych'
 
     @property
     def diffrence_netto(self):

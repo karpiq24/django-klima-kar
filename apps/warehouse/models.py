@@ -26,6 +26,10 @@ class Ware(models.Model):
         auto_now_add=True,
         verbose_name='Data dodania')
 
+    class Meta:
+        verbose_name = 'Towar'
+        verbose_name_plural = 'Towary'
+
     @property
     def last_price(self):
         last_invoice = InvoiceItem.objects.filter(ware=self).order_by('-invoice__date')
@@ -55,6 +59,10 @@ class Supplier(models.Model):
         auto_now_add=True,
         verbose_name='Data dodania')
 
+    class Meta:
+        verbose_name = 'Dostawca'
+        verbose_name_plural = 'Dostawcy'
+
     def __str__(self):
         return self.name
 
@@ -79,6 +87,10 @@ class Invoice(models.Model):
     created_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Data dodania')
+
+    class Meta:
+        verbose_name = 'Faktura zakupowa'
+        verbose_name_plural = 'Faktury zakupowe'
 
     def __str__(self):
         return '{}: {}'.format(str(self.supplier), self.number)
@@ -133,6 +145,10 @@ class InvoiceItem(models.Model):
         decimal_places=2,
         verbose_name='Cena netto')
 
+    class Meta:
+        verbose_name = 'Pozycja faktury zakupowej'
+        verbose_name_plural = 'Pozycje faktur zakupowych'
+
     def __str__(self):
         return self.ware.index
 
@@ -157,6 +173,10 @@ class WarePriceChange(models.Model):
     created_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Data dodania')
+
+    class Meta:
+        verbose_name = 'Zmiana ceny towaru'
+        verbose_name_plural = 'Zmiany cen towarów'
 
     def __str__(self):
         return "{} {} -> {}".format(self.ware, self.last_price, self.new_price)

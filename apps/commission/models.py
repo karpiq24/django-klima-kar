@@ -42,6 +42,10 @@ class Vehicle(models.Model):
         null=True,
         verbose_name='Rok produkcji')
 
+    class Meta:
+        verbose_name = 'Pojazd'
+        verbose_name_plural = 'Pojazdy'
+
     def __str__(self):
         return '{}{}{}{}'.format(
             self.brand,
@@ -79,6 +83,10 @@ class Component(models.Model):
         blank=True,
         null=True,
         verbose_name='Numer katalogowy')
+
+    class Meta:
+        verbose_name = 'Podzespół'
+        verbose_name_plural = 'Podzespoły'
 
     def __str__(self):
         return '{}{}{}{}'.format(
@@ -166,6 +174,10 @@ class Commission(models.Model):
         blank=True,
         null=True)
 
+    class Meta:
+        verbose_name = 'Zlecenie'
+        verbose_name_plural = 'Zlecenia'
+
     def __str__(self):
         name = str(self.vehicle) if self.vehicle else str(self.component) if self.component else self.vc_name
         return 'Zlecenie {}: {}'.format(self.number, name)
@@ -219,6 +231,10 @@ class CommissionItem(models.Model):
         null=True,
         verbose_name='Towar')
 
+    class Meta:
+        verbose_name = 'Pozycja zlecenia'
+        verbose_name_plural = 'Pozycje zleceń'
+
     def __str__(self):
         return "{} - {}".format(self.commission.id, self.name)
 
@@ -244,6 +260,10 @@ class CommissionFile(models.Model):
         max_length=128,
         blank=True,
         null=True)
+
+    class Meta:
+        verbose_name = 'Plik zlecenia'
+        verbose_name_plural = 'Pliki zleceń'
 
     def __str__(self):
         return self.file_name

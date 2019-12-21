@@ -71,6 +71,13 @@ class SiteSettings(SingletonModel):
         blank=True,
         null=True)
 
+    class Meta:
+        verbose_name = 'Ustawienia strony'
+        verbose_name_plural = 'Ustawienia strony'
+
+    def __str__(self):
+        return 'Ustawienia strony'
+
 
 class MyCloudHome(SingletonModel):
     APP_DIR_NAME = models.CharField(
@@ -128,6 +135,13 @@ class MyCloudHome(SingletonModel):
         max_length=128,
         blank=True,
         null=True)
+
+    class Meta:
+        verbose_name = 'Ustawienia MyCluod Home'
+        verbose_name_plural = 'Ustawienia MyCluod Home'
+
+    def __str__(self):
+        return 'Ustawienia MyCluod Home'
 
     def initialize(self):
         if not self.REFRESH_TOKEN:

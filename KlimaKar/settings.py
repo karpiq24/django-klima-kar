@@ -168,6 +168,10 @@ RQ_QUEUES = {
     }
 }
 
+# GEOIP2
+GEOIP_PATH = 'data/'
+GEOIP_COUNTRY = 'GeoLite2-Country.mmdb'
+
 
 def FILTERS_VERBOSE_LOOKUPS():
     from django_filters.conf import DEFAULTS
