@@ -3,10 +3,11 @@ from django.urls import include, path
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from KlimaKar.views import HomeView, SendIssueView, SendSMSView
+from KlimaKar.forms import KlimaKarAuthenticationForm
 
 urlpatterns = [
     path('', HomeView.as_view(), name="home"),
-    path('zaloguj/', auth_views.LoginView.as_view(), name='login'),
+    path('zaloguj/', auth_views.LoginView.as_view(authentication_form=KlimaKarAuthenticationForm), name='login'),
     path('wyloguj/', auth_views.LogoutView.as_view(), name='logout'),
     path('admin/', admin.site.urls),
 
