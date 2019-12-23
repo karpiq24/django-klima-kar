@@ -341,6 +341,20 @@ small#gus-data:hover {
     margin: 0 10px;
 }
 
+.table span.true:after {
+    font-size: 2rem;
+    font-family: "Font Awesome 5 Free";
+    content: "\f058";
+    color: #28a745;
+}
+
+.table span.false:after {
+    font-size: 2rem;
+    font-family: "Font Awesome 5 Free";
+    content: "\f057";
+    color: #dc3545;
+}
+
 /* 
     SELECT2
 */

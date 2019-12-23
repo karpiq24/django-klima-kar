@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load render_table export_url from django_tables2 %}
+{% load static %}
+
+{% block content %}
+<div>
+    <h1>Użytkownicy</h1>
+</div>
+{% csrf_token %}
+<input id="delete-user-sessions-url" type="hidden" value="{% url 'management:delete_user_sessions' %}">
+
+{% include "filter_panel.html" %}
+
+{% render_table table %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function() {
+        $('.sidenav #nav-users').children(':first').addClass('active');
+        $('.sidenav #nav-management').collapse('show');
+
+        $(document).on('click', '.delete-sessions', function () {
+            const data = {
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                user: $(this).data('user')
+            }
+
+            Swal.fire({
+                title: "Czy na pewno chcesz usunąć wszystkie sesje tego użytkownika?",
+                type: "question",
+                showCancelButton: true,
+                focusCancel: false,
+                focusConfirm: true,
+                confirmButtonText: 'Tak',
+                cancelButtonText: 'Nie'
+            }).then((deleteSession) => {
+                if (deleteSession.value) {
+                    $.ajax({
+                        url:  $('#delete-user-sessions-url').val(),
+                        type: 'POST',
+                        data: data,
+                        success: function(data) {
+                            addAlert('Sukces!', 'success', data.message);
+                            reloadTable({});
+                        },
+                        error: function() {
+                            addAlert('Błąd!', 'error', 'Coś poszło nie tak. Spróbuj ponownie.');
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

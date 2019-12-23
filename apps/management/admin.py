@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from KlimaKar.models import UserSession
+from apps.management.models import UserSession
 
 # Register your models here.
 admin.site.register(UserSession)

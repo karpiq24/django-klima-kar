@@ -1,5 +1,7 @@
+let reloadTable = null;
+
 $(function() {
-    function reload_table ({page = 1, sort = null, table_id = null, counts_only = false}) {
+    function reload_table({page = 1, sort = null, table_id = null, counts_only = false}) {
         $('body').css('cursor', 'progress');
         var url = [location.protocol, '//', location.host, location.pathname].join('');
         var data = $('#filters > form').serialize() + '&page=' + page;
@@ -37,6 +39,8 @@ $(function() {
             }
         });
     }
+
+    reloadTable = reload_table;
     
     var debounce = (function() {
         var timer = 0;

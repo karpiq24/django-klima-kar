@@ -1,0 +1,7 @@
+{% load slugify %}
+<a class="btn btn-outline-primary btn-sm btn-table" href="{% url 'admin:auth_user_change' record.pk %}" target="_blank" title="Szczegóły">
+    Szczegóły
+</a>
+<button class="btn btn-outline-danger btn-sm btn-table delete-sessions" data-user="{{ record.pk }}" title="Zakończ wszystkie sesje">
+    Zakończ sesje
+</button>

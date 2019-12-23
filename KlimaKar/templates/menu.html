@@ -66,4 +66,27 @@
             </a>
         </li>
     </div>
+
+    {% if request.user.is_superuser %}
+        <li>
+            <i data-toggle="collapse" href="#nav-management">Zarządzanie<span class="fa fa-angle-down"></span></i>
+        </li>
+        <div id="nav-management" class="collapse show">
+            <li id="nav-users">
+                <a href="{% url 'management:users' %}">
+                    <span class="fa fa-user-circle"></span> Użytkownicy
+                </a>
+            </li>
+            <li id="nav-user-sessions">
+                <a href="{% url 'management:user_sessions' %}">
+                    <span class="fa fa-sliders-h"></span> Sesje użytkowników
+                </a>
+            </li>
+            <li id="nav-management-page">
+                <a target="_blank" href="{% url 'admin:index' %}">
+                    <span class="fas fa-toolbox"></span> Panel admina
+                </a>
+            </li>
+        </div>
+    {% endif %}
 </ul>

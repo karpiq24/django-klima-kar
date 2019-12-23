@@ -101,8 +101,10 @@ ENV/
 .mypy_cache/
 
 # custom
-apps/*/migrations/
-KlimaKar/migrations/
+apps/*/migrations/*
+KlimaKar/migrations/*
+!apps/*/migrations/__init__.py
+!KlimaKar/migrations/__init__.py
 *.sqlite3
 data/
 .vscode/
