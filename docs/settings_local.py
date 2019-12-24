@@ -10,6 +10,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # a tuple of (Full name, email address).
 # Example: [('John', 'john@example.com'), ('Mary', 'mary@example.com')]
 ADMINS = []
+MANAGERS = []
 
 EMAIL_HOST = ''
 EMAIL_HOST_USER = ''
@@ -46,6 +47,7 @@ STATIC_ROOT = '/var/www/wsgi/static/KlimaKar'
 # Example command to generate secret key in bash:
 # tr -dc A-Za-z0-9 < /dev/urandom | head -c 50 | xargs
 SECRET_KEY = ''
+SECRET_SALT = ''
 
 AUTH_PASSWORD_VALIDATORS = []
 

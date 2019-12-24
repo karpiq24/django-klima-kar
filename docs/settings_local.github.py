@@ -10,6 +10,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # a tuple of (Full name, email address).
 # Example: [('John', 'john@example.com'), ('Mary', 'mary@example.com')]
 ADMINS = [('Bartosz', 'karpiq@gmail.com')]
+MANAGERS = [('Bartosz', 'karpiq@gmail.com')]
 
 EMAIL_HOST = ''
 EMAIL_HOST_USER = ''
