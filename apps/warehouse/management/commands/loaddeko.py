@@ -6,10 +6,10 @@ from bs4 import BeautifulSoup
 from xml.dom.minidom import parseString
 
 from django.core.management.base import BaseCommand
-from django.core.mail import mail_admins
 from django.db.models import Q
 
 from KlimaKar.settings import DEKO_LOGIN, DEKO_PASSWORD, DEKO_PK
+from KlimaKar.email import mail_admins
 from apps.warehouse.models import Invoice, Ware, InvoiceItem, Supplier
 
 

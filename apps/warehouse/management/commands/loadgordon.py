@@ -4,10 +4,10 @@ import datetime
 from bs4 import BeautifulSoup
 
 from django.core.management.base import BaseCommand
-from django.core.mail import mail_admins
 from django.db.models import Q
 
 from KlimaKar.settings import GORDON_LOGIN, GORDON_PASSWORD, GORDON_PK
+from KlimaKar.email import mail_admins
 from apps.warehouse.models import Invoice, Ware, InvoiceItem, Supplier
 
 

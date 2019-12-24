@@ -4,12 +4,12 @@ import dateutil.parser
 import xml.dom.minidom
 
 from django.core.management.base import BaseCommand
-from django.core.mail import mail_admins, mail_managers
 from django.urls import reverse
 
 from apps.warehouse.models import Invoice, InvoiceItem, Supplier, Ware
 from KlimaKar.settings import IC_CLIENT_NUMBER, IC_TOKEN, IC_API_URL, IC_PK, ABSOLUTE_URL
 from KlimaKar.templatetags.slugify import slugify
+from KlimaKar.email import mail_managers, mail_admins
 
 
 class Command(BaseCommand):

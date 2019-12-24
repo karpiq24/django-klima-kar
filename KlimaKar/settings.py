@@ -9,11 +9,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ''
+SECRET_SALT = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+EMAIL_SUBJECT_PREFIX = '[Klima-Kar]'
 
 # Application definition
 
@@ -56,9 +59,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'KlimaKar.urls'
 LOGIN_URL = '/zaloguj'
-LOGIN_EXEMPT_URLS = ['admin']
+LOGIN_EXEMPT_URLS = []
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
+TOKEN_VALID_TIME = 600
 
 TEMPLATES = [
     {

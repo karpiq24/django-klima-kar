@@ -9,9 +9,9 @@ from dropbox.exceptions import ApiError, AuthError
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from django.utils.six import StringIO
-from django.core.mail import mail_admins
 
 from KlimaKar.settings import DROPBOX_TOKEN
+from KlimaKar.email import mail_admins
 from apps.settings.models import MyCloudHome
 
 
@@ -62,4 +62,4 @@ class Command(BaseCommand):
         cloud = MyCloudHome.load()
         r = cloud.create_file(file_name, open(file_path, 'rb').read(), cloud.BACKUP_DIR_ID)
         if r.status_code == 409 or r.status_code != 201:
-            mail_admins('Postgres backup save failed!', r.text)
+            mail_admins('JSON dump backup save failed!', r.text)

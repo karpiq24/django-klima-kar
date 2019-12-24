@@ -1,9 +1,10 @@
 import os
 
-from django.core.mail import mail_managers
 from django.conf import settings
 from django.contrib.gis.geoip2 import GeoIP2
 from geoip2.errors import AddressNotFoundError
+
+from KlimaKar.email import mail_managers
 
 
 def report_user_login(user_session):

@@ -5,10 +5,10 @@ from bs4 import BeautifulSoup
 from dateutil import rrule, parser as date_parser
 
 from django.core.management.base import BaseCommand
-from django.core.mail import mail_admins
 from django.db.models import Q
 
 from KlimaKar.settings import ZATOKA_LOGIN, ZATOKA_PASSWORD, ZATOKA_PK
+from KlimaKar.email import mail_admins
 from apps.warehouse.models import Invoice, Ware, InvoiceItem, Supplier
 
 

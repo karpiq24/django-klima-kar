@@ -12,9 +12,10 @@ from subprocess import Popen, STDOUT
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
-from django.core.mail import mail_admins
 
 from apps.settings.models import MyCloudHome
+
+from KlimaKar.email import mail_admins
 
 
 class Command(BaseCommand):

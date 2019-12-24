@@ -2,8 +2,9 @@ import datetime
 import traceback
 
 from django.core.management.base import BaseCommand
-from django.core.mail import mail_admins
 from django.core.management import call_command
+
+from KlimaKar.email import mail_admins
 
 
 class Command(BaseCommand):

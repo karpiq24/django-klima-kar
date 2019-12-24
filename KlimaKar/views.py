@@ -4,7 +4,6 @@ from django.views.generic import TemplateView, View
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.urls import reverse
 from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import mail_admins
 
 from django_tables2 import SingleTableView
 from dal import autocomplete
@@ -13,7 +12,7 @@ from smsapi.client import SmsApiPlClient
 
 from KlimaKar import settings
 from KlimaKar.forms import IssueForm
-from KlimaKar.email import get_email_message
+from KlimaKar.email import get_email_message, mail_admins
 
 
 class HomeView(TemplateView):

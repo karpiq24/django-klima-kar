@@ -25,3 +25,19 @@ def encode_media_related(metadata, media=None):
         )
         return encode_multipart_related([rf1, rf2])
     return encode_multipart_related([rf1])
+
+
+def send_token_email(user, token):
+    from KlimaKar.email import get_email_message
+
+    body = (
+        f'Witaj {user.username}!\n\n'
+        f'Nastąpiła próba logowania na Twoje konto, które jest zabezpieczone dwuskładnikowym uwierzytelnianiem.\n\n'
+        f'Twój token autoryzacyjny to: {token}'
+    )
+    email = get_email_message(
+        subject='Logowanie do Klima-Kar - token autoryzacyjny',
+        body=body,
+        to=[user.email]
+    )
+    email.send(fail_silently=True)
