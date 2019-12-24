@@ -35,6 +35,8 @@ Django project used in my family buisness. It provides warehouse management, inv
   - advanced filtering of all models
   - filtering and paginating tables using ajax
   - JSON dump and SQL dump backup with upload to dropbox and WD My Cloud Home
+  - 2-step email authentication
+  - login from remote location only for managers and admins
 
 ## Requirements
 1. [WeasyPrint dependecies](https://weasyprint.readthedocs.io/en/latest/install.html)
