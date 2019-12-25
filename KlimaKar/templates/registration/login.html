@@ -21,11 +21,55 @@
             </div>
         {% endif %}
 
-        {% for field in form.visible_fields %}
-            {% if not exclude or field.name not in exclude %}
-                {% include 'forms/field.html' with field=field %}
-            {% endif %}
-        {% endfor %}
+        {% with field=form.username %}
+            <div class="form-group" {% if hidden %}style="display:none;"{% endif %}>
+                {{ field.label_tag }}<span class="required">*</span>
+            
+                {% if form.is_bound %}
+                    {% if field.errors %}
+                        {% render_field field class+="form-control is-invalid" %}
+                        {% for error in field.errors %}
+                            <div class="invalid-feedback">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        {% render_field field class+="form-control is-valid" %}
+                    {% endif %}
+                {% else %}
+                    {% render_field field class+="form-control" %}
+                {% endif %}
+            
+                {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+        {% endwith %}
+
+        {% with field=form.password %}
+            <div class="form-group" {% if hidden %}style="display:none;"{% endif %}>
+                {{ field.label_tag }}<span class="required">*</span>
+            
+                {% if form.is_bound %}
+                    {% if field.errors %}
+                        {% render_field field class+="form-control is-invalid" %}
+                        {% for error in field.errors %}
+                            <div class="invalid-feedback">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <input type="password" name="password" class="form-control is-valid" required="" id="id_password" value="{{ form.cleaned_data.password }}">
+                    {% endif %}
+                {% else %}
+                    {% render_field field class+="form-control" %}
+                {% endif %}
+            
+                {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+        {% endwith %}
 
         <div class="card-deck text-center">
             <div class="card bg-light">

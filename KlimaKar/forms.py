@@ -50,7 +50,7 @@ class KlimaKarAuthenticationForm(AuthenticationForm):
 
     def clean(self):
         self.cleaned_data = super().clean()
-        if not self.get_user().email:
+        if not self.get_user() or not self.get_user().email:
             return self.cleaned_data
         if not self.cleaned_data['token']:
             django_rq.enqueue(send_token_email, self.get_user(), self.get_token())
@@ -84,3 +84,8 @@ class KlimaKarAuthenticationForm(AuthenticationForm):
                     'Niedozwolony zdalny dostęp.',
                     code='remote_disallowed',
                 )
+
+    def get_invalid_login_error(self):
+        self.add_error('username', '')
+        self.add_error('password', '')
+        return super().get_invalid_login_error()
