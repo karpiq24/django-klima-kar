@@ -40,7 +40,7 @@
     </li>
     {% if user.is_authenticated %}
     <li class="left-line" style="float:right">
-        <a href="{% url 'logout' %}" title="Wyloguj">
+        <a href="{% url 'accounts:logout' %}" title="Wyloguj">
             <i class="fa fa-sign-out-alt fa-lg" style="cursor: pointer;"></i> <span>Wyloguj</span>
         </a>
     </li>

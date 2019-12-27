@@ -3,7 +3,7 @@ import django_tables2 as tables
 from django.contrib.auth.models import User
 from django.utils.html import format_html
 
-from apps.management.models import UserSession
+from apps.accounts.models import UserSession
 
 
 class UserSessionTable(tables.Table):
@@ -20,7 +20,7 @@ class UserSessionTable(tables.Table):
     actions = tables.TemplateColumn(
         attrs={'th': {'width': '7%'}},
         verbose_name="Akcje",
-        template_name='management/users/user_session_actions.html',
+        template_name='accounts/user_session_actions.html',
         orderable=False,
         exclude_from_export=True)
 
@@ -61,7 +61,7 @@ class UserTable(tables.Table):
     actions = tables.TemplateColumn(
         attrs={'th': {'width': '7%'}},
         verbose_name="Akcje",
-        template_name='management/users/user_actions.html',
+        template_name='accounts/user_actions.html',
         orderable=False,
         exclude_from_export=True)
 

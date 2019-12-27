@@ -5,7 +5,7 @@ from dateutil import parser as date_parser
 from django import forms
 from django.contrib.auth.models import User
 
-from apps.management.models import UserSession
+from apps.accounts.models import UserSession
 
 
 class UserSessionFilter(django_filters.FilterSet):

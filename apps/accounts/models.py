@@ -7,7 +7,7 @@ from django.contrib.auth.signals import user_logged_in, user_logged_out
 
 from ipware import get_client_ip
 
-from apps.management.functions import report_user_login
+from apps.accounts.functions import report_user_login
 
 
 class UserSession(models.Model):

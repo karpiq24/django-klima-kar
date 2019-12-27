@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.management.models import UserSession
+from apps.accounts.models import UserSession
 
 # Register your models here.
 admin.site.register(UserSession)

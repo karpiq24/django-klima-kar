@@ -7,7 +7,7 @@
     <h1>Użytkownicy</h1>
 </div>
 {% csrf_token %}
-<input id="delete-user-sessions-url" type="hidden" value="{% url 'management:delete_user_sessions' %}">
+<input id="delete-user-sessions-url" type="hidden" value="{% url 'accounts:delete_user_sessions' %}">
 
 {% include "filter_panel.html" %}
 
@@ -19,7 +19,7 @@
 <script>
     $(function() {
         $('.sidenav #nav-users').children(':first').addClass('active');
-        $('.sidenav #nav-management').collapse('show');
+        $('.sidenav #nav-accounts').collapse('show');
 
         $(document).on('click', '.delete-sessions', function () {
             const data = {

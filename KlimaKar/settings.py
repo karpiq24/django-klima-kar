@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'compressor',
     'django_rq',
+    'defender',
 
     'KlimaKar',
     'apps.settings',
@@ -43,7 +44,7 @@ INSTALLED_APPS = [
     'apps.invoicing',
     'apps.commission',
     'apps.stats',
-    'apps.management'
+    'apps.accounts'
 ]
 
 MIDDLEWARE = [
@@ -54,15 +55,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'defender.middleware.FailedLoginMiddleware',
     'KlimaKar.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'KlimaKar.urls'
-LOGIN_URL = '/zaloguj'
-LOGIN_EXEMPT_URLS = []
+LOGIN_URL = '/konta/zaloguj'
+LOGIN_EXEMPT_URLS = ['konta/first_step_login/']
 LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = 'accounts:login'
 TOKEN_VALID_TIME = 600
+DEFENDER_ACCESS_ATTEMPT_EXPIRATION = 336
 
 TEMPLATES = [
     {

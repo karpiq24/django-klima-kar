@@ -25,3 +25,4 @@ smsapi-client==2.3.1
 django-ipware==2.1.0
 geoip2==3.0.0
 pyotp==2.3.0
+django-defender==0.6.2
