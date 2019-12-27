@@ -25,6 +25,11 @@
 <script>
     $(function() {
         $('#id_token').val('');
+        $('#id_password, #id_username').keypress(function (e) {
+            if (e.which == 13) {
+                $('#login-btn').click();
+            }
+        });
         $('#login-btn').on('click', function() {
             const that = this;
             $(that).prop('disabled', true);
