@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'apps.invoicing',
     'apps.commission',
     'apps.stats',
-    'apps.accounts'
+    'apps.accounts',
+    'apps.audit.apps.AuditConfig'
 ]
 
 MIDDLEWARE = [
@@ -66,6 +67,7 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'accounts:login'
 TOKEN_VALID_TIME = 600
 DEFENDER_ACCESS_ATTEMPT_EXPIRATION = 336
+AUDIT_LOG_EXPIRATION = 336
 
 TEMPLATES = [
     {

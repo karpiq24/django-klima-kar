@@ -2,6 +2,9 @@ from django.db import models
 from django.db.models import Sum, F
 from django.db.models.fields import FloatField
 from django.conf import settings
+from django.urls import reverse
+
+from KlimaKar.templatetags.slugify import slugify
 
 
 class Ware(models.Model):
@@ -45,6 +48,11 @@ class Ware(models.Model):
     def __str__(self):
         return self.index
 
+    def get_absolute_url(self):
+        return reverse('warehouse:ware_detail', kwargs={
+            'pk': self.pk,
+            'slug': slugify(self)})
+
     def save(self, *args, **kwargs):
         self.index_slug = self.slugify(self.index)
         super(Ware, self).save(*args, **kwargs)
@@ -65,6 +73,11 @@ class Supplier(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('warehouse:supplier_detail', kwargs={
+            'pk': self.pk,
+            'slug': slugify(self)})
 
     @property
     def all_invoices_value(self):
@@ -94,6 +107,11 @@ class Invoice(models.Model):
 
     def __str__(self):
         return '{}: {}'.format(str(self.supplier), self.number)
+
+    def get_absolute_url(self):
+        return reverse('warehouse:invoice_detail', kwargs={
+            'pk': self.pk,
+            'slug': slugify(self)})
 
     @property
     def total_value(self):
@@ -150,7 +168,12 @@ class InvoiceItem(models.Model):
         verbose_name_plural = 'Pozycje faktur zakupowych'
 
     def __str__(self):
-        return self.ware.index
+        return f'{self.invoice}: {self.ware.index}'
+
+    def get_absolute_url(self):
+        return reverse('warehouse:invoice_detail', kwargs={
+            'pk': self.invoice.pk,
+            'slug': slugify(self.invoice)})
 
 
 class WarePriceChange(models.Model):

@@ -355,6 +355,15 @@ small#gus-data:hover {
     color: #dc3545;
 }
 
+.table-legend {
+    display: flex;
+    justify-content: center;
+}
+
+.table-legend .alert:not(:first-child) {
+    margin-left: 1rem;
+}
+
 /* 
     SELECT2
 */

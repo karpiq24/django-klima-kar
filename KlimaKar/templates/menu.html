@@ -69,9 +69,14 @@
 
     {% if request.user.is_superuser %}
         <li>
-            <i data-toggle="collapse" href="#nav-accounts">Konta<span class="fa fa-angle-down"></span></i>
+            <i data-toggle="collapse" href="#nav-management">Zarządzanie<span class="fa fa-angle-down"></span></i>
         </li>
-        <div id="nav-accounts" class="collapse show">
+        <div id="nav-management" class="collapse show">
+            <li id="nav-audit">
+                <a href="{% url 'apps.audit:audit_logs' %}">
+                    <span class="fa fa-history"></span> Audyt zmian
+                </a>
+            </li>
             <li id="nav-users">
                 <a href="{% url 'accounts:users' %}">
                     <span class="fa fa-user-circle"></span> Użytkownicy
@@ -82,7 +87,7 @@
                     <span class="fa fa-sliders-h"></span> Sesje użytkowników
                 </a>
             </li>
-            <li id="nav-accounts-page">
+            <li id="nav-admin-page">
                 <a target="_blank" href="{% url 'admin:index' %}">
                     <span class="fas fa-toolbox"></span> Panel admina
                 </a>

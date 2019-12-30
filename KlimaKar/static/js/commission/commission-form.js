@@ -40,7 +40,6 @@ function calculateInvoiceTotals() {
     if (isNaN(invoice_total)) {
         invoice_total = 0;
     }
-    $('#id_value').val(invoice_total);
     $('#invoice-total').text(invoice_total.toFixed(2).replace(".", ",") + " zł");
 }
 

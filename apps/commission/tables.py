@@ -1,5 +1,8 @@
 import django_tables2 as tables
 
+from django.db.models import F, Sum
+from django.db.models.fields import FloatField
+
 from apps.commission.models import Vehicle, Component, Commission, CommissionItem
 
 
@@ -84,6 +87,13 @@ class CommissionTable(tables.Table):
 
     def render_value(self, value):
         return "{0:.2f} zł".format(value).replace('.', ',')
+
+    def order_value(self, queryset, is_descending):
+        queryset = queryset.annotate(
+            total=Sum(
+                F('commissionitem__price') * F('commissionitem__quantity'),
+                output_field=FloatField())).order_by(('-' if is_descending else '') + 'total')
+        return (queryset, True)
 
     def render_phone(self, record):
         phone = ''

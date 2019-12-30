@@ -432,7 +432,7 @@ class FastCommissionCreateView(View):
         CommissionItem.objects.create(
             commission=commission,
             name=commission.description,
-            price=commission.value
+            price=form.cleaned_data['value']
         )
         return JsonResponse({
             'status': 'success',

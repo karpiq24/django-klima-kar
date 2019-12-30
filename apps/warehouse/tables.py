@@ -1,7 +1,7 @@
+import django_tables2 as tables
+
 from django.db.models import F, Sum, Max
 from django.db.models.fields import FloatField
-
-import django_tables2 as tables
 
 from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 

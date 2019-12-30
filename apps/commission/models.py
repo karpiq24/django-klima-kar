@@ -3,9 +3,13 @@ import datetime
 from weasyprint import HTML, CSS
 
 from django.db import models
+from django.db.models import Sum, F
+from django.db.models.fields import FloatField
 from django.template.loader import get_template
 from django.dispatch import receiver
+from django.urls import reverse
 
+from KlimaKar.templatetags.slugify import slugify
 from apps.settings.models import MyCloudHome
 from apps.invoicing.models import Contractor, SaleInvoice
 from apps.warehouse.models import Ware
@@ -53,6 +57,11 @@ class Vehicle(models.Model):
             ' {}'.format(self.registration_plate) if self.registration_plate else '',
             ' ({})'.format(self.production_year) if self.production_year else '')
 
+    def get_absolute_url(self):
+        return reverse('commission:vehicle_detail', kwargs={
+            'pk': self.pk,
+            'slug': slugify(self)})
+
 
 class Component(models.Model):
     COMPRESSOR = 'CO'
@@ -94,6 +103,11 @@ class Component(models.Model):
             ' {}'.format(self.model) if self.model else '',
             ' {}'.format(self.serial_number) if self.serial_number else '',
             ' {}'.format(self.catalog_number) if self.catalog_number else '')
+
+    def get_absolute_url(self):
+        return reverse('commission:component_detail', kwargs={
+            'pk': self.pk,
+            'slug': slugify(self)})
 
 
 class Commission(models.Model):
@@ -162,10 +176,6 @@ class Commission(models.Model):
         blank=True,
         null=True,
         verbose_name='Data zamknięcia')
-    value = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name='Wartość')
     upload = models.BooleanField(
         verbose_name='Pliki są wgrywane',
         default=False)
@@ -182,6 +192,11 @@ class Commission(models.Model):
         name = str(self.vehicle) if self.vehicle else str(self.component) if self.component else self.vc_name
         return 'Zlecenie {}: {}'.format(self.number, name)
 
+    def get_absolute_url(self):
+        return reverse('commission:commission_detail', kwargs={
+            'pk': self.pk,
+            'slug': slugify(self)})
+
     def save(self, *args, **kwargs):
         if self.status in [self.DONE, self.CANCELLED] and not self.end_date:
             self.end_date = datetime.date.today()
@@ -190,6 +205,13 @@ class Commission(models.Model):
     @property
     def number(self):
         return self.pk
+
+    @property
+    def value(self):
+        total = CommissionItem.objects.filter(commission=self).aggregate(
+            total=Sum(F('price') * F('quantity'),
+                      output_field=FloatField()))['total']
+        return total
 
     def generate_pdf(self):
         template = get_template('commission/pdf_commission.html')
@@ -238,6 +260,11 @@ class CommissionItem(models.Model):
     def __str__(self):
         return "{} - {}".format(self.commission.id, self.name)
 
+    def get_absolute_url(self):
+        return reverse('commission:commission_detail', kwargs={
+            'pk': self.commission.pk,
+            'slug': slugify(self.commission)})
+
     @property
     def total(self):
         return self.price * self.quantity
@@ -267,6 +294,11 @@ class CommissionFile(models.Model):
 
     def __str__(self):
         return self.file_name
+
+    def get_absolute_url(self):
+        return reverse('commission:commission_detail', kwargs={
+            'pk': self.commission.pk,
+            'slug': slugify(self.commission)})
 
     @property
     def file_contents(self):

@@ -3,9 +3,13 @@ import datetime
 from weasyprint import HTML, CSS
 
 from django.db import models
+from django.db.models import Sum, F
+from django.db.models.fields import FloatField
 from django.core.validators import RegexValidator
 from django.template.loader import get_template
+from django.urls import reverse
 
+from KlimaKar.templatetags.slugify import slugify
 from apps.warehouse.models import Ware
 
 
@@ -73,6 +77,11 @@ class Contractor(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('invoicing:contractor_detail', kwargs={
+            'pk': self.pk,
+            'slug': slugify(self)})
+
 
 class SaleInvoice(models.Model):
     CASH = '1'
@@ -135,14 +144,6 @@ class SaleInvoice(models.Model):
     payed = models.BooleanField(
         verbose_name='Zapłacono',
         default=True)
-    total_value_netto = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name='Łączna wartość netto')
-    total_value_brutto = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name='Łączna wartość brutto')
     tax_percent = models.FloatField(
         verbose_name="Procent podatku VAT",
         default=23)
@@ -162,6 +163,25 @@ class SaleInvoice(models.Model):
 
     def __str__(self):
         return '{} {}'.format(self.get_invoice_type_display(), self.number)
+
+    def get_absolute_url(self):
+        return reverse('invoicing:sale_invoice_detail', kwargs={
+            'pk': self.pk,
+            'slug': slugify(self)})
+
+    @property
+    def total_value_netto(self):
+        total = SaleInvoiceItem.objects.filter(sale_invoice=self).aggregate(
+            total=Sum(F('price_netto') * F('quantity'),
+                      output_field=FloatField()))['total']
+        return total
+
+    @property
+    def total_value_brutto(self):
+        total = SaleInvoiceItem.objects.filter(sale_invoice=self).aggregate(
+            total=Sum(F('price_brutto') * F('quantity'),
+                      output_field=FloatField()))['total']
+        return total
 
     @property
     def total_value_tax(self):
@@ -192,8 +212,8 @@ class SaleInvoice(models.Model):
             raise ValueError('number', 'Faktura o tym numerze już istnieje.')
 
         number_data = self.number.split('/')
-        self.number_value = number_data[0]
-        self.number_year = number_data[1]
+        self.number_value = int(number_data[0])
+        self.number_year = int(number_data[1])
         if not self.pk and self.payment_date:
             self.payed = False
         super().save(*args, **kwargs)
@@ -242,6 +262,11 @@ class RefrigerantWeights(models.Model):
     def __str__(self):
         return "Waga czynników dla faktury {}".format(self.sale_invoice)
 
+    def get_absolute_url(self):
+        return reverse('invoicing:sale_invoice_detail', kwargs={
+            'pk': self.sale_invoice.pk,
+            'slug': slugify(self.sale_invoice)})
+
 
 class ServiceTemplate(models.Model):
     name = models.CharField(
@@ -280,6 +305,11 @@ class ServiceTemplate(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('invoicing:service_template_detail', kwargs={
+            'pk': self.pk,
+            'slug': slugify(self)})
 
 
 class SaleInvoiceItem(models.Model):
@@ -320,6 +350,11 @@ class SaleInvoiceItem(models.Model):
     def __str__(self):
         return "{} - {}".format(self.sale_invoice.number, self.name)
 
+    def get_absolute_url(self):
+        return reverse('invoicing:sale_invoice_detail', kwargs={
+            'pk': self.sale_invoice.pk,
+            'slug': slugify(self.sale_invoice)})
+
     @property
     def total_netto(self):
         return self.price_netto * self.quantity
@@ -342,6 +377,11 @@ class CorrectiveSaleInvoice(SaleInvoice):
     class Meta:
         verbose_name = 'Korekta faktury sprzedażowej'
         verbose_name_plural = 'Korekty faktur sprzedażowych'
+
+    def get_absolute_url(self):
+        return reverse('invoicing:sale_invoice_detail', kwargs={
+            'pk': self.pk,
+            'slug': slugify(self)})
 
     @property
     def diffrence_netto(self):

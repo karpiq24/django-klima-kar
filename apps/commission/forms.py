@@ -112,21 +112,24 @@ class CommissionModelForm(forms.ModelForm):
     class Meta:
         model = Commission
         fields = ['vc_name', 'vehicle', 'component', 'contractor', 'description', 'status', 'start_date', 'end_date',
-                  'value', 'commission_type']
+                  'commission_type']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
-            'value': forms.HiddenInput(),
             'commission_type': forms.HiddenInput(),
             'status': PrettySelect()
         }
 
 
 class CommissionFastModelForm(forms.ModelForm):
+    value = forms.DecimalField(
+        label='Cena',
+        max_digits=7,
+        decimal_places=2)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['vc_name'].widget.attrs.update(
             {'placeholder': 'Podaj nazwę'})
-        self.fields['value'].label = 'Cena'
         self.fields['description'].required = True
 
     class Meta:

@@ -34,8 +34,6 @@ function calculateInvoiceTotals() {
         invoice_total_netto = 0;
     }
     var invoice_total_brutto = toCurrency(invoice_total_netto + invoice_total_netto * tax_multiplier);
-    $('#id_total_value_netto').val(invoice_total_netto);
-    $('#id_total_value_brutto').val(invoice_total_brutto);
     $('#invoice-total-netto').text(invoice_total_netto.toFixed(2).replace(".", ",") + " zł");
     $('#invoice-total-brutto').text(invoice_total_brutto.toFixed(2).replace(".", ",") + " zł");
 }

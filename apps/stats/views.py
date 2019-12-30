@@ -353,25 +353,21 @@ class Metrics(View):
         return response
 
     def _get_sale_secret_metrics(self):
-        invoices_sum = 0
+        invoices_sum_netto = 0
         invoices_sum_brutto = 0
         tax_sum = 0
         person_tax_sum = 0
         if self.get_sale_invoices():
-            invoices_sum = self.get_sale_invoices().aggregate(
-                Sum('total_value_netto'))['total_value_netto__sum']
-            invoices_sum_brutto = self.get_sale_invoices().aggregate(
-                Sum('total_value_brutto'))['total_value_brutto__sum']
-            tax_sum = self.get_sale_invoices().annotate(
-                vat=F('total_value_brutto') - F('total_value_netto')).aggregate(
-                    Sum('vat'))['vat__sum']
+            invoices_sum_netto = self._get_sale_netto(self.get_sale_invoices())
+            invoices_sum_brutto = self._get_sale_brutto(self.get_sale_invoices())
+            tax_sum = invoices_sum_brutto - invoices_sum_netto
         person_invoices = self.get_sale_invoices().filter(contractor__nip=None)
         if person_invoices:
-            person_tax_sum = person_invoices.annotate(
-                vat=F('total_value_brutto') - F('total_value_netto')).aggregate(
-                    Sum('vat'))['vat__sum']
+            person_netto = self._get_sale_netto(person_invoices)
+            person_brutto = self._get_sale_brutto(person_invoices)
+            person_tax_sum = person_brutto - person_netto
         response = {}
-        response['sale_invoice_sum'] = "{0:.2f} zł".format(invoices_sum).replace('.', ',')
+        response['sale_invoice_sum'] = "{0:.2f} zł".format(invoices_sum_netto).replace('.', ',')
         response['sale_invoice_sum_brutto'] = "{0:.2f} zł".format(invoices_sum_brutto).replace('.', ',')
         response['vat_sum'] = "{0:.2f} zł".format(tax_sum).replace('.', ',')
         response['person_vat_sum'] = "{0:.2f} zł".format(person_tax_sum).replace('.', ',')
@@ -384,9 +380,21 @@ class Metrics(View):
 
         commissions_sum = 0
         if self.get_commissions():
-            commissions_sum = self.get_commissions().aggregate(Sum('value'))['value__sum']
+            commissions_sum = self.get_commissions().aggregate(
+                total=Sum(F('commissionitem__price') * F('commissionitem__quantity'),
+                          output_field=FloatField()))['total']
         response['commission_sum'] = "{0:.2f} zł".format(commissions_sum).replace('.', ',')
         return response
+
+    def _get_sale_netto(self, queryset):
+        return queryset.aggregate(
+                total=Sum(F('saleinvoiceitem__price_netto') * F('saleinvoiceitem__quantity'),
+                          output_field=FloatField()))['total']
+
+    def _get_sale_brutto(self, queryset):
+        return queryset.aggregate(
+                total=Sum(F('saleinvoiceitem__price_brutto') * F('saleinvoiceitem__quantity'),
+                          output_field=FloatField()))['total']
 
     def get_wares(self):
         if self.wares is not None:
@@ -546,7 +554,7 @@ class GetSummary(GroupAccessControlMixin, View):
         purchase_sum = self._get_purchase(date_from, date_to)
         response['purchase'] = "{0:.2f} zł".format(purchase_sum).replace('.', ',')
 
-        all_sum = commissions_sum - ptu_sum - vat_sum - purchase_sum
+        all_sum = float(commissions_sum) - float(ptu_sum) - float(vat_sum) - float(purchase_sum)
         response['sum'] = "{0:.2f} zł".format(all_sum).replace('.', ',')
         date_range = self._get_date_range(date_from, date_to)
         response['urls'] = {
@@ -574,7 +582,9 @@ class GetSummary(GroupAccessControlMixin, View):
         commissions = Commission.objects.filter(
                     end_date__gte=date_from, end_date__lte=date_to, status=Commission.DONE)
         if commissions:
-            commissions_sum = commissions.aggregate(Sum('value'))['value__sum']
+            commissions_sum = commissions.aggregate(
+                total=Sum(F('commissionitem__price') * F('commissionitem__quantity'),
+                          output_field=FloatField()))['total']
         return commissions_sum
 
     def _get_vat(self, date_from, date_to):
@@ -582,8 +592,13 @@ class GetSummary(GroupAccessControlMixin, View):
         invoices = SaleInvoice.objects.filter(
             issue_date__gte=date_from, issue_date__lte=date_to).exclude(contractor__nip=None)
         if invoices:
-            vat_sum = invoices.annotate(
-                vat=F('total_value_brutto') - F('total_value_netto')).aggregate(Sum('vat'))['vat__sum']
+            netto = invoices.aggregate(
+                total=Sum(F('saleinvoiceitem__price_netto') * F('saleinvoiceitem__quantity'),
+                          output_field=FloatField()))['total']
+            brutto = invoices.aggregate(
+                total=Sum(F('saleinvoiceitem__price_brutto') * F('saleinvoiceitem__quantity'),
+                          output_field=FloatField()))['total']
+            vat_sum = brutto - netto
         return vat_sum
 
     def _get_purchase(self, date_from, date_to):
@@ -591,5 +606,6 @@ class GetSummary(GroupAccessControlMixin, View):
         invoices = Invoice.objects.filter(date__gte=date_from, date__lte=date_to)
         if invoices:
             purchase_sum = invoices.aggregate(
-                total=Sum(F('invoiceitem__price') * F('invoiceitem__quantity')))['total']
+                total=Sum(F('invoiceitem__price') * F('invoiceitem__quantity'),
+                          output_field=FloatField()))['total']
         return purchase_sum

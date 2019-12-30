@@ -71,8 +71,6 @@ class SaleInvoiceModelForm(forms.ModelForm):
             'comment': forms.Textarea(attrs={'rows': 2}),
             'payment_date': EnableDisableDateInput(),
             'invoice_type': forms.HiddenInput(),
-            'total_value_netto': forms.HiddenInput(),
-            'total_value_brutto': forms.HiddenInput(),
             'tax_percent': forms.HiddenInput(),
             'payment_type': PrettySelect()
         }
@@ -93,8 +91,6 @@ class CorrectiveSaleInvoiceModelForm(SaleInvoiceModelForm):
             'reason': forms.Textarea(attrs={'rows': 2}),
             'payment_date': EnableDisableDateInput(),
             'invoice_type': forms.HiddenInput(),
-            'total_value_netto': forms.HiddenInput(),
-            'total_value_brutto': forms.HiddenInput(),
             'original_invoice': forms.HiddenInput(),
             'tax_percent': forms.HiddenInput(),
             'payment_type': PrettySelect()
