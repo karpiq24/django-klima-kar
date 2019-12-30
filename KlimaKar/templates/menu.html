@@ -1,3 +1,5 @@
+{% load access_control %}
+
 <ul class="sidenav">
     <li id="nav-dashboard" class="main-nav">
         <a href="{% url 'home' %}">
@@ -67,7 +69,7 @@
         </li>
     </div>
 
-    {% if request.user.is_superuser %}
+    {% if request.user|has_group:"boss" %}
         <li>
             <i data-toggle="collapse" href="#nav-management">Zarządzanie<span class="fa fa-angle-down"></span></i>
         </li>
@@ -77,21 +79,23 @@
                     <span class="fa fa-history"></span> Audyt zmian
                 </a>
             </li>
-            <li id="nav-users">
-                <a href="{% url 'accounts:users' %}">
-                    <span class="fa fa-user-circle"></span> Użytkownicy
-                </a>
-            </li>
-            <li id="nav-user-sessions">
-                <a href="{% url 'accounts:user_sessions' %}">
-                    <span class="fa fa-sliders-h"></span> Sesje użytkowników
-                </a>
-            </li>
-            <li id="nav-admin-page">
-                <a target="_blank" href="{% url 'admin:index' %}">
-                    <span class="fas fa-toolbox"></span> Panel admina
-                </a>
-            </li>
+            {% if request.user.is_superuser %}
+                <li id="nav-users">
+                    <a href="{% url 'accounts:users' %}">
+                        <span class="fa fa-user-circle"></span> Użytkownicy
+                    </a>
+                </li>
+                <li id="nav-user-sessions">
+                    <a href="{% url 'accounts:user_sessions' %}">
+                        <span class="fa fa-sliders-h"></span> Sesje użytkowników
+                    </a>
+                </li>
+                <li id="nav-admin-page">
+                    <a target="_blank" href="{% url 'admin:index' %}">
+                        <span class="fas fa-toolbox"></span> Panel admina
+                    </a>
+                </li>
+            {% endif %}
         </div>
     {% endif %}
 </ul>
