@@ -59,30 +59,6 @@
     $(function() {
         $('.sidenav #nav-audit').children(':first').addClass('active');
         $('.sidenav #nav-management').collapse('show');
-
-        $(document).on('click', '.show-diff', function() {
-            const that = this
-            $.ajax({
-                url: $(that).data('url'),
-                type: 'get',
-                data: {
-                    pk: $(that).data('pk')
-                },
-                dataType: 'json',
-                success: function (data) {
-                    $('#diff-body').empty();
-                    $('#object-repr').text($(that).data('repr'))
-                    $.each(data, function(key, val) {
-                        if ($(that).data('action') === 'change') {
-                            $('#diff-body').append('<tr><td>' + key + '</td><td class="table-danger">' + val[0] + '</td><td class="table-success">' + val[1] + '</td></tr>')
-                        } else if (val !== null) {
-                            $('#diff-body').append('<tr><td>' + key + '</td><td class="table-danger">' + val + '</td><td class="table-success">—</td></tr>')
-                        }
-                    });
-                    $('#diffModal').modal('show')
-                }
-            });
-        });
     });
 </script>
 {% endblock %}

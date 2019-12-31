@@ -3,8 +3,3 @@
         Szczegóły
     </a>
 {% endif %}
-{% if record.action_type != record.ADDITION %}
-    <button class="btn btn-outline-dark btn-sm btn-table show-diff" data-pk="{{ record.pk }}" data-url="{% url 'apps.audit:diff' %}" data-action="{{ record.action_type }}" data-repr="{{ record.object_repr }}" title="Pokaż zmiany">
-        Zmiany
-    </button>
-{% endif %}
