@@ -52,11 +52,10 @@ class AuditLogTable(tables.Table):
                  '{}'
                  '</tbody></table>')
         rows = []
-        headers = ('<th scope="col" class="bg-info">Pole</th>'
-                   '<th scope="col" class="bg-danger">Było</th>')
+        headers = ('<th scope="col" class="bg-info" width="30%">Pole</th>'
+                   '<th scope="col" class="bg-danger" width="35%">Było</th>'
+                   '<th scope="col" class="bg-success" width="35%">Jest</th>')
         if record.action_type == AuditLog.CHANGE:
-            headers = (f'{headers}'
-                       '<th scope="col" class="bg-success">Jest</th>')
             for key, values in diff.items():
                 val1 = values[0] or '—'
                 val2 = values[1] or '—'
@@ -75,6 +74,7 @@ class AuditLogTable(tables.Table):
                     '<tr>'
                     f'<td class="bg-info">{key}</td>'
                     f'<td class="bg-danger">{value}</td>'
+                    '<td class="bg-success">—</td>'
                     '</tr>'
                 )
         return mark_safe(table.format(headers, '\n'.join(rows)))
