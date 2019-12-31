@@ -24,6 +24,7 @@ class Vehicle(models.Model):
         max_length=32,
         blank=True,
         null=True,
+        unique=True,
         verbose_name='Numer VIN')
     brand = models.CharField(
         max_length=64,
