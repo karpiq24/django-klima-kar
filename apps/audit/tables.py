@@ -57,8 +57,8 @@ class AuditLogTable(tables.Table):
                    '<th scope="col" class="bg-success" width="35%">Jest</th>')
         if record.action_type == AuditLog.CHANGE:
             for key, values in diff.items():
-                val1 = values[0] or '—'
-                val2 = values[1] or '—'
+                val1 = values[0] if values[0] is not None else '—'
+                val2 = values[1] if values[1] is not None else '—'
                 rows.append(
                     '<tr>'
                     f'<td class="bg-info">{key}</td>'
@@ -68,7 +68,7 @@ class AuditLogTable(tables.Table):
                 )
         elif record.action_type == AuditLog.DELETION:
             for key, value in diff.items():
-                if not value:
+                if value is None:
                     continue
                 rows.append(
                     '<tr>'
