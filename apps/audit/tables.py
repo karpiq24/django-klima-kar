@@ -42,7 +42,7 @@ class AuditLogTable(tables.Table):
 
     def render_diffrence(self, record):
         diff = record.get_diffrence(verbose=True)
-        table = ('<table class="table table-dark">'
+        table = ('<table class="table table-dark mb-0">'
                  '<thead>'
                  '<tr>'
                  '{}'
