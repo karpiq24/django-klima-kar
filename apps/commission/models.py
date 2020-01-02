@@ -64,6 +64,11 @@ class Vehicle(models.Model):
             'slug': slugify(self)})
 
 
+@receiver(models.signals.post_save, sender=Vehicle)
+def change_vehicle_commissions_name(sender, instance, **kwargs):
+    instance.commission_set.update(vc_name=str(instance))
+
+
 class Component(models.Model):
     COMPRESSOR = 'CO'
     HEATER = 'HE'
@@ -109,6 +114,11 @@ class Component(models.Model):
         return reverse('commission:component_detail', kwargs={
             'pk': self.pk,
             'slug': slugify(self)})
+
+
+@receiver(models.signals.post_save, sender=Component)
+def change_component_commissions_name(sender, instance, **kwargs):
+    instance.commission_set.update(vc_name=str(instance))
 
 
 class Commission(models.Model):
