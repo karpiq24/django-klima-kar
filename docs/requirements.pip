@@ -18,7 +18,7 @@ openpyxl==3.0.2
 beautifulsoup4==4.8.2
 django_compressor==2.3
 psycopg2==2.8.4
-PyGithub==1.44.1
+PyGithub==1.45
 zeep==3.4.0
 django-rq==2.2.0
 smsapi-client==2.3.1
