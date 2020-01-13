@@ -3,13 +3,12 @@ import datetime
 from weasyprint import HTML, CSS
 
 from django.db import models
-from django.db.models import Sum, F
-from django.db.models.fields import FloatField
 from django.core.validators import RegexValidator
 from django.template.loader import get_template
 from django.urls import reverse
 
 from KlimaKar.templatetags.slugify import slugify
+from KlimaKar.models import TotalValueQuerySet
 from apps.warehouse.models import Ware
 
 
@@ -157,6 +156,10 @@ class SaleInvoice(models.Model):
         auto_now_add=True,
         verbose_name='Data dodania')
 
+    objects = TotalValueQuerySet.as_manager()
+    PRICE_FIELD = 'saleinvoiceitem__price'
+    QUANTITY_FIELD = 'saleinvoiceitem__quantity'
+
     class Meta:
         verbose_name = 'Faktura sprzedażowa'
         verbose_name_plural = 'Faktury sprzedażowe'
@@ -171,17 +174,11 @@ class SaleInvoice(models.Model):
 
     @property
     def total_value_netto(self):
-        total = SaleInvoiceItem.objects.filter(sale_invoice=self).aggregate(
-            total=Sum(F('price_netto') * F('quantity'),
-                      output_field=FloatField()))['total']
-        return total
+        return self._meta.model.objects.filter(pk=self.pk).total(price_type='netto')
 
     @property
     def total_value_brutto(self):
-        total = SaleInvoiceItem.objects.filter(sale_invoice=self).aggregate(
-            total=Sum(F('price_brutto') * F('quantity'),
-                      output_field=FloatField()))['total']
-        return total
+        return self._meta.model.objects.filter(pk=self.pk).total(price_type='brutto')
 
     @property
     def total_value_tax(self):

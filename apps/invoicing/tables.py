@@ -1,8 +1,5 @@
 import django_tables2 as tables
 
-from django.db.models import F, Sum
-from django.db.models.fields import FloatField
-
 from apps.invoicing.models import Contractor, SaleInvoice, SaleInvoiceItem, ServiceTemplate
 
 
@@ -44,6 +41,7 @@ class SaleInvoiceTable(tables.Table):
         verbose_name="Data wystawienia")
     total_value_brutto = tables.Column(
         attrs={'th': {'width': '20%'}},
+        empty_values=(),
         verbose_name="Cena brutto")
     actions = tables.TemplateColumn(
         attrs={'th': {'width': '7%'}},
@@ -53,13 +51,10 @@ class SaleInvoiceTable(tables.Table):
         exclude_from_export=True)
 
     def render_total_value_brutto(self, value):
-        return "{0:.2f} zł".format(value).replace('.', ',')
+        return "{0:.2f} zł".format(value or 0).replace('.', ',')
 
     def order_total_value_brutto(self, queryset, is_descending):
-        queryset = queryset.annotate(
-            total=Sum(
-                F('saleinvoiceitem__price_brutto') * F('saleinvoiceitem__quantity'),
-                output_field=FloatField())).order_by(('-' if is_descending else '') + 'total')
+        queryset = queryset.order_by_total(is_descending, price_type='brutto')
         return (queryset, True)
 
     def order_number(self, queryset, is_descending):

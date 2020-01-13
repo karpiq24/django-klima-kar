@@ -3,13 +3,12 @@ import datetime
 from weasyprint import HTML, CSS
 
 from django.db import models
-from django.db.models import Sum, F
-from django.db.models.fields import FloatField
 from django.template.loader import get_template
 from django.dispatch import receiver
 from django.urls import reverse
 
 from KlimaKar.templatetags.slugify import slugify
+from KlimaKar.models import TotalValueQuerySet
 from apps.settings.models import MyCloudHome
 from apps.invoicing.models import Contractor, SaleInvoice
 from apps.warehouse.models import Ware
@@ -195,6 +194,10 @@ class Commission(models.Model):
         blank=True,
         null=True)
 
+    objects = TotalValueQuerySet.as_manager()
+    PRICE_FIELD = 'commissionitem__price'
+    QUANTITY_FIELD = 'commissionitem__quantity'
+
     class Meta:
         verbose_name = 'Zlecenie'
         verbose_name_plural = 'Zlecenia'
@@ -219,10 +222,7 @@ class Commission(models.Model):
 
     @property
     def value(self):
-        total = CommissionItem.objects.filter(commission=self).aggregate(
-            total=Sum(F('price') * F('quantity'),
-                      output_field=FloatField()))['total']
-        return total
+        return self._meta.model.objects.filter(pk=self.pk).total()
 
     def generate_pdf(self):
         template = get_template('commission/pdf_commission.html')

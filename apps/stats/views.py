@@ -322,11 +322,8 @@ class Metrics(View):
         return response
 
     def _get_purchase_secret_metrics(self):
-        invoices_sum = 0
-        if self.get_purchase_invoices():
-            invoices_sum = self.get_purchase_invoices().aggregate(
-                total=Sum(F('invoiceitem__price') * F('invoiceitem__quantity')))['total']
-        return {'invoice_sum': "{0:.2f} zł".format(invoices_sum).replace('.', ',')}
+        return {'invoice_sum': "{0:.2f} zł".format(
+            self.get_purchase_invoices().total()).replace('.', ',')}
 
     def _get_sale_metrics(self):
         response = {
@@ -378,23 +375,15 @@ class Metrics(View):
             ptu_sum = self.get_ptus().aggregate(Sum('value'))['value__sum']
         response['ptu_sum'] = "{0:.2f} zł".format(ptu_sum).replace('.', ',')
 
-        commissions_sum = 0
-        if self.get_commissions():
-            commissions_sum = self.get_commissions().aggregate(
-                total=Sum(F('commissionitem__price') * F('commissionitem__quantity'),
-                          output_field=FloatField()))['total']
-        response['commission_sum'] = "{0:.2f} zł".format(commissions_sum).replace('.', ',')
+        response['commission_sum'] = "{0:.2f} zł".format(
+            self.get_commissions().total()).replace('.', ',')
         return response
 
     def _get_sale_netto(self, queryset):
-        return queryset.aggregate(
-                total=Sum(F('saleinvoiceitem__price_netto') * F('saleinvoiceitem__quantity'),
-                          output_field=FloatField()))['total']
+        return queryset.total(price_type='netto')
 
     def _get_sale_brutto(self, queryset):
-        return queryset.aggregate(
-                total=Sum(F('saleinvoiceitem__price_brutto') * F('saleinvoiceitem__quantity'),
-                          output_field=FloatField()))['total']
+        return queryset.total(price_type='brutto')
 
     def get_wares(self):
         if self.wares is not None:
@@ -572,40 +561,29 @@ class GetSummary(GroupAccessControlMixin, View):
 
     def _get_ptu(self, date_from, date_to):
         ptu_sum = 0
-        ptu_objects = ReceiptPTU.objects.filter(date__gte=date_from, date__lte=date_to)
+        ptu_objects = ReceiptPTU.objects.filter(
+            date__gte=date_from,
+            date__lte=date_to)
         if ptu_objects:
             ptu_sum = ptu_objects.aggregate(Sum('value'))['value__sum']
         return ptu_sum
 
     def _get_commissions(self, date_from, date_to):
-        commissions_sum = 0
         commissions = Commission.objects.filter(
-                    end_date__gte=date_from, end_date__lte=date_to, status=Commission.DONE)
-        if commissions:
-            commissions_sum = commissions.aggregate(
-                total=Sum(F('commissionitem__price') * F('commissionitem__quantity'),
-                          output_field=FloatField()))['total']
-        return commissions_sum
+            end_date__gte=date_from,
+            end_date__lte=date_to,
+            status=Commission.DONE)
+        return commissions.total()
 
     def _get_vat(self, date_from, date_to):
-        vat_sum = 0
         invoices = SaleInvoice.objects.filter(
-            issue_date__gte=date_from, issue_date__lte=date_to).exclude(contractor__nip=None)
-        if invoices:
-            netto = invoices.aggregate(
-                total=Sum(F('saleinvoiceitem__price_netto') * F('saleinvoiceitem__quantity'),
-                          output_field=FloatField()))['total']
-            brutto = invoices.aggregate(
-                total=Sum(F('saleinvoiceitem__price_brutto') * F('saleinvoiceitem__quantity'),
-                          output_field=FloatField()))['total']
-            vat_sum = brutto - netto
-        return vat_sum
+            issue_date__gte=date_from,
+            issue_date__lte=date_to).exclude(
+                contractor__nip=None)
+        return invoices.total(price_type='brutto') - invoices.total(price_type='netto')
 
     def _get_purchase(self, date_from, date_to):
-        purchase_sum = 0
-        invoices = Invoice.objects.filter(date__gte=date_from, date__lte=date_to)
-        if invoices:
-            purchase_sum = invoices.aggregate(
-                total=Sum(F('invoiceitem__price') * F('invoiceitem__quantity'),
-                          output_field=FloatField()))['total']
-        return purchase_sum
+        invoices = Invoice.objects.filter(
+            date__gte=date_from,
+            date__lte=date_to)
+        return invoices.total()

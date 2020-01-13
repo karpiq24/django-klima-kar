@@ -1,10 +1,9 @@
 from django.db import models
-from django.db.models import Sum, F
-from django.db.models.fields import FloatField
 from django.conf import settings
 from django.urls import reverse
 
 from KlimaKar.templatetags.slugify import slugify
+from KlimaKar.models import TotalValueQuerySet
 
 
 class Ware(models.Model):
@@ -81,10 +80,7 @@ class Supplier(models.Model):
 
     @property
     def all_invoices_value(self):
-        total = InvoiceItem.objects.filter(invoice__supplier=self).aggregate(
-            total=Sum(F('price') * F('quantity'),
-                      output_field=FloatField()))['total']
-        return total
+        return self.invoice_set.total()
 
 
 class Invoice(models.Model):
@@ -101,6 +97,10 @@ class Invoice(models.Model):
         auto_now_add=True,
         verbose_name='Data dodania')
 
+    objects = TotalValueQuerySet.as_manager()
+    PRICE_FIELD = 'invoiceitem__price'
+    QUANTITY_FIELD = 'invoiceitem__quantity'
+
     class Meta:
         verbose_name = 'Faktura zakupowa'
         verbose_name_plural = 'Faktury zakupowe'
@@ -115,10 +115,7 @@ class Invoice(models.Model):
 
     @property
     def total_value(self):
-        total = InvoiceItem.objects.filter(invoice=self).aggregate(
-            total=Sum(F('price') * F('quantity'),
-                      output_field=FloatField()))['total']
-        return total
+        return self._meta.model.objects.filter(pk=self.pk).total()
 
     def check_ware_price_changes(self):
         for item in self.invoiceitem_set.all():

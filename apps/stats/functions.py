@@ -1,5 +1,4 @@
-from django.db.models import Sum, F
-from django.db.models.fields import FloatField
+from django.db.models import Sum
 
 from apps.warehouse.models import WarePriceChange, Invoice, Ware, Supplier
 from apps.invoicing.models import SaleInvoice, Contractor
@@ -19,13 +18,9 @@ def get_report_data(date_from, date_to, price_change_limit):
         obj for obj in report_data['ware_price_changes'] if obj.percent_change(absolute=True) >= price_change_limit]
     report_data['metrics'] = {
         'purchase_invoices': "{0:.2f} zł".format(
-            report_data['purchase_invoices'].aggregate(
-                total=Sum(F('invoiceitem__price') * F('invoiceitem__quantity'),
-                          output_field=FloatField()))['total'] or 0).replace('.', ','),
+            report_data['purchase_invoices'].total()).replace('.', ','),
         'sale_invoices': "{0:.2f} zł".format(
-            report_data['sale_invoices'].aggregate(
-                total=Sum(F('saleinvoiceitem__price_brutto') * F('saleinvoiceitem__quantity'),
-                          output_field=FloatField()))['total'] or 0).replace('.', ','),
+            report_data['sale_invoices'].total(price_type='brutto')).replace('.', ','),
         'r134a': "{} g".format(
             report_data['sale_invoices'].aggregate(
                 Sum('refrigerantweights__r134a'))['refrigerantweights__r134a__sum'] or 0),
