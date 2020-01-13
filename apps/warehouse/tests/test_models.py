@@ -32,7 +32,7 @@ class SupplierModelTest(TestCase):
         self.assertEquals(self.supplier.name, str(self.supplier))
 
     def test_all_invoices_value(self):
-        self.assertEquals(self.supplier.all_invoices_value, None)
+        self.assertEquals(self.supplier.all_invoices_value, 0)
 
 
 class InvoiceModelTest(TestCase):
