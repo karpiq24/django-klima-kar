@@ -75,6 +75,7 @@ $(function () {
     const CREATE_COMPONENT = $('#create_component_url').val();
     const UPDATE_COMPONENT = $('#update_component_url').val();
     const DECODE_AZTEC = $('#decode_aztec_url').val();
+    const DECODE_CSV_VEHICLE = $('#decode_csv_vehicle_url').val();
     const GET_CONTRACTOR_DATA = $('#get_contractor_data_url').val();
 
     $('#optionName').on('change', function () {
@@ -422,46 +423,74 @@ $(function () {
                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
             },
             success: function (data) {
-                $('#id_vehicle').select2("close");
-                if (data.pk === null) {
-                    $.ajax({
-                        url: CREATE_VEHICLE,
-                        type: 'get',
-                        dataType: 'json',
-                        data: data,
-                        beforeSend: function () {
-                            $("#modal-generic").modal("show");
-                        },
-                        success: function (data) {
-                            $("#modal-generic .modal-content").html(data.html_form);
-                        }
-                    });
-                } else {
-                    const $option = $("<option selected></option>").val(data['pk']).text(data['label']);
-                    $('#id_vehicle').append($option).trigger('change');
-                    $('#vehicle-component-edit').prop('disabled', false);
-                    $('#id_vc_name').val(data['label']);
-                }
+                processVehicleData(data);
+            },
+            error: function (data) {
+                addAlert('Błąd!', 'error', 'Coś poszło nie tak. Spróbuj ponownie.');
             }
         });
     }
 
-    $(document).on('input', '.select2-search__field.vehicle', function (e) {
-        const code = $(this).val();
-        if (code.length > 350) {
+    function decode_csv(code) {
+        $.ajax({
+            url: DECODE_CSV_VEHICLE,
+            type: 'post',
+            dataType: 'json',
+            data: {
+                code: code,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function (data) {
+                processVehicleData(data);
+            },
+            error: function (data) {
+                addAlert('Błąd!', 'error', 'Coś poszło nie tak. Spróbuj ponownie.');
+            }
+        });
+    }
+
+    function processVehicleData(data) {
+        $('#id_vehicle').select2("close");
+        if (data.pk === null) {
+            $.ajax({
+                url: CREATE_VEHICLE,
+                type: 'get',
+                dataType: 'json',
+                data: data,
+                beforeSend: function () {
+                    $("#modal-generic").modal("show");
+                },
+                success: function (data) {
+                    $("#modal-generic .modal-content").html(data.html_form);
+                }
+            });
+        } else {
+            const $option = $("<option selected></option>").val(data['pk']).text(data['label']);
+            $('#id_vehicle').append($option).trigger('change');
+            $('#vehicle-component-edit').prop('disabled', false);
+            $('#id_vc_name').val(data['label']);
+        }
+    }
+
+    function processVehicleCode(code) {
+        if (code.length > 50 && code.length <= 350) {
+            debounce(function () {
+                decode_csv(code);
+            }, 300)
+        }
+        else if (code.length > 350) {
             debounce(function () {
                 decode_aztec(code);
             }, 300)
         }
+    }
+
+    $(document).on('input', '.select2-search__field.vehicle', function (e) {
+        processVehicleCode($(this).val());
     })
 
     $(document).on('paste', '.select2-search__field.vehicle', function (e) {
-        const code = e.originalEvent.clipboardData.getData('Text');
-        if (code.length > 350) {
-            debounce(function () {
-                decode_aztec(code);
-            }, 300)
-        }
+        processVehicleCode(e.originalEvent.clipboardData.getData('Text'));
     })
 
     $('input[type=radio][name=status]').change(function() {

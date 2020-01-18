@@ -714,3 +714,27 @@ class DecodeAztecCode(View):
         except Vehicle.DoesNotExist:
             response_data['pk'] = None
         return JsonResponse(response_data)
+
+
+class DecodeCsvVehicleData(View):
+    def post(self, request, *args, **kwargs):
+        code = request.POST.get('code')
+        values = code.split(';')
+        if len(values) != 17:
+            return JsonResponse({}, status=400)
+        response_data = {
+            'registration_plate': values[2],
+            'vin': values[3],
+            'brand': values[0],
+            'model': values[1],
+            'engine_volume': int(values[5]),
+            'engine_power': int(values[6]),
+            'production_year': int(values[4]),
+        }
+        try:
+            vehicle = Vehicle.objects.get(vin=response_data['vin'])
+            response_data['pk'] = vehicle.pk
+            response_data['label'] = str(vehicle)
+        except Vehicle.DoesNotExist:
+            response_data['pk'] = None
+        return JsonResponse(response_data)

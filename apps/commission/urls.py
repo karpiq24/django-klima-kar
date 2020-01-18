@@ -14,6 +14,7 @@ urlpatterns = [
     path('vehicles/<int:pk>/update_ajax', views.VehicleUpdateAjaxView.as_view(), name='vehicle_update_ajax'),
     path('vehicles/create_ajax', views.VehicleCreateAjaxView.as_view(), name='vehicle_create_ajax'),
     path('decode_aztec', views.DecodeAztecCode.as_view(), name='decode_aztec'),
+    path('decode_vehicle_csv', views.DecodeCsvVehicleData.as_view(), name='decode_vehicle_csv'),
 
     path('podzespoly', views.ComponentTableView.as_view(), name='components'),
     path('podzespoly/<str:slug>,<int:pk>', views.ComponentDetailView.as_view(), name='component_detail'),

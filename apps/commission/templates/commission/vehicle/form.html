@@ -6,6 +6,7 @@
 </div>
 <form action="" method="post">
     <input type="hidden" id="decode_aztec_url" value="{% url 'commission:decode_aztec' %}">
+    <input type="hidden" id="decode_csv_vehicle_url" value="{% url 'commission:decode_vehicle_csv' %}">
     {% csrf_token %}
 
     <div class="row">
