@@ -129,7 +129,7 @@ class SaleInvoice(models.Model):
         verbose_name='Kontrahent')
     payment_type = models.CharField(
         max_length=1,
-        verbose_name='Rodzaj płatności',
+        verbose_name='Forma płatności',
         choices=PAYMENT_TYPES)
     payment_date = models.DateField(
         verbose_name='Termin płatności',
@@ -137,7 +137,7 @@ class SaleInvoice(models.Model):
         blank=True)
     payment_type_other = models.CharField(
         max_length=128,
-        verbose_name='Inny rodzaj płatności',
+        verbose_name='Inna forma płatności',
         null=True,
         blank=True)
     payed = models.BooleanField(

@@ -66,7 +66,7 @@
                 <td>{{ object.completion_date }}</td>
             </tr>
             <tr>
-                <td class="detail-label">Rodzaj płatności</td>
+                <td class="detail-label">Forma płatności</td>
                 <td>{{ object.get_payment_type_display }}{% if object.payment_type is object.OTHER %}: {{ object.payment_type_other }}{% endif %}</td>
             </tr>
             <tr>

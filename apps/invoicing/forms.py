@@ -34,7 +34,7 @@ class SaleInvoiceModelForm(forms.ModelForm):
         self.fields['completion_date'].widget.attrs.update({'class': 'date-input'})
         self.fields['payment_date'].widget.attrs.update({'placeholder': 'Wybierz datę'})
         self.fields['payment_date'].widget.attrs.update({'class': 'date-input'})
-        self.fields['payment_type_other'].widget.attrs.update({'placeholder': 'Podaj rodzaj płatności'})
+        self.fields['payment_type_other'].widget.attrs.update({'placeholder': 'Podaj formę płatności'})
 
         contractor = self.initial.get('contractor')
         if contractor:
