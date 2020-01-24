@@ -157,6 +157,9 @@ class SaleInvoiceCommissionCreateView(SaleInvoiceCreateView):
     def forms_valid(self, form, inlines):
         response = super().forms_valid(form, inlines)
         self.commission.sale_invoices.add(self.object)
+        if not self.commission.contractor:
+            self.commission.contractor = self.object.contractor
+            self.commission.save()
         return response
 
 

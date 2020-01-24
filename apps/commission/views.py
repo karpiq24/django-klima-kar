@@ -643,6 +643,9 @@ class AssignInoiceView(View):
                 'message': 'Ta faktura była już wcześniej przypisana do tego zlecenia.'
             }, status=200)
         commission.sale_invoices.add(invoice)
+        if not commission.contractor:
+            commission.contractor = invoice.contractor
+            commission.save()
         return JsonResponse({
             'status': 'success',
             'message': 'Faktura została przypisana do zlecenia.',
