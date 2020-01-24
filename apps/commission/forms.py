@@ -27,7 +27,13 @@ class VehicleModelForm(forms.ModelForm):
     def clean_registration_plate(self):
         data = self.cleaned_data['registration_plate']
         if data:
-            data = data.replace(' ', '')
+            data = data.replace(' ', '').upper()
+        return data
+
+    def clean_vin(self):
+        data = self.cleaned_data['vin']
+        if data:
+            data = data.upper()
         return data
 
     class Meta:
