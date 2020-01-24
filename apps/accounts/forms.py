@@ -3,6 +3,7 @@ import ipaddress
 from ipware import get_client_ip
 
 from django import forms
+from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
 
 from apps.accounts.functions import validate_auth_token
@@ -17,6 +18,8 @@ class KlimaKarAuthenticationForm(AuthenticationForm):
 
     def clean(self):
         self.cleaned_data = super().clean()
+        if not settings.TWO_STEP_LOGIN_ENABLED:
+            return self.cleaned_data
         if not self.get_user() or not self.get_user().email:
             return self.cleaned_data
         if not self.cleaned_data['token']:

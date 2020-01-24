@@ -6,6 +6,7 @@ from django.http import JsonResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.conf import settings
 
 from apps.accounts.tables import UserSessionTable, UserTable
 from apps.accounts.models import UserSession
@@ -68,7 +69,7 @@ class FirstStepLoginView(View):
                 'status': 'error',
                 'message': 'Podana nazwa użytkownika lub hasło są nieprawidłowe.'
                 }, status=401)
-        if user.email:
+        if settings.TWO_STEP_LOGIN_ENABLED and user.email:
             django_rq.enqueue(send_token_email, user)
             return JsonResponse({
                 'status': 'success',
