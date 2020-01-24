@@ -7,9 +7,10 @@ import unicodedata
 
 from urllib.parse import urlencode
 from smtplib import SMTPRecipientsRefused
+from io import BytesIO
 
 from django.urls import reverse
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, FileResponse
 from django.views.generic import DetailView, UpdateView, CreateView, View
 from django.template import Template, Context
 from django.template.defaultfilters import date as str_date
@@ -477,10 +478,7 @@ class CommissionFileDownloadView(View):
     def get(self, request, *args, **kwargs):
         commission = get_object_or_404(Commission, pk=kwargs.get('pk'))
         commission_file = get_object_or_404(CommissionFile, file_name=kwargs.get('name'), commission=commission)
-        response = HttpResponse(commission_file.file_contents, content_type=commission_file.mime_type)
-        response['Content-Disposition'] = 'filename="{}"'.format(commission_file.file_name)
-        response['Content-Encoding'] = None
-        response['Content-Type'] = commission_file.mime_type
+        response = FileResponse(BytesIO(commission_file.file_contents), content_type=commission_file.mime_type)
         return response
 
 
