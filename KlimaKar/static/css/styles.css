@@ -249,6 +249,26 @@ span.required {
     flex-wrap: wrap;
 }
 
+.form-control.is-warning {
+    border-color: #ffc107;
+}
+
+.form-control.is-warning:focus {
+    border-color:#ffc107;
+    box-shadow:0 0 0 .2rem rgba(255, 193, 7, 0.25)
+}
+
+.warning-feedback {
+    width: 100%;
+    margin-top: .25rem;
+    font-size: 80%;
+    color: #ffc107;
+}
+
+.is-warning ~ .select2-container .selection .select2-selection--single {
+    border: 1px solid #ffc107 !important;
+}
+
 /*
     MISC
 */

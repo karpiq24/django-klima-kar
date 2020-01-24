@@ -126,6 +126,10 @@ $(function () {
     $("#id_contractor").change(function () {
         const parent = $("#id_contractor").parent();
         const contractor_pk = $('#id_contractor').val();
+        $("#id_contractor").removeClass('is-invalid');
+        $("#id_contractor").removeClass('is-warning');
+        $(parent).find('div.invalid-feedback').remove();
+        $(parent).find('div.warning-feedback').remove();
         $.ajax({
             url: GET_CONTRACTOR_DATA,
             data: {
@@ -136,8 +140,6 @@ $(function () {
                 if (result.contractor.id === "") {
                     $('#contractor-edit').prop('disabled', true);
                     $('#gus-data').hide();
-                    $("#id_contractor").removeClass('is-invalid');
-                    $(parent).find('div.invalid-feedback').remove();
                     return;
                 }
 
@@ -149,13 +151,10 @@ $(function () {
                 }
                 if (result.contractor.phone == null) {
                     $("#id_contractor").addClass('is-invalid');
-                    if ($(parent).find('div.invalid-feedback').length == 0) {
-                        $(parent).append('<div class="invalid-feedback">Wybrany kontrahent nie ma podanego numeru telefonu.</div>')
-                    }    
-                }
-                else {
-                    $("#id_contractor").removeClass('is-invalid');
-                    $(parent).find('div.invalid-feedback').remove();
+                    $(parent).append('<div class="invalid-feedback">Wybrany kontrahent nie ma podanego numeru telefonu.</div>')
+                } else if (result.contractor.phone.length !== 9) {
+                    $("#id_contractor").addClass('is-warning');
+                    $(parent).append('<div class="warning-feedback">Sprawdź numer telefonu - podany posiada nie standardową liczbę cyfr.</div>')
                 }
             }
         });

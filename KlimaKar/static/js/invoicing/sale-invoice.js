@@ -76,9 +76,11 @@ $(function () {
         var parent = $("#id_contractor").parent();
         var contractor_pk = $('#id_contractor').val();
         $("#id_contractor").removeClass('is-valid');
+        $("#id_contractor").removeClass('is-warning');
         $("#id_contractor").removeClass('is-invalid');
         $(parent).find('div.valid-feedback').remove();
         $(parent).find('div.invalid-feedback').remove();
+        $(parent).find('div.warning-feedback').remove();
         $(parent).append('<small id="loding-contractor" class="form-text text-muted"><i class="fas fa-spinner fa-spin"></i> Sprawdzam kontrahenta..</small>')
         $.ajax({
             url: GET_CONTRACTOR_DATA,
@@ -96,11 +98,11 @@ $(function () {
                     $('#gus-data').hide();
                 }
                 if (result.contractor.vat_valid === false) {
-                    $("#id_contractor").addClass('is-invalid');
-                    $(parent).append('<div class="invalid-feedback vat-invalid">Wybrany kontrahent nie jest płatnikiem VAT. <a href="' + result.contractor.vat_url + '" target="_blank">(sprawdź tutaj)</a></div>')
+                    $("#id_contractor").addClass('is-warning');
+                    $(parent).append('<div class="warning-feedback vat-invalid">Wybrany kontrahent nie jest płatnikiem VAT. <a href="' + result.contractor.vat_url + '" target="_blank">(sprawdź tutaj)</a></div>')
                 } else if (result.contractor.vat_valid === 'failed') {
-                    $("#id_contractor").addClass('is-invalid');
-                    $(parent).append('<div class="invalid-feedback vat-failed">Nie udało się sprawdzić statusu płatnika VAT. Sprawdź ręcznie.</div>');
+                    $("#id_contractor").addClass('is-warning');
+                    $(parent).append('<div class="warning-feedback vat-failed">Nie udało się sprawdzić statusu płatnika VAT. Sprawdź ręcznie.</div>');
                 } else if (result.contractor.vat_valid !== null) {
                     $("#id_contractor").addClass('is-valid');
                     $(parent).append('<div class="valid-feedback">Kontrahent jest płatnikiem VAT</div>')
@@ -112,7 +114,7 @@ $(function () {
                         $(parent).append('<div class="invalid-feedback no-prefix">Wybrany kontrahent nie ma podanego prefiksu NIP.</div>')
                     }
                     else {
-                        if ($(parent).find('div.invalid-feedback').length == 0) {
+                        if ($(parent).find('div.invalid-feedback').length == 0 && $(parent).find('div.warning-feedback').length == 0) {
                             $("#id_contractor").addClass('is-valid');
                             $(parent).append('<div class="valid-feedback">Wybrany kontrahent ma podany prefiks NIP.</div>')
                         }
