@@ -141,6 +141,18 @@ class ContractorModelForm(forms.ModelForm):
             'nip_prefix': forms.HiddenInput()
         }
 
+    def clean_phone_1(self):
+        data = self.cleaned_data['phone_1']
+        if data:
+            data = data.replace(' ', '')
+        return data
+
+    def clean_phone_2(self):
+        data = self.cleaned_data['phone_2']
+        if data:
+            data = data.replace(' ', '')
+        return data
+
 
 class SaleInvoiceItemModelForm(forms.ModelForm):
     ware = forms.ModelChoiceField(
