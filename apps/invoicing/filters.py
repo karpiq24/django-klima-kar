@@ -110,6 +110,10 @@ class ContractorFilter(django_filters.FilterSet):
     email = django_filters.CharFilter(
         lookup_expr='icontains',
         widget=forms.TextInput())
+    phone = django_filters.CharFilter(
+        method='phone_filter',
+        label="Numer telefonu",
+        widget=forms.TextInput())
     created_date = django_filters.CharFilter(
         method='created_date_filter',
         label="",
@@ -117,7 +121,7 @@ class ContractorFilter(django_filters.FilterSet):
 
     class Meta:
         model = Contractor
-        fields = ['name', 'nip', 'address_1', 'city', 'postal_code', 'email']
+        fields = ['name', 'nip', 'address_1', 'city', 'postal_code', 'email', 'phone']
 
     def created_date_filter(self, queryset, name, value):
         try:
@@ -127,6 +131,9 @@ class ContractorFilter(django_filters.FilterSet):
         except ValueError:
             return queryset.none()
         return queryset.filter(created_date__date__gte=date_from, created_date__date__lte=date_to).distinct()
+
+    def phone_filter(self, queryset, name, value):
+        return queryset.filter(Q(phone_1__icontains=value) | Q(phone_2__icontains=0))
 
 
 class ServiceTemplateFilter(django_filters.FilterSet):

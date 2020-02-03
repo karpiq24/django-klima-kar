@@ -5,13 +5,18 @@ from apps.invoicing.models import Contractor, SaleInvoice, SaleInvoiceItem, Serv
 
 class ContractorTable(tables.Table):
     name = tables.Column(
-        attrs={'th': {'width': '38%'}})
+        attrs={'th': {'width': '36%'}})
     nip = tables.Column(
         attrs={'th': {'width': '15%'}})
+    phone = tables.TemplateColumn(
+        attrs={'th': {'width': '10%'}},
+        empty_values=(),
+        template_name='invoicing/contractor/phone_table_field.html',
+        verbose_name="Telefon")
     address_1 = tables.Column(
-        attrs={'th': {'width': '25%'}})
+        attrs={'th': {'width': '20%'}})
     city = tables.Column(
-        attrs={'th': {'width': '15%'}})
+        attrs={'th': {'width': '12%'}})
     actions = tables.TemplateColumn(
         attrs={'th': {'width': '7%'}},
         verbose_name="Akcje",
@@ -22,10 +27,16 @@ class ContractorTable(tables.Table):
     def render_nip(self, record):
         return "{}{}".format(record.nip_prefix or '', record.nip)
 
+    def order_phone(self, queryset, is_descending):
+        queryset = queryset.order_by(
+            ('-' if is_descending else '') + 'phone_1',
+            ('-' if is_descending else '') + 'phone_2')
+        return (queryset, True)
+
     class Meta:
         model = Contractor
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['name', 'nip', 'address_1', 'city', 'actions']
+        fields = ['name', 'nip', 'phone', 'address_1', 'city', 'actions']
         order_by = 'name'
         empty_text = 'Brak kontrahentów'
 

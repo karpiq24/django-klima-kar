@@ -61,16 +61,18 @@ class CommissionTable(tables.Table):
         empty_values=(),
         verbose_name="Pojazd/podzespół")
     contractor = tables.Column(
-        attrs={'th': {'width': '15%'}})
-    phone = tables.Column(
-        attrs={'th': {'width': '8%'}},
+        attrs={'th': {'width': '17%'}})
+    phone = tables.TemplateColumn(
+        attrs={'th': {'width': '10%'}},
         empty_values=(),
+        accessor='contractor',
+        template_name='commission/commission/phone_table_field.html',
         verbose_name="Telefon")
     start_date = tables.Column(
-        attrs={'th': {'width': '14%'}},
+        attrs={'th': {'width': '12%'}},
         verbose_name="Data przyjęcia")
     end_date = tables.Column(
-        attrs={'th': {'width': '14%'}},
+        attrs={'th': {'width': '12%'}},
         verbose_name="Data zamknięcia")
     value = tables.Column(
         attrs={'th': {'width': '13%'}},
@@ -89,13 +91,6 @@ class CommissionTable(tables.Table):
     def order_value(self, queryset, is_descending):
         queryset = queryset.order_by_total(is_descending)
         return (queryset, True)
-
-    def render_phone(self, record):
-        phone = ''
-        if record.contractor:
-            phone = record.contractor.phone_1 or ''
-            phone = '{}{}'.format(phone, ' {}'.format(record.contractor.phone_2) if record.contractor.phone_2 else '')
-        return phone or '—'
 
     def order_phone(self, queryset, is_descending):
         queryset = queryset.order_by(

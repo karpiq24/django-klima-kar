@@ -1,0 +1,7 @@
+<ul class="simple-list">
+    {% for phone in record.contractor.formatted_phones %}
+        <li>{{ phone }}</li>
+    {% empty %}
+        <li>—</li>
+    {% endfor %}
+</ul>

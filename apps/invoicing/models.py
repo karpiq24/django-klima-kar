@@ -73,6 +73,44 @@ class Contractor(models.Model):
         verbose_name = 'Kontrahent'
         verbose_name_plural = 'Kontrahenci'
 
+    @property
+    def phone_1_formatted(self):
+        return Contractor.format_phone_number(self.phone_1) if self.phone_1 else None
+
+    @property
+    def phone_2_formatted(self):
+        return Contractor.format_phone_number(self.phone_2) if self.phone_2 else None
+
+    @property
+    def phones(self):
+        phones = []
+        if self.phone_1:
+            phones.append(self.phone_1)
+        if self.phone_2:
+            phones.append(self.phone_2)
+        return phones
+
+    @property
+    def formatted_phones(self):
+        phones = []
+        if self.phone_1:
+            phones.append(self.phone_1_formatted)
+        if self.phone_2:
+            phones.append(self.phone_2_formatted)
+        return phones
+
+    @staticmethod
+    def format_phone_number(number):
+        if not number:
+            return number
+        if len(number) == 7:
+            return ' '.join([number[:3], number[3:5], number[5:7]])
+        if number.startswith('00'):
+            return ' '.join([number[:4], *[number[i:i + 3] for i in range(4, len(number), 3)]])
+        if len(number) == 10 and number.startswith('0'):
+            return ' '.join([number[:3], number[3:6], number[6:8], number[8:10]])
+        return ' '.join([number[i:i + 3] for i in range(0, len(number), 3)])
+
     def __str__(self):
         return self.name
 
