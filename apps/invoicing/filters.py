@@ -133,7 +133,7 @@ class ContractorFilter(django_filters.FilterSet):
         return queryset.filter(created_date__date__gte=date_from, created_date__date__lte=date_to).distinct()
 
     def phone_filter(self, queryset, name, value):
-        return queryset.filter(Q(phone_1__icontains=value) | Q(phone_2__icontains=0))
+        return queryset.filter(Q(phone_1__icontains=value) | Q(phone_2__icontains=value))
 
 
 class ServiceTemplateFilter(django_filters.FilterSet):
