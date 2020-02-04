@@ -121,6 +121,8 @@ def change_component_commissions_name(sender, instance, **kwargs):
 
 
 class Commission(models.Model):
+    AUDIT_IGNORE = ['upload', 'mch_id']
+
     OPEN = 'OP'
     READY = 'RE'
     DONE = 'DO'

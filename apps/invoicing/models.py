@@ -121,6 +121,8 @@ class Contractor(models.Model):
 
 
 class SaleInvoice(models.Model):
+    AUDIT_IGNORE = ['number_year', 'number_value']
+
     CASH = '1'
     CARD = '2'
     TRANSFER = '3'
