@@ -154,7 +154,7 @@ $(function () {
                     $(parent).append('<div class="invalid-feedback">Wybrany kontrahent nie ma podanego numeru telefonu.</div>')
                 } else if (result.contractor.phone.length !== 9) {
                     $("#id_contractor").addClass('is-warning');
-                    $(parent).append('<div class="warning-feedback">Sprawdź numer telefonu - podany posiada nie standardową liczbę cyfr.</div>')
+                    $(parent).append('<div class="warning-feedback">Sprawdź numer telefonu - podany posiada niestandardową liczbę cyfr.</div>')
                 }
             }
         });
