@@ -1,3 +1,4 @@
+import json
 import datetime
 
 from weasyprint import HTML, CSS
@@ -6,6 +7,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 from django.template.loader import get_template
 from django.urls import reverse
+from django.core.serializers.json import DjangoJSONEncoder
 
 from KlimaKar.templatetags.slugify import slugify
 from KlimaKar.models import TotalValueQuerySet
@@ -110,6 +112,21 @@ class Contractor(models.Model):
         if len(number) == 10 and number.startswith('0'):
             return ' '.join([number[:3], number[3:6], number[6:8], number[8:10]])
         return ' '.join([number[i:i + 3] for i in range(0, len(number), 3)])
+
+    def as_json(self, ignore=['created_date']):
+        data = {}
+        for field in Contractor._meta.get_fields():
+            try:
+                if field.attname in ignore:
+                    continue
+                if getattr(self, field.attname):
+                    data[field.attname] = {
+                        'label': field.verbose_name,
+                        'value': getattr(self, field.attname)
+                    }
+            except AttributeError:
+                continue
+        return json.dumps(data, cls=DjangoJSONEncoder, ensure_ascii=False)
 
     def __str__(self):
         return self.name

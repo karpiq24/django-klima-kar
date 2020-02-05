@@ -4,6 +4,7 @@ from extra_views import InlineFormSet
 from django import forms
 from django.urls import reverse
 from django.forms.models import model_to_dict
+from django.db.models import Q
 
 from KlimaKar.widgets import PrettySelect
 from apps.invoicing.models import Contractor, SaleInvoice, SaleInvoiceItem, ServiceTemplate, RefrigerantWeights,\
@@ -115,6 +116,8 @@ class NipInput(forms.TextInput):
 
 
 class ContractorModelForm(forms.ModelForm):
+    ignore_duplicated_phone = forms.CharField(required=False, widget=forms.HiddenInput())
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['name'].widget.attrs.update({'placeholder': 'Podaj nazwę'})
@@ -136,22 +139,39 @@ class ContractorModelForm(forms.ModelForm):
     class Meta:
         model = Contractor
         fields = ['nip_prefix', 'nip', 'name', 'city', 'postal_code', 'address_1', 'address_2', 'email',
-                  'phone_1', 'phone_2', 'bdo_number']
+                  'phone_1', 'phone_2', 'bdo_number', 'ignore_duplicated_phone']
         widgets = {
             'nip_prefix': forms.HiddenInput()
         }
+
+    class Media:
+        js = ('js/invoicing/contractor-form.js',)
 
     def clean_phone_1(self):
         data = self.cleaned_data['phone_1']
         if data:
             data = data.replace(' ', '')
+            if not bool(self.data.get('ignore_duplicated_phone', 'False')):
+                self._check_duplicate_phones(data)
         return data
 
     def clean_phone_2(self):
         data = self.cleaned_data['phone_2']
         if data:
             data = data.replace(' ', '')
+            if not bool(self.data.get('ignore_duplicated_phone', 'False')):
+                self._check_duplicate_phones(data)
         return data
+
+    def _check_duplicate_phones(self, number):
+        queryset = Contractor.objects.filter(Q(phone_1=number) | Q(phone_2=number))
+        if self.instance and self.instance.pk:
+            queryset = queryset.exclude(pk=self.instance.pk)
+        if queryset.exists():
+            raise forms.ValidationError(
+                'Podany numer jest już przypisany do innego kontrahenta.',
+                code='duplicated_phone',
+                params=[queryset.first().as_json()])
 
 
 class SaleInvoiceItemModelForm(forms.ModelForm):

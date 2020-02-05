@@ -1,7 +1,7 @@
 <form id="modal_form" method="post" onsubmit="submitAjaxForm('{{ url }}', '{{ identifier }}'); return false;">
     {% csrf_token %}
     <div class="modal-header">
-        <h3 class="modal-title">{{ title }}</h5>
+        <h3 class="modal-title">{{ title }}</h3>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>

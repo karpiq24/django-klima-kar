@@ -4,6 +4,12 @@
   {{ hidden_field }}
 {% endfor %}
 
+{% for key, errors in form.errors.as_data.items %}
+    {% for error in errors %}
+        <input type="hidden" id="{{ error.code }}" value="{{ error.params }}">
+    {% endfor %}
+{% endfor %}
+
 {% if form.non_field_errors %}
   <div class="alert alert-danger" role="alert">
     {% for error in form.non_field_errors %}
