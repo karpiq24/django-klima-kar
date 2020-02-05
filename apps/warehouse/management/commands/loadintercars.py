@@ -5,6 +5,7 @@ import xml.dom.minidom
 
 from django.core.management.base import BaseCommand
 from django.urls import reverse
+from django.db.models import Q
 
 from apps.warehouse.models import Invoice, InvoiceItem, Supplier, Ware
 from KlimaKar.settings import IC_CLIENT_NUMBER, IC_TOKEN, IC_API_URL, IC_PK, ABSOLUTE_URL
@@ -105,11 +106,13 @@ class Command(BaseCommand):
             try:
                 ware_obj = Ware.objects.get(index=getData(ware, 'indeks'))
             except Ware.DoesNotExist:
-                ware_obj = Ware.objects.create(
-                    index=getData(ware, 'indeks'),
-                    name=getData(ware, 'nazwa'),
-                    description=getData(ware, 'opis'))
-                new_wares += 1
+                ware_obj = Ware.objects.filter(index_slug=getData(ware, 'indeks')).first()
+                if not ware_obj:
+                    ware_obj = Ware.objects.create(
+                        index=getData(ware, 'indeks'),
+                        name=getData(ware, 'nazwa'),
+                        description=getData(ware, 'opis'))
+                    new_wares += 1
             InvoiceItem.objects.create(
                 invoice=invoice_obj,
                 ware=ware_obj,
