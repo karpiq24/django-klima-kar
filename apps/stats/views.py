@@ -552,6 +552,7 @@ class GetSummary(GroupAccessControlMixin, View):
             'purchase': '{}?date={}'.format(reverse('warehouse:invoices'), date_range),
             'wares': '{}?purchase_date={}'.format(reverse('warehouse:wares'), date_range),
         }
+        response['invoices_without_commission'] = self._get_sale_invoices_wthout_commission(date_from, date_to)
         return JsonResponse(response)
 
     def _get_date_range(self, date_from, date_to):
@@ -587,3 +588,24 @@ class GetSummary(GroupAccessControlMixin, View):
             date__gte=date_from,
             date__lte=date_to)
         return invoices.total()
+
+    def _get_sale_invoices_wthout_commission(self, date_from, date_to):
+        invoices = SaleInvoice.objects.filter(
+            issue_date__gte=date_from,
+            issue_date__lte=date_to,
+            commission=None)
+        return [{
+            'url': reverse('invoicing:sale_invoice_detail', kwargs={
+                'pk': invoice.pk,
+                'slug': slugify(invoice)
+            }),
+            'number': invoice.number,
+            'brutto_price': "{0:.2f} zł".format(invoice.total_value_brutto).replace('.', ','),
+            'contractor': {
+                'url': reverse('invoicing:contractor_detail', kwargs={
+                    'pk': invoice.contractor.pk,
+                    'slug': slugify(invoice.contractor)
+                }),
+                'name': invoice.contractor.name
+            }
+        } for invoice in invoices]

@@ -5,7 +5,6 @@ import xml.dom.minidom
 
 from django.core.management.base import BaseCommand
 from django.urls import reverse
-from django.db.models import Q
 
 from apps.warehouse.models import Invoice, InvoiceItem, Supplier, Ware
 from KlimaKar.settings import IC_CLIENT_NUMBER, IC_TOKEN, IC_API_URL, IC_PK, ABSOLUTE_URL
