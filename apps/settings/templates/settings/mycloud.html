@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Akcje</h5>
                     <button class="btn btn-outline-primary btn-lg" type="submit"><i class="far fa-save"></i> Zapisz</button>
-                    <a href="{{ object.get_auth_url }}" target="_blank" class="btn btn-outline-success btn-lg disabled" type="submit" id="authorize" data-url="{% url 'settings:mycloud_authorize' %}"><i class="fas fa-sign-in-alt"></i> Autoryzuj połączenie</a>
+                    <button class="btn btn-outline-success btn-lg disabled" type="button" id="authorize" data-url="{% url 'settings:get_auth_url' %}"><i class="fas fa-sign-in-alt"></i> Autoryzuj połączenie</button>
                 </div>
             </div>
         </div>
@@ -21,44 +21,50 @@
 {% block scripts %}
 <script>
     $(function () {
+        const url = new URL(window.location.href);
+        const code = url.searchParams.get("code");
+        if (code !== null) {
+            Swal.fire({
+                title: 'Trwa inicjalizacja usługi.',
+                text: 'Może to potrwać kilka sekund.',
+                html: '<i class="fas fa-spinner fa-spin fa-8x" style="margin: 26px;color: #00a0df;"></i>',
+                showConfirmButton: false
+            })
+            $.ajax({
+                url: $('#authorize').data('authorize-url'),
+                type: 'POST',
+                data: {
+                    code: code,
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(data) {
+                    window.location.href = window.location.href.split("?")[0];
+                },
+                error: function(data) {
+                    addAlert('Błąd!', 'error', data.responseJSON.message + '.');
+                }
+            });
+        }
+
         $('#nav-settings-mycloud').addClass('active');
         if ($('#id_APP_DIR_NAME').val() !== '' && $('#id_COMMISSION_DIR_NAME').val() !== '' && $('#id_WD_CLIENT_ID').val() !== '' && $('#id_WD_CLIENT_SECRET').val() !== '') {
             $('#authorize').removeClass('disabled');
         }
         $('#authorize').on('click', function () {
             Swal.fire({
-                title: "Podaj kod autoryzacyjny.",
-                type: "info",
-                input: 'text',
-                showCancelButton: true,
-                focusCancel: true,
-                confirmButtonText: 'Zapisz',
-                cancelButtonText: 'Anuluj'
-            }).then((data) => {
-                if (data.value && data.value.length > 3) {
-                    var spinner = document.createElement("i");
-                    spinner.className = 'fas fa-spinner fa-spin fa-8x'
-                    spinner.style = 'margin-bottom: 26px;color: #00a0df;'
-                    Swal.fire({
-                        title: 'Trwa autoryzacja.',
-                        text: 'Może to potrwać kilka sekund.',
-                        html: '<i class="fas fa-spinner fa-spin fa-8x" style="margin: 26px;color: #00a0df;"></i>',
-                        showConfirmButton: false
-                    })
-                    $.ajax({
-                        url: $('#authorize').data('url'),
-                        type: 'POST',
-                        data: {
-                            code: data.value,
-                            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-                        },
-                        success: function(data) {
-                            window.location.reload();
-                        },
-                        error: function(data) {
-                            addAlert('Błąd!', 'error', data.responseJSON.message + '.');
-                        }
-                    });
+                title: 'Trwa generowanie linku autoryzacyjnego.',
+                text: 'Może to potrwać kilka sekund.',
+                html: '<i class="fas fa-spinner fa-spin fa-8x" style="margin: 26px;color: #00a0df;"></i>',
+                showConfirmButton: false
+            })
+            $.ajax({
+                url: $('#authorize').data('url'),
+                type: 'GET',
+                success: function(data) {
+                    window.location.href = data.url;
+                },
+                error: function(data) {
+                    addAlert('Błąd!', 'error', data.responseJSON.message + '.');
                 }
             });
         })

@@ -2,6 +2,7 @@ import os
 import requests
 
 from django.db import models
+from django.conf import settings
 
 from KlimaKar.models import SingletonModel
 from KlimaKar.functions import encode_media_related
@@ -218,9 +219,8 @@ class MyCloudHome(SingletonModel):
             'connection': 'Username-Password-Authentication',
             'sso': 'false',
             'audience': 'mycloud.com',
-            'state': 'my-custom-state',
             'protocol': 'oauth2',
-            'redirect_uri': 'http://localhost/',
+            'redirect_uri': settings.WD_REDIRECT_URL,
             'client_id': self.WD_CLIENT_ID
         }
         pr = requests.models.PreparedRequest()
@@ -235,7 +235,7 @@ class MyCloudHome(SingletonModel):
             'client_id': self.WD_CLIENT_ID,
             'client_secret': self.WD_CLIENT_SECRET,
             'grant_type': 'authorization_code',
-            'redirect_uri': 'http://localhost/',
+            'redirect_uri': settings.WD_REDIRECT_URL,
         }
         r = requests.post(url, data=data)
         return r.json()

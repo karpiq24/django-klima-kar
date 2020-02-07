@@ -1,10 +1,9 @@
-from django.views.generic import UpdateView, View
+from django.views.generic import UpdateView, View, RedirectView
 from django.urls import reverse
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.http import JsonResponse
 
-from KlimaKar.mixins import GroupAccessControlMixin
+from KlimaKar.mixins import GroupAccessControlMixin, SuperUserOnlyMixin
 from apps.settings.models import SiteSettings, MyCloudHome
 from apps.settings.forms import EmailSettingsModelForm, InvoicingSettingsModelForm,\
     CommissionSettingsModelForm, MyCloudHomeModelForm
@@ -49,13 +48,10 @@ class CommissionSettingsUpdateView(GroupAccessControlMixin, UpdateView):
         return reverse("settings:commission")
 
 
-class MyCloudHomeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+class MyCloudHomeUpdateView(SuperUserOnlyMixin, UpdateView):
     model = MyCloudHome
     form_class = MyCloudHomeModelForm
     template_name = 'settings/mycloud.html'
-
-    def test_func(self):
-        return self.request.user.is_superuser
 
     def get_object(self, queryset=None):
         return MyCloudHome.load()
@@ -64,10 +60,7 @@ class MyCloudHomeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
         return reverse("settings:mycloud")
 
 
-class MyCloudHomeAuthorizeView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.is_superuser
-
+class MyCloudHomeInitializeView(SuperUserOnlyMixin, View):
     def post(self, *args, **kwargs):
         if not self.request.POST.get('code'):
             return JsonResponse({'status': 'error', 'message': 'Podaj kod autoryzacyjny.'}, status=400)
@@ -77,3 +70,22 @@ class MyCloudHomeAuthorizeView(LoginRequiredMixin, UserPassesTestMixin, View):
             return JsonResponse({'status': 'success'})
         else:
             return JsonResponse({'status': 'error', 'message': 'Coś poszło nie tak. Spróbuj ponownie'}, status=400)
+
+
+class MyCloudRedirectAuthorizeView(SuperUserOnlyMixin, RedirectView):
+    pattern_name = 'settings:mycloud'
+    query_string = True
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
+class MyCloudGetAuthUrl(SuperUserOnlyMixin, View):
+    pattern_name = 'settings:mycloud'
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def get(self, *args, **kwargs):
+        cloud = MyCloudHome.load()
+        return JsonResponse({'url': cloud.get_auth_url()}, status=200)

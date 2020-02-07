@@ -1,6 +1,7 @@
 from django.template.loader import render_to_string
 from django.http import HttpResponseForbidden, JsonResponse
 from django.core.exceptions import ImproperlyConfigured
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 from django_tables2 import SingleTableMixin
 from django_tables2.views import TableMixinBase
@@ -136,3 +137,8 @@ class MultiTableAjaxMixin(TableMixinBase):
             tables[table_id] = self.get_table(table_id, **self.get_table_kwargs(table_id))
         context[self.tables_context_key] = tables
         return context
+
+
+class SuperUserOnlyMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
