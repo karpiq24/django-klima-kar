@@ -1,7 +1,5 @@
-git stash
 git fetch origin
 git rebase origin/master
-git stash pop
 pip install -r docs/requirements.pip
 ./manage.py makemigrations
 ./manage.py migrate
