@@ -148,7 +148,7 @@ class SaleInvoice(models.Model):
         (CASH, 'gotówka'),
         (CARD, 'karta'),
         (TRANSFER, 'przelew'),
-        (OTHER, 'inny')
+        (OTHER, 'inna')
     ]
 
     TYPE_VAT = '1'

@@ -58,8 +58,8 @@ class Command(BaseCommand):
 
             url = 'http://sklep.dekoautoparts.pl/AjaxWS.svc/GetFilteredInvoices'
             data = {
-                'dateFrom': options['date_from'],
-                'dateTo': options['date_to'],
+                'dateFrom': '-c46-'.join(reversed(options['date_from'].split('-'))),
+                'dateTo': '-c46-'.join(reversed(options['date_to'].split('-'))),
                 'overdueOnly': False
             }
             r = s.post(url, json=data, headers=headers)
