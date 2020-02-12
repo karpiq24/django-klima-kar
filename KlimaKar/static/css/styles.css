@@ -9,6 +9,15 @@ body {
     margin-top: 49px;
 }
 
+div.content {
+  margin-left: 200px;
+  padding: 16px 16px;
+}
+
+div.content-full {
+  margin-left: 0% !important;
+}
+
 @media screen and (max-width: 1240px) {
     .pretty-select.btn-group {
         flex-direction: column;
@@ -529,4 +538,224 @@ ul#file-list > li > i.delete-file,
 #file-data .card-body > div {
     width: 100%;
     margin-left: 1rem;
+}
+
+/*
+    SIDEBAR
+*/
+
+ul.sidenav {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    background-color: #191c21;
+    color: #abb;
+    position: fixed;
+    z-index: 998;
+    height: 100%;
+    overflow: auto;
+}
+
+ul.sidenav li a {
+    display: block;
+    color: #abb;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-bottom: solid 1px rgb(85, 85, 85);
+    min-width: 200px;
+}
+
+ul.sidenav li a span {
+    margin-right: 10px;
+    width: 14px;
+    text-align: center;
+}
+
+ul.sidenav li a.active {
+    color: #3E77AD;
+}
+
+ul.sidenav li a:hover:not(.active) {
+    color: white;
+}
+
+ul.sidenav li i {
+    display: block;
+    color: #abb;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-bottom: solid 1px rgb(85, 85, 85);
+    background-color: #0e1013;
+    font-style: normal;
+    cursor: pointer;
+    min-width: 200px;
+}
+
+ul.sidenav li i span{
+    float: right;
+    padding-top: 3px;
+}
+
+ul.sidenav li i:hover {
+    color: white;
+}
+
+#toggleMenu {
+    display: none;
+}
+
+@media screen and (max-width: 992px) {
+    ul.sidenav {
+        width: 100%;
+        height: auto;
+        position: relative;
+        display: none;
+        margin-top: 49px;
+    }
+    #toggleMenu {
+        display: block;
+    }
+    ul.sidenav .collapse {
+        display: block;
+    }
+    ul.sidenav li a {
+        float: left;
+        padding: 15px;
+        border-right: solid 1px rgb(85, 85, 85);
+        border-bottom: none;
+    }
+    ul.sidenav li i {
+        display: none;
+    }
+    div.content {
+        margin-left: 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+  ul.sidenav li a {
+      text-align: center;
+      float: none;
+      border-bottom: solid 1px rgb(85, 85, 85);
+  }
+}
+
+/*
+    TOPBAR
+*/
+
+#topbar {
+    display: flex;
+    justify-content: space-between;
+    background-color: #00a0df;
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    width: 100%;
+    height: 49px;
+    color: #fff
+}
+
+#topbar-left,
+#topbar-middle,
+#topbar-right,
+#topbar-right-main {
+    display: flex;
+}
+
+
+#topbar-right > div,
+#topbar-left > div {
+    color: #fff;
+}
+
+#topbar-right a,
+#topbar-left a {
+    display: block;
+    color: #fff;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+#topbar-left a {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+#topbar-left span {
+    display: block;
+    padding: 14px 16px;
+}
+
+#topbar-left .debug-info {
+    background-color: red;
+}
+
+#topbar-right button,
+#topbar-middle button {
+    background-color: transparent;
+    border: none;
+    text-align: center;
+    color: #fff;
+    cursor: pointer;
+    padding: 14px 16px;
+}
+
+#topbar-middle button {
+    padding-right: 0;
+}
+
+#topbar .motto {
+    font-style: italic;
+    white-space: nowrap;
+}
+
+#topbar-middle {
+    background-color: #008bc2;
+}
+
+#topbar #inline-search-form {
+    display: flex;
+    align-items: center;
+}
+
+#topbar #inline-search-form input {
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    color: #fff;
+}
+
+#topbar #inline-search-form input::placeholder {
+    color: #ddd;
+}
+
+@media screen and (max-width: 992px) {
+    #topbar .motto {
+        display: none;
+    }
+    #topbar-right a > span {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 505px) {
+    #topbar #inline-search-form input {
+        display: none;
+    }
+    #topbar-middle {
+        background-color: transparent;
+        border-right: 1px dotted #dbd8cf;
+    }
+    #topbar {
+        justify-content: flex-end;
+    }
+    #topbar-left {
+        margin-right: auto;
+    }
+    #topbar-middle button {
+        padding-right: 16px;
+    }
 }

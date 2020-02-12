@@ -1,0 +1,47 @@
+{% load access_control %}
+<div id="topbar">
+    <div id="topbar-left">
+        {% if DEBUG %}
+            <div class="debug-info"><a class="active right-line" href="{% url 'home' %}">Klima-DEV</a></div>
+        {% else %}
+            <div><a class="active right-line" href="{% url 'home' %}">Klima-Kar</a></div>
+        {% endif %}
+        <div><span class="motto">komfortowy klimat w zasięgu ręki</span></div>
+    </div>
+    <div id="topbar-middle">
+        <form action="/" id="inline-search-form">
+            <button type="submit" title="Wyszukaj">
+                <i class="fa fa-search fa-lg"></i>
+            </button>
+            <input class="form-control form-control-lg" name="q" placeholder="Wyszukiwanie...">
+        </form>
+    </div>
+    {% if user.is_authenticated %}
+        <div id="topbar-right">
+            <div id="topbar-right-main">
+                {% if request.user|has_group:"boss" %}
+                    <div>
+                        <a href="{% url 'settings:settings' %}" title="Ustawienia">
+                            <i class="fa fa-cogs fa-lg" style="cursor: pointer;"></i>
+                        </a>
+                    </div>
+                {% endif %}
+                <div class="left-line">
+                    <button href="#" title="Zgłoszenie" data-toggle="modal" data-target="#issue_modal">
+                        <i class="fas fa-exclamation-triangle" style="cursor: pointer;"></i>
+                    </button>
+                </div>
+                <div class="left-line">
+                    <a href="{% url 'accounts:logout' %}" title="Wyloguj">
+                        <i class="fa fa-sign-out-alt fa-lg" style="cursor: pointer;"></i> <span>Wyloguj</span>
+                    </a>
+                </div>
+            </div>
+            <div class="left-line" id="toggleMenu">
+                <a href="#" title="Menu">
+                    <i class="fa fa-bars fa-lg" style="cursor: pointer;"></i>
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>

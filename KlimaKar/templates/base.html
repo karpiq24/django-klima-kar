@@ -1,4 +1,4 @@
-{% load static access_control messages compress %}
+{% load static messages compress %}
 
 <!DOCTYPE html>
 <html lang="pl">
@@ -15,7 +15,6 @@
         <link rel="stylesheet" type="text/css" media="screen" href="{% static 'autocomplete_light/select2.css' %}">
         <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/print.min.css' %}">
         <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/sweetalert2.min.css' %}">
-        <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/navbar.css' %}">
         <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/headings.css' %}">
         <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/styles.css' %}">
     {% endcompress %}
@@ -25,39 +24,7 @@
     {% endcompress %}
 </head>
 <body>
-
-<ul class="topnav">
-    {% if DEBUG %}
-        <li class="debug-info"><a class="active right-line" href="{% url 'home' %}">SERWER DEWELOPERSKI</a></li>
-    {% else %}
-        <li><a class="active right-line" href="{% url 'home' %}">Klima-Kar</a></li>
-    {% endif %}
-    <li><span class="motto">komfortowy klimat w zasięgu ręki</span></li>
-    <li class="left-line" style="float:right">
-        <a href="#" title="Menu" id="toggleMenu">
-            <i class="fa fa-bars fa-lg" style="cursor: pointer;"></i>
-        </a>
-    </li>
-    {% if user.is_authenticated %}
-    <li class="left-line" style="float:right">
-        <a href="{% url 'accounts:logout' %}" title="Wyloguj">
-            <i class="fa fa-sign-out-alt fa-lg" style="cursor: pointer;"></i> <span>Wyloguj</span>
-        </a>
-    </li>
-    <li class="left-line" style="float:right">
-        <button href="#" title="Zgłoszenie" data-toggle="modal" data-target="#issue_modal">
-            <i class="fas fa-exclamation-triangle" style="cursor: pointer;"></i>
-        </button>
-    </li>
-    {% endif %}
-    {% if request.user|has_group:"boss" %}
-        <li style="float:right">
-            <a href="{% url 'settings:settings' %}" title="Ustawienia">
-                <i class="fa fa-cogs fa-lg" style="cursor: pointer;"></i>
-            </a>
-        </li>
-    {% endif %}
-</ul>
+{% include 'topnav.html' %}
 {% if user.is_authenticated %}
     {% include 'menu.html' %}
 {% endif %}
