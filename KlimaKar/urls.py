@@ -15,6 +15,7 @@ urlpatterns = [
     path('ustawienia/', include('apps.settings.urls')),
     path('konta/', include('apps.accounts.urls')),
     path('audyt/', include('apps.audit.urls')),
+    path('szukaj/', include('apps.search.urls')),
 
     path('send_issue', SendIssueView.as_view(), name='send_issue'),
     path('send_sms', SendSMSView.as_view(), name='send_sms'),

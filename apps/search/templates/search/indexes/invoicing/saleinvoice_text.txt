@@ -1,0 +1,8 @@
+{{ object.get_invoice_type_display }} {{ object.number }}
+{{ object.contractor }}
+{{ object.comment|default_if_none:"" }}
+{% for item in object.saleinvoiceitem_set.all %}
+    {{ item.name }}
+    {{ item.description|default_if_none:"" }}
+    {{ item.ware|default_if_none:"" }}
+{% endfor %}

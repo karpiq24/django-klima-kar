@@ -52,7 +52,7 @@ class UserTableView(UserIsAdminMixin, FilteredSingleTableView):
 
 class FirstStepLoginView(View):
     def post(self, request, *args, **kwargs):
-        if not request.is_ajax:
+        if not request.is_ajax():
             return HttpResponseForbidden()
         username = request.POST.get('username')
         password = request.POST.get('password')

@@ -2,40 +2,40 @@
 
 {% if table.page and table.paginator.num_pages > 1 %}
 {% block pagination %}
-<nav aria-label="Page navigation example">
-<ul class="pagination justify-content-center">
-    {% if table.page.has_previous %}
-        {% block pagination.previous %}
-        <li class="page-item">
-            <button type="button" data-page="{{ table.page.previous_page_number }}" class="page-link"><span aria-hidden="true">&larr;</span> Poprzednia</button>
-        </li>
-        {% endblock pagination.previous %}
-    {% else %}
-        <li class="page-item disabled">
-            <a href="#" class="page-link"><span aria-hidden="true">&larr;</span> Poprzednia</a>
-        </li>
-    {% endif %}
-
-    {% if table.page.has_previous or table.page.has_next %}
-        {% block pagination.current %}
-            <li class="page-item cardinality">
-                <div><small>Strona </small><input class="form-control form-control-sm page-input" type="number" value="{{ table.page.number }}" min="1" max="{{ table.paginator.num_pages }}"><small> z {{ table.paginator.num_pages }}</small></div>
+<nav aria-label="Table page navigation">
+    <ul class="pagination justify-content-center">
+        {% if table.page.has_previous %}
+            {% block pagination.previous %}
+            <li class="page-item">
+                <button type="button" data-page="{{ table.page.previous_page_number }}" class="page-link"><span aria-hidden="true">&larr;</span> Poprzednia</button>
             </li>
-        {% endblock pagination.current %}
-    {% endif %}
+            {% endblock pagination.previous %}
+        {% else %}
+            <li class="page-item disabled">
+                <a href="#" class="page-link"><span aria-hidden="true">&larr;</span> Poprzednia</a>
+            </li>
+        {% endif %}
 
-    {% if table.page.has_next %}
-        {% block pagination.next %}
-        <li class="page-item">
-            <button type="button" data-page="{{ table.page.next_page_number }}" class="page-link">Następna <span aria-hidden="true">&rarr;</span></button>
-        </li>
-        {% endblock pagination.next %}
-    {% else %}
-        <li class="page-item disabled">
-            <a href="#" class="page-link">Następna  <span aria-hidden="true">&rarr;</span></a>
-        </li>
-    {% endif %}
-</ul>
+        {% if table.page.has_previous or table.page.has_next %}
+            {% block pagination.current %}
+                <li class="page-item cardinality">
+                    <div><small>Strona </small><input class="form-control form-control-sm page-input" type="number" value="{{ table.page.number }}" min="1" max="{{ table.paginator.num_pages }}"><small> z {{ table.paginator.num_pages }}</small></div>
+                </li>
+            {% endblock pagination.current %}
+        {% endif %}
+
+        {% if table.page.has_next %}
+            {% block pagination.next %}
+            <li class="page-item">
+                <button type="button" data-page="{{ table.page.next_page_number }}" class="page-link">Następna <span aria-hidden="true">&rarr;</span></button>
+            </li>
+            {% endblock pagination.next %}
+        {% else %}
+            <li class="page-item disabled">
+                <a href="#" class="page-link">Następna  <span aria-hidden="true">&rarr;</span></a>
+            </li>
+        {% endif %}
+    </ul>
 </nav>
 {% endblock pagination %}
 {% endif %}

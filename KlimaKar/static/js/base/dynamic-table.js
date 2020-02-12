@@ -68,7 +68,7 @@ $(function() {
         }, 10)
     });
 
-    $('.content').on('click', '.page-link', function() {
+    $('.content').on('click', '.table-container .page-link', function() {
         let table_id = $(this).parents('.table-container').data('table_id');
         if (table_id !== undefined) {
             reload_table({page:$(this).data('page'), table_id:table_id});
@@ -78,7 +78,7 @@ $(function() {
         }
     });
 
-    $('.content').on('change', '.page-input', function() {
+    $('.content').on('change', '.table-container .page-input', function() {
         let table_id = $(this).parents('.table-container').data('table_id');
         if (table_id !== undefined) {
             reload_table({page:$(this).val(), table_id:table_id});
@@ -88,7 +88,7 @@ $(function() {
         }
     });
 
-    $('.content').on('click', '.orderable > a', function() {
+    $('.content').on('click', '.table-container .orderable > a', function() {
         let table_id = $(this).parents('.table-container').data('table_id');
         if (table_id !== undefined) {
             reload_table({sort:$(this).data('query'), table_id:table_id});

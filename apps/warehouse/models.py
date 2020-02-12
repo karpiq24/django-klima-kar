@@ -7,6 +7,8 @@ from KlimaKar.models import TotalValueQuerySet
 
 
 class Ware(models.Model):
+    RELATED_MODELS = [('warehouse.Invoice', 'invoiceitem__ware')]
+
     index = models.CharField(
         max_length=63,
         unique=True,
@@ -44,6 +46,14 @@ class Ware(models.Model):
     def slugify(value):
         return ''.join(e for e in value if e.isalnum()).lower()
 
+    @staticmethod
+    def get_model_color():
+        return '#FF3516'
+
+    @staticmethod
+    def get_model_icon():
+        return 'fas fa-tags'
+
     def __str__(self):
         return self.index
 
@@ -58,6 +68,8 @@ class Ware(models.Model):
 
 
 class Supplier(models.Model):
+    RELATED_MODELS = [('warehouse.Invoice', 'supplier')]
+
     name = models.CharField(
         max_length=255,
         unique=True,
@@ -81,6 +93,14 @@ class Supplier(models.Model):
     @property
     def all_invoices_value(self):
         return self.invoice_set.total()
+
+    @staticmethod
+    def get_model_color():
+        return '#C1456E'
+
+    @staticmethod
+    def get_model_icon():
+        return 'fas fa-truck'
 
 
 class Invoice(models.Model):
@@ -116,6 +136,14 @@ class Invoice(models.Model):
     @property
     def total_value(self):
         return self._meta.model.objects.filter(pk=self.pk).total()
+
+    @staticmethod
+    def get_model_color():
+        return '#8355C5'
+
+    @staticmethod
+    def get_model_icon():
+        return 'fas fa-file-alt'
 
     def check_ware_price_changes(self):
         for item in self.invoiceitem_set.all():

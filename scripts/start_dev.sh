@@ -1,5 +1,6 @@
 POSTGRES_STATUS="$(service postgresql status)"
 REDIS_STATUS="$(sudo service redis-server status)"
+SOLR_STATUS="$(sudo service solr status)"
 
 if  [[ $POSTGRES_STATUS =~ 'down' ]];
 then
@@ -10,5 +11,11 @@ if  [[ $REDIS_STATUS =~ 'not running' ]];
 then
     sudo service redis-server start
 fi
+
+if  [[ $SOLR_STATUS =~ 'not found' ]];
+then
+    sudo service solr start
+fi
+
 source venv/bin/activate
 ./manage.py runserver

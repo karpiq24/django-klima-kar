@@ -6,38 +6,39 @@ Django project used in my family buisness. It provides warehouse management, inv
 
 ## Features
 - Warehouse management
-  - wares, suppliers and purchase invoices
-  - export data to multiple formats
-  - generate inventory report
-  - automatically load data from suppliers using APIs or web scraping
+    - wares, suppliers and purchase invoices
+    - export data to multiple formats
+    - generate inventory report
+    - automatically load data from suppliers using APIs or web scraping
 - Invoicing
-  - contractors, sale invoices and default services
-  - multiple invoice forms (VAT, WDT, Pro forma, Corrective)
-  - download contractor data from REGON API
-  - export invoice to PDF
-  - print invoice
-  - email invoice to contractor
-  - validate contractor VAT payer status
+    - contractors, sale invoices and default services
+    - multiple invoice forms (VAT, WDT, Pro forma, Corrective)
+    - download contractor data from REGON API
+    - export invoice to PDF
+    - print invoice
+    - email invoice to contractor
+    - validate contractor VAT payer status
 - Commissions
-  - commissions, vehicles, components
-  - decode AZTEC code from registration papers to get vehicle information
-  - export commission to PDF
-  - print commission
-  - email commission to contractor
-  - generate invoice based on commission
-  - handle file uploads using WD My Cloud Home API
-  - Send SMS notifications to contractors
+    - commissions, vehicles, components
+    - decode AZTEC code from registration papers to get vehicle information
+    - export commission to PDF
+    - print commission
+    - email commission to contractor
+    - generate invoice based on commission
+    - handle file uploads using WD My Cloud Home API
+    - Send SMS notifications to contractors
 - Advanced statistics
-  - rich interactive charts and metrics
-  - detect purchased ware price changes
-  - weekly, monthly and yearly reports
+    - rich interactive charts and metrics
+    - detect purchased ware price changes
+    - weekly, monthly and yearly reports
 - Other
-  - advanced filtering of all models
-  - filtering and paginating tables using ajax
-  - JSON dump and SQL dump backup with upload to dropbox and WD My Cloud Home
-  - 2-step email authentication
-  - login from remote location only for managers and admins
-  - create audit logs for creating, modyfing and deleteing objects
+    - advanced filtering of all models
+    - filtering and paginating tables using ajax
+    - JSON dump and SQL dump backup with upload to dropbox and WD My Cloud Home
+    - 2-step email authentication
+    - login from remote location only for managers and admins
+    - create audit logs for creating, modyfing and deleteing objects
+    - Full text search using Solr and django-haystack
 
 ## Requirements
 1. [WeasyPrint dependecies](https://weasyprint.readthedocs.io/en/latest/install.html)
@@ -65,29 +66,39 @@ Django project used in my family buisness. It provides warehouse management, inv
     sudo apt-get install redis-server
     sudo systemctl enable redis-server.service
     ```
-5. Create and activate virtual envoirment
+5. Install Solr
+   ```
+   sudo apt install openjdk-8-jdk openjdk-8-jre
+   curl -O https://archive.apache.org/dist/lucene/solr/6.6.6/solr-6.6.6.tgz
+   tar xvf solr-6.6.6.tgz
+   sudo ./solr-6.6.6/bin/install_solr_service.sh solr-6.6.6.tgz
+   sudo su solr
+   /opt/solr-6.6.6/bin/solr create -c klimakar -n basic_config
+   sudo venv/bin/python manage.py build_solr_schema --configure-directory=/var/solr/data/klimakar/conf --reload-core klimakar
+   ```
+6. Create and activate virtual envoirment
     ```
     virtualenv -p python3 venv
     source venv/bin/activate
     ```
-6. Install python requirements
+7. Install python requirements
    ```
    pip install -r docs/requirements.pip
    ```
-7. Install fonts
+8. Install fonts
    ```
    sudo cp KlimaKar/static/fonts/* /usr/local/share/fonts/
    sudo fc-cache -fv
    ```
-8. Compile aztec code decoder
+9. Compile aztec code decoder
    ```
    g++ -o scripts/aztec scripts/aztec.cpp
    ```
-9. Prepare settings
+10.  Prepare settings
     ```
     cp docs/settings_local.py KlimaKar
     ```
-10. Migrate database, create superuser and run local server
+11. Migrate database, create superuser and run local server
     ```
     ./manage.py makemigrations
     ./manage.py makemigrations commission

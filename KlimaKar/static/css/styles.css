@@ -759,3 +759,60 @@ ul.sidenav li i:hover {
         padding-right: 16px;
     }
 }
+
+/* 
+    SEARCH
+*/
+
+.highlighted {
+    font-weight: bold;
+    /*background-color: yellow;*/
+}
+
+#search-models > #id_models{
+    display: none;
+}
+
+#search-models > .choices-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+#search-models .model-choice {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+#search-models .model-choice:hover {
+    opacity: 0.75;
+}
+
+#search-models .model-choice.active {
+    opacity: 1;
+}
+
+#search-models p {
+    font-size: 1.2rem;
+    margin-bottom: 0;
+}
+
+.search-result {
+    display: flex;
+    align-items: center;
+}
+
+.search-result .result-detail {
+    margin-left: 1rem;
+}
+
+#search-query {
+    display: flex;
+    align-items: baseline;
+}
+
+#search-query button {
+    display: flex;
+    align-items: baseline;
+    margin-left: 1rem;
+}

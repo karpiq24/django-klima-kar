@@ -15,6 +15,8 @@ from apps.warehouse.models import Ware
 
 
 class Vehicle(models.Model):
+    RELATED_MODELS = [('commission.Commission', 'vehicle')]
+
     registration_plate = models.CharField(
         max_length=32,
         unique=True,
@@ -62,6 +64,14 @@ class Vehicle(models.Model):
             'pk': self.pk,
             'slug': slugify(self)})
 
+    @staticmethod
+    def get_model_color():
+        return '#F09300'
+
+    @staticmethod
+    def get_model_icon():
+        return 'fas fa-car'
+
 
 @receiver(models.signals.post_save, sender=Vehicle)
 def change_vehicle_commissions_name(sender, instance, **kwargs):
@@ -69,6 +79,7 @@ def change_vehicle_commissions_name(sender, instance, **kwargs):
 
 
 class Component(models.Model):
+    RELATED_MODELS = [('commission.Commission', 'component')]
     COMPRESSOR = 'CO'
     HEATER = 'HE'
     OTHER = 'OT'
@@ -113,6 +124,14 @@ class Component(models.Model):
         return reverse('commission:component_detail', kwargs={
             'pk': self.pk,
             'slug': slugify(self)})
+
+    @staticmethod
+    def get_model_color():
+        return '#13BB72'
+
+    @staticmethod
+    def get_model_icon():
+        return 'fas fa-microchip'
 
 
 @receiver(models.signals.post_save, sender=Component)
@@ -225,6 +244,14 @@ class Commission(models.Model):
     @property
     def value(self):
         return self._meta.model.objects.filter(pk=self.pk).total()
+
+    @staticmethod
+    def get_model_color():
+        return '#427BD2'
+
+    @staticmethod
+    def get_model_icon():
+        return 'fas fa-tasks'
 
     def generate_pdf(self):
         template = get_template('commission/pdf_commission.html')

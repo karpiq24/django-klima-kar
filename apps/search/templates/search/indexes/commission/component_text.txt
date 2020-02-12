@@ -1,0 +1,4 @@
+{{ object.get_component_type_display }}
+{{ object.model|default_if_none:"" }}
+{{ object.serial_number|default_if_none:"" }}
+{{ object.catalog_number|default_if_none:"" }}

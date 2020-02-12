@@ -1,0 +1,4 @@
+{{ object.index }}
+{{ object.index_slug }}
+{{ object.name }}
+{{ object.description|default_if_none:"" }}

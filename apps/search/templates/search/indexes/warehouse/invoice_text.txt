@@ -1,0 +1,7 @@
+{{ object.number }}
+{{ object.supplier.name }}
+{% for item in object.invoiceitem_set.all %}
+    {{ item.ware.index }}
+    {{ item.ware.index_slug }}
+    {{ item.ware.name }}
+{% endfor %}

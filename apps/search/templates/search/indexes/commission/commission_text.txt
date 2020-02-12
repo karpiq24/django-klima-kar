@@ -1,0 +1,11 @@
+{{ object.vc_name }}
+{{ object.contractor|default_if_none:"" }}
+{{ object.description|default_if_none:"" }}
+{% for item in object.commissionitem_set.all %}
+    {{ item.name }}
+    {{ item.description|default_if_none:"" }}
+    {{ item.ware|default_if_none:"" }}
+{% endfor %}
+{% for file in object.commissionfile_set.all %}
+    {{ file.file_name }}
+{% endfor %}

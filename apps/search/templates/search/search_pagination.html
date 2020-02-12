@@ -1,0 +1,31 @@
+{% if page_obj.has_previous or page_obj.has_next %}
+    <nav aria-label="Search page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <button type="button" data-page="{{ page_obj.previous_page_number }}" class="page-link"><span aria-hidden="true">&larr;</span> Poprzednia</button>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a href="#" class="page-link"><span aria-hidden="true">&larr;</span> Poprzednia</a>
+                </li>
+            {% endif %}
+    
+            {% if page_obj.has_previous or page_obj.has_next %}
+                    <li class="page-item cardinality">
+                        <div><small>Strona </small><input class="form-control form-control-sm page-input" type="number" value="{{ page_obj.number }}" min="1" max="{{ paginator.num_pages }}"><small> z {{ paginator.num_pages }}</small></div>
+                    </li>
+            {% endif %}
+    
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <button type="button" data-page="{{ page_obj.next_page_number }}" class="page-link">Następna <span aria-hidden="true">&rarr;</span></button>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a href="#" class="page-link">Następna  <span aria-hidden="true">&rarr;</span></a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}

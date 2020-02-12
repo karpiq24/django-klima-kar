@@ -1,0 +1,3 @@
+{{ object.registration_plate|default_if_none:"" }}
+{{ object.vin|default_if_none:"" }}
+{{ object.brand }}

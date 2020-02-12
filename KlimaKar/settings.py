@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'compressor',
     'django_rq',
     'defender',
+    'haystack',
 
     'KlimaKar',
     'apps.settings',
@@ -45,7 +46,8 @@ INSTALLED_APPS = [
     'apps.commission',
     'apps.stats',
     'apps.accounts',
-    'apps.audit.apps.AuditConfig'
+    'apps.audit.apps.AuditConfig',
+    'apps.search.apps.SearchConfig'
 ]
 
 MIDDLEWARE = [
@@ -182,6 +184,17 @@ RQ_QUEUES = {
 # GEOIP2
 GEOIP_PATH = 'data/'
 GEOIP_COUNTRY = 'GeoLite2-Country.mmdb'
+
+
+# Haystack
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        'URL': 'http://127.0.0.1:8983/solr/klimakar',
+        'ADMIN_URL': 'http://127.0.0.1:8983/solr/admin/cores'
+    },
+}
+HAYSTACK_SIGNAL_PROCESSOR = 'apps.search.signals.RQSignalProcessor'
 
 
 def FILTERS_VERBOSE_LOOKUPS():
