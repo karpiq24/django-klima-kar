@@ -775,13 +775,16 @@ ul.sidenav li i:hover {
 
 #search-models > .choices-container {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     flex-wrap: wrap;
 }
 
 #search-models .model-choice {
     opacity: 0.5;
     cursor: pointer;
+    width: 120px;
+    margin-top: 1rem;
+    text-align: center;
 }
 
 #search-models .model-choice:hover {
@@ -809,10 +812,24 @@ ul.sidenav li i:hover {
 #search-query {
     display: flex;
     align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+#search-query input {
+    width: auto;
+    max-width: 100%;
+    flex-grow: 1;
+    margin-top: 1rem;
 }
 
 #search-query button {
     display: flex;
     align-items: baseline;
     margin-left: 1rem;
+    margin-top: 1rem;
+}
+
+#search-query button i {
+    margin-right: .5rem;
 }

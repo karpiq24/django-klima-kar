@@ -12,7 +12,7 @@ then
     sudo service redis-server start
 fi
 
-if  [[ $SOLR_STATUS =~ 'not found' ]];
+if  [[ $SOLR_STATUS =~ 'No Solr nodes are running.' ]];
 then
     sudo service solr start
 fi
