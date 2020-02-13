@@ -18,6 +18,8 @@ class Contractor(models.Model):
     RELATED_MODELS = [
         ('invoicing.SaleInvoice', 'contractor'),
         ('commission.Commission', 'contractor')]
+    MODEL_COLOR = '#00A0DF'
+    MODEL_ICON = 'fas fa-users'
 
     name = models.CharField(
         max_length=512,
@@ -117,14 +119,6 @@ class Contractor(models.Model):
             return ' '.join([number[:3], number[3:6], number[6:8], number[8:10]])
         return ' '.join([number[i:i + 3] for i in range(0, len(number), 3)])
 
-    @staticmethod
-    def get_model_color():
-        return '#00A0DF'
-
-    @staticmethod
-    def get_model_icon():
-        return 'fas fa-users'
-
     def as_json(self, ignore=['created_date']):
         data = {}
         for field in Contractor._meta.get_fields():
@@ -151,6 +145,8 @@ class Contractor(models.Model):
 
 class SaleInvoice(models.Model):
     AUDIT_IGNORE = ['number_year', 'number_value']
+    MODEL_COLOR = '#89D23A'
+    MODEL_ICON = 'fas fa-book'
 
     CASH = '1'
     CARD = '2'
@@ -256,14 +252,6 @@ class SaleInvoice(models.Model):
     @property
     def corrected_invoice(self):
         return CorrectiveSaleInvoice.objects.get(original_invoice=self)
-
-    @staticmethod
-    def get_model_color():
-        return '#89D23A'
-
-    @staticmethod
-    def get_model_icon():
-        return 'fas fa-book'
 
     def save(self, *args, **kwargs):
         invoice_type = self.invoice_type

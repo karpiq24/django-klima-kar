@@ -16,6 +16,8 @@ from apps.warehouse.models import Ware
 
 class Vehicle(models.Model):
     RELATED_MODELS = [('commission.Commission', 'vehicle')]
+    MODEL_COLOR = '#F09300'
+    MODEL_ICON = 'fas fa-car'
 
     registration_plate = models.CharField(
         max_length=32,
@@ -64,14 +66,6 @@ class Vehicle(models.Model):
             'pk': self.pk,
             'slug': slugify(self)})
 
-    @staticmethod
-    def get_model_color():
-        return '#F09300'
-
-    @staticmethod
-    def get_model_icon():
-        return 'fas fa-car'
-
 
 @receiver(models.signals.post_save, sender=Vehicle)
 def change_vehicle_commissions_name(sender, instance, **kwargs):
@@ -80,6 +74,8 @@ def change_vehicle_commissions_name(sender, instance, **kwargs):
 
 class Component(models.Model):
     RELATED_MODELS = [('commission.Commission', 'component')]
+    MODEL_COLOR = '#13BB72'
+    MODEL_ICON = 'fas fa-microchip'
     COMPRESSOR = 'CO'
     HEATER = 'HE'
     OTHER = 'OT'
@@ -125,14 +121,6 @@ class Component(models.Model):
             'pk': self.pk,
             'slug': slugify(self)})
 
-    @staticmethod
-    def get_model_color():
-        return '#13BB72'
-
-    @staticmethod
-    def get_model_icon():
-        return 'fas fa-microchip'
-
 
 @receiver(models.signals.post_save, sender=Component)
 def change_component_commissions_name(sender, instance, **kwargs):
@@ -141,6 +129,8 @@ def change_component_commissions_name(sender, instance, **kwargs):
 
 class Commission(models.Model):
     AUDIT_IGNORE = ['upload', 'mch_id']
+    MODEL_COLOR = '#427BD2'
+    MODEL_ICON = 'fas fa-tasks'
 
     OPEN = 'OP'
     READY = 'RE'
@@ -244,14 +234,6 @@ class Commission(models.Model):
     @property
     def value(self):
         return self._meta.model.objects.filter(pk=self.pk).total()
-
-    @staticmethod
-    def get_model_color():
-        return '#427BD2'
-
-    @staticmethod
-    def get_model_icon():
-        return 'fas fa-tasks'
 
     def generate_pdf(self):
         template = get_template('commission/pdf_commission.html')

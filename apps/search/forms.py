@@ -1,7 +1,7 @@
-from haystack.forms import SearchForm
+from haystack.forms import ModelSearchForm
 
 
-class HighlightedSearchForm(SearchForm):
+class HighlightedSearchForm(ModelSearchForm):
     def search(self):
         sqs = super().search()
         kwargs = {
