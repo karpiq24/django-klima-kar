@@ -1,5 +1,8 @@
 import os
 
+from django.utils.log import DEFAULT_LOGGING
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -170,8 +173,7 @@ COMPRESS_OUTPUT_DIR = 'compressed'
 DJANGO_TABLES2_TEMPLATE = 'tables2/table.html'
 
 TEMPORARY_UPLOAD_DIRECTORY = os.path.join(BASE_DIR, 'temp')
-HOURS_TO_REMOVE_STALE_FILES = 2
-
+HOURS_TO_REMOVE_STALE_FILES = 48
 
 RQ_QUEUES = {
     'default': {
@@ -179,6 +181,12 @@ RQ_QUEUES = {
         'PORT': 6379,
         'DB': 0,
     }
+}
+
+# Logging
+DEFAULT_LOGGING['loggers']['rq.worker'] = {
+    'handlers': ['console', 'mail_admins'],
+    'level': 'INFO'
 }
 
 # GEOIP2
