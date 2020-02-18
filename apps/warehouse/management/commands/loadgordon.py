@@ -101,7 +101,8 @@ class Command(BaseCommand):
         for row in soup.find_all('tr', {'class': 'dgriditem'}) + soup.find_all('tr', {'class': 'dgridaltitem'}):
             cells = row.find_all('td')
             price = float(cells[4].text.strip().split(' ')[0].replace(',', '.'))
-            quantity = cells[2].text.strip()
+            quantity = int(cells[2].text.strip())
+            price = price / quantity
             index = cells[0].text.strip()
             name = cells[1].text.strip()
             if not index:
