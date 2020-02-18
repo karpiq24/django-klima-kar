@@ -115,21 +115,33 @@ class SaleInvoiceItemTable(tables.Table):
 
 class ServiceTemplateTable(tables.Table):
     name = tables.Column(
-        attrs={'th': {'width': '40%'}},
+        attrs={'th': {'width': '25%'}},
         verbose_name="Nazwa usługi/towaru")
     description = tables.Column(
-        attrs={'th': {'width': '40%'}},
+        attrs={'th': {'width': '25%'}},
         verbose_name="Opis usługi/towaru")
     ware = tables.Column(
         attrs={'th': {'width': '13%'}})
+    quantity = tables.Column(
+        attrs={'th': {'width': '10%'}})
+    price_netto = tables.Column(
+        attrs={'th': {'width': '10%'}})
+    price_brutto = tables.Column(
+        attrs={'th': {'width': '10%'}})
     actions = tables.TemplateColumn(
         attrs={'th': {'width': '7%'}},
         verbose_name="Akcje",
         template_name='invoicing/service_template/table_actions.html',
         orderable=False)
 
+    def render_price_netto(self, value):
+        return "{0:.2f} zł".format(value).replace('.', ',')
+
+    def render_price_brutto(self, value):
+        return "{0:.2f} zł".format(value).replace('.', ',')
+
     class Meta:
         model = ServiceTemplate
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['name', 'description', 'ware']
+        fields = ['name', 'description', 'ware', 'price_netto', 'price_brutto']
         empty_text = 'Brak pozycji'
