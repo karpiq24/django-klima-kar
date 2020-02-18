@@ -376,6 +376,9 @@ class CommissionCreateView(CreateWithInlinesView):
         if check_uploaded_files(form.data['upload_key']):
             self.object.upload = True
             self.object.save()
+            directory = os.path.join(settings.TEMPORARY_UPLOAD_DIRECTORY, form.data['upload_key'])
+            with open(os.path.join(directory, 'lock'), 'w') as lockfile:
+                lockfile.write('')
             django_rq.enqueue(process_uploads, self.object.pk, form.data['upload_key'])
         return response
 
@@ -399,11 +402,6 @@ class CommissionUpdateView(UpdateWithInlinesView):
         upload_key = self.request.POST.get('upload_key')
         if upload_key:
             context['temp_files'] = get_temporary_files(upload_key)
-        if self.object.contractor:
-            context['contractor'] = {
-                'nip': self.object.contractor.nip,
-                'phone': self.object.contractor.phone_1 or self.object.contractor.phone_2
-            }
         return context
 
     def forms_valid(self, form, inlines):
@@ -413,6 +411,9 @@ class CommissionUpdateView(UpdateWithInlinesView):
         if check_uploaded_files(form.data['upload_key']):
             self.object.upload = True
             self.object.save()
+            directory = os.path.join(settings.TEMPORARY_UPLOAD_DIRECTORY, form.data['upload_key'])
+            with open(os.path.join(directory, 'lock'), 'w') as lockfile:
+                lockfile.write('')
             django_rq.enqueue(process_uploads, self.object.pk, form.data['upload_key'])
         return response
 

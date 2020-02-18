@@ -17,6 +17,8 @@ class Command(BaseCommand):
             path = os.path.join(TEMPORARY_UPLOAD_DIRECTORY, folder)
             if os.path.isfile(path):
                 os.remove(path)
+            elif os.path.exists(os.path.join(path, 'lock')):
+                continue
             elif os.path.exists(os.path.join(path, 'timestamp')):
                 with open(os.path.join(path, 'timestamp'), 'r') as timefile:
                     timestamp = DateParser.parse(timefile.read())
