@@ -10,14 +10,17 @@ class WareTable(tables.Table):
     index = tables.Column(
         attrs={'th': {'width': '20%'}})
     name = tables.Column(
-        attrs={'th': {'width': '25%'}})
+        attrs={'th': {'width': '20%'}})
     description = tables.Column(
-        attrs={'th': {'width': '30%'}})
+        attrs={'th': {'width': '23%'}})
     stock = tables.Column(
         attrs={'th': {'width': '5%'}})
     last_price = tables.Column(
-        attrs={'th': {'width': '13%'}},
+        attrs={'th': {'width': '10%'}},
         verbose_name="Ostatnia cena")
+    retail_price = tables.Column(
+        attrs={'th': {'width': '10%'}},
+        verbose_name="Cena detaliczna")
     actions = tables.TemplateColumn(
         attrs={'th': {'width': '7%'}},
         verbose_name="Akcje",
@@ -33,10 +36,13 @@ class WareTable(tables.Table):
             max_price=Max('invoiceitem__price')).order_by(('-' if is_descending else '') + 'max_price')
         return (queryset, True)
 
+    def render_retail_price(self, value):
+        return "{0:.2f} zł".format(value).replace('.', ',')
+
     class Meta:
         model = Ware
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['index', 'name', 'description', 'last_price', 'stock']
+        fields = ['index', 'name', 'description', 'last_price', 'retail_price', 'stock']
         order_by = 'index'
         empty_text = 'Brak towarów'
 

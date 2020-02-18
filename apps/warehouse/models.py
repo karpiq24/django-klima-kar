@@ -28,6 +28,12 @@ class Ware(models.Model):
     stock = models.PositiveIntegerField(
         default=0,
         verbose_name='Stan')
+    retail_price = models.DecimalField(
+        max_digits=7,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        verbose_name='Cena detaliczna')
     created_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Data dodania')

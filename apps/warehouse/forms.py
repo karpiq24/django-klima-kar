@@ -15,7 +15,7 @@ class WareModelForm(forms.ModelForm):
 
     class Meta:
         model = Ware
-        fields = ['index', 'name', 'description', 'stock']
+        fields = ['index', 'name', 'description', 'stock', 'retail_price']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3}),
         }

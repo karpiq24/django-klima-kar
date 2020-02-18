@@ -17,5 +17,10 @@ then
     sudo service solr start
 fi
 
+if  [[ $SOLR_STATUS =~ 'not found' ]];
+then
+    sudo service solr start
+fi
+
 source venv/bin/activate
 ./manage.py runserver

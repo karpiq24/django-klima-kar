@@ -22,6 +22,10 @@
                 <td>{{ object.stock }}</td>
             </tr>
             <tr>
+                <td class="detail-label">Cena detaliczna</td>
+                <td>{% if object.retail_price %}{{ object.retail_price|floatformat:2 }} zł{% else %}—{% endif %}</td>
+            </tr>
+            <tr>
                 <td class="detail-label">Opis</td>
                 <td>{{ object.description|default:"—" }}</td>
             </tr>
