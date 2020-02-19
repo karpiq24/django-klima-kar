@@ -363,7 +363,12 @@ class FilteredSingleTableView(SingleTableView):
 
     def get(self, request, *args, **kwargs):
         key = "{}_params".format(self.model.__name__)
-        self.request.session[key] = self.request.GET
+        export = self.request.GET.get('_export')
+        if export:
+            self.request.GET = self.request.GET.copy()
+            self.request.GET.update(self.request.session[key])
+        else:
+            self.request.session[key] = self.request.GET
         if self.request.is_ajax():
             table = self.get_table(**self.get_table_kwargs())
             return JsonResponse({
