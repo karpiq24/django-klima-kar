@@ -302,6 +302,7 @@ class CommissionDetailView(SingleTableAjaxMixin, DetailView):
     model = Commission
     template_name = 'commission/commission/detail.html'
     table_class = CommissionItemTable
+    table_pagination = {"per_page": 20}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

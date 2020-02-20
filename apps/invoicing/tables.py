@@ -82,6 +82,18 @@ class SaleInvoiceTable(tables.Table):
         empty_text = 'Brak faktur'
 
 
+class SaleInvoiceWithTypeTable(SaleInvoiceTable):
+    invoice_type = tables.Column(
+        attrs={'th': {'width': '10%'}})
+
+    class Meta:
+        model = SaleInvoice
+        attrs = {'class': 'table table-striped table-hover table-bordered'}
+        fields = ['invoice_type', 'number', 'contractor', 'issue_date', 'total_value_brutto']
+        order_by = '-number'
+        empty_text = 'Brak faktur'
+
+
 class SaleInvoiceItemTable(tables.Table):
     name = tables.Column(
         attrs={'th': {'width': '20%'}},

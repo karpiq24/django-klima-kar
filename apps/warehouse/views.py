@@ -106,6 +106,7 @@ class InvoiceDetailView(SingleTableAjaxMixin, DetailView):
     model = Invoice
     template_name = 'warehouse/invoice/invoice_detail.html'
     table_class = InvoiceItemTable
+    table_pagination = {"per_page": 20}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

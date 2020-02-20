@@ -23,7 +23,8 @@ from KlimaKar.templatetags.slugify import slugify
 from apps.invoicing.models import SaleInvoice, Contractor, SaleInvoiceItem, ServiceTemplate, CorrectiveSaleInvoice
 from apps.invoicing.forms import SaleInvoiceModelForm, ContractorModelForm, SaleInvoiceItemsInline,\
     ServiceTemplateModelForm, EmailForm, RefrigerantWeightsInline, CorrectiveSaleInvoiceModelForm
-from apps.invoicing.tables import SaleInvoiceTable, ContractorTable, SaleInvoiceItemTable, ServiceTemplateTable
+from apps.invoicing.tables import SaleInvoiceTable, ContractorTable, SaleInvoiceItemTable, ServiceTemplateTable,\
+    SaleInvoiceWithTypeTable
 from apps.invoicing.filters import SaleInvoiceFilter, ContractorFilter, ServiceTemplateFilter
 from apps.invoicing.functions import get_next_invoice_number, generate_refrigerant_weights_report
 from apps.invoicing.gus import GUS
@@ -47,6 +48,7 @@ class SaleInvoiceDetailView(SingleTableAjaxMixin, DetailView):
     model = SaleInvoice
     template_name = 'invoicing/sale_invoice/detail.html'
     table_class = SaleInvoiceItemTable
+    table_pagination = {"per_page": 20}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -421,7 +423,7 @@ class ContractorDetailView(MultiTableAjaxMixin, DetailView):
     model = Contractor
     template_name = 'invoicing/contractor/detail.html'
     table_classes = {
-        'sale_invoice': SaleInvoiceTable,
+        'sale_invoice': SaleInvoiceWithTypeTable,
         'commission': CommissionTable
     }
 
