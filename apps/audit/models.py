@@ -78,9 +78,10 @@ class AuditLog(models.Model):
     def is_deletion(self):
         return self.action_type == self.DELETION
 
-    def get_diffrence(self, verbose=False):
-        if not verbose:
-            return json.loads(self.diffrence)
+    def get_diffrence(self):
+        return json.loads(self.diffrence) if self.diffrence else {}
+
+    def get_diffrence_verbose(self):
         diff = {}
         for key, values in self.get_diffrence().items():
             if self.action_type == self.CHANGE:

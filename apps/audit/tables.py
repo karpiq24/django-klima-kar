@@ -11,8 +11,15 @@ class AuditLogTable(tables.Table):
         attrs={'th': {'width': '15%'}})
     object_repr = tables.Column(
         attrs={'th': {'width': '25%'}})
-    diffrence = tables.Column(
-        attrs={'th': {'width': '38%'}})
+    diffrence = tables.TemplateColumn(
+        attrs={'th': {'width': '38%'}},
+        template_name='audit/audit_diffrence.html',
+        extra_context={
+            'ADDITION': AuditLog.ADDITION,
+            'CHANGE': AuditLog.CHANGE,
+            'DELETION': AuditLog.DELETION
+        },
+        orderable=False)
     actions = tables.TemplateColumn(
         attrs={'th': {'width': '7%'}},
         verbose_name="Akcje",
@@ -39,42 +46,3 @@ class AuditLogTable(tables.Table):
                 AuditLog.DELETION: 'table-danger',
             }[record.action_type]
         }
-
-    def render_diffrence(self, record):
-        diff = record.get_diffrence(verbose=True)
-        table = ('<table class="table table-dark mb-0">'
-                 '<thead>'
-                 '<tr>'
-                 '{}'
-                 '</tr>'
-                 '</thead>'
-                 '<tbody id="diff-body">'
-                 '{}'
-                 '</tbody></table>')
-        rows = []
-        headers = ('<th scope="col" class="bg-info" width="30%">Pole</th>'
-                   '<th scope="col" class="bg-danger" width="35%">Było</th>'
-                   '<th scope="col" class="bg-success" width="35%">Jest</th>')
-        if record.action_type == AuditLog.CHANGE:
-            for key, values in diff.items():
-                val1 = values[0] if values[0] is not None else '—'
-                val2 = values[1] if values[1] is not None else '—'
-                rows.append(
-                    '<tr>'
-                    f'<td class="bg-info">{key}</td>'
-                    f'<td class="bg-danger">{val1}</td>'
-                    f'<td class="bg-success">{val2}</td>'
-                    '</tr>'
-                )
-        elif record.action_type == AuditLog.DELETION:
-            for key, value in diff.items():
-                if value is None:
-                    continue
-                rows.append(
-                    '<tr>'
-                    f'<td class="bg-info">{key}</td>'
-                    f'<td class="bg-danger">{value}</td>'
-                    '<td class="bg-success">—</td>'
-                    '</tr>'
-                )
-        return mark_safe(table.format(headers, '\n'.join(rows)))
