@@ -1,0 +1,7 @@
+type Component {
+    id: ID!
+    component_type: String!
+    model: String
+    serial_number: String
+    catalog_number: String
+}

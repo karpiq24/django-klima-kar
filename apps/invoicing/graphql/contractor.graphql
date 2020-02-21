@@ -1,0 +1,19 @@
+extend type Query {
+    contractors(pagination: PageInput, filters: ContractorFilter): ContractorConnection!
+}
+
+type Contractor {
+    id: ID!
+    name: String!
+    nip: String
+}
+
+type ContractorConnection {
+    pageInfo: PageInfo!
+    objects: [Contractor]!
+}
+
+input ContractorFilter {
+    id: ID
+    name__icontains: String
+}

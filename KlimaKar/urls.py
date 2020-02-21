@@ -1,7 +1,10 @@
 from django.urls import include, path
 from django.contrib import admin
 
+from ariadne.contrib.django.views import GraphQLView
+
 from KlimaKar.views import HomeView, SendIssueView, SendSMSView
+from KlimaKar.graphql import schema
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
@@ -20,5 +23,7 @@ urlpatterns = [
     path('send_issue', SendIssueView.as_view(), name='send_issue'),
     path('send_sms', SendSMSView.as_view(), name='send_sms'),
 
-    path('django-rq/', include('django_rq.urls'))
+    path('django-rq/', include('django_rq.urls')),
+    path('graphql/', GraphQLView.as_view(
+        schema=schema, playground_options={'request.credentials': 'same-origin'}), name='graphql'),
 ]

@@ -27,3 +27,4 @@ pyotp==2.3.0
 django-defender==0.6.2
 django-haystack==2.8.1
 pysolr==3.8.1
+ariadne==0.10.0

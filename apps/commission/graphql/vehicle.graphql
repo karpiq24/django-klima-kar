@@ -1,0 +1,10 @@
+type Vehicle {
+    id: ID!
+    registration_plate: String!
+    vin: String
+    brand: String!
+    model: String
+    engine_volume: Int
+    engine_power: Int
+    production_year: Int
+}

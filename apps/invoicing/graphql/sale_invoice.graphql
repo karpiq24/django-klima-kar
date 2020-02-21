@@ -1,0 +1,5 @@
+type SaleInvoice {
+    id: ID!
+    number: String!
+    contractor: Contractor!
+}

@@ -1,0 +1,19 @@
+type Query {
+    _unused: Boolean
+}
+
+type Mutation {
+    _unused: Boolean
+}
+
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    count: Int!
+    numPages: Int!
+}
+
+input PageInput {
+    page: Int
+    pageSize: Int
+}

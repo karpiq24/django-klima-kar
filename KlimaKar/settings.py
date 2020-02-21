@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django_rq',
     'defender',
     'haystack',
+    'ariadne.contrib.django',
 
     'KlimaKar',
     'apps.settings',

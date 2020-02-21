@@ -1,0 +1,43 @@
+type Commission {
+    id: ID!
+    vc_name: String!
+    vehicle: Vehicle
+    component: Component
+    contractor: Contractor
+    status: String!
+    commission_type: String!
+    sale_invoices: [SaleInvoice]!
+    description: String
+}
+
+type CommissionConnection {
+    pageInfo: PageInfo!
+    objects: [Commission]!
+}
+
+input CommissionFilter {
+    status: CommissionStatus
+    id: ID
+    vc_name__icontains: String
+}
+
+enum CommissionStatus{
+    OPEN
+    READY
+    DONE
+    CANCELLED
+    ON_HOLD
+}
+
+enum CommissionType{
+    VEHICLE
+    COMPONENT
+}
+
+extend type Query {
+    commissions(pagination: PageInput, filters: CommissionFilter): CommissionConnection!
+}
+
+extend type Mutation {
+    updateStatus(id: ID!, status: CommissionStatus!): Commission!
+}
