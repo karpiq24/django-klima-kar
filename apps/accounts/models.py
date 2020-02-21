@@ -43,6 +43,7 @@ class UserSession(models.Model):
     class Meta:
         verbose_name = 'Sesja użytkownika'
         verbose_name_plural = 'Sesje użytkownika'
+        ordering = ['-created']
 
     def __str__(self):
         return '{}: {} ({})'.format(

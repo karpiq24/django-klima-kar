@@ -32,15 +32,10 @@ commission_type = EnumType(
 
 @query.field("commissions")
 def resolve_commissions(_, info, pagination=None, filters=None):
-    if not pagination:
-        pagination = {}
-    qs = Commission.objects.all().order_by('-pk')
-    if filters:
-        for key, value in filters.items():
-            if issubclass(type(value), enum.Enum):
-                filters[key] = value.value
-        qs = qs.filter(**filters)
-    return get_paginated_results(qs, **pagination)
+    return get_paginated_results(
+        Commission.objects.all(),
+        pagination,
+        filters)
 
 
 @mutation.field("updateStatus")

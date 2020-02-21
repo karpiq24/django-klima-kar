@@ -41,6 +41,7 @@ class Ware(models.Model):
     class Meta:
         verbose_name = 'Towar'
         verbose_name_plural = 'Towary'
+        ordering = ['index']
 
     @property
     def last_price(self):
@@ -83,6 +84,7 @@ class Supplier(models.Model):
     class Meta:
         verbose_name = 'Dostawca'
         verbose_name_plural = 'Dostawcy'
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -121,6 +123,7 @@ class Invoice(models.Model):
     class Meta:
         verbose_name = 'Faktura zakupowa'
         verbose_name_plural = 'Faktury zakupowe'
+        ordering = ['-date']
 
     def __str__(self):
         return '{}: {}'.format(str(self.supplier), self.number)
@@ -180,6 +183,7 @@ class InvoiceItem(models.Model):
     class Meta:
         verbose_name = 'Pozycja faktury zakupowej'
         verbose_name_plural = 'Pozycje faktur zakupowych'
+        ordering = ['invoice', 'pk']
 
     def __str__(self):
         return f'{self.invoice}: {self.ware.index}'
@@ -214,6 +218,7 @@ class WarePriceChange(models.Model):
     class Meta:
         verbose_name = 'Zmiana ceny towaru'
         verbose_name_plural = 'Zmiany cen towarów'
+        ordering = ['-created_date']
 
     def __str__(self):
         return "{} {} -> {}".format(self.ware, self.last_price, self.new_price)

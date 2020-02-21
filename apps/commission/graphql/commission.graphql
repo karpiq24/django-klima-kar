@@ -1,13 +1,16 @@
 type Commission {
     id: ID!
+    commission_type: String!
     vc_name: String!
     vehicle: Vehicle
     component: Component
     contractor: Contractor
-    status: String!
-    commission_type: String!
     sale_invoices: [SaleInvoice]!
     description: String
+    status: String!
+    start_date: String! 
+    end_date: String
+    upload: Boolean!
 }
 
 type CommissionConnection {

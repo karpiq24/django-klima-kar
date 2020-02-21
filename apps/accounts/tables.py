@@ -28,7 +28,7 @@ class UserSessionTable(tables.Table):
         model = UserSession
         attrs = {'class': 'table table-striped table-hover table-bordered'}
         fields = ['user', 'user_agent', 'client_ip', 'created', 'country', 'actions']
-        order_by = 'created'
+        order_by = '-created'
         empty_text = 'Brak sesji użytkowników'
 
 

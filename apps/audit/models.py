@@ -56,7 +56,7 @@ class AuditLog(models.Model):
     class Meta:
         verbose_name = 'Log'
         verbose_name_plural = 'Logi'
-        ordering = ('-action_time',)
+        ordering = ['-action_time']
 
     def __repr__(self):
         return str(self.action_time)

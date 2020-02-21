@@ -80,6 +80,7 @@ class Contractor(models.Model):
     class Meta:
         verbose_name = 'Kontrahent'
         verbose_name_plural = 'Kontrahenci'
+        ordering = ['name']
 
     @property
     def phone_1_formatted(self):
@@ -228,6 +229,7 @@ class SaleInvoice(models.Model):
     class Meta:
         verbose_name = 'Faktura sprzedażowa'
         verbose_name_plural = 'Faktury sprzedażowe'
+        ordering = ['-number']
 
     def __str__(self):
         return '{} {}'.format(self.get_invoice_type_display(), self.number)
@@ -320,6 +322,7 @@ class RefrigerantWeights(models.Model):
     class Meta:
         verbose_name = 'Waga czynników'
         verbose_name_plural = 'Wagi czynników'
+        ordering = ['sale_invoice']
 
     def __str__(self):
         return "Waga czynników dla faktury {}".format(self.sale_invoice)
@@ -364,6 +367,7 @@ class ServiceTemplate(models.Model):
     class Meta:
         verbose_name = 'Szablon usługi'
         verbose_name_plural = 'Szablony usług'
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -408,6 +412,7 @@ class SaleInvoiceItem(models.Model):
     class Meta:
         verbose_name = 'Pozycja faktury sprzedażowej'
         verbose_name_plural = 'Pozycje faktur sprzedażowych'
+        ordering = ['sale_invoice']
 
     def __str__(self):
         return "{} - {}".format(self.sale_invoice.number, self.name)
@@ -439,6 +444,7 @@ class CorrectiveSaleInvoice(SaleInvoice):
     class Meta:
         verbose_name = 'Korekta faktury sprzedażowej'
         verbose_name_plural = 'Korekty faktur sprzedażowych'
+        ordering = ['-number']
 
     def get_absolute_url(self):
         return reverse('invoicing:sale_invoice_detail', kwargs={

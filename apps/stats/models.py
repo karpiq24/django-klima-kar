@@ -13,6 +13,7 @@ class ReceiptPTU(models.Model):
     class Meta:
         verbose_name = 'Raport PTU'
         verbose_name_plural = 'Raporty PTU'
+        ordering = ['-date']
 
     def __str__(self):
         return "{} - {} zł".format(self.date, self.value)
