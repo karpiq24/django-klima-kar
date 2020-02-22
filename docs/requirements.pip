@@ -25,5 +25,5 @@ requests==2.23.0
 smsapi-client==2.4.1
 tablib[xlsx, xls, ods]==1.1.0
 WeasyPrint==51
-XlsxWriter==1.2.7
+XlsxWriter==1.2.8
 zeep==3.4.0
