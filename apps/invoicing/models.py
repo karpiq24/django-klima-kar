@@ -229,7 +229,7 @@ class SaleInvoice(models.Model):
     class Meta:
         verbose_name = 'Faktura sprzedażowa'
         verbose_name_plural = 'Faktury sprzedażowe'
-        ordering = ['-number']
+        ordering = ['-number_year', '-number_value']
 
     def __str__(self):
         return '{} {}'.format(self.get_invoice_type_display(), self.number)

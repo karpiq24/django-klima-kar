@@ -6,6 +6,17 @@ type Contractor {
     id: ID!
     name: String!
     nip: String
+    nip_prefix: String
+    address_1: String
+    address_2: String
+    city: String
+    postal_code: String
+    email: String
+    bdo_number: String
+    phone_1: String
+    phone_2: String
+    saleInvoices: [SaleInvoice]
+    commissions: [Commission]
 }
 
 type ContractorConnection {

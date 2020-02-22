@@ -1,7 +1,24 @@
+extend type Query {
+    components(pagination: PageInput, filters: ComponentFilter): ComponentConnection!
+}
+
+type ComponentConnection {
+    pageInfo: PageInfo!
+    objects: [Component]!
+}
+
 type Component {
     id: ID!
     component_type: String!
     model: String
     serial_number: String
     catalog_number: String
+    commissions: [Commission]
+}
+
+input ComponentFilter {
+    id: ID
+    model__icontains: String
+    serial_number__icontains: String
+    catalog_number__icontains: String
 }

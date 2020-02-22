@@ -1,0 +1,29 @@
+extend type Query {
+    purchaseInvoices(pagination: PageInput, filters: PurchaseInvoiceFilter): PurchaseInvoiceConnection!
+}
+
+type PurchaseInvoiceConnection {
+    pageInfo: PageInfo!
+    objects: [PurchaseInvoice]!
+}
+
+type PurchaseInvoice {
+    id: ID!
+    date: String!
+    number: String!
+    supplier: Supplier!
+    total_value: Float!
+    items: [PurchaseInvoicenItem]
+}
+
+input PurchaseInvoiceFilter {
+    id: ID
+    number: String
+    supplier__name__icontains: String
+}
+
+type PurchaseInvoicenItem {
+    ware: Ware
+    quantity: Int!
+    price: Float!
+}

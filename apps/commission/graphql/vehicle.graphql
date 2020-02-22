@@ -1,3 +1,12 @@
+extend type Query {
+    vehicles(pagination: PageInput, filters: VehicleFilter): VehicleConnection!
+}
+
+type VehicleConnection {
+    pageInfo: PageInfo!
+    objects: [Vehicle]!
+}
+
 type Vehicle {
     id: ID!
     registration_plate: String!
@@ -7,4 +16,10 @@ type Vehicle {
     engine_volume: Int
     engine_power: Int
     production_year: Int
+    commissions: [Commission]
+}
+
+input VehicleFilter {
+    id: ID
+    registration_plate__icontains: String
 }

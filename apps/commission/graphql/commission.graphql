@@ -1,16 +1,9 @@
-type Commission {
-    id: ID!
-    commission_type: String!
-    vc_name: String!
-    vehicle: Vehicle
-    component: Component
-    contractor: Contractor
-    sale_invoices: [SaleInvoice]!
-    description: String
-    status: String!
-    start_date: String! 
-    end_date: String
-    upload: Boolean!
+extend type Query {
+    commissions(pagination: PageInput, filters: CommissionFilter): CommissionConnection!
+}
+
+extend type Mutation {
+    updateStatus(id: ID!, status: CommissionStatus!): Commission!
 }
 
 type CommissionConnection {
@@ -18,13 +11,30 @@ type CommissionConnection {
     objects: [Commission]!
 }
 
+type Commission {
+    id: ID!
+    commission_type: String!
+    vc_name: String!
+    vehicle: Vehicle
+    component: Component
+    contractor: Contractor
+    saleInvoices: [SaleInvoice]!
+    description: String
+    status: String!
+    start_date: String!
+    end_date: String
+    upload: Boolean!
+    value: Float!
+    items: [CommissionItem]
+}
+
 input CommissionFilter {
-    status: CommissionStatus
     id: ID
+    status: CommissionStatus
     vc_name__icontains: String
 }
 
-enum CommissionStatus{
+enum CommissionStatus {
     OPEN
     READY
     DONE
@@ -32,15 +42,15 @@ enum CommissionStatus{
     ON_HOLD
 }
 
-enum CommissionType{
+enum CommissionType {
     VEHICLE
     COMPONENT
 }
 
-extend type Query {
-    commissions(pagination: PageInput, filters: CommissionFilter): CommissionConnection!
-}
-
-extend type Mutation {
-    updateStatus(id: ID!, status: CommissionStatus!): Commission!
+type CommissionItem {
+    name: String!
+    description: String
+    quantity: Int!
+    price: Float!
+    ware: Ware
 }

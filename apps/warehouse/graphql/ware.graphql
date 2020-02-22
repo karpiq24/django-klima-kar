@@ -1,0 +1,24 @@
+extend type Query {
+    wares(pagination: PageInput, filters: WareFilter): WareConnection!
+}
+
+type Ware {
+    id: ID!
+    index: String!
+    name: String!
+    description: String
+    stock: Int!
+    retail_price: Float
+    last_price: Float
+    purchaseInvoices: [PurchaseInvoice]
+}
+
+type WareConnection {
+    pageInfo: PageInfo!
+    objects: [Ware]!
+}
+
+input WareFilter {
+    id: ID
+    name__icontains: String
+}

@@ -1,0 +1,20 @@
+extend type Query {
+    suppliers(pagination: PageInput, filters: SupplierFilter): SupplierConnection!
+}
+
+type Supplier {
+    id: ID!
+    name: String!
+    all_invoices_value: Float!
+    purchaseInvoices: [PurchaseInvoice]
+}
+
+type SupplierConnection {
+    pageInfo: PageInfo!
+    objects: [Supplier]!
+}
+
+input SupplierFilter {
+    id: ID
+    name__icontains: String
+}
