@@ -4,7 +4,7 @@ django-filter==2.2.0
 django-tables2==2.2.1
 django-filter==2.2.0
 django-extra-views==0.13.0
-django-autocomplete-light==3.5.0
+django-autocomplete-light==3.5.1
 python-dateutil==2.8.1
 requests==2.23.0
 dropbox==9.4.0
