@@ -39,6 +39,7 @@ Django project used in my family buisness. It provides warehouse management, inv
     - login from remote location only for managers and admins
     - create audit logs for creating, modyfing and deleteing objects
     - Full text search using Solr and django-haystack
+    - GraphQL API
 
 ## Requirements
 1. [WeasyPrint dependecies](https://weasyprint.readthedocs.io/en/latest/install.html)
@@ -101,12 +102,6 @@ Django project used in my family buisness. It provides warehouse management, inv
 11. Migrate database, create superuser and run local server
     ```
     ./manage.py makemigrations
-    ./manage.py makemigrations commission
-    ./manage.py makemigrations invoicing
-    ./manage.py makemigrations settings
-    ./manage.py makemigrations stats
-    ./manage.py makemigrations warehouse
-    ./manage.py makemigrations KlimaKar
     ./manage.py migrate
     ./manage.py createsuperuser
     ./manage.py runserver
