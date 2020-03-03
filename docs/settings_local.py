@@ -42,12 +42,14 @@ ALLOWED_HOSTS = ['*']
 # The absolute path to the directory
 # where collectstatic will collect static files for deployment
 STATIC_ROOT = '/var/www/wsgi/static/KlimaKar'
+COMPRESS_ENABLED = True
 
 # SECRET_KEY should be unique, unpredictable value.
 # Example command to generate secret key in bash:
 # tr -dc A-Za-z0-9 < /dev/urandom | head -c 50 | xargs
 SECRET_KEY = ''
 SECRET_SALT = ''
+TWO_STEP_LOGIN_ENABLED = True
 
 AUTH_PASSWORD_VALIDATORS = []
 
@@ -103,3 +105,7 @@ SMSAPI_LOW_BALANCE_COUNT = 20
 
 # WD MyCloud Home
 WD_REDIRECT_URL = ''
+WD_DELETE_FILES = True
+
+# Haystack
+HAYSTACK_ENABLE_INDEXING = True

@@ -322,6 +322,10 @@ class MyCloudHome(SingletonModel):
         return r.json()
 
     def delete_file(self, file_id):
+        if not settings.WD_DELETE_FILES:
+            return False
+        if settings.DEBUG:
+            raise Exception("Cannot delete WD files when in DEBUG mode.")
         if file_id == self.APP_DIR_ID:
             return False
         url = os.path.join(self.DEVICE_INTERNAL_URL, 'sdk', 'v2', 'files', file_id)
