@@ -1,6 +1,9 @@
 from django import forms
+from dal import autocomplete
 
-from apps.settings.models import SiteSettings, MyCloudHome
+from KlimaKar.forms import ToggleInput
+from apps.settings.models import SiteSettings, MyCloudHome, InvoiceDownloadSettings
+from apps.warehouse.models import Supplier
 
 
 class EmailSettingsModelForm(forms.ModelForm):
@@ -37,6 +40,55 @@ class CommissionSettingsModelForm(forms.ModelForm):
             'COMMISSION_EMAIL_TITLE': 'Zawiera dostęp do kontekstu zlecenia np. {{ commission.number }}',
             'COMMISSION_EMAIL_BODY': 'Zawiera dostęp do kontekstu zlecenia np. {{ commission.contractor }}',
             'COMMISSION_SMS_BODY': 'Zawiera dostęp do kontekstu zlecenia np. {{ commission.vc_name }}',
+        }
+
+
+class InvoiceDownloadSettingsModelForm(forms.ModelForm):
+    INTER_CARS_SUPPLIER = forms.ModelChoiceField(
+        label='Dostawca Inter Cars',
+        queryset=Supplier.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='warehouse:supplier_autocomplete_create'),
+        required=False)
+    DEKO_SUPPLIER = forms.ModelChoiceField(
+        label='Dostawca Deko',
+        queryset=Supplier.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='warehouse:supplier_autocomplete_create'),
+        required=False)
+    SAUTO_SUPPLIER = forms.ModelChoiceField(
+        label='Dostawca S-Auto',
+        queryset=Supplier.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='warehouse:supplier_autocomplete_create'),
+        required=False)
+    GORDON_SUPPLIER = forms.ModelChoiceField(
+        label='Dostawca Gordon',
+        queryset=Supplier.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='warehouse:supplier_autocomplete_create'),
+        required=False)
+    ZATOKA_SUPPLIER = forms.ModelChoiceField(
+        label='Dostawca Zatoka',
+        queryset=Supplier.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url='warehouse:supplier_autocomplete_create'),
+        required=False)
+
+    class Meta:
+        model = InvoiceDownloadSettings
+        fields = '__all__'
+        widgets = {
+            'DOWNLOAD_INTER_CARS': ToggleInput,
+            'DOWNLOAD_DEKO': ToggleInput,
+            'DOWNLOAD_SAUTO': ToggleInput,
+            'DOWNLOAD_GORDON': ToggleInput,
+            'DOWNLOAD_ZATOKA': ToggleInput,
+            'INTER_CARS_TOKEN': forms.PasswordInput(render_value=True),
+            'DEKO_PASSWORD': forms.PasswordInput(render_value=True),
+            'SAUTO_PASSWORD': forms.PasswordInput(render_value=True),
+            'GORDON_PASSWORD': forms.PasswordInput(render_value=True),
+            'ZATOKA_PASSWORD': forms.PasswordInput(render_value=True),
         }
 
 

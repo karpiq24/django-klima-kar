@@ -1,0 +1,50 @@
+{% extends "settings/settings.html" %}
+{% block settings_form %}      
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="row">
+            {% for hidden_field in form.hidden_fields %}
+                {{ hidden_field }}
+            {% endfor %}
+            {% for key, errors in form.errors.as_data.items %}
+                {% for error in errors %}
+                    <input type="hidden" id="{{ error.code }}" value="{{ error.params }}">
+                {% endfor %}
+            {% endfor %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% for error in form.non_field_errors %}
+                    {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% for field in form.visible_fields %}
+                <div class=col-sm-6>
+                    {% include 'forms/field.html' with field=field %}
+                </div>
+                {% if forloop.counter|divisibleby:4 %}
+                    <div class=col-sm-12>
+                        <hr>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    
+        <div class="card-deck text-center">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Akcje</h5>
+                    <button class="btn btn-outline-primary btn-lg" type="submit"><i class="far fa-save"></i> Zapisz</button>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function () {
+        $('#nav-settings-invoice-download').addClass('active');
+    });
+</script>
+{% endblock %}

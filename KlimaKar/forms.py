@@ -29,3 +29,7 @@ class IssueForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.initial['label'] = self.BUG
+
+
+class ToggleInput(forms.CheckboxInput):
+    template_name = 'forms/toggle.html'

@@ -7,6 +7,8 @@ from django.conf import settings
 from KlimaKar.models import SingletonModel
 from KlimaKar.functions import encode_media_related
 
+from apps.warehouse.models import Supplier
+
 
 class SiteSettings(SingletonModel):
     EMAIL_HOST = models.CharField(
@@ -78,6 +80,116 @@ class SiteSettings(SingletonModel):
 
     def __str__(self):
         return 'Ustawienia strony'
+
+
+class InvoiceDownloadSettings(SingletonModel):
+    DOWNLOAD_INTER_CARS = models.BooleanField(
+        verbose_name='Pobieraj faktury Inter Cars',
+        default=True)
+    INTER_CARS_SUPPLIER = models.ForeignKey(
+        Supplier,
+        on_delete=models.SET_NULL,
+        verbose_name='Dostawca Inter Cars',
+        related_name='intercars',
+        blank=True,
+        null=True)
+    INTER_CARS_CLIENT_NUMBER = models.CharField(
+        verbose_name='Numer klienta Inter Cars',
+        max_length=255,
+        blank=True,
+        null=True)
+    INTER_CARS_TOKEN = models.CharField(
+        verbose_name='Token Inter Cars',
+        max_length=255,
+        blank=True,
+        null=True)
+    DOWNLOAD_DEKO = models.BooleanField(
+        verbose_name='Pobieraj faktury Deko',
+        default=True)
+    DEKO_SUPPLIER = models.ForeignKey(
+        Supplier,
+        on_delete=models.SET_NULL,
+        verbose_name='Dostawca Deko',
+        related_name='deko',
+        blank=True,
+        null=True)
+    DEKO_LOGIN = models.CharField(
+        verbose_name="Login Deko",
+        max_length=255,
+        blank=True,
+        null=True)
+    DEKO_PASSWORD = models.CharField(
+        verbose_name="Hasło Deko",
+        max_length=255,
+        blank=True,
+        null=True)
+    DOWNLOAD_SAUTO = models.BooleanField(
+        verbose_name='Pobieraj faktury S-Auto',
+        default=True)
+    SAUTO_SUPPLIER = models.ForeignKey(
+        Supplier,
+        on_delete=models.SET_NULL,
+        verbose_name='Dostawca S-auto',
+        related_name='sauto',
+        blank=True,
+        null=True)
+    SAUTO_LOGIN = models.CharField(
+        verbose_name="Login S-auto",
+        max_length=255,
+        blank=True,
+        null=True)
+    SAUTO_PASSWORD = models.CharField(
+        verbose_name="Hasło S-auto",
+        max_length=255,
+        blank=True,
+        null=True)
+    DOWNLOAD_GORDON = models.BooleanField(
+        verbose_name='Pobieraj faktury Gordon',
+        default=True)
+    GORDON_SUPPLIER = models.ForeignKey(
+        Supplier,
+        on_delete=models.SET_NULL,
+        verbose_name='Dostawca Gordon',
+        related_name='gordon',
+        blank=True,
+        null=True)
+    GORDON_LOGIN = models.CharField(
+        verbose_name="Login Gordon",
+        max_length=255,
+        blank=True,
+        null=True)
+    GORDON_PASSWORD = models.CharField(
+        verbose_name="Hasło Gordon",
+        max_length=255,
+        blank=True,
+        null=True)
+    DOWNLOAD_ZATOKA = models.BooleanField(
+        verbose_name='Pobieraj faktury Zatoka',
+        default=True)
+    ZATOKA_SUPPLIER = models.ForeignKey(
+        Supplier,
+        on_delete=models.SET_NULL,
+        verbose_name='Dostawca Zatoka',
+        related_name='zatoka',
+        blank=True,
+        null=True)
+    ZATOKA_LOGIN = models.CharField(
+        verbose_name="Login Zatoka",
+        max_length=255,
+        blank=True,
+        null=True)
+    ZATOKA_PASSWORD = models.CharField(
+        verbose_name="Hasło Zatoka",
+        max_length=255,
+        blank=True,
+        null=True)
+
+    class Meta:
+        verbose_name = 'Ustawienia pobierania faktur'
+        verbose_name_plural = 'Ustawienia pobierania faktur'
+
+    def __str__(self):
+        return 'Ustawienia pobierania faktur'
 
 
 class MyCloudHome(SingletonModel):

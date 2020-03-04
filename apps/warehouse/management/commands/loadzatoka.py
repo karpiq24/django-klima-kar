@@ -7,9 +7,9 @@ from dateutil import rrule, parser as date_parser
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 
-from KlimaKar.settings import ZATOKA_LOGIN, ZATOKA_PASSWORD, ZATOKA_PK
 from KlimaKar.email import mail_admins
-from apps.warehouse.models import Invoice, Ware, InvoiceItem, Supplier
+from apps.warehouse.models import Invoice, Ware, InvoiceItem
+from apps.settings.models import InvoiceDownloadSettings
 
 
 class Command(BaseCommand):
@@ -22,6 +22,7 @@ class Command(BaseCommand):
                             default=(datetime.date.today() + datetime.timedelta(1)).strftime('%Y-%m-%d'))
 
     def handle(self, *args, **options):
+        self.settings = InvoiceDownloadSettings.load()
         date_from = date_parser.parse(options['date_from']).date().replace(day=1)
         date_to = date_parser.parse(options['date_to']).date()
         month_dates = list(rrule.rrule(rrule.MONTHLY, bymonthday=1, dtstart=date_from, until=date_to))
@@ -42,8 +43,8 @@ class Command(BaseCommand):
             soup = BeautifulSoup(r.content, 'html5lib')
             data = {
                 '_csrf_token': soup.find('input', attrs={'name': '_csrf_token'})['value'],
-                '_username': ZATOKA_LOGIN,
-                '_password': ZATOKA_PASSWORD,
+                '_username': self.settings.ZATOKA_LOGIN,
+                '_password': self.settings.ZATOKA_PASSWORD,
             }
             url = 'https://auto-zatoka.webterminal.com.pl/login_check'
             r = s.post(url, data=data, headers=headers)
@@ -66,7 +67,8 @@ class Command(BaseCommand):
 
                 for invoice in r.json().get('data', []):
                     number = invoice['number']
-                    if number and not Invoice.objects.filter(number=number, supplier__pk=ZATOKA_PK).exists():
+                    if number and not Invoice.objects.filter(number=number,
+                                                             supplier=self.settings.ZATOKA_SUPPLIER).exists():
                         issue_date = invoice['created']
                         value_netto = invoice['netto']
                         invoice_id = invoice['id']
@@ -85,7 +87,7 @@ class Command(BaseCommand):
         invoice = Invoice.objects.create(
             number=number,
             date=issue_date,
-            supplier=Supplier.objects.get(pk=ZATOKA_PK)
+            supplier=self.settings.ZATOKA_SUPPLIER
         )
 
         new_wares = 0

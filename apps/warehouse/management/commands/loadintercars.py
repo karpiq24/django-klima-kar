@@ -6,8 +6,9 @@ import xml.dom.minidom
 from django.core.management.base import BaseCommand
 from django.urls import reverse
 
-from apps.warehouse.models import Invoice, InvoiceItem, Supplier, Ware
-from KlimaKar.settings import IC_CLIENT_NUMBER, IC_TOKEN, IC_API_URL, IC_PK, ABSOLUTE_URL
+from apps.warehouse.models import Invoice, InvoiceItem, Ware
+from apps.settings.models import InvoiceDownloadSettings
+from KlimaKar.settings import IC_API_URL, ABSOLUTE_URL
 from KlimaKar.templatetags.slugify import slugify
 from KlimaKar.email import mail_managers, mail_admins
 
@@ -22,19 +23,13 @@ class Command(BaseCommand):
                             default=(datetime.date.today() + datetime.timedelta(1)).strftime('%Y-%m-%d'))
 
     def handle(self, *args, **options):
+        self.settings = InvoiceDownloadSettings.load()
         try:
             date_from = dateutil.parser.parse(options['date_from'])
             date_to = dateutil.parser.parse(options['date_to'])
             print("Loading invoices from date: {} to: {}".format(options['date_from'], options['date_to']))
         except ValueError:
             print("Invalid date format.\n")
-            return
-
-        if not IC_CLIENT_NUMBER:
-            print("Inter Cars client number is not specified.\n")
-            return
-        if not IC_TOKEN:
-            print("Inter Cars client token is not specified.\n")
             return
 
         current_date = date_from
@@ -56,7 +51,7 @@ class Command(BaseCommand):
             'from': current_date.strftime('%Y%m%d'),
             'to': end_date.strftime('%Y%m%d')
         }
-        headers = {'kh_kod': IC_CLIENT_NUMBER, 'token': IC_TOKEN}
+        headers = {'kh_kod': self.settings.INTER_CARS_CLIENT_NUMBER, 'token': self.settings.INTER_CARS_TOKEN}
         r = requests.get(url, params=params, headers=headers)
         if r.status_code != 200:
             report_admins('Invoice list download failed.\n{}'.format(r.text))
@@ -72,14 +67,14 @@ class Command(BaseCommand):
             invoice_total = float(getData(invoice, 'war_n'))
             invoice_date = dateutil.parser.parse(getData(invoice, 'dat_w'))
             try:
-                Invoice.objects.get(number=invoice_number, supplier__pk=IC_PK)
+                Invoice.objects.get(number=invoice_number, supplier=self.settings.INTER_CARS_SUPPLIER)
                 continue
             except Invoice.DoesNotExist:
                 new_invoices += 1
                 invoice_obj = Invoice.objects.create(
                     date=invoice_date.date(),
                     number=invoice_number,
-                    supplier=Supplier.objects.get(pk=IC_PK)
+                    supplier=self.settings.INTER_CARS_SUPPLIER
                 )
                 new_wares += self.get_invoice_detail(invoice_obj, invoice_id)
                 self.check_total_price(invoice_obj, invoice_total)
@@ -89,7 +84,7 @@ class Command(BaseCommand):
     def get_invoice_detail(self, invoice_obj, invoice_id):
         url = IC_API_URL + 'GetInvoice'
         params = {'id': invoice_id}
-        headers = {'kh_kod': IC_CLIENT_NUMBER, 'token': IC_TOKEN}
+        headers = {'kh_kod': self.settings.INTER_CARS_CLIENT_NUMBER, 'token': self.settings.INTER_CARS_TOKEN}
         r = requests.get(url, params=params, headers=headers)
         if r.status_code != 200:
             report_admins('Invoice {} details download failed.\n{}'.format(invoice_obj.number, r.text))

@@ -1,15 +1,21 @@
 import datetime
-import traceback
+import sys
+import logging
 
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
 
-from KlimaKar.email import mail_admins
+from apps.settings.models import InvoiceDownloadSettings
 
 
 class Command(BaseCommand):
     help = 'Loads invoices from various suppliers'
-    LOAD_COMMANDS = ['loadintercars', 'loaddeko', 'loadgordon', 'loadsauto', 'loadzatoka']
+    LOAD_COMMANDS = [
+        ('DOWNLOAD_INTER_CARS', 'loadintercars'),
+        ('DOWNLOAD_DEKO', 'loaddeko'),
+        ('DOWNLOAD_GORDON', 'loadgordon'),
+        ('DOWNLOAD_SAUTO', 'loadsauto'),
+        ('DOWNLOAD_ZATOKA', 'loadzatoka')]
 
     def add_arguments(self, parser):
         parser.add_argument('date_from', nargs='?',
@@ -18,12 +24,13 @@ class Command(BaseCommand):
                             default=(datetime.date.today() + datetime.timedelta(1)).strftime('%Y-%m-%d'))
 
     def handle(self, *args, **options):
-        for command in self.LOAD_COMMANDS:
-            print('Calling {}'.format(command))
-            try:
-                call_command(command, **options)
-            except Exception:
-                self.report_admins(command, traceback.format_exc())
-
-    def report_admins(self, command, message):
-        mail_admins('{} invoice download failed!'.format(command), message)
+        settings = InvoiceDownloadSettings.load()
+        for attr, command in self.LOAD_COMMANDS:
+            if getattr(settings, attr):
+                try:
+                    print('Calling {}'.format(command))
+                    call_command(command, **options)
+                except Exception:
+                    logging.getLogger('commands').error(
+                        'Admin Command Error: {}'.format(' '.join(sys.argv)),
+                        exc_info=sys.exc_info())

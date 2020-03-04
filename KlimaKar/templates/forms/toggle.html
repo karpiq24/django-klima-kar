@@ -1,0 +1,4 @@
+<label class="toggle-switch">
+    <input type="checkbox" name="{{ widget.name }}"{% if widget.value != None %} value="{{ widget.value|stringformat:'s' }}"{% endif %}{% include "django/forms/widgets/attrs.html" %}>
+    <span class="slider"></span>
+</label>

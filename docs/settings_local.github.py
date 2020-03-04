@@ -52,29 +52,6 @@ AUTH_PASSWORD_VALIDATORS = []
 
 # Inter Cars API
 IC_API_URL = 'https://katalog.intercars.com.pl/api/v2/External/'
-IC_TOKEN = ''
-IC_CLIENT_NUMBER = ''
-IC_PK = None
-
-# DEKO
-DEKO_LOGIN = ''
-DEKO_PASSWORD = ''
-DEKO_PK = None
-
-# S-AUTO
-SAUTO_LOGIN = ''
-SAUTO_PASSWORD = ''
-SAUTO_PK = None
-
-# GORDON
-GORDON_LOGIN = ''
-GORDON_PASSWORD = ''
-GORDON_PK = None
-
-# Auto-Zatoka
-ZATOKA_LOGIN = ''
-ZATOKA_PASSWORD = ''
-ZATOKA_PK = None
 
 # Dropbox
 DROPBOX_TOKEN = ''

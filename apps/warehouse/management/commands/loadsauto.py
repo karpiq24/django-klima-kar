@@ -8,9 +8,9 @@ from xml.dom.minidom import parseString
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 
-from KlimaKar.settings import SAUTO_LOGIN, SAUTO_PASSWORD, SAUTO_PK
 from KlimaKar.email import mail_admins
-from apps.warehouse.models import Invoice, Ware, InvoiceItem, Supplier
+from apps.warehouse.models import Invoice, Ware, InvoiceItem
+from apps.settings.models import InvoiceDownloadSettings
 
 
 class Command(BaseCommand):
@@ -23,6 +23,7 @@ class Command(BaseCommand):
                             default=(datetime.date.today() + datetime.timedelta(1)).strftime('%Y-%m-%d'))
 
     def handle(self, *args, **options):
+        self.settings = InvoiceDownloadSettings.load()
         with requests.Session() as s:
             url = 'https://s-auto.profiauto.net/Account/Login'
             headers = {
@@ -30,8 +31,8 @@ class Command(BaseCommand):
                                ' Chrome/75.0.3770.80 Safari/537.36')
             }
             data = {
-                "Login": SAUTO_LOGIN,
-                'Haslo': SAUTO_PASSWORD
+                "Login": self.settings.SAUTO_LOGIN,
+                'Haslo': self.settings.SAUTO_PASSWORD
             }
             r = s.post(url, headers=headers, data=data)
             if r.status_code != 200:
@@ -74,7 +75,8 @@ class Command(BaseCommand):
             if soup.find('tbody'):
                 for row in soup.find('tbody').find_all('tr'):
                     number = row.find_all('td')[1].find('a').text.strip()
-                    if number and not Invoice.objects.filter(number=number, supplier__pk=SAUTO_PK).exists():
+                    if number and not Invoice.objects.filter(number=number,
+                                                             supplier=self.settings.SAUTO_SUPPLIER).exists():
                         invoice_id = row.find('a')['href'].split('/')[-1]
                         url = 'https://s-auto.profiauto.net/Klient/faktury/EksportXML/{}'.format(invoice_id)
                         r = s.get(url, headers=headers)
@@ -93,7 +95,7 @@ class Command(BaseCommand):
         invoice = Invoice.objects.create(
             number=number,
             date=issue_date,
-            supplier=Supplier.objects.get(pk=SAUTO_PK))
+            supplier=self.settings.SAUTO_SUPPLIER)
 
         new_wares = 0
         for item in xml_doc.getElementsByTagName('poz'):

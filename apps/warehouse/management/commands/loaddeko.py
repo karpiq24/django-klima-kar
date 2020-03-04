@@ -8,9 +8,9 @@ from xml.dom.minidom import parseString
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 
-from KlimaKar.settings import DEKO_LOGIN, DEKO_PASSWORD, DEKO_PK
 from KlimaKar.email import mail_admins
-from apps.warehouse.models import Invoice, Ware, InvoiceItem, Supplier
+from apps.warehouse.models import Invoice, Ware, InvoiceItem
+from apps.settings.models import InvoiceDownloadSettings
 
 
 class Command(BaseCommand):
@@ -23,6 +23,7 @@ class Command(BaseCommand):
                             default=(datetime.date.today() + datetime.timedelta(1)).strftime('%Y-%m-%d'))
 
     def handle(self, *args, **options):
+        self.settings = InvoiceDownloadSettings.load()
         with requests.Session() as s:
             url = 'http://sklep.dekoautoparts.pl/pl'
             headers = {
@@ -46,8 +47,8 @@ class Command(BaseCommand):
                 '__VIEWSTATE': __VIEWSTATE,
                 '__VIEWSTATEGENERATOR': __VIEWSTATEGENERATOR,
                 '__EVENTVALIDATION': __EVENTVALIDATION,
-                'ctl00$ctl00$BodyContentPlaceHolder$LoginForm$Username': DEKO_LOGIN,
-                'ctl00$ctl00$BodyContentPlaceHolder$LoginForm$Password': DEKO_PASSWORD,
+                'ctl00$ctl00$BodyContentPlaceHolder$LoginForm$Username': self.settings.DEKO_LOGIN,
+                'ctl00$ctl00$BodyContentPlaceHolder$LoginForm$Password': self.settings.DEKO_PASSWORD,
             }
             r = s.post(url, data=data, headers=headers)
             if r.status_code != 200:
@@ -75,7 +76,7 @@ class Command(BaseCommand):
             for row in soup.find_all('tr')[1:-2]:
                 number = row.find('td').text.strip()
                 invoice_id = row.find('a')['href'].strip().split('/')[-1]
-                if number and not Invoice.objects.filter(number=number, supplier__pk=DEKO_PK).exists():
+                if number and not Invoice.objects.filter(number=number, supplier=self.settings.DEKO_SUPPLIER).exists():
                     url = 'http://sklep.dekoautoparts.pl/Download.ashx?type=4&id={}&typedoc=1'.format(invoice_id)
                     r = s.get(url, headers=headers)
                     result = self.parse_invoice(r.text)
@@ -92,7 +93,7 @@ class Command(BaseCommand):
         invoice = Invoice.objects.create(
             number=number,
             date=issue_date,
-            supplier=Supplier.objects.get(pk=DEKO_PK))
+            supplier=self.settings.DEKO_SUPPLIER)
 
         new_wares = 0
         for item in xml_invoice.getElementsByTagName('Item'):

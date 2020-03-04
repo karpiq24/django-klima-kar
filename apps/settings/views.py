@@ -4,9 +4,9 @@ from django.contrib import messages
 from django.http import JsonResponse
 
 from KlimaKar.mixins import GroupAccessControlMixin, SuperUserOnlyMixin
-from apps.settings.models import SiteSettings, MyCloudHome
+from apps.settings.models import SiteSettings, MyCloudHome, InvoiceDownloadSettings
 from apps.settings.forms import EmailSettingsModelForm, InvoicingSettingsModelForm,\
-    CommissionSettingsModelForm, MyCloudHomeModelForm
+    CommissionSettingsModelForm, MyCloudHomeModelForm, InvoiceDownloadSettingsModelForm
 
 
 class EmailSettingsUpdateView(GroupAccessControlMixin, UpdateView):
@@ -46,6 +46,19 @@ class CommissionSettingsUpdateView(GroupAccessControlMixin, UpdateView):
 
     def get_success_url(self, **kwargs):
         return reverse("settings:commission")
+
+
+class InvoiceDownloadSettingsUpdateView(GroupAccessControlMixin, UpdateView):
+    allowed_groups = ['boss']
+    model = InvoiceDownloadSettings
+    form_class = InvoiceDownloadSettingsModelForm
+    template_name = 'settings/invoice_download.html'
+
+    def get_object(self, queryset=None):
+        return InvoiceDownloadSettings.load()
+
+    def get_success_url(self, **kwargs):
+        return reverse("settings:invoice_download")
 
 
 class MyCloudHomeUpdateView(SuperUserOnlyMixin, UpdateView):

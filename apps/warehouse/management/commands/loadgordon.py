@@ -6,9 +6,9 @@ from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 
-from KlimaKar.settings import GORDON_LOGIN, GORDON_PASSWORD, GORDON_PK
 from KlimaKar.email import mail_admins
-from apps.warehouse.models import Invoice, Ware, InvoiceItem, Supplier
+from apps.warehouse.models import Invoice, Ware, InvoiceItem
+from apps.settings.models import InvoiceDownloadSettings
 
 
 class Command(BaseCommand):
@@ -21,6 +21,7 @@ class Command(BaseCommand):
                             default=(datetime.date.today() + datetime.timedelta(1)).strftime('%Y-%m-%d'))
 
     def handle(self, *args, **options):
+        self.settings = InvoiceDownloadSettings.load()
         with requests.Session() as s:
             url = 'http://katalog.gordon.com.pl/loginform-gordon.aspx'
             headers = {
@@ -44,8 +45,8 @@ class Command(BaseCommand):
                 '__VIEWSTATE': __VIEWSTATE,
                 '__VIEWSTATEGENERATOR': __VIEWSTATEGENERATOR,
                 '__EVENTVALIDATION': __EVENTVALIDATION,
-                'tbLoginName': GORDON_LOGIN,
-                'tbPassword': GORDON_PASSWORD,
+                'tbLoginName': self.settings.GORDON_LOGIN,
+                'tbPassword': self.settings.GORDON_PASSWORD,
                 'ctl07': 'ctl08|btnLogin',
                 '__ASYNCPOST': 'true',
                 'btnLogin': 'Zaloguj się'
@@ -79,7 +80,8 @@ class Command(BaseCommand):
                 value_netto = float(
                     row.find('td', {'class': 'doc-item-net-col'}).text.strip().split(' ')[0].replace(',', '.'))
                 invoice_id = row['data-id'].strip()
-                if number and not Invoice.objects.filter(number=number, supplier__pk=GORDON_PK).exists():
+                if number and not Invoice.objects.filter(number=number,
+                                                         supplier=self.settings.GORDON_SUPPLIER).exists():
                     url = 'http://katalog.gordon.com.pl/customers/documentitems.aspx?id={}'.format(invoice_id)
                     r = s.get(url, headers=headers)
                     result = self.parse_invoice(r.content, number, date, value_netto)
@@ -94,7 +96,7 @@ class Command(BaseCommand):
         invoice = Invoice.objects.create(
             number=number,
             date=issue_date,
-            supplier=Supplier.objects.get(pk=GORDON_PK)
+            supplier=self.settings.DEKO_SUPPLIER
         )
 
         new_wares = 0
