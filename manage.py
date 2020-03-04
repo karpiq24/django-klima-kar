@@ -2,6 +2,7 @@
 # flake8: noqa
 import os
 import sys
+import logging
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "KlimaKar.settings")
@@ -20,4 +21,12 @@ if __name__ == "__main__":
                 "forget to activate a virtual environment?"
             )
         raise
-    execute_from_command_line(sys.argv)
+
+    logger = logging.getLogger('commands')
+    try:
+        execute_from_command_line(sys.argv)
+    except Exception as e:
+        logger.error(
+            'Admin Command Error: {}'.format(' '.join(sys.argv)),
+            exc_info=sys.exc_info())
+        raise e

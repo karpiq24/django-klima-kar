@@ -189,6 +189,11 @@ DEFAULT_LOGGING['loggers']['rq.worker'] = {
     'handlers': ['console', 'mail_admins'],
     'level': 'INFO'
 }
+DEFAULT_LOGGING['loggers']['commands'] = {
+    'handlers': ['mail_admins'],
+    'level': 'ERROR',
+    'propagate': True,
+}
 
 # GEOIP2
 GEOIP_PATH = 'data/'
