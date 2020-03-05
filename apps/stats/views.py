@@ -162,6 +162,13 @@ class SaleInvoicesHistory(GroupAccessControlMixin, BigChartHistoryMixin):
             self.price_field = '{}netto'.format(self.price_field)
         return super()._annotate(qs)
 
+    def _filter_objects(self, **kwargs):
+        self.objects = self.objects.exclude(
+            invoice_type__in=[
+                SaleInvoice.TYPE_PRO_FORMA,
+                SaleInvoice.TYPE_CORRECTIVE,
+                SaleInvoice.TYPE_WDT_PRO_FORMA])
+
 
 class CommissionHistory(GroupAccessControlMixin, BigChartHistoryMixin):
     allowed_groups = ['boss']
@@ -580,7 +587,11 @@ class GetSummary(GroupAccessControlMixin, View):
         invoices = SaleInvoice.objects.filter(
             issue_date__gte=date_from,
             issue_date__lte=date_to).exclude(
-                contractor__nip=None)
+                contractor__nip=None,).exclude(
+                invoice_type__in=[
+                    SaleInvoice.TYPE_PRO_FORMA,
+                    SaleInvoice.TYPE_CORRECTIVE,
+                    SaleInvoice.TYPE_WDT_PRO_FORMA])
         return invoices.total(price_type='brutto') - invoices.total(price_type='netto')
 
     def _get_purchase(self, date_from, date_to):
