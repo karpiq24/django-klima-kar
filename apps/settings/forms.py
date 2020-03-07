@@ -56,8 +56,8 @@ class InvoiceDownloadSettingsModelForm(forms.ModelForm):
         widget=autocomplete.ModelSelect2(
             url='warehouse:supplier_autocomplete_create'),
         required=False)
-    SAUTO_SUPPLIER = forms.ModelChoiceField(
-        label='Dostawca S-Auto',
+    PROFIAUTO_SUPPLIER = forms.ModelChoiceField(
+        label='Dostawca ProfiAuto',
         queryset=Supplier.objects.all(),
         widget=autocomplete.ModelSelect2(
             url='warehouse:supplier_autocomplete_create'),
@@ -81,12 +81,12 @@ class InvoiceDownloadSettingsModelForm(forms.ModelForm):
         widgets = {
             'DOWNLOAD_INTER_CARS': ToggleInput,
             'DOWNLOAD_DEKO': ToggleInput,
-            'DOWNLOAD_SAUTO': ToggleInput,
+            'DOWNLOAD_PROFIAUTO': ToggleInput,
             'DOWNLOAD_GORDON': ToggleInput,
             'DOWNLOAD_ZATOKA': ToggleInput,
             'INTER_CARS_TOKEN': forms.PasswordInput(render_value=True),
             'DEKO_PASSWORD': forms.PasswordInput(render_value=True),
-            'SAUTO_PASSWORD': forms.PasswordInput(render_value=True),
+            'PROFIAUTO_PASSWORD': forms.PasswordInput(render_value=True),
             'GORDON_PASSWORD': forms.PasswordInput(render_value=True),
             'ZATOKA_PASSWORD': forms.PasswordInput(render_value=True),
         }

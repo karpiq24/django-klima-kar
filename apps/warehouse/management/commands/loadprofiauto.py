@@ -14,7 +14,7 @@ from apps.settings.models import InvoiceDownloadSettings
 
 
 class Command(BaseCommand):
-    help = 'Loads invoices from S-AUTO'
+    help = 'Loads invoices from ProfiAuto'
 
     def add_arguments(self, parser):
         parser.add_argument('date_from', nargs='?',
@@ -25,14 +25,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.settings = InvoiceDownloadSettings.load()
         with requests.Session() as s:
-            url = 'https://s-auto.profiauto.net/Account/Login'
+            url = 'https://matusiewicz.profiauto.net/Account/Login'
             headers = {
                 'User-Agent': ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)'
                                ' Chrome/75.0.3770.80 Safari/537.36')
             }
             data = {
-                "Login": self.settings.SAUTO_LOGIN,
-                'Haslo': self.settings.SAUTO_PASSWORD
+                "Login": self.settings.PROFIAUTO_LOGIN,
+                'Haslo': self.settings.PROFIAUTO_PASSWORD
             }
             r = s.post(url, headers=headers, data=data)
             if r.status_code != 200:
@@ -42,7 +42,7 @@ class Command(BaseCommand):
                 return
 
             soup = BeautifulSoup(r.content, 'html5lib')
-            url = 'https://s-auto.profiauto.net/'
+            url = 'https://matusiewicz.profiauto.net/'
             data = {
                 'code': soup.find('input', attrs={'name': 'code'})['value'],
                 'token_type': soup.find('input', attrs={'name': 'token_type'})['value'],
@@ -53,7 +53,7 @@ class Command(BaseCommand):
             }
             r = s.post(url, headers=headers, data=data)
 
-            url = 'https://s-auto.profiauto.net/klient/faktury'
+            url = 'https://matusiewicz.profiauto.net/klient/faktury'
             data = {
                 'status': '---',
                 'from':	options['date_from'],
@@ -76,9 +76,9 @@ class Command(BaseCommand):
                 for row in soup.find('tbody').find_all('tr'):
                     number = row.find_all('td')[1].find('a').text.strip()
                     if number and not Invoice.objects.filter(number=number,
-                                                             supplier=self.settings.SAUTO_SUPPLIER).exists():
+                                                             supplier=self.settings.PROFIAUTO_SUPPLIER).exists():
                         invoice_id = row.find('a')['href'].split('/')[-1]
-                        url = 'https://s-auto.profiauto.net/Klient/faktury/EksportXML/{}'.format(invoice_id)
+                        url = 'https://matusiewicz.profiauto.net/Klient/faktury/EksportXML/{}'.format(invoice_id)
                         r = s.get(url, headers=headers)
                         result = self.parse_invoice(r.text)
                         new_invoices = new_invoices + result[0]
@@ -95,7 +95,7 @@ class Command(BaseCommand):
         invoice = Invoice.objects.create(
             number=number,
             date=issue_date,
-            supplier=self.settings.SAUTO_SUPPLIER)
+            supplier=self.settings.PROFIAUTO_SUPPLIER)
 
         new_wares = 0
         for item in xml_doc.getElementsByTagName('poz'):
@@ -127,7 +127,7 @@ class Command(BaseCommand):
         return 1, new_wares
 
     def report_admins(self, message):
-        mail_admins('S-AUTO invoice download failed!', message)
+        mail_admins('ProfiAuto invoice download failed!', message)
 
     def getData(self, node, tag):
         if node.getElementsByTagName(tag)[0].childNodes != []:

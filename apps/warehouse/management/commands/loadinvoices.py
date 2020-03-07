@@ -14,7 +14,7 @@ class Command(BaseCommand):
         ('DOWNLOAD_INTER_CARS', 'loadintercars'),
         ('DOWNLOAD_DEKO', 'loaddeko'),
         ('DOWNLOAD_GORDON', 'loadgordon'),
-        ('DOWNLOAD_SAUTO', 'loadsauto'),
+        ('DOWNLOAD_PROFIAUTO', 'loadprofiauto'),
         ('DOWNLOAD_ZATOKA', 'loadzatoka')]
 
     def add_arguments(self, parser):

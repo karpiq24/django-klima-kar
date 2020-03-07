@@ -85,7 +85,7 @@ class SiteSettings(SingletonModel):
 class InvoiceDownloadSettings(SingletonModel):
     DOWNLOAD_INTER_CARS = models.BooleanField(
         verbose_name='Pobieraj faktury Inter Cars',
-        default=True)
+        default=False)
     INTER_CARS_SUPPLIER = models.ForeignKey(
         Supplier,
         on_delete=models.SET_NULL,
@@ -105,7 +105,7 @@ class InvoiceDownloadSettings(SingletonModel):
         null=True)
     DOWNLOAD_DEKO = models.BooleanField(
         verbose_name='Pobieraj faktury Deko',
-        default=True)
+        default=False)
     DEKO_SUPPLIER = models.ForeignKey(
         Supplier,
         on_delete=models.SET_NULL,
@@ -123,29 +123,29 @@ class InvoiceDownloadSettings(SingletonModel):
         max_length=255,
         blank=True,
         null=True)
-    DOWNLOAD_SAUTO = models.BooleanField(
-        verbose_name='Pobieraj faktury S-Auto',
-        default=True)
-    SAUTO_SUPPLIER = models.ForeignKey(
+    DOWNLOAD_PROFIAUTO = models.BooleanField(
+        verbose_name='Pobieraj faktury ProfiAuto',
+        default=False)
+    PROFIAUTO_SUPPLIER = models.ForeignKey(
         Supplier,
         on_delete=models.SET_NULL,
-        verbose_name='Dostawca S-auto',
-        related_name='sauto',
+        verbose_name='Dostawca ProfiAuto',
+        related_name='profiauto',
         blank=True,
         null=True)
-    SAUTO_LOGIN = models.CharField(
-        verbose_name="Login S-auto",
+    PROFIAUTO_LOGIN = models.CharField(
+        verbose_name="Login ProfiAuto",
         max_length=255,
         blank=True,
         null=True)
-    SAUTO_PASSWORD = models.CharField(
-        verbose_name="Hasło S-auto",
+    PROFIAUTO_PASSWORD = models.CharField(
+        verbose_name="Hasło ProfiAuto",
         max_length=255,
         blank=True,
         null=True)
     DOWNLOAD_GORDON = models.BooleanField(
         verbose_name='Pobieraj faktury Gordon',
-        default=True)
+        default=False)
     GORDON_SUPPLIER = models.ForeignKey(
         Supplier,
         on_delete=models.SET_NULL,
@@ -165,7 +165,7 @@ class InvoiceDownloadSettings(SingletonModel):
         null=True)
     DOWNLOAD_ZATOKA = models.BooleanField(
         verbose_name='Pobieraj faktury Zatoka',
-        default=True)
+        default=False)
     ZATOKA_SUPPLIER = models.ForeignKey(
         Supplier,
         on_delete=models.SET_NULL,
