@@ -307,7 +307,10 @@ class SendEmailView(View):
 class ExportRefrigerantWeights(View):
     def get(self, request, *args, **kwargs):
         key = "{}_params".format(SaleInvoice.__name__)
-        queryset = SaleInvoiceFilter(request.session[key], queryset=SaleInvoice.objects.all()).qs
+        filters = request.session[key]
+        if filters.get('invoice_type') == '__ALL__':
+            filters.pop('invoice_type')
+        queryset = SaleInvoiceFilter(filters, queryset=SaleInvoice.objects.all()).qs
         output = generate_refrigerant_weights_report(queryset)
         response = HttpResponse(output.read(),
                                 content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
