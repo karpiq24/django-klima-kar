@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'apps.stats',
     'apps.accounts',
     'apps.audit.apps.AuditConfig',
-    'apps.search.apps.SearchConfig'
+    'apps.search.apps.SearchConfig',
+    'tiles.apps.TilesConfig'
 ]
 
 MIDDLEWARE = [

@@ -3,6 +3,10 @@ git rebase origin/master
 pip install -r docs/requirements.pip
 ./manage.py makemigrations
 ./manage.py migrate
+cd tiles/
+npm install
+npm run build
+cd ..
 ./manage.py collectstatic --noinput
 sudo crontab < docs/crontab.txt
 sudo service gunicorn restart

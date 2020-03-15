@@ -1,0 +1,106 @@
+.card-container {
+    display: flex;
+    margin-left: -1rem;
+    width: auto;
+}
+.card-container-column {
+    padding-left: 1rem;
+    background-clip: padding-box;
+}
+
+.card-container-column > div {
+    margin-bottom: 1rem;
+}
+
+.commission-buttons {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+}
+
+.commission-buttons button:not(:last-child) {
+    margin-right: 1rem;
+}
+
+.btn-new-commission {
+    margin-left: auto;
+}
+
+.btn-footer {
+    width: 50%;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-footer:first-child:not(:last-child) {
+    margin-right: 1rem;
+}
+
+.btn-footer svg {
+    margin-right: 0.5rem;
+}
+
+.card-footer {
+    display: flex;
+}
+
+.commission-dates {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.commission-dates header {
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+@media screen and (max-width: 1440px) {
+    .pretty-select.btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    .pretty-select.btn-group > .btn {
+        width: 100%;
+    }
+    .pretty-select.btn-group > .pretty-select.btn-group:not(:first-child),
+    .pretty-select.btn-group > .btn:not(:first-child) {
+        margin-top: -1px;
+    }
+    .pretty-select.btn-group > .btn:not(:first-child) {
+        margin-left: 0;
+    }
+    .pretty-select.btn-group > .btn:not(:last-child):not(.dropdown-toggle) {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: 0.25rem;
+        border-top-right-radius: 0.25rem;
+    }
+    .pretty-select.btn-group > .btn:not(:first-child):not(:last-child) {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+    .pretty-select.btn-group > .btn:not(:first-child) {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        border-bottom-left-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
+    }
+    .pretty-select.form-control {
+        height: auto;
+    }
+
+    .commission-buttons {
+        justify-content: center;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .btn-footer span {
+        display: none;
+    }
+}

@@ -78,3 +78,8 @@ def resolve_items(obj, info):
 @component.field("commissions")
 def resolve_vc_commissions(obj, info):
     return obj.commission_set.all()
+
+
+@component.field("get_component_type_display")
+def resolve_get_component_type_display(obj, info):
+    return obj.get_component_type_display()

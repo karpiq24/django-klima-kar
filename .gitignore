@@ -112,3 +112,5 @@ KlimaKar/settings_local.py
 scripts/aztec
 temp/
 .idea/
+tiles/node_modules/
+tiles/static/tiles/main.js

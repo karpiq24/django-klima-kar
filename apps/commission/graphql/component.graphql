@@ -10,6 +10,7 @@ type ComponentConnection {
 type Component {
     id: ID!
     component_type: String!
+    get_component_type_display: String!
     model: String
     serial_number: String
     catalog_number: String

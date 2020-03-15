@@ -32,6 +32,7 @@ input CommissionFilter {
     id: ID
     status: CommissionStatus
     vc_name__icontains: String
+    end_date: String
 }
 
 enum CommissionStatus {

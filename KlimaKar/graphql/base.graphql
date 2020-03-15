@@ -11,6 +11,7 @@ type PageInfo {
     hasPreviousPage: Boolean!
     count: Int!
     numPages: Int!
+    pageNumber: Int!
 }
 
 input PageInput {

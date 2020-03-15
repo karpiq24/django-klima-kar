@@ -21,7 +21,8 @@ def get_paginated_results(qs, pagination, filters):
             'hasNextPage': page_obj.has_next(),
             'hasPreviousPage': page_obj.has_previous(),
             'count': paginator.count,
-            'numPages': paginator.num_pages
+            'numPages': paginator.num_pages,
+            'pageNumber': page
         },
         'objects': page_obj
     }

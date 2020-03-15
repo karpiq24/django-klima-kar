@@ -53,12 +53,14 @@ class Vehicle(models.Model):
     class Meta:
         verbose_name = 'Pojazd'
         verbose_name_plural = 'Pojazdy'
+        ordering = ['brand']
 
     def __str__(self):
         return '{}{}{}{}'.format(
             self.brand,
             ' {}'.format(self.model) if self.model else '',
-            ' {}'.format(self.registration_plate) if self.registration_plate else '',
+            ' {}'.format(
+                self.registration_plate) if self.registration_plate else '',
             ' ({})'.format(self.production_year) if self.production_year else '')
 
     def get_absolute_url(self):
@@ -108,6 +110,7 @@ class Component(models.Model):
     class Meta:
         verbose_name = 'Podzespół'
         verbose_name_plural = 'Podzespoły'
+        ordering = ['component_type']
 
     def __str__(self):
         return '{}{}{}{}'.format(
@@ -212,9 +215,11 @@ class Commission(models.Model):
     class Meta:
         verbose_name = 'Zlecenie'
         verbose_name_plural = 'Zlecenia'
+        ordering = ['-pk']
 
     def __str__(self):
-        name = str(self.vehicle) if self.vehicle else str(self.component) if self.component else self.vc_name
+        name = str(self.vehicle) if self.vehicle else str(
+            self.component) if self.component else self.vc_name
         return 'Zlecenie {}: {}'.format(self.number, name)
 
     def get_absolute_url(self):
@@ -278,6 +283,7 @@ class CommissionItem(models.Model):
     class Meta:
         verbose_name = 'Pozycja zlecenia'
         verbose_name_plural = 'Pozycje zleceń'
+        ordering = ['commission', 'pk']
 
     def __str__(self):
         return "{} - {}".format(self.commission.id, self.name)
@@ -313,6 +319,7 @@ class CommissionFile(models.Model):
     class Meta:
         verbose_name = 'Plik zlecenia'
         verbose_name_plural = 'Pliki zleceń'
+        ordering = ['commission', 'pk']
 
     def __str__(self):
         return self.file_name
