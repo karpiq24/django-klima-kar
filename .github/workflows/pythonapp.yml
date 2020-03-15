@@ -3,48 +3,47 @@ name: django-klima-kar
 on: [push]
 
 jobs:
-  build:
+    build:
+        runs-on: ubuntu-18.04
 
-    runs-on: ubuntu-18.04
-
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.7
-    - name: Setup PostgreSQL
-      uses: Harmon758/postgresql-action@v1.0.0
-      with:
-        postgresql db: klimakar
-        postgresql user: user 
-        postgresql password: password
-    - name: Install system dependecies
-      run: |
-        sudo apt-get install python3-cffi libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info libpq-dev
-    - name: Setup Redis
-      uses: zhulik/redis-action@v1.0.0
-    - name: Install fonts
-      run: |
-        sudo cp KlimaKar/static/fonts/* /usr/local/share/fonts/
-        sudo fc-cache -fv
-    - name: Compile aztec code decoder
-      run: |
-        g++ -o scripts/aztec scripts/aztec.cpp
-    - name: Copy local settings
-      run: |
-        cp docs/settings_local.github.py KlimaKar/settings_local.py
-    - name: Install python dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r docs/requirements.pip
-    - name: Lint with flake8
-      run: |
-        pip install flake8
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=128 --statistics
-    - name: Run tests
-      run: |
-        python manage.py makemigrations
-        python manage.py migrate
-        python manage.py test
+        steps:
+            - uses: actions/checkout@v1
+            - name: Set up Python 3.7
+              uses: actions/setup-python@v1
+              with:
+                  python-version: 3.7
+            - name: Setup PostgreSQL
+              uses: Harmon758/postgresql-action@v1.0.0
+              with:
+                  postgresql db: klimakar
+                  postgresql user: user
+                  postgresql password: password
+            - name: Install system dependecies
+              run: |
+                  sudo apt-get install python3-cffi libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info libpq-dev npm
+            - name: Setup Redis
+              uses: zhulik/redis-action@v1.0.0
+            - name: Install fonts
+              run: |
+                  sudo cp KlimaKar/static/fonts/* /usr/local/share/fonts/
+                  sudo fc-cache -fv
+            - name: Compile aztec code decoder
+              run: |
+                  g++ -o scripts/aztec scripts/aztec.cpp
+            - name: Copy local settings
+              run: |
+                  cp docs/settings_local.github.py KlimaKar/settings_local.py
+            - name: Install python dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r docs/requirements.pip
+            - name: Lint with flake8
+              run: |
+                  pip install flake8
+                  flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+                  flake8 . --count --exit-zero --max-complexity=10 --max-line-length=128 --statistics
+            - name: Run tests
+              run: |
+                  python manage.py makemigrations
+                  python manage.py migrate
+                  python manage.py test

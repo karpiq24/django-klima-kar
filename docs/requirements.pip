@@ -10,7 +10,7 @@ django-rq==2.3.0
 django-tables2==2.2.1
 django-tables2==2.2.1
 django-widget-tweaks==1.4.5
-django==2.2.10
+django==2.2.12
 django_compressor==2.4
 dropbox==9.4.0
 geoip2==3.0.0
