@@ -58,7 +58,7 @@ const COMISSIONS = gql`
 
 const CommissionList = props => {
     const pageSize = 25;
-    const [status, setStatus] = useState(["DONE"]);
+    const [status, setStatus] = useState(["OPEN"]);
     const [contractor, setContractor] = useState(null);
     const [vehicle, setVehicle] = useState(null);
     const [component, setComponent] = useState(null);
@@ -68,7 +68,7 @@ const CommissionList = props => {
     const { loading, data, refetch } = useQuery(COMISSIONS, {
         variables: {
             pagination: { pageSize: pageSize, page: 1 },
-            filters: { status: "DONE" }
+            filters: { status: "OPEN" }
         }
     });
 
