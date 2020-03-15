@@ -28,7 +28,7 @@ Django project used in my family buisness. It provides warehouse management, inv
     -   generate invoice based on commission
     -   handle file uploads using WD My Cloud Home API
     -   Send SMS notifications to contractors
-    -   Tiled interface for large touchscreens using React
+    -   React SPA for large touchscreen monitors
 -   Advanced statistics
     -   rich interactive charts and metrics
     -   detect purchased ware price changes
@@ -43,13 +43,13 @@ Django project used in my family buisness. It provides warehouse management, inv
     -   Full text search using Solr and django-haystack
     -   GraphQL API
 
-## Requirements
+## Installation
 
-1. Dependecies and [WeasyPrint dependecies](https://weasyprint.readthedocs.io/en/latest/install.html)
+1. Install system dependecies
     ```
     sudo apt-get install build-essential python3-dev python3-pip python3-setuptools python3-wheel python3-cffi libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info virtualenv libpq-dev postgresql postgresql-contrib redis-server openjdk-8-jdk openjdk-8-jre npm
     ```
-2. Install Postgres and configure
+2. Enable and configure Postgres
     ```
     sudo service postgresql start
     sudo -u postgres psql
@@ -60,11 +60,11 @@ Django project used in my family buisness. It provides warehouse management, inv
     ALTER ROLE admin SET timezone TO 'UTC';
     GRANT ALL PRIVILEGES ON DATABASE klimakar TO admin;
     ```
-3. Install Redis
+3. Enable Redis server
     ```
     sudo systemctl enable redis-server.service
     ```
-4. Install Solr
+4. Install and configure Solr
     ```
     curl -O https://archive.apache.org/dist/lucene/solr/6.6.6/solr-6.6.6.tgz
     tar xvf solr-6.6.6.tgz
@@ -92,13 +92,16 @@ Django project used in my family buisness. It provides warehouse management, inv
     g++ -o scripts/aztec scripts/aztec.cpp
     ```
 9. Prepare settings
-
-
     ```
     cp docs/settings_local.py KlimaKar
     ```
-
-10. Migrate database, create superuser and run local server
+10. Build React frontend
+    ```
+    cd tiles/
+    npm install
+    npm run build
+    ```
+11. Migrate database, create superuser and run local server
     ```
     ./manage.py makemigrations
     ./manage.py migrate
