@@ -12,76 +12,76 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ADMINS = []
 MANAGERS = []
 
-EMAIL_HOST = ''
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST = ""
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
 EMAIL_PORT = 465
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
-DEFAULT_FROM_EMAIL = ''
+DEFAULT_FROM_EMAIL = ""
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'klimakar',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "klimakar",
+        "USER": "",
+        "PASSWORD": "",
+        "HOST": "localhost",
+        "PORT": "",
     }
 }
 
 # A list of strings representing the host/domain names that this Django
 # site can serve. Values in this list can be fully qualified names.
 # A value beginning with a period can be used as a subdomain wildcard.
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 # The absolute path to the directory
 # where collectstatic will collect static files for deployment
-STATIC_ROOT = '/var/www/wsgi/static/KlimaKar'
+STATIC_ROOT = "/var/www/wsgi/static/KlimaKar"
 COMPRESS_ENABLED = True
 
 # SECRET_KEY should be unique, unpredictable value.
 # Example command to generate secret key in bash:
 # tr -dc A-Za-z0-9 < /dev/urandom | head -c 50 | xargs
-SECRET_KEY = ''
-SECRET_SALT = ''
+SECRET_KEY = ""
+SECRET_SALT = ""
 TWO_STEP_LOGIN_ENABLED = True
 
 AUTH_PASSWORD_VALIDATORS = []
 
 # Inter Cars API
-IC_API_URL = 'https://katalog.intercars.com.pl/api/v2/External/'
+IC_API_URL = "https://katalog.intercars.com.pl/api/v2/External/"
 
 # Dropbox
-DROPBOX_TOKEN = ''
+DROPBOX_TOKEN = ""
 
 # GUS API KEY
 GUS_SANDBOX = False
-GUS_KEY = ''
+GUS_KEY = ""
 
 # GitHub
-GITHUB_USERNAME = ''
-GITHUB_TOKEN = ''
-GITHUB_REPOSITORY = 'karpiq24/django-klima-kar'
+GITHUB_USERNAME = ""
+GITHUB_TOKEN = ""
+GITHUB_REPOSITORY = "karpiq24/django-klima-kar"
 
 # Ware price changes alerts
 PRICE_CHHANGE_PERCENTAGE = 5
 
 # Reports settings
-ABSOLUTE_URL = ''
+ABSOLUTE_URL = ""
 REPORT_EMAILS = []
-REPORT_PRICE_CHANGE_PERCENTAGE = {'week': 5, 'month': 10, 'year': 25}
+REPORT_PRICE_CHANGE_PERCENTAGE = {"week": 5, "month": 10, "year": 25}
 
 # SMSAPI
-SMSAPI_TOKEN = ''
+SMSAPI_TOKEN = ""
 SMSAPI_LOW_BALANCE_COUNT = 20
 
 # WD MyCloud Home
-WD_REDIRECT_URL = ''
+WD_REDIRECT_URL = ""
 WD_DELETE_FILES = True
 
 # Haystack

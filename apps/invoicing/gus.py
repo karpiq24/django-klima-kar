@@ -36,6 +36,7 @@ class GUSSession(object):
                 except Exception:
                     return None
             return result
+
         return wrapper
 
     @gus_initialize

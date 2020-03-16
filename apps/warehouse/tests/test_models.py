@@ -7,9 +7,7 @@ from apps.warehouse.models import Ware, Supplier, Invoice, InvoiceItem, WarePric
 
 class WareModelTest(TestCase):
     def setUp(self):
-        self.ware = Ware.objects.create(
-            index='K 1111A',
-            name='Cabin filter')
+        self.ware = Ware.objects.create(index="K 1111A", name="Cabin filter")
 
     def test_object_name(self):
         self.assertEquals(self.ware.index, str(self.ware))
@@ -18,7 +16,7 @@ class WareModelTest(TestCase):
         self.assertEquals(self.ware.last_price, None)
 
     def test_index_slug(self):
-        self.assertEquals(self.ware.index_slug, 'k1111a')
+        self.assertEquals(self.ware.index_slug, "k1111a")
 
     def test_stock_default(self):
         self.assertEquals(self.ware.stock, 0)
@@ -26,7 +24,7 @@ class WareModelTest(TestCase):
 
 class SupplierModelTest(TestCase):
     def setUp(self):
-        self.supplier = Supplier.objects.create(name='The Supplier')
+        self.supplier = Supplier.objects.create(name="The Supplier")
 
     def test_object_name(self):
         self.assertEquals(self.supplier.name, str(self.supplier))
@@ -37,35 +35,26 @@ class SupplierModelTest(TestCase):
 
 class InvoiceModelTest(TestCase):
     def setUp(self):
-        self.supplier = Supplier.objects.create(name='The Supplier')
-        self.ware = Ware.objects.create(
-            index='K 1111A',
-            name='Cabin filter')
+        self.supplier = Supplier.objects.create(name="The Supplier")
+        self.ware = Ware.objects.create(index="K 1111A", name="Cabin filter")
         self.invoice = Invoice.objects.create(
             date=date.today() - timedelta(days=1),
-            number='F123/2019',
-            supplier=self.supplier)
+            number="F123/2019",
+            supplier=self.supplier,
+        )
         InvoiceItem.objects.create(
-            invoice=self.invoice,
-            ware=self.ware,
-            quantity=2,
-            price=20
+            invoice=self.invoice, ware=self.ware, quantity=2, price=20
         )
         self.invoice2 = Invoice.objects.create(
-            date=date.today(),
-            number='F124/2019',
-            supplier=self.supplier)
+            date=date.today(), number="F124/2019", supplier=self.supplier
+        )
         InvoiceItem.objects.create(
-            invoice=self.invoice2,
-            ware=self.ware,
-            quantity=1,
-            price=5
+            invoice=self.invoice2, ware=self.ware, quantity=1, price=5
         )
         self.invoice2.check_ware_price_changes()
 
     def test_object_name(self):
-        expected_name = '{}: {}'.format(
-            str(self.invoice.supplier), self.invoice.number)
+        expected_name = "{}: {}".format(str(self.invoice.supplier), self.invoice.number)
         self.assertEquals(expected_name, str(self.invoice))
 
     def test_total_value(self):

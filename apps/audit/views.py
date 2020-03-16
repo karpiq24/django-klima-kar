@@ -6,8 +6,8 @@ from KlimaKar.mixins import GroupAccessControlMixin
 
 
 class AuditLogTableView(GroupAccessControlMixin, FilteredSingleTableView):
-    allowed_groups = ['boss']
+    allowed_groups = ["boss"]
     model = AuditLog
     table_class = AuditLogTable
     filter_class = AuditLogFilter
-    template_name = 'audit/audit_table.html'
+    template_name = "audit/audit_table.html"

@@ -20,10 +20,10 @@ def remove_document(object_id):
 
 
 def get_model_instance_index(object_id):
-    parts = object_id.split('.')
+    parts = object_id.split(".")
     pk = parts[-1]
     model_name = parts[-2]
-    app_name = '.'.join(parts[:-2])
+    app_name = ".".join(parts[:-2])
     model = apps.get_model(app_name, model_name)
     try:
         index = connections[DEFAULT_ALIAS].get_unified_index().get_index(model)
@@ -36,7 +36,7 @@ def get_model_instance_index(object_id):
 
 
 def get_model(model_path):
-    parts = model_path.split('.')
+    parts = model_path.split(".")
     model_name = parts[-1]
-    app_name = '.'.join(parts[:-1])
+    app_name = ".".join(parts[:-1])
     return apps.get_model(app_name, model_name)

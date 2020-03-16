@@ -27,9 +27,9 @@ class AjaxFormMixin(object):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = self.title
-        context['url'] = self.request.path
-        context['identifier'] = self.identifier
+        context["title"] = self.title
+        context["url"] = self.request.path
+        context["identifier"] = self.identifier
         return context
 
     def get(self, *args, **kwargs):
@@ -37,32 +37,28 @@ class AjaxFormMixin(object):
             self.initial = self.request.GET.dict()
             super().get(self.request)
             html_form = render_to_string(
-                'forms/modal_form.html',
-                self.get_context_data(),
-                request=self.request,
+                "forms/modal_form.html", self.get_context_data(), request=self.request,
             )
-            return JsonResponse({'html_form': html_form})
-        return JsonResponse({'error': "Not allowed"})
+            return JsonResponse({"html_form": html_form})
+        return JsonResponse({"error": "Not allowed"})
 
     def form_invalid(self, form):
         response = super().form_invalid(form)
         if self.request.is_ajax():
             html_form = render_to_string(
-                'forms/modal_form.html',
-                self.get_context_data(),
-                request=self.request,
+                "forms/modal_form.html", self.get_context_data(), request=self.request,
             )
-            return JsonResponse({'html_form': html_form}, status=400)
+            return JsonResponse({"html_form": html_form}, status=400)
         else:
             return response
 
     def form_valid(self, form):
         response = super().form_valid(form)
         if self.request.is_ajax():
-            data = dict({
-                'pk': self.object.pk,
-                'text': str(self.object)
-            }, **self.extend_result_data(self.object))
+            data = dict(
+                {"pk": self.object.pk, "text": str(self.object)},
+                **self.extend_result_data(self.object)
+            )
             return JsonResponse(data)
         else:
             return response
@@ -90,11 +86,11 @@ class MultiTableAjaxMixin(TableMixinBase):
     table_pagination = {"per_page": 10}
     table_classes = None
     table_data = None
-    tables_context_key = 'tables'
+    tables_context_key = "tables"
 
     def get(self, request, *args, **kwargs):
         if self.request.is_ajax():
-            table_id = request.GET.get('table_id')
+            table_id = request.GET.get("table_id")
             table = self.get_table(table_id, **self.get_table_kwargs(table_id))
             return JsonResponse({"table": table.as_html(request)})
         else:
@@ -113,13 +109,13 @@ class MultiTableAjaxMixin(TableMixinBase):
         table = table_class(data=self.get_table_data(table_id), **kwargs)
         table.table_id = table_id
         return RequestConfig(
-            self.request,
-            paginate=self.get_table_pagination(table)).configure(table)
+            self.request, paginate=self.get_table_pagination(table)
+        ).configure(table)
 
     def get_table_data(self, table_id):
-        if self.table_data and self.table_data.get('table_id'):
-            return self.table_data['table_id']
-        elif hasattr(self, 'get_tables_data'):
+        if self.table_data and self.table_data.get("table_id"):
+            return self.table_data["table_id"]
+        elif hasattr(self, "get_tables_data"):
             return self.get_tables_data()[table_id]
 
         klass = type(self).__name__
@@ -135,7 +131,8 @@ class MultiTableAjaxMixin(TableMixinBase):
         tables = {}
         for table_id, klass in self.table_classes.items():
             tables[table_id] = self.get_table(
-                table_id, **self.get_table_kwargs(table_id))
+                table_id, **self.get_table_kwargs(table_id)
+            )
         context[self.tables_context_key] = tables
         return context
 

@@ -1,5 +1,11 @@
 from django.contrib import admin
-from apps.commission.models import Component, Vehicle, Commission, CommissionFile, CommissionItem
+from apps.commission.models import (
+    Component,
+    Vehicle,
+    Commission,
+    CommissionFile,
+    CommissionItem,
+)
 
 
 admin.site.register(Component)

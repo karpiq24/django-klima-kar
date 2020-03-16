@@ -10,49 +10,49 @@ from apps.stats.functions import get_report_data
 
 
 class Command(BaseCommand):
-    help = 'Generate and send reports'
+    help = "Generate and send reports"
 
     def add_arguments(self, parser):
-        parser.add_argument('date_option')
-        parser.add_argument('date')
+        parser.add_argument("date_option")
+        parser.add_argument("date")
 
     def handle(self, *args, **options):
-        date_option = options['date_option']
-        input_date = date_parser.parse(options['date']).date()
-        if date_option == 'week':
+        date_option = options["date_option"]
+        input_date = date_parser.parse(options["date"]).date()
+        if date_option == "week":
             date_from = input_date - relativedelta(days=input_date.weekday())
             date_to = date_from + relativedelta(days=6)
-            title = 'Raport tygodniowy'
-        elif date_option == 'month':
+            title = "Raport tygodniowy"
+        elif date_option == "month":
             date_from = input_date.replace(day=1)
-            date_to = date_from + \
-                relativedelta(months=1) - relativedelta(days=1)
-            title = 'Raport miesięczny'
-        elif date_option == 'year':
+            date_to = date_from + relativedelta(months=1) - relativedelta(days=1)
+            title = "Raport miesięczny"
+        elif date_option == "year":
             date_from = input_date.replace(day=1, month=1)
-            date_to = date_from + \
-                relativedelta(years=1) - relativedelta(days=1)
-            title = 'Raport roczny'
+            date_to = date_from + relativedelta(years=1) - relativedelta(days=1)
+            title = "Raport roczny"
         else:
             print("Invalid date option (allowed are: 'week', 'month', 'year').")
             return
 
-        print("Sending {} report from {} to {}".format(
-            date_option, date_from, date_to))
+        print("Sending {} report from {} to {}".format(date_option, date_from, date_to))
         report_data = get_report_data(
-            date_from, date_to, settings.REPORT_PRICE_CHANGE_PERCENTAGE[date_option])
-        report_data['title'] = title
-        report_data['date_from'] = date_from
-        report_data['date_to'] = date_to
-        report_data['absolute_url'] = settings.ABSOLUTE_URL
-        report_data['price_change_limit'] = settings.REPORT_PRICE_CHANGE_PERCENTAGE[date_option]
+            date_from, date_to, settings.REPORT_PRICE_CHANGE_PERCENTAGE[date_option]
+        )
+        report_data["title"] = title
+        report_data["date_from"] = date_from
+        report_data["date_to"] = date_to
+        report_data["absolute_url"] = settings.ABSOLUTE_URL
+        report_data["price_change_limit"] = settings.REPORT_PRICE_CHANGE_PERCENTAGE[
+            date_option
+        ]
 
-        template = get_template('stats/report_{}.html'.format(date_option))
+        template = get_template("stats/report_{}.html".format(date_option))
         content = template.render(report_data)
         email = EmailMultiAlternatives(
             subject="Klima-Kar: {}".format(title),
             body="Twój klient poczty nie wspiera wiadomości HTML",
-            to=settings.REPORT_EMAILS
+            to=settings.REPORT_EMAILS,
         )
         email.attach_alternative(content, "text/html")
         print(email.send(fail_silently=False))

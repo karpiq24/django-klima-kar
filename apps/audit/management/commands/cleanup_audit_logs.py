@@ -15,10 +15,8 @@ class Command(BaseCommand):
         cleanup_delta = timedelta(hours=settings.AUDIT_LOG_EXPIRATION)
         min_attempt_time = now - cleanup_delta
 
-        audit_logs = AuditLog.objects.filter(
-            action_time__lt=min_attempt_time,
-        )
+        audit_logs = AuditLog.objects.filter(action_time__lt=min_attempt_time,)
         count = audit_logs.count()
         audit_logs.delete()
 
-        print(f'Finished removed {count} AuditLog entries')
+        print(f"Finished removed {count} AuditLog entries")

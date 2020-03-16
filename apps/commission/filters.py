@@ -10,84 +10,80 @@ from apps.invoicing.models import Contractor
 
 
 class VehicleFilter(django_filters.FilterSet):
-    brand = django_filters.CharFilter(
-        lookup_expr='icontains',
-        widget=forms.TextInput())
-    model = django_filters.CharFilter(
-        lookup_expr='icontains',
-        widget=forms.TextInput())
+    brand = django_filters.CharFilter(lookup_expr="icontains", widget=forms.TextInput())
+    model = django_filters.CharFilter(lookup_expr="icontains", widget=forms.TextInput())
     registration_plate = django_filters.CharFilter(
-        lookup_expr='icontains',
-        widget=forms.TextInput())
-    vin = django_filters.CharFilter(
-        lookup_expr='icontains',
-        widget=forms.TextInput())
+        lookup_expr="icontains", widget=forms.TextInput()
+    )
+    vin = django_filters.CharFilter(lookup_expr="icontains", widget=forms.TextInput())
     production_year = django_filters.CharFilter(
-        lookup_expr='exact',
-        widget=forms.TextInput())
+        lookup_expr="exact", widget=forms.TextInput()
+    )
 
     class Meta:
         model = Vehicle
-        fields = ['brand', 'model', 'registration_plate',
-                  'vin', 'production_year']
+        fields = ["brand", "model", "registration_plate", "vin", "production_year"]
 
 
 class ComponentFilter(django_filters.FilterSet):
-    component_type = django_filters.ChoiceFilter(
-        choices=Component.TYPE_CHOICES)
-    model = django_filters.CharFilter(
-        lookup_expr='icontains', widget=forms.TextInput())
+    component_type = django_filters.ChoiceFilter(choices=Component.TYPE_CHOICES)
+    model = django_filters.CharFilter(lookup_expr="icontains", widget=forms.TextInput())
     serial_number = django_filters.CharFilter(
-        lookup_expr='icontains', widget=forms.TextInput())
+        lookup_expr="icontains", widget=forms.TextInput()
+    )
     catalog_number = django_filters.CharFilter(
-        lookup_expr='icontains', widget=forms.TextInput())
+        lookup_expr="icontains", widget=forms.TextInput()
+    )
 
     class Meta:
         model = Component
-        fields = ['component_type', 'model', 'serial_number', 'catalog_number']
+        fields = ["component_type", "model", "serial_number", "catalog_number"]
 
 
 class CommissionFilter(django_filters.FilterSet):
-    YES = 'yes'
-    NO = 'no'
-    HAS_FILES = [
-        (YES, 'Tak'),
-        (NO, 'Nie')
-    ]
+    YES = "yes"
+    NO = "no"
+    HAS_FILES = [(YES, "Tak"), (NO, "Nie")]
 
-    status = django_filters.CharFilter(
-        widget=forms.HiddenInput())
+    status = django_filters.CharFilter(widget=forms.HiddenInput())
     pk = django_filters.CharFilter(
-        lookup_expr='iexact',
-        widget=forms.TextInput(),
-        label="Numer zlecenia")
+        lookup_expr="iexact", widget=forms.TextInput(), label="Numer zlecenia"
+    )
     vc_name = django_filters.CharFilter(
-        lookup_expr='icontains',
-        widget=forms.TextInput(),
-        label="Pojazd/podzespół")
+        lookup_expr="icontains", widget=forms.TextInput(), label="Pojazd/podzespół"
+    )
     contractor = django_filters.ModelChoiceFilter(
         queryset=Contractor.objects.all(),
-        widget=autocomplete.ModelSelect2(url='invoicing:contractor_autocomplete'))
+        widget=autocomplete.ModelSelect2(url="invoicing:contractor_autocomplete"),
+    )
     description = django_filters.CharFilter(
-        lookup_expr='icontains',
-        widget=forms.TextInput())
+        lookup_expr="icontains", widget=forms.TextInput()
+    )
     has_files = django_filters.ChoiceFilter(
-        choices=HAS_FILES,
-        label="Załączono pliki",
-        method='has_files_filter')
+        choices=HAS_FILES, label="Załączono pliki", method="has_files_filter"
+    )
     start_date = django_filters.CharFilter(
-        method='start_date_filter',
+        method="start_date_filter",
         label="Data przyjęcia",
-        widget=forms.TextInput(attrs={'class': 'date-range-input'}))
+        widget=forms.TextInput(attrs={"class": "date-range-input"}),
+    )
     end_date = django_filters.CharFilter(
-        method='end_date_filter',
+        method="end_date_filter",
         label="Data zamknięcia",
-        widget=forms.TextInput(attrs={'class': 'date-range-input'}))
+        widget=forms.TextInput(attrs={"class": "date-range-input"}),
+    )
 
     class Meta:
         model = Commission
-        fields = ['status', 'pk', 'vc_name', 'contractor',
-                  'description', 'start_date', 'end_date']
+        fields = [
+            "status",
+            "pk",
+            "vc_name",
+            "contractor",
+            "description",
+            "start_date",
+            "end_date",
+        ]
 
     def has_files_filter(self, queryset, name, value):
         if value == self.YES:
@@ -97,22 +93,22 @@ class CommissionFilter(django_filters.FilterSet):
 
     def start_date_filter(self, queryset, name, value):
         try:
-            date_from, date_to = value.split(' - ')
+            date_from, date_to = value.split(" - ")
             date_from = date_parser.parse(date_from, dayfirst=True).date()
             date_to = date_parser.parse(date_to, dayfirst=True).date()
         except ValueError:
             return queryset.none()
         return queryset.filter(
-            start_date__gte=date_from,
-            start_date__lte=date_to).distinct()
+            start_date__gte=date_from, start_date__lte=date_to
+        ).distinct()
 
     def end_date_filter(self, queryset, name, value):
         try:
-            date_from, date_to = value.split(' - ')
+            date_from, date_to = value.split(" - ")
             date_from = date_parser.parse(date_from, dayfirst=True).date()
             date_to = date_parser.parse(date_to, dayfirst=True).date()
         except ValueError:
             return queryset.none()
         return queryset.filter(
-            end_date__gte=date_from,
-            end_date__lte=date_to).distinct()
+            end_date__gte=date_from, end_date__lte=date_to
+        ).distinct()

@@ -6,9 +6,9 @@ from KlimaKar.graphql.utils import get_paginated_results
 from apps.commission.models import Commission, Vehicle, Component
 
 
-commission = ObjectType('Commission')
-vehicle = ObjectType('Vehicle')
-component = ObjectType('Component')
+commission = ObjectType("Commission")
+vehicle = ObjectType("Vehicle")
+component = ObjectType("Component")
 query = QueryType()
 mutation = MutationType()
 
@@ -26,34 +26,23 @@ class CommissionType(enum.Enum):
     COMPONENT = Commission.COMPONENT
 
 
-commission_status = EnumType(
-    'CommissionStatus', CommissionStatus)
-commission_type = EnumType(
-    'CommissionType', CommissionType)
+commission_status = EnumType("CommissionStatus", CommissionStatus)
+commission_type = EnumType("CommissionType", CommissionType)
 
 
 @query.field("commissions")
 def resolve_commissions(_, info, pagination=None, filters=None):
-    return get_paginated_results(
-        Commission.objects.all(),
-        pagination,
-        filters)
+    return get_paginated_results(Commission.objects.all(), pagination, filters)
 
 
 @query.field("vehicles")
 def resolve_vehicles(_, info, pagination=None, filters=None):
-    return get_paginated_results(
-        Vehicle.objects.all(),
-        pagination,
-        filters)
+    return get_paginated_results(Vehicle.objects.all(), pagination, filters)
 
 
 @query.field("components")
 def resolve_components(_, info, pagination=None, filters=None):
-    return get_paginated_results(
-        Component.objects.all(),
-        pagination,
-        filters)
+    return get_paginated_results(Component.objects.all(), pagination, filters)
 
 
 @mutation.field("updateStatus")

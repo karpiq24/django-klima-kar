@@ -5,7 +5,6 @@ from django.db.models.functions import Coalesce
 
 
 class SingletonModel(models.Model):
-
     class Meta:
         abstract = True
 
@@ -26,16 +25,27 @@ class TotalValueQuerySet(models.QuerySet):
     def total(self, price_type=None):
         price_field = self.model.PRICE_FIELD
         if price_type:
-            price_field = '{}_{}'.format(price_field, price_type)
-        return self.aggregate(total=Coalesce(Sum(
-            F(price_field) * F(self.model.QUANTITY_FIELD),
-            output_field=FloatField()), 0))['total']
+            price_field = "{}_{}".format(price_field, price_type)
+        return self.aggregate(
+            total=Coalesce(
+                Sum(
+                    F(price_field) * F(self.model.QUANTITY_FIELD),
+                    output_field=FloatField(),
+                ),
+                0,
+            )
+        )["total"]
 
     def order_by_total(self, is_descending=True, price_type=None):
         price_field = self.model.PRICE_FIELD
         if price_type:
-            price_field = '{}_{}'.format(price_field, price_type)
-        return self.annotate(total=Coalesce(Sum(
-            F(price_field) * F(self.model.QUANTITY_FIELD),
-            output_field=FloatField()), 0)).order_by(
-                '{}total'.format('-' if is_descending else ''))
+            price_field = "{}_{}".format(price_field, price_type)
+        return self.annotate(
+            total=Coalesce(
+                Sum(
+                    F(price_field) * F(self.model.QUANTITY_FIELD),
+                    output_field=FloatField(),
+                ),
+                0,
+            )
+        ).order_by("{}total".format("-" if is_descending else ""))

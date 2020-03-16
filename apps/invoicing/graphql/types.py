@@ -24,26 +24,18 @@ class PaymentType(enum.Enum):
     OTHER = SaleInvoice.OTHER
 
 
-sale_invoice_types = EnumType(
-    'SaleInvoiceType', SaleInvoiceType)
-payment_types = EnumType(
-    'PaymentType', PaymentType)
+sale_invoice_types = EnumType("SaleInvoiceType", SaleInvoiceType)
+payment_types = EnumType("PaymentType", PaymentType)
 
 
 @query.field("contractors")
 def resolve_contractors(_, info, pagination=None, filters=None):
-    return get_paginated_results(
-        Contractor.objects.all(),
-        pagination,
-        filters)
+    return get_paginated_results(Contractor.objects.all(), pagination, filters)
 
 
 @query.field("saleInvoices")
 def resolve_invoices(_, info, pagination=None, filters=None):
-    return get_paginated_results(
-        SaleInvoice.objects.all(),
-        pagination,
-        filters)
+    return get_paginated_results(SaleInvoice.objects.all(), pagination, filters)
 
 
 @invoice.field("items")

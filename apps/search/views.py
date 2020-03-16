@@ -11,10 +11,8 @@ class AjaxSearchView(SearchView):
     def get(self, *args, **kwargs):
         response = super().get(self.request, *args, **kwargs)
         html = render_to_string(
-            'search/search_results.html',
-            response.context_data,
-            request=self.request,
+            "search/search_results.html", response.context_data, request=self.request,
         )
         if self.request.is_ajax():
-            return JsonResponse({'html': html})
+            return JsonResponse({"html": html})
         return response

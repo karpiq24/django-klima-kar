@@ -6,9 +6,7 @@ from apps.commission.models import Vehicle, Component, Commission
 
 
 class SearchIndex(indexes.SearchIndex, indexes.Indexable):
-    text = indexes.CharField(
-        document=True,
-        use_template=True)
+    text = indexes.CharField(document=True, use_template=True)
     boost = 1
     model = None
     haystack_use_for_indexing = False
@@ -21,7 +19,7 @@ class SearchIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare(self, obj):
         data = super().prepare(obj)
-        data['boost'] = self.boost
+        data["boost"] = self.boost
         return data
 
 

@@ -1,7 +1,13 @@
 from django.contrib import admin
 
-from apps.invoicing.models import SaleInvoice, SaleInvoiceItem, Contractor, RefrigerantWeights, ServiceTemplate,\
-    CorrectiveSaleInvoice
+from apps.invoicing.models import (
+    SaleInvoice,
+    SaleInvoiceItem,
+    Contractor,
+    RefrigerantWeights,
+    ServiceTemplate,
+    CorrectiveSaleInvoice,
+)
 
 admin.site.register(SaleInvoice)
 admin.site.register(SaleInvoiceItem)

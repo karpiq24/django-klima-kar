@@ -15,58 +15,45 @@ from apps.warehouse.models import Ware
 
 
 class Vehicle(models.Model):
-    RELATED_MODELS = [('commission.Commission', 'vehicle')]
-    MODEL_COLOR = '#F09300'
-    MODEL_ICON = 'fas fa-car'
+    RELATED_MODELS = [("commission.Commission", "vehicle")]
+    MODEL_COLOR = "#F09300"
+    MODEL_ICON = "fas fa-car"
 
     registration_plate = models.CharField(
-        max_length=32,
-        unique=True,
-        verbose_name='Numer rejestracyjny')
+        max_length=32, unique=True, verbose_name="Numer rejestracyjny"
+    )
     vin = models.CharField(
-        max_length=32,
-        blank=True,
-        null=True,
-        unique=True,
-        verbose_name='Numer VIN')
-    brand = models.CharField(
-        max_length=64,
-        verbose_name='Marka')
-    model = models.CharField(
-        max_length=64,
-        blank=True,
-        null=True,
-        verbose_name='Model')
+        max_length=32, blank=True, null=True, unique=True, verbose_name="Numer VIN"
+    )
+    brand = models.CharField(max_length=64, verbose_name="Marka")
+    model = models.CharField(max_length=64, blank=True, null=True, verbose_name="Model")
     engine_volume = models.PositiveSmallIntegerField(
-        blank=True,
-        null=True,
-        verbose_name='Pojemność silnika (cm3)')
+        blank=True, null=True, verbose_name="Pojemność silnika (cm3)"
+    )
     engine_power = models.PositiveSmallIntegerField(
-        blank=True,
-        null=True,
-        verbose_name='Moc silnika (kW)')
+        blank=True, null=True, verbose_name="Moc silnika (kW)"
+    )
     production_year = models.PositiveSmallIntegerField(
-        blank=True,
-        null=True,
-        verbose_name='Rok produkcji')
+        blank=True, null=True, verbose_name="Rok produkcji"
+    )
 
     class Meta:
-        verbose_name = 'Pojazd'
-        verbose_name_plural = 'Pojazdy'
-        ordering = ['brand']
+        verbose_name = "Pojazd"
+        verbose_name_plural = "Pojazdy"
+        ordering = ["brand"]
 
     def __str__(self):
-        return '{}{}{}{}'.format(
+        return "{}{}{}{}".format(
             self.brand,
-            ' {}'.format(self.model) if self.model else '',
-            ' {}'.format(
-                self.registration_plate) if self.registration_plate else '',
-            ' ({})'.format(self.production_year) if self.production_year else '')
+            " {}".format(self.model) if self.model else "",
+            " {}".format(self.registration_plate) if self.registration_plate else "",
+            " ({})".format(self.production_year) if self.production_year else "",
+        )
 
     def get_absolute_url(self):
-        return reverse('commission:vehicle_detail', kwargs={
-            'pk': self.pk,
-            'slug': slugify(self)})
+        return reverse(
+            "commission:vehicle_detail", kwargs={"pk": self.pk, "slug": slugify(self)}
+        )
 
 
 @receiver(models.signals.post_save, sender=Vehicle)
@@ -75,54 +62,48 @@ def change_vehicle_commissions_name(sender, instance, **kwargs):
 
 
 class Component(models.Model):
-    RELATED_MODELS = [('commission.Commission', 'component')]
-    MODEL_COLOR = '#13BB72'
-    MODEL_ICON = 'fas fa-microchip'
-    COMPRESSOR = 'CO'
-    HEATER = 'HE'
-    OTHER = 'OT'
+    RELATED_MODELS = [("commission.Commission", "component")]
+    MODEL_COLOR = "#13BB72"
+    MODEL_ICON = "fas fa-microchip"
+    COMPRESSOR = "CO"
+    HEATER = "HE"
+    OTHER = "OT"
     TYPE_CHOICES = [
-        (COMPRESSOR, 'Sprężarka'),
-        (HEATER, 'Ogrzewanie postojowe'),
-        (OTHER, 'Inny'),
+        (COMPRESSOR, "Sprężarka"),
+        (HEATER, "Ogrzewanie postojowe"),
+        (OTHER, "Inny"),
     ]
 
     component_type = models.CharField(
-        max_length=2,
-        choices=TYPE_CHOICES,
-        verbose_name='Rodzaj')
-    model = models.CharField(
-        max_length=64,
-        blank=True,
-        null=True,
-        verbose_name='Model')
+        max_length=2, choices=TYPE_CHOICES, verbose_name="Rodzaj"
+    )
+    model = models.CharField(max_length=64, blank=True, null=True, verbose_name="Model")
     serial_number = models.CharField(
-        max_length=64,
-        blank=True,
-        null=True,
-        verbose_name='Numer seryjny')
+        max_length=64, blank=True, null=True, verbose_name="Numer seryjny"
+    )
     catalog_number = models.CharField(
-        max_length=64,
-        blank=True,
-        null=True,
-        verbose_name='Numer katalogowy')
+        max_length=64, blank=True, null=True, verbose_name="Numer katalogowy"
+    )
 
     class Meta:
-        verbose_name = 'Podzespół'
-        verbose_name_plural = 'Podzespoły'
-        ordering = ['component_type']
+        verbose_name = "Podzespół"
+        verbose_name_plural = "Podzespoły"
+        ordering = ["component_type"]
 
     def __str__(self):
-        return '{}{}{}{}'.format(
-            self.get_component_type_display() if self.component_type != self.OTHER else '',
-            ' {}'.format(self.model) if self.model else '',
-            ' {}'.format(self.serial_number) if self.serial_number else '',
-            ' {}'.format(self.catalog_number) if self.catalog_number else '')
+        return "{}{}{}{}".format(
+            self.get_component_type_display()
+            if self.component_type != self.OTHER
+            else "",
+            " {}".format(self.model) if self.model else "",
+            " {}".format(self.serial_number) if self.serial_number else "",
+            " {}".format(self.catalog_number) if self.catalog_number else "",
+        )
 
     def get_absolute_url(self):
-        return reverse('commission:component_detail', kwargs={
-            'pk': self.pk,
-            'slug': slugify(self)})
+        return reverse(
+            "commission:component_detail", kwargs={"pk": self.pk, "slug": slugify(self)}
+        )
 
 
 @receiver(models.signals.post_save, sender=Component)
@@ -131,101 +112,88 @@ def change_component_commissions_name(sender, instance, **kwargs):
 
 
 class Commission(models.Model):
-    AUDIT_IGNORE = ['upload', 'mch_id']
-    MODEL_COLOR = '#427BD2'
-    MODEL_ICON = 'fas fa-tasks'
+    AUDIT_IGNORE = ["upload", "mch_id"]
+    MODEL_COLOR = "#427BD2"
+    MODEL_ICON = "fas fa-tasks"
 
-    OPEN = 'OP'
-    READY = 'RE'
-    DONE = 'DO'
-    CANCELLED = 'CA'
-    ON_HOLD = 'HO'
+    OPEN = "OP"
+    READY = "RE"
+    DONE = "DO"
+    CANCELLED = "CA"
+    ON_HOLD = "HO"
     STATUS_CHOICES = [
-        (OPEN, 'Otwarte'),
-        (READY, 'Gotowe'),
-        (DONE, 'Zamknięte'),
-        (ON_HOLD, 'Wstrzymane'),
-        (CANCELLED, 'Anulowane')
+        (OPEN, "Otwarte"),
+        (READY, "Gotowe"),
+        (DONE, "Zamknięte"),
+        (ON_HOLD, "Wstrzymane"),
+        (CANCELLED, "Anulowane"),
     ]
-    VEHICLE = 'VH'
-    COMPONENT = 'CO'
-    COMMISSION_TYPES = [
-        (VEHICLE, 'Pojazd'),
-        (COMPONENT, 'Podzespół')
-    ]
+    VEHICLE = "VH"
+    COMPONENT = "CO"
+    COMMISSION_TYPES = [(VEHICLE, "Pojazd"), (COMPONENT, "Podzespół")]
 
     commission_type = models.CharField(
         max_length=2,
         choices=COMMISSION_TYPES,
         default=VEHICLE,
-        verbose_name='Rodzaj zlecenia')
-    vc_name = models.CharField(
-        max_length=128,
-        verbose_name='Nazwa pojazdu/podzespołu')
+        verbose_name="Rodzaj zlecenia",
+    )
+    vc_name = models.CharField(max_length=128, verbose_name="Nazwa pojazdu/podzespołu")
     vehicle = models.ForeignKey(
-        Vehicle,
-        blank=True,
-        null=True,
-        on_delete=models.PROTECT,
-        verbose_name='Pojazd')
+        Vehicle, blank=True, null=True, on_delete=models.PROTECT, verbose_name="Pojazd"
+    )
     component = models.ForeignKey(
         Component,
         blank=True,
         null=True,
         on_delete=models.PROTECT,
-        verbose_name='Podzespół')
+        verbose_name="Podzespół",
+    )
     contractor = models.ForeignKey(
         Contractor,
         on_delete=models.PROTECT,
         blank=True,
         null=True,
-        verbose_name='Kontrahent')
+        verbose_name="Kontrahent",
+    )
     sale_invoices = models.ManyToManyField(
-        SaleInvoice,
-        blank=True,
-        verbose_name='Faktury sprzedażowe')
-    description = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name='Opis')
+        SaleInvoice, blank=True, verbose_name="Faktury sprzedażowe"
+    )
+    description = models.TextField(blank=True, null=True, verbose_name="Opis")
     status = models.CharField(
-        max_length=2,
-        choices=STATUS_CHOICES,
-        default=OPEN,
-        verbose_name='Status')
+        max_length=2, choices=STATUS_CHOICES, default=OPEN, verbose_name="Status"
+    )
     start_date = models.DateField(
-        verbose_name='Data przyjęcia',
-        default=datetime.date.today)
-    end_date = models.DateField(
-        blank=True,
-        null=True,
-        verbose_name='Data zamknięcia')
-    upload = models.BooleanField(
-        verbose_name='Pliki są wgrywane',
-        default=False)
-    mch_id = models.CharField(
-        max_length=128,
-        blank=True,
-        null=True)
+        verbose_name="Data przyjęcia", default=datetime.date.today
+    )
+    end_date = models.DateField(blank=True, null=True, verbose_name="Data zamknięcia")
+    upload = models.BooleanField(verbose_name="Pliki są wgrywane", default=False)
+    mch_id = models.CharField(max_length=128, blank=True, null=True)
 
     objects = TotalValueQuerySet.as_manager()
-    PRICE_FIELD = 'commissionitem__price'
-    QUANTITY_FIELD = 'commissionitem__quantity'
+    PRICE_FIELD = "commissionitem__price"
+    QUANTITY_FIELD = "commissionitem__quantity"
 
     class Meta:
-        verbose_name = 'Zlecenie'
-        verbose_name_plural = 'Zlecenia'
-        ordering = ['-pk']
+        verbose_name = "Zlecenie"
+        verbose_name_plural = "Zlecenia"
+        ordering = ["-pk"]
 
     def __str__(self):
-        name = str(self.vehicle) if self.vehicle else str(
-            self.component) if self.component else self.vc_name
-        return 'Zlecenie {}: {}'.format(self.number, name)
+        name = (
+            str(self.vehicle)
+            if self.vehicle
+            else str(self.component)
+            if self.component
+            else self.vc_name
+        )
+        return "Zlecenie {}: {}".format(self.number, name)
 
     def get_absolute_url(self):
-        return reverse('commission:commission_detail', kwargs={
-            'pk': self.pk,
-            'slug': slugify(self)})
+        return reverse(
+            "commission:commission_detail",
+            kwargs={"pk": self.pk, "slug": slugify(self)},
+        )
 
     def save(self, *args, **kwargs):
         if self.status in [self.DONE, self.CANCELLED] and not self.end_date:
@@ -241,11 +209,14 @@ class Commission(models.Model):
         return self._meta.model.objects.filter(pk=self.pk).total()
 
     def generate_pdf(self):
-        template = get_template('commission/pdf_commission.html')
-        rendered_tpl = template.render({'commission': self}).encode()
+        template = get_template("commission/pdf_commission.html")
+        rendered_tpl = template.render({"commission": self}).encode()
         documents = []
         documents.append(
-            HTML(string=rendered_tpl).render(stylesheets=[CSS(filename='KlimaKar/static/css/invoice.css')]))
+            HTML(string=rendered_tpl).render(
+                stylesheets=[CSS(filename="KlimaKar/static/css/invoice.css")]
+            )
+        )
         all_pages = []
         for doc in documents:
             for p in doc.pages:
@@ -255,43 +226,31 @@ class Commission(models.Model):
 
 class CommissionItem(models.Model):
     commission = models.ForeignKey(
-        Commission,
-        on_delete=models.CASCADE,
-        verbose_name='Zlecenie')
-    name = models.CharField(
-        max_length=255,
-        verbose_name='Nazwa usługi/towaru')
+        Commission, on_delete=models.CASCADE, verbose_name="Zlecenie"
+    )
+    name = models.CharField(max_length=255, verbose_name="Nazwa usługi/towaru")
     description = models.CharField(
-        max_length=255,
-        verbose_name='Opis usługi/towaru',
-        blank=True,
-        null=True)
-    quantity = models.IntegerField(
-        default=1,
-        verbose_name='Ilość')
-    price = models.DecimalField(
-        max_digits=7,
-        decimal_places=2,
-        verbose_name='Cena')
+        max_length=255, verbose_name="Opis usługi/towaru", blank=True, null=True
+    )
+    quantity = models.IntegerField(default=1, verbose_name="Ilość")
+    price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name="Cena")
     ware = models.ForeignKey(
-        Ware,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name='Towar')
+        Ware, on_delete=models.SET_NULL, blank=True, null=True, verbose_name="Towar"
+    )
 
     class Meta:
-        verbose_name = 'Pozycja zlecenia'
-        verbose_name_plural = 'Pozycje zleceń'
-        ordering = ['commission', 'pk']
+        verbose_name = "Pozycja zlecenia"
+        verbose_name_plural = "Pozycje zleceń"
+        ordering = ["commission", "pk"]
 
     def __str__(self):
         return "{} - {}".format(self.commission.id, self.name)
 
     def get_absolute_url(self):
-        return reverse('commission:commission_detail', kwargs={
-            'pk': self.commission.pk,
-            'slug': slugify(self.commission)})
+        return reverse(
+            "commission:commission_detail",
+            kwargs={"pk": self.commission.pk, "slug": slugify(self.commission)},
+        )
 
     @property
     def total(self):
@@ -300,34 +259,26 @@ class CommissionItem(models.Model):
 
 class CommissionFile(models.Model):
     commission = models.ForeignKey(
-        Commission,
-        on_delete=models.CASCADE,
-        verbose_name='Zlecenie')
-    file_name = models.CharField(
-        max_length=256,
-        verbose_name='Nazwa pliku')
-    file_size = models.PositiveIntegerField(
-        verbose_name='Rozmiar pliku')
-    mime_type = models.CharField(
-        max_length=64,
-        verbose_name='Typ pliku')
-    mch_id = models.CharField(
-        max_length=128,
-        blank=True,
-        null=True)
+        Commission, on_delete=models.CASCADE, verbose_name="Zlecenie"
+    )
+    file_name = models.CharField(max_length=256, verbose_name="Nazwa pliku")
+    file_size = models.PositiveIntegerField(verbose_name="Rozmiar pliku")
+    mime_type = models.CharField(max_length=64, verbose_name="Typ pliku")
+    mch_id = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
-        verbose_name = 'Plik zlecenia'
-        verbose_name_plural = 'Pliki zleceń'
-        ordering = ['commission', 'pk']
+        verbose_name = "Plik zlecenia"
+        verbose_name_plural = "Pliki zleceń"
+        ordering = ["commission", "pk"]
 
     def __str__(self):
         return self.file_name
 
     def get_absolute_url(self):
-        return reverse('commission:commission_detail', kwargs={
-            'pk': self.commission.pk,
-            'slug': slugify(self.commission)})
+        return reverse(
+            "commission:commission_detail",
+            kwargs={"pk": self.commission.pk, "slug": slugify(self.commission)},
+        )
 
     @property
     def file_contents(self):
