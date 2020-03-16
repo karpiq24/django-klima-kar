@@ -1,6 +1,6 @@
-function addAlert(title, tag, text='', html='') {
+function addAlert(title, tag, text = "", html = "") {
     Swal.fire({
-        position: 'top-end',
+        position: "top-end",
         type: tag,
         title: title,
         text: text,
@@ -11,26 +11,26 @@ function addAlert(title, tag, text='', html='') {
     });
 }
 
-$(function () {
-    MESSAGES.forEach(function (message) {
-        var title = '';
+$(function() {
+    MESSAGES.forEach(function(message) {
+        var title = "";
         switch (message.tag) {
-            case 'success':
-                title = 'Sukces!'
+            case "success":
+                title = "Sukces!";
                 break;
-            case 'error':
-                title = 'Błąd!'
+            case "error":
+                title = "Błąd!";
                 break;
-            case 'info':
-                title = 'Informacja!'
+            case "info":
+                title = "Informacja!";
                 break;
-            case 'warning':
-                title = 'Uwaga!'
+            case "warning":
+                title = "Uwaga!";
                 break;
-            case 'debug':
-                title = 'DEBUG!'
+            case "debug":
+                title = "DEBUG!";
                 break;
         }
-        addAlert(title, message.tag, '', message.message)
+        addAlert(title, message.tag, "", message.message);
     });
 });
