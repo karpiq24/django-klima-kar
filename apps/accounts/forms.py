@@ -30,9 +30,9 @@ class KlimaKarAuthenticationForm(AuthenticationForm):
         if not validate_auth_token(self.get_user(), self.cleaned_data['token']):
             self.cleaned_data['token'] = ''
             raise forms.ValidationError(
-                    'Nieprawidłowy token autoryzacyjny.',
-                    code='token_invalid',
-                )
+                'Nieprawidłowy token autoryzacyjny.',
+                code='token_invalid',
+            )
         return self.cleaned_data
 
     def confirm_login_allowed(self, user):

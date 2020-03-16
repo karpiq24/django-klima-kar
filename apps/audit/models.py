@@ -85,7 +85,8 @@ class AuditLog(models.Model):
         diff = {}
         for key, values in self.get_diffrence().items():
             if self.action_type == self.CHANGE:
-                values = [value if value is not None else '—' for value in values]
+                values = [
+                    value if value is not None else '—' for value in values]
             diff[self._get_field_verbose_name(key)] = values
         return diff
 

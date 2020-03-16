@@ -27,7 +27,8 @@ class Command(BaseCommand):
         try:
             date_from = dateutil.parser.parse(options['date_from'])
             date_to = dateutil.parser.parse(options['date_to'])
-            print("Loading invoices from date: {} to: {}".format(options['date_from'], options['date_to']))
+            print("Loading invoices from date: {} to: {}".format(
+                options['date_from'], options['date_to']))
         except ValueError:
             print("Invalid date format.\n")
             return
@@ -51,7 +52,8 @@ class Command(BaseCommand):
             'from': current_date.strftime('%Y%m%d'),
             'to': end_date.strftime('%Y%m%d')
         }
-        headers = {'kh_kod': self.settings.INTER_CARS_CLIENT_NUMBER, 'token': self.settings.INTER_CARS_TOKEN}
+        headers = {'kh_kod': self.settings.INTER_CARS_CLIENT_NUMBER,
+                   'token': self.settings.INTER_CARS_TOKEN}
         r = requests.get(url, params=params, headers=headers)
         if r.status_code != 200:
             report_admins('Invoice list download failed.\n{}'.format(r.text))
@@ -67,7 +69,8 @@ class Command(BaseCommand):
             invoice_total = float(getData(invoice, 'war_n'))
             invoice_date = dateutil.parser.parse(getData(invoice, 'dat_w'))
             try:
-                Invoice.objects.get(number=invoice_number, supplier=self.settings.INTER_CARS_SUPPLIER)
+                Invoice.objects.get(number=invoice_number,
+                                    supplier=self.settings.INTER_CARS_SUPPLIER)
                 continue
             except Invoice.DoesNotExist:
                 new_invoices += 1
@@ -84,10 +87,12 @@ class Command(BaseCommand):
     def get_invoice_detail(self, invoice_obj, invoice_id):
         url = IC_API_URL + 'GetInvoice'
         params = {'id': invoice_id}
-        headers = {'kh_kod': self.settings.INTER_CARS_CLIENT_NUMBER, 'token': self.settings.INTER_CARS_TOKEN}
+        headers = {'kh_kod': self.settings.INTER_CARS_CLIENT_NUMBER,
+                   'token': self.settings.INTER_CARS_TOKEN}
         r = requests.get(url, params=params, headers=headers)
         if r.status_code != 200:
-            report_admins('Invoice {} details download failed.\n{}'.format(invoice_obj.number, r.text))
+            report_admins('Invoice {} details download failed.\n{}'.format(
+                invoice_obj.number, r.text))
         DOMTree = xml.dom.minidom.parseString(r.text)
         collection = DOMTree.documentElement
         wares = collection.getElementsByTagName("poz")
@@ -95,12 +100,14 @@ class Command(BaseCommand):
 
         for ware in wares:
             if not getData(ware, 'indeks') or not getData(ware, 'nazwa'):
-                report_admins('Invalid data in invoice {}. Please verify.'.format(invoice_obj.number))
+                report_admins(
+                    'Invalid data in invoice {}. Please verify.'.format(invoice_obj.number))
                 continue
             try:
                 ware_obj = Ware.objects.get(index=getData(ware, 'indeks'))
             except Ware.DoesNotExist:
-                ware_obj = Ware.objects.filter(index_slug=getData(ware, 'indeks')).first()
+                ware_obj = Ware.objects.filter(
+                    index_slug=getData(ware, 'indeks')).first()
                 if not ware_obj:
                     ware_obj = Ware.objects.create(
                         index=getData(ware, 'indeks'),

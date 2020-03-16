@@ -27,16 +27,19 @@ class SupplierPurchaseHistory(GroupAccessControlMixin, ChartDataMixin, View):
         self.metric = self.request.GET.get('custom_select', 'Sum')
 
         self.invoices = self.get_invoices()
-        self.response_data = self.get_response_data_template(chart_type='doughnut', values_appendix=' zł')
+        self.response_data = self.get_response_data_template(
+            chart_type='doughnut', values_appendix=' zł')
         self.invoices = self.invoices.values('supplier')
         self.invoices = self._annotate(self.invoices)
-        self.invoices = self.invoices.values_list('supplier__name', 'total').order_by('-total')
+        self.invoices = self.invoices.values_list(
+            'supplier__name', 'total').order_by('-total')
         if self.invoices.count() > self.max_positions:
             index = self.max_positions - 1
         else:
             index = self.invoices.count()
 
-        labels = list(self.invoices[0:index].values_list('supplier__name', flat=True))
+        labels = list(self.invoices[0:index].values_list(
+            'supplier__name', flat=True))
         values = list(self.invoices[0:index].values_list('total', flat=True))
 
         if self.invoices.count() > self.max_positions:
@@ -61,7 +64,8 @@ class SupplierPurchaseHistory(GroupAccessControlMixin, ChartDataMixin, View):
         elif self.date_option == 'month':
             date = datetime.today() - relativedelta(months=1)
         elif self.date_option == 'year':
-            date = (datetime.today() - relativedelta(years=1, months=-1)).replace(day=1)
+            date = (datetime.today() -
+                    relativedelta(years=1, months=-1)).replace(day=1)
         else:
             date = None
         if date:
@@ -96,7 +100,8 @@ class WarePurchaseHistory(ChartDataMixin, View):
         else:
             date = None
 
-        response_data = self.get_response_data_template(chart_type='doughnut', values_appendix=' zł')
+        response_data = self.get_response_data_template(
+            chart_type='doughnut', values_appendix=' zł')
         wares = Ware.objects.exclude(invoiceitem=None)
         if date:
             wares = wares.filter(invoiceitem__invoice__date__gte=date)
@@ -113,7 +118,8 @@ class WarePurchaseHistory(ChartDataMixin, View):
         if wares.count() > self.max_positions:
             wares = wares[:self.max_positions]
 
-        response_data['data']['labels'] = list(wares.values_list('index', flat=True))
+        response_data['data']['labels'] = list(
+            wares.values_list('index', flat=True))
         values = list(wares.values_list('total', flat=True))
         response_data['data']['datasets'].append(self.get_dataset(
             values, COLORS[:len(values)]))
@@ -178,7 +184,8 @@ class CommissionHistory(GroupAccessControlMixin, BigChartHistoryMixin):
     quantity_field = 'commissionitem__quantity'
 
     def _filter_objects(self, **kwargs):
-        self.objects = self.objects.filter(status=Commission.DONE).exclude(end_date=None)
+        self.objects = self.objects.filter(
+            status=Commission.DONE).exclude(end_date=None)
 
 
 class RefrigerantWeightsHistory(BigChartHistoryMixin):
@@ -200,7 +207,8 @@ class WarePurchaseCost(ChartDataMixin, View):
             invoiceitem__ware__pk=ware_pk).order_by('date')
         if invoices.count() < self.min_count:
             return JsonResponse({}, status=404)
-        response_data['data']['labels'] = list(invoices.values_list('date', flat=True))
+        response_data['data']['labels'] = list(
+            invoices.values_list('date', flat=True))
         values = list(invoices.values_list('invoiceitem__price', flat=True))
         response_data['data']['datasets'].append(self.get_dataset(
             values, COLORS[0]))
@@ -228,7 +236,7 @@ class WarePriceChanges(View):
                 'url': reverse('warehouse:invoice_detail', kwargs={
                     'pk': change.invoice.pk,
                     'slug': slugify(change.invoice),
-                    }),
+                }),
                 'number': change.invoice.number
             },
             'ware': {
@@ -241,7 +249,7 @@ class WarePriceChanges(View):
                 'url': reverse('warehouse:supplier_detail', kwargs={
                     'pk': change.invoice.supplier.pk,
                     'slug': slugify(change.invoice.supplier)
-                    }),
+                }),
                 'name': change.invoice.supplier.name
             },
             'is_discount': change.is_discount,
@@ -307,8 +315,10 @@ class Metrics(View):
             self.has_permission = True
 
         group = self.request.GET.get('group')
-        self.date_from = date_parser.parse(self.request.GET.get('date_from')).date()
-        self.date_to = date_parser.parse(self.request.GET.get('date_to')).date()
+        self.date_from = date_parser.parse(
+            self.request.GET.get('date_from')).date()
+        self.date_to = date_parser.parse(
+            self.request.GET.get('date_to')).date()
 
         if group == 'purchase':
             response = self._get_purchase_metrics()
@@ -344,7 +354,8 @@ class Metrics(View):
         r404 = 0
         if self.get_weights():
             r134a = self.get_weights().aggregate(Sum('r134a'))['r134a__sum']
-            r1234yf = self.get_weights().aggregate(Sum('r1234yf'))['r1234yf__sum']
+            r1234yf = self.get_weights().aggregate(
+                Sum('r1234yf'))['r1234yf__sum']
             r12 = self.get_weights().aggregate(Sum('r12'))['r12__sum']
             r404 = self.get_weights().aggregate(Sum('r404'))['r404__sum']
         response['r134a_sum'] = "{} g".format(r134a)
@@ -363,7 +374,8 @@ class Metrics(View):
         person_tax_sum = 0
         if self.get_sale_invoices():
             invoices_sum_netto = self._get_sale_netto(self.get_sale_invoices())
-            invoices_sum_brutto = self._get_sale_brutto(self.get_sale_invoices())
+            invoices_sum_brutto = self._get_sale_brutto(
+                self.get_sale_invoices())
             tax_sum = invoices_sum_brutto - invoices_sum_netto
         person_invoices = self.get_sale_invoices().filter(contractor__nip=None)
         if person_invoices:
@@ -371,11 +383,15 @@ class Metrics(View):
             person_brutto = self._get_sale_brutto(person_invoices)
             person_tax_sum = person_brutto - person_netto
         response = {}
-        response['sale_invoice_sum'] = "{0:.2f} zł".format(invoices_sum_netto).replace('.', ',')
-        response['sale_invoice_sum_brutto'] = "{0:.2f} zł".format(invoices_sum_brutto).replace('.', ',')
+        response['sale_invoice_sum'] = "{0:.2f} zł".format(
+            invoices_sum_netto).replace('.', ',')
+        response['sale_invoice_sum_brutto'] = "{0:.2f} zł".format(
+            invoices_sum_brutto).replace('.', ',')
         response['vat_sum'] = "{0:.2f} zł".format(tax_sum).replace('.', ',')
-        response['person_vat_sum'] = "{0:.2f} zł".format(person_tax_sum).replace('.', ',')
-        response['company_vat_sum'] = "{0:.2f} zł".format(tax_sum - person_tax_sum).replace('.', ',')
+        response['person_vat_sum'] = "{0:.2f} zł".format(
+            person_tax_sum).replace('.', ',')
+        response['company_vat_sum'] = "{0:.2f} zł".format(
+            tax_sum - person_tax_sum).replace('.', ',')
 
         ptu_sum = 0
         if self.get_ptus():
@@ -404,8 +420,8 @@ class Metrics(View):
         if self.suppliers is not None:
             return self.suppliers
         self.suppliers = Supplier.objects.filter(
-                created_date__date__gte=self.date_from,
-                created_date__date__lte=self.date_to)
+            created_date__date__gte=self.date_from,
+            created_date__date__lte=self.date_to)
         return self.suppliers
 
     def get_purchase_invoices(self):
@@ -420,8 +436,8 @@ class Metrics(View):
         if self.contractors is not None:
             return self.contractors
         self.contractors = Contractor.objects.filter(
-                created_date__date__gte=self.date_from,
-                created_date__date__lte=self.date_to)
+            created_date__date__gte=self.date_from,
+            created_date__date__lte=self.date_to)
         return self.contractors
 
     def get_weights(self):
@@ -436,21 +452,21 @@ class Metrics(View):
         if self.sale_invoices is not None:
             return self.sale_invoices
         self.sale_invoices = SaleInvoice.objects.filter(
-                issue_date__gte=self.date_from,
-                issue_date__lte=self.date_to).exclude(
-                    invoice_type__in=[
-                        SaleInvoice.TYPE_PRO_FORMA,
-                        SaleInvoice.TYPE_CORRECTIVE,
-                        SaleInvoice.TYPE_WDT_PRO_FORMA])
+            issue_date__gte=self.date_from,
+            issue_date__lte=self.date_to).exclude(
+            invoice_type__in=[
+                SaleInvoice.TYPE_PRO_FORMA,
+                SaleInvoice.TYPE_CORRECTIVE,
+                SaleInvoice.TYPE_WDT_PRO_FORMA])
         return self.sale_invoices
 
     def get_commissions(self):
         if self.commissions is not None:
             return self.commissions
         self.commissions = Commission.objects.filter(
-                end_date__gte=self.date_from,
-                end_date__lte=self.date_to,
-                status=Commission.DONE)
+            end_date__gte=self.date_from,
+            end_date__lte=self.date_to,
+            status=Commission.DONE)
         return self.commissions
 
     def get_ptus(self):
@@ -467,7 +483,8 @@ class PTUList(GroupAccessControlMixin, View):
 
     def get(self, *args, **kwargs):
         try:
-            date_from = date_parser.parse(self.request.GET.get('date_from')).date()
+            date_from = date_parser.parse(
+                self.request.GET.get('date_from')).date()
             date_to = date_parser.parse(self.request.GET.get('date_to')).date()
         except TypeError:
             return JsonResponse({'status': 'error', 'message': 'Niepoprawny zakres dat.'}, status=400)
@@ -515,7 +532,8 @@ class SavePTU(GroupAccessControlMixin, View):
     allowed_groups = ['boss']
 
     def post(self, *args, **kwargs):
-        date = date_parser.parse(self.request.POST.get('date'), dayfirst=True).date()
+        date = date_parser.parse(
+            self.request.POST.get('date'), dayfirst=True).date()
         value = self.request.POST.get('value')
         if not date or not value:
             return JsonResponse({'status': 'error', 'message': 'Niepoprawne dane.'}, status=400)
@@ -523,6 +541,7 @@ class SavePTU(GroupAccessControlMixin, View):
             ptu = ReceiptPTU.objects.get(date=date)
         except ReceiptPTU.DoesNotExist:
             ptu = ReceiptPTU(date=date)
+        value = value.replace(',', '.')
         ptu.value = value
         ptu.save()
         return JsonResponse({'status': 'success', 'message': 'Poprawnie zapisano PTU.'})
@@ -533,7 +552,8 @@ class GetSummary(GroupAccessControlMixin, View):
 
     def get(self, *args, **kwargs):
         try:
-            date_from = date_parser.parse(self.request.GET.get('date_from')).date()
+            date_from = date_parser.parse(
+                self.request.GET.get('date_from')).date()
             date_to = date_parser.parse(self.request.GET.get('date_to')).date()
         except TypeError:
             return JsonResponse({'status': 'error', 'message': 'Niepoprawny zakres dat.'}, status=400)
@@ -542,15 +562,18 @@ class GetSummary(GroupAccessControlMixin, View):
         response['ptu'] = "{0:.2f} zł".format(ptu_sum).replace('.', ',')
 
         commissions_sum = self._get_commissions(date_from, date_to)
-        response['commissions'] = "{0:.2f} zł".format(commissions_sum).replace('.', ',')
+        response['commissions'] = "{0:.2f} zł".format(
+            commissions_sum).replace('.', ',')
 
         vat_sum = self._get_vat(date_from, date_to)
         response['vat'] = "{0:.2f} zł".format(vat_sum).replace('.', ',')
 
         purchase_sum = self._get_purchase(date_from, date_to)
-        response['purchase'] = "{0:.2f} zł".format(purchase_sum).replace('.', ',')
+        response['purchase'] = "{0:.2f} zł".format(
+            purchase_sum).replace('.', ',')
 
-        all_sum = float(commissions_sum) - float(ptu_sum) - float(vat_sum) - float(purchase_sum)
+        all_sum = float(commissions_sum) - float(ptu_sum) - \
+            float(vat_sum) - float(purchase_sum)
         response['sum'] = "{0:.2f} zł".format(all_sum).replace('.', ',')
         date_range = self._get_date_range(date_from, date_to)
         response['urls'] = {
@@ -559,7 +582,8 @@ class GetSummary(GroupAccessControlMixin, View):
             'purchase': '{}?date={}'.format(reverse('warehouse:invoices'), date_range),
             'wares': '{}?purchase_date={}'.format(reverse('warehouse:wares'), date_range),
         }
-        response['invoices_without_commission'] = self._get_sale_invoices_wthout_commission(date_from, date_to)
+        response['invoices_without_commission'] = self._get_sale_invoices_wthout_commission(
+            date_from, date_to)
         return JsonResponse(response)
 
     def _get_date_range(self, date_from, date_to):

@@ -64,7 +64,8 @@ class InvoiceModelTest(TestCase):
         self.invoice2.check_ware_price_changes()
 
     def test_object_name(self):
-        expected_name = '{}: {}'.format(str(self.invoice.supplier), self.invoice.number)
+        expected_name = '{}: {}'.format(
+            str(self.invoice.supplier), self.invoice.number)
         self.assertEquals(expected_name, str(self.invoice))
 
     def test_total_value(self):

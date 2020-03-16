@@ -80,7 +80,7 @@ class WareFilter(django_filters.FilterSet):
 
     def supplier_filter(self, queryset, name, value):
         return queryset.filter(invoiceitem__invoice__supplier=value).distinct()
-    
+
     def exclude_supplier_filter(self, queryset, name, value):
         return queryset.exclude(invoiceitem__invoice__supplier=value).distinct()
 

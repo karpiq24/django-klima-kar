@@ -25,18 +25,22 @@ class Command(BaseCommand):
             title = 'Raport tygodniowy'
         elif date_option == 'month':
             date_from = input_date.replace(day=1)
-            date_to = date_from + relativedelta(months=1) - relativedelta(days=1)
+            date_to = date_from + \
+                relativedelta(months=1) - relativedelta(days=1)
             title = 'Raport miesięczny'
         elif date_option == 'year':
             date_from = input_date.replace(day=1, month=1)
-            date_to = date_from + relativedelta(years=1) - relativedelta(days=1)
+            date_to = date_from + \
+                relativedelta(years=1) - relativedelta(days=1)
             title = 'Raport roczny'
         else:
             print("Invalid date option (allowed are: 'week', 'month', 'year').")
             return
 
-        print("Sending {} report from {} to {}".format(date_option, date_from, date_to))
-        report_data = get_report_data(date_from, date_to, settings.REPORT_PRICE_CHANGE_PERCENTAGE[date_option])
+        print("Sending {} report from {} to {}".format(
+            date_option, date_from, date_to))
+        report_data = get_report_data(
+            date_from, date_to, settings.REPORT_PRICE_CHANGE_PERCENTAGE[date_option])
         report_data['title'] = title
         report_data['date_from'] = date_from
         report_data['date_to'] = date_to

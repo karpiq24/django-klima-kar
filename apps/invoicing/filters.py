@@ -121,7 +121,8 @@ class ContractorFilter(django_filters.FilterSet):
 
     class Meta:
         model = Contractor
-        fields = ['name', 'nip', 'address_1', 'city', 'postal_code', 'email', 'phone']
+        fields = ['name', 'nip', 'address_1',
+                  'city', 'postal_code', 'email', 'phone']
 
     def created_date_filter(self, queryset, name, value):
         try:

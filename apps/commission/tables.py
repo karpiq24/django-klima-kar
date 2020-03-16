@@ -46,7 +46,8 @@ class ComponentTable(tables.Table):
     class Meta:
         model = Component
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['component_type', 'model', 'serial_number', 'catalog_number', 'actions']
+        fields = ['component_type', 'model',
+                  'serial_number', 'catalog_number', 'actions']
         order_by = 'component_type'
         empty_text = 'Brak podzespołów'
 
@@ -101,7 +102,8 @@ class CommissionTable(tables.Table):
     class Meta:
         model = Commission
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['pk', 'vc_name', 'contractor', 'phone', 'start_date', 'end_date', 'value']
+        fields = ['pk', 'vc_name', 'contractor',
+                  'phone', 'start_date', 'end_date', 'value']
         order_by = '-pk'
         empty_text = 'Brak zleceń'
 

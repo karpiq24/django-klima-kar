@@ -38,9 +38,12 @@ class Command(BaseCommand):
                 return
 
             soup = BeautifulSoup(r.content, 'html5lib')
-            __VIEWSTATE = soup.find('input', attrs={'name': '__VIEWSTATE'})['value']
-            __VIEWSTATEGENERATOR = soup.find('input', attrs={'name': '__VIEWSTATEGENERATOR'})['value']
-            __EVENTVALIDATION = soup.find('input', attrs={'name': '__EVENTVALIDATION'})['value']
+            __VIEWSTATE = soup.find(
+                'input', attrs={'name': '__VIEWSTATE'})['value']
+            __VIEWSTATEGENERATOR = soup.find(
+                'input', attrs={'name': '__VIEWSTATEGENERATOR'})['value']
+            __EVENTVALIDATION = soup.find(
+                'input', attrs={'name': '__EVENTVALIDATION'})['value']
             data = {
                 '__EVENTTARGET': 'ctl00$ctl00$BodyContentPlaceHolder$LoginForm$LoginButton',
                 '__EVENTARGUMENT': '',
@@ -77,7 +80,8 @@ class Command(BaseCommand):
                 number = row.find('td').text.strip()
                 invoice_id = row.find('a')['href'].strip().split('/')[-1]
                 if number and not Invoice.objects.filter(number=number, supplier=self.settings.DEKO_SUPPLIER).exists():
-                    url = 'http://sklep.dekoautoparts.pl/Download.ashx?type=4&id={}&typedoc=1'.format(invoice_id)
+                    url = 'http://sklep.dekoautoparts.pl/Download.ashx?type=4&id={}&typedoc=1'.format(
+                        invoice_id)
                     r = s.get(url, headers=headers)
                     result = self.parse_invoice(r.text)
                     new_invoices = new_invoices + result[0]
@@ -86,9 +90,11 @@ class Command(BaseCommand):
             print("Added {} new wares.\n". format(new_wares))
 
     def parse_invoice(self, xml_string):
-        xml_invoice = parseString(xml_string).documentElement.getElementsByTagName('Invoice')[0]
+        xml_invoice = parseString(
+            xml_string).documentElement.getElementsByTagName('Invoice')[0]
         number = xml_invoice.getAttribute('Number')
-        issue_date = dateutil.parser.parse(xml_invoice.getAttribute('IssueDate'), dayfirst=True).date()
+        issue_date = dateutil.parser.parse(
+            xml_invoice.getAttribute('IssueDate'), dayfirst=True).date()
 
         invoice = Invoice.objects.create(
             number=number,
@@ -103,14 +109,18 @@ class Command(BaseCommand):
             name = item.getAttribute('Name').strip().capitalize()
             if not index:
                 print("Skipped ware without index.")
-                self.report_admins('Invalid data in invoice {}. Please verify.'.format(number))
+                self.report_admins(
+                    'Invalid data in invoice {}. Please verify.'.format(number))
                 continue
             try:
-                ware = Ware.objects.get(Q(index=index) | Q(index_slug=Ware.slugify(index)))
+                ware = Ware.objects.get(Q(index=index) | Q(
+                    index_slug=Ware.slugify(index)))
             except Ware.DoesNotExist:
                 try:
-                    index2 = '{}{}'.format(item.getAttribute('Manufacturer').strip(), index)
-                    ware = Ware.objects.get(Q(index=index2) | Q(index_slug=Ware.slugify(index2)))
+                    index2 = '{}{}'.format(item.getAttribute(
+                        'Manufacturer').strip(), index)
+                    ware = Ware.objects.get(Q(index=index2) | Q(
+                        index_slug=Ware.slugify(index2)))
                 except Ware.DoesNotExist:
                     ware = Ware.objects.create(index=index, name=name)
                     new_wares = new_wares + 1

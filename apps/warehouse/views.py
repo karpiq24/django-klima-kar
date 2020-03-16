@@ -38,7 +38,8 @@ class WareUpdateView(UpdateView):
         return context
 
     def form_valid(self, form):
-        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Zapisano zmiany.')
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
@@ -59,7 +60,7 @@ class WareCreateView(CreateView):
 
     def form_valid(self, form):
         messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejny towar.</a>'.format(
-                reverse('warehouse:ware_create')))
+            reverse('warehouse:ware_create')))
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
@@ -76,7 +77,8 @@ class WareDetailView(SingleTableAjaxMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         key = "{}_params".format(self.model.__name__)
-        context['back_url'] = reverse('warehouse:wares') + '?' + urlencode(self.request.session.get(key, ''))
+        context['back_url'] = reverse(
+            'warehouse:wares') + '?' + urlencode(self.request.session.get(key, ''))
         return context
 
     def get_table_data(self):
@@ -111,7 +113,8 @@ class InvoiceDetailView(SingleTableAjaxMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         key = "{}_params".format(self.model.__name__)
-        context['back_url'] = reverse('warehouse:invoices') + '?' + urlencode(self.request.session.get(key, ''))
+        context['back_url'] = reverse(
+            'warehouse:invoices') + '?' + urlencode(self.request.session.get(key, ''))
         return context
 
     def get_table_data(self):
@@ -133,7 +136,7 @@ class InvoiceCreateView(CreateWithInlinesView):
         response = super().forms_valid(form, inlines)
         self.object.check_ware_price_changes()
         messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejną fakturę.</a>'.format(
-                reverse('warehouse:invoice_create')))
+            reverse('warehouse:invoice_create')))
         return response
 
     def get_success_url(self):
@@ -155,7 +158,8 @@ class InvoiceUpdateView(UpdateWithInlinesView):
         return context
 
     def forms_valid(self, form, inlines):
-        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Zapisano zmiany.')
         return super().forms_valid(form, inlines)
 
     def get_success_url(self):
@@ -181,7 +185,8 @@ class SupplierDetailView(SingleTableAjaxMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         key = "{}_params".format(self.model.__name__)
-        context['back_url'] = reverse('warehouse:suppliers') + '?' + urlencode(self.request.session.get(key, ''))
+        context['back_url'] = reverse(
+            'warehouse:suppliers') + '?' + urlencode(self.request.session.get(key, ''))
         if self.get_table_data().count() > 3:
             context['chart'] = {
                 'title': 'Historia zakupów',
@@ -209,7 +214,8 @@ class SupplierUpdateView(UpdateView):
         return context
 
     def form_valid(self, form):
-        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Zapisano zmiany.')
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
@@ -231,7 +237,7 @@ class SupplierCreateView(CreateView):
 
     def form_valid(self, form):
         messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejnego dostawcę.</a>'.format(
-                reverse('warehouse:supplier_create')))
+            reverse('warehouse:supplier_create')))
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
@@ -271,7 +277,8 @@ class WareAutocomplete(CustomSelect2QuerySetView):
     def get_queryset(self):
         qs = Ware.objects.all()
         if self.q:
-            qs = qs.filter(Q(index__icontains=self.q) | Q(index_slug__icontains=self.q))
+            qs = qs.filter(Q(index__icontains=self.q) |
+                           Q(index_slug__icontains=self.q))
         return qs
 
 

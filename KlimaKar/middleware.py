@@ -18,6 +18,7 @@ class LoginRequiredMiddleware(MiddlewareMixin):
     Requires authentication middleware and template context processors to be
     loaded. You'll get an error if they aren't.
     """
+
     def process_request(self, request):
         assert hasattr(request, 'user'), "The Login Required middleware\
  requires authentication middleware to be installed. Edit your\

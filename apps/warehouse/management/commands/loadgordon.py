@@ -36,9 +36,12 @@ class Command(BaseCommand):
                 return
 
             soup = BeautifulSoup(r.content, 'html5lib')
-            __VIEWSTATE = soup.find('input', attrs={'name': '__VIEWSTATE'})['value']
-            __VIEWSTATEGENERATOR = soup.find('input', attrs={'name': '__VIEWSTATEGENERATOR'})['value']
-            __EVENTVALIDATION = soup.find('input', attrs={'name': '__EVENTVALIDATION'})['value']
+            __VIEWSTATE = soup.find(
+                'input', attrs={'name': '__VIEWSTATE'})['value']
+            __VIEWSTATEGENERATOR = soup.find(
+                'input', attrs={'name': '__VIEWSTATEGENERATOR'})['value']
+            __EVENTVALIDATION = soup.find(
+                'input', attrs={'name': '__EVENTVALIDATION'})['value']
             data = {
                 '__EVENTTARGET': '',
                 '__EVENTARGUMENT': '',
@@ -75,16 +78,20 @@ class Command(BaseCommand):
             new_invoices = 0
             new_wares = 0
             for row in soup.find_all('tr', {'class': 'clickable'}):
-                number = row.find('td', {'class': 'doc-item-doc-id-col'}).find('a').text.strip()
-                date = row.find('td', {'class': 'doc-item-date-create-col'}).text.strip()
+                number = row.find(
+                    'td', {'class': 'doc-item-doc-id-col'}).find('a').text.strip()
+                date = row.find(
+                    'td', {'class': 'doc-item-date-create-col'}).text.strip()
                 value_netto = float(
                     row.find('td', {'class': 'doc-item-net-col'}).text.strip().split(' ')[0].replace(',', '.'))
                 invoice_id = row['data-id'].strip()
                 if number and not Invoice.objects.filter(number=number,
                                                          supplier=self.settings.GORDON_SUPPLIER).exists():
-                    url = 'http://katalog.gordon.com.pl/customers/documentitems.aspx?id={}'.format(invoice_id)
+                    url = 'http://katalog.gordon.com.pl/customers/documentitems.aspx?id={}'.format(
+                        invoice_id)
                     r = s.get(url, headers=headers)
-                    result = self.parse_invoice(r.content, number, date, value_netto)
+                    result = self.parse_invoice(
+                        r.content, number, date, value_netto)
                     new_invoices = new_invoices + result[0]
                     new_wares = new_wares + result[1]
             print("Added {} new invoices.". format(new_invoices))
@@ -102,18 +109,21 @@ class Command(BaseCommand):
         new_wares = 0
         for row in soup.find_all('tr', {'class': 'dgriditem'}) + soup.find_all('tr', {'class': 'dgridaltitem'}):
             cells = row.find_all('td')
-            price = float(cells[4].text.strip().split(' ')[0].replace(',', '.'))
+            price = float(cells[4].text.strip().split(' ')
+                          [0].replace(',', '.'))
             quantity = int(cells[2].text.strip())
             price = price / quantity
             index = cells[0].text.strip()
             name = cells[1].text.strip()
             if not index:
                 print("Skipped ware without index.")
-                self.report_admins('Invalid data in invoice {}. Please verify.'.format(number))
+                self.report_admins(
+                    'Invalid data in invoice {}. Please verify.'.format(number))
                 continue
             try:
                 index_split = index.split(' ')
-                index2 = '{} {}'.format(index_split[-1], ' '.join(index_split[:-1])).strip()
+                index2 = '{} {}'.format(
+                    index_split[-1], ' '.join(index_split[:-1])).strip()
                 index3 = ' '.join(index_split[:-1])
                 ware = Ware.objects.get(
                     Q(index=index) | Q(index_slug=Ware.slugify(index)) |

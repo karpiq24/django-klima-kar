@@ -38,7 +38,8 @@ class VehicleModelForm(forms.ModelForm):
 
     class Meta:
         model = Vehicle
-        fields = ['registration_plate', 'brand', 'model', 'vin', 'engine_volume', 'engine_power', 'production_year']
+        fields = ['registration_plate', 'brand', 'model', 'vin',
+                  'engine_volume', 'engine_power', 'production_year']
 
 
 class ComponentModelForm(forms.ModelForm):
@@ -60,23 +61,27 @@ class CommissionModelForm(forms.ModelForm):
     contractor = forms.ModelChoiceField(
         label="Kontrahent",
         queryset=Contractor.objects.all(),
-        widget=autocomplete.ModelSelect2(url='invoicing:contractor_autocomplete_create'),
+        widget=autocomplete.ModelSelect2(
+            url='invoicing:contractor_autocomplete_create'),
         required=False
     )
     vehicle = forms.ModelChoiceField(
         label="Pojazd",
         queryset=Vehicle.objects.all(),
-        widget=autocomplete.ModelSelect2(url='commission:vehicle_autocomplete_create'),
+        widget=autocomplete.ModelSelect2(
+            url='commission:vehicle_autocomplete_create'),
         required=False
     )
     component = forms.ModelChoiceField(
         label="Podzespół",
         queryset=Component.objects.all(),
-        widget=autocomplete.ModelSelect2(url='commission:component_autocomplete_create'),
+        widget=autocomplete.ModelSelect2(
+            url='commission:component_autocomplete_create'),
         required=False
     )
 
-    upload_key = forms.CharField(label='Klucz wysyłania plików', widget=forms.HiddenInput())
+    upload_key = forms.CharField(
+        label='Klucz wysyłania plików', widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         self.commission_type = kwargs.pop('commission_type', None)
@@ -130,7 +135,8 @@ class CommissionFastModelForm(forms.ModelForm):
     value = forms.DecimalField(
         label='Cena',
         max_digits=7,
-        decimal_places=2)
+        decimal_places=2,
+        localize=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -158,7 +164,8 @@ class CommissionItemModelForm(forms.ModelForm):
     )
     service = forms.ModelChoiceField(
         label="Usługa", queryset=ServiceTemplate.objects.all(), required=False,
-        widget=autocomplete.ModelSelect2(url='invoicing:service_template_autocomplete')
+        widget=autocomplete.ModelSelect2(
+            url='invoicing:service_template_autocomplete')
     )
 
     def __init__(self, *args, **kwargs):
@@ -178,7 +185,9 @@ class CommissionItemModelForm(forms.ModelForm):
 
     class Meta:
         model = CommissionItem
-        fields = ['name', 'description', 'quantity', 'price', 'ware', 'service']
+        fields = ['name', 'description',
+                  'quantity', 'price', 'ware', 'service']
+        localized_fields = ['price']
 
 
 class CommissionItemInline(InlineFormSet):
@@ -191,8 +200,10 @@ class CommissionEmailForm(forms.Form):
     recipient = forms.EmailField(label='Do')
     subject = forms.CharField(label='Temat')
     message = forms.CharField(widget=forms.Textarea, label='Treść')
-    commission = forms.ModelChoiceField(queryset=Commission.objects.none(), widget=forms.HiddenInput())
+    commission = forms.ModelChoiceField(
+        queryset=Commission.objects.none(), widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['commission'].queryset = Commission.objects.filter(pk=self.initial['commission'].pk)
+        self.fields['commission'].queryset = Commission.objects.filter(
+            pk=self.initial['commission'].pk)

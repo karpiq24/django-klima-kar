@@ -57,7 +57,8 @@ class VehicleUpdateView(UpdateView):
         return context
 
     def form_valid(self, form):
-        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Zapisano zmiany.')
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
@@ -78,7 +79,7 @@ class VehicleCreateView(CreateView):
 
     def form_valid(self, form):
         messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejny pojazd.</a>'.format(
-                reverse('commission:vehicle_create')))
+            reverse('commission:vehicle_create')))
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
@@ -95,7 +96,8 @@ class VehicleDetailView(SingleTableAjaxMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         key = "{}_params".format(self.model.__name__)
-        context['back_url'] = reverse('commission:vehicles') + '?' + urlencode(self.request.session.get(key, ''))
+        context['back_url'] = reverse(
+            'commission:vehicles') + '?' + urlencode(self.request.session.get(key, ''))
         return context
 
     def get_table_data(self):
@@ -160,7 +162,8 @@ class ComponentUpdateView(UpdateView):
         return context
 
     def form_valid(self, form):
-        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Zapisano zmiany.')
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
@@ -181,7 +184,7 @@ class ComponentCreateView(CreateView):
 
     def form_valid(self, form):
         messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejny podzespół.</a>'.format(
-                reverse('commission:component_create')))
+            reverse('commission:component_create')))
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
@@ -198,7 +201,8 @@ class ComponentDetailView(SingleTableAjaxMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         key = "{}_params".format(self.model.__name__)
-        context['back_url'] = reverse('commission:components') + '?' + urlencode(self.request.session.get(key, ''))
+        context['back_url'] = reverse(
+            'commission:components') + '?' + urlencode(self.request.session.get(key, ''))
         return context
 
     def get_table_data(self):
@@ -262,7 +266,8 @@ class CommissionTableView(ExportMixin, FilteredSingleTableView):
             'end_date': datetime.date.today(),
         }
         context['status_done'] = Commission.DONE
-        context['fast_commission_form'] = CommissionFastModelForm(initial=commission_data)
+        context['fast_commission_form'] = CommissionFastModelForm(
+            initial=commission_data)
         context['fast_commission_url'] = reverse('commission:fast_commission')
         return context
 
@@ -274,11 +279,13 @@ class CommissionTableView(ExportMixin, FilteredSingleTableView):
     def get_filter_params(self):
         params = super().get_filter_params()
         if params.get(self.tab_filter) == Commission.DONE:
-            params['end_date'] = '{} - {}'.format(self._today_string(), self._today_string())
+            params['end_date'] = '{} - {}'.format(
+                self._today_string(), self._today_string())
         return params
 
     def process_params_per_choice(self, params, choice):
-        date_range = '{} - {}'.format(self._today_string(), self._today_string())
+        date_range = '{} - {}'.format(self._today_string(),
+                                      self._today_string())
         if choice != Commission.DONE and params.get('end_date') == date_range:
             params.pop('end_date', None)
         return params
@@ -307,7 +314,8 @@ class CommissionDetailView(SingleTableAjaxMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         key = "{}_params".format(self.model.__name__)
-        context['back_url'] = reverse('commission:commissions') + '?' + urlencode(self.request.session.get(key, ''))
+        context['back_url'] = reverse(
+            'commission:commissions') + '?' + urlencode(self.request.session.get(key, ''))
         types = dict(SaleInvoice.INVOICE_TYPES)
         types.pop(SaleInvoice.TYPE_CORRECTIVE)
         context['invoice_types'] = types
@@ -315,10 +323,12 @@ class CommissionDetailView(SingleTableAjaxMixin, DetailView):
         site_settings = SiteSettings.load()
         subject = ''
         if site_settings.COMMISSION_EMAIL_TITLE:
-            subject = Template(site_settings.COMMISSION_EMAIL_TITLE).render(Context({'commission': self.object}))
+            subject = Template(site_settings.COMMISSION_EMAIL_TITLE).render(
+                Context({'commission': self.object}))
         message = ''
         if site_settings.COMMISSION_EMAIL_BODY:
-            message = Template(site_settings.COMMISSION_EMAIL_BODY).render(Context({'commission': self.object}))
+            message = Template(site_settings.COMMISSION_EMAIL_BODY).render(
+                Context({'commission': self.object}))
         email_data = {
             'commission': self.object,
             'subject': subject,
@@ -330,7 +340,8 @@ class CommissionDetailView(SingleTableAjaxMixin, DetailView):
 
         sms = ''
         if site_settings.COMMISSION_SMS_BODY:
-            sms = Template(site_settings.COMMISSION_SMS_BODY).render(Context({'commission': self.object}))
+            sms = Template(site_settings.COMMISSION_SMS_BODY).render(
+                Context({'commission': self.object}))
         context['sms'] = self._strip_accents(sms)
         return context
 
@@ -377,10 +388,12 @@ class CommissionCreateView(CreateWithInlinesView):
         if check_uploaded_files(form.data['upload_key']):
             self.object.upload = True
             self.object.save()
-            directory = os.path.join(settings.TEMPORARY_UPLOAD_DIRECTORY, form.data['upload_key'])
+            directory = os.path.join(
+                settings.TEMPORARY_UPLOAD_DIRECTORY, form.data['upload_key'])
             with open(os.path.join(directory, 'lock'), 'w') as lockfile:
                 lockfile.write('')
-            django_rq.enqueue(process_uploads, self.object.pk, form.data['upload_key'])
+            django_rq.enqueue(process_uploads, self.object.pk,
+                              form.data['upload_key'])
         return response
 
     def get_success_url(self, **kwargs):
@@ -399,7 +412,8 @@ class CommissionUpdateView(UpdateWithInlinesView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = "Edycja zlecenia ({})".format(str(self.get_object()))
+        context['title'] = "Edycja zlecenia ({})".format(
+            str(self.get_object()))
         upload_key = self.request.POST.get('upload_key')
         if upload_key:
             context['temp_files'] = get_temporary_files(upload_key)
@@ -407,15 +421,18 @@ class CommissionUpdateView(UpdateWithInlinesView):
 
     def forms_valid(self, form, inlines):
         self.generate_pdf = 'generate_pdf' in form.data
-        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Zapisano zmiany.')
         response = super().forms_valid(form, inlines)
         if check_uploaded_files(form.data['upload_key']):
             self.object.upload = True
             self.object.save()
-            directory = os.path.join(settings.TEMPORARY_UPLOAD_DIRECTORY, form.data['upload_key'])
+            directory = os.path.join(
+                settings.TEMPORARY_UPLOAD_DIRECTORY, form.data['upload_key'])
             with open(os.path.join(directory, 'lock'), 'w') as lockfile:
                 lockfile.write('')
-            django_rq.enqueue(process_uploads, self.object.pk, form.data['upload_key'])
+            django_rq.enqueue(process_uploads, self.object.pk,
+                              form.data['upload_key'])
         return response
 
     def get_success_url(self, **kwargs):
@@ -468,25 +485,30 @@ class CommissionPDFView(View):
         pdf_file = commission.generate_pdf()
         response = HttpResponse(content_type='application/pdf')
         response.write(pdf_file)
-        response['Content-Disposition'] = 'filename="Zlecenie {}.pdf"'.format(commission.pk)
+        response['Content-Disposition'] = 'filename="Zlecenie {}.pdf"'.format(
+            commission.pk)
         response['Content-Encoding'] = None
         response['Content-Type'] = 'application/pdf'
         if not self.print_version:
-            response['Content-Disposition'] = 'attachment;' + response['Content-Disposition']
+            response['Content-Disposition'] = 'attachment;' + \
+                response['Content-Disposition']
         return response
 
 
 class CommissionFileDownloadView(View):
     def get(self, request, *args, **kwargs):
         commission = get_object_or_404(Commission, pk=kwargs.get('pk'))
-        commission_file = get_object_or_404(CommissionFile, file_name=kwargs.get('name'), commission=commission)
-        response = FileResponse(BytesIO(commission_file.file_contents), content_type=commission_file.mime_type)
+        commission_file = get_object_or_404(
+            CommissionFile, file_name=kwargs.get('name'), commission=commission)
+        response = FileResponse(
+            BytesIO(commission_file.file_contents), content_type=commission_file.mime_type)
         return response
 
 
 class CommissionSendEmailView(View):
     def post(self, request, *args, **kwargs):
-        commission = get_object_or_404(Commission, pk=request.POST.get('commission'))
+        commission = get_object_or_404(
+            Commission, pk=request.POST.get('commission'))
         pdf_file = commission.generate_pdf()
         email = get_email_message(
             subject=request.POST.get('subject'),
@@ -517,7 +539,8 @@ class CommissionFileUplaodView(View):
         if not upload_key:
             return JsonResponse({'status': 'error', 'message': 'Coś poszło nie tak. Spróbuj ponownie.'}, status=400)
 
-        directory = os.path.join(settings.TEMPORARY_UPLOAD_DIRECTORY, upload_key)
+        directory = os.path.join(
+            settings.TEMPORARY_UPLOAD_DIRECTORY, upload_key)
         if not os.path.exists(directory):
             os.makedirs(directory)
         with open(os.path.join(directory, 'timestamp'), 'w') as timefile:
@@ -533,7 +556,7 @@ class CommissionFileUplaodView(View):
             'status': 'success',
             'message': 'Pliki zostały zapisane.',
             'files': get_temporary_files(upload_key)
-            }, status=200)
+        }, status=200)
 
 
 class CheckUploadFinishedView(View):
@@ -558,7 +581,8 @@ class DeleteTempFile(View):
         fname = request.POST.get('file')
         if not upload_key or not fname:
             return JsonResponse({'status': 'error', 'message': 'Coś poszło nie tak. Spróbuj ponownie.'}, status=400)
-        fpath = os.path.join(settings.TEMPORARY_UPLOAD_DIRECTORY, upload_key, fname)
+        fpath = os.path.join(
+            settings.TEMPORARY_UPLOAD_DIRECTORY, upload_key, fname)
         if os.path.exists(fpath):
             os.remove(fpath)
         metapath = '{}.meta'.format(fpath)
@@ -567,18 +591,19 @@ class DeleteTempFile(View):
         return JsonResponse({
             'status': 'success',
             'message': 'Plik został usunięty.',
-            }, status=200)
+        }, status=200)
 
 
 class DeleteCommissionFile(View):
     def post(self, request, *args, **kwargs):
         get_object_or_404(Commission, pk=request.POST.get('object'))
-        commission_file = get_object_or_404(CommissionFile, pk=request.POST.get('file'))
+        commission_file = get_object_or_404(
+            CommissionFile, pk=request.POST.get('file'))
         commission_file.delete()
         return JsonResponse({
             'status': 'success',
             'message': 'Plik został usunięty.',
-            }, status=200)
+        }, status=200)
 
 
 class ChangeCommissionStatus(View):
@@ -665,7 +690,7 @@ class AssignInoiceView(View):
                     'slug': slugify(invoice)
                 })
             }
-            }, status=200)
+        }, status=200)
 
 
 class UnassignInoiceView(View):
@@ -689,7 +714,7 @@ class UnassignInoiceView(View):
         return JsonResponse({
             'status': 'success',
             'message': 'Faktura odłączona od zlecenia.',
-            }, status=200)
+        }, status=200)
 
 
 class DecodeAztecCode(View):

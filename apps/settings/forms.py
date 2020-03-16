@@ -35,7 +35,8 @@ class CommissionSettingsModelForm(forms.ModelForm):
 
     class Meta:
         model = SiteSettings
-        fields = ['COMMISSION_EMAIL_TITLE', 'COMMISSION_EMAIL_BODY', 'COMMISSION_SMS_BODY']
+        fields = ['COMMISSION_EMAIL_TITLE',
+                  'COMMISSION_EMAIL_BODY', 'COMMISSION_SMS_BODY']
         help_texts = {
             'COMMISSION_EMAIL_TITLE': 'Zawiera dostęp do kontekstu zlecenia np. {{ commission.number }}',
             'COMMISSION_EMAIL_BODY': 'Zawiera dostęp do kontekstu zlecenia np. {{ commission.contractor }}',

@@ -134,7 +134,8 @@ class MultiTableAjaxMixin(TableMixinBase):
         context = super().get_context_data(**kwargs)
         tables = {}
         for table_id, klass in self.table_classes.items():
-            tables[table_id] = self.get_table(table_id, **self.get_table_kwargs(table_id))
+            tables[table_id] = self.get_table(
+                table_id, **self.get_table_kwargs(table_id))
         context[self.tables_context_key] = tables
         return context
 

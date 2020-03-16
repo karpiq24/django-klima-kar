@@ -63,7 +63,8 @@ def process_uploads(commission_pk, upload_key):
         file_path = os.path.join(directory, meta['name'])
         if not os.path.exists(file_path):
             continue
-        r = cloud.create_file(meta['name'], open(file_path, 'rb').read(), commission_dir)
+        r = cloud.create_file(meta['name'], open(
+            file_path, 'rb').read(), commission_dir)
         if r.status_code == 409 or r.status_code != 201:
             continue
         mch_id = r.headers['Location'].split('/')[-1]

@@ -27,7 +27,8 @@ class UserSessionTable(tables.Table):
     class Meta:
         model = UserSession
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['user', 'user_agent', 'client_ip', 'created', 'country', 'actions']
+        fields = ['user', 'user_agent', 'client_ip',
+                  'created', 'country', 'actions']
         order_by = '-created'
         empty_text = 'Brak sesji użytkowników'
 
@@ -68,7 +69,8 @@ class UserTable(tables.Table):
     class Meta:
         model = User
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['username', 'email', 'is_active', 'is_staff', 'is_superuser', 'is_boss', 'is_logged_in', 'actions']
+        fields = ['username', 'email', 'is_active', 'is_staff',
+                  'is_superuser', 'is_boss', 'is_logged_in', 'actions']
         order_by = 'username'
         empty_text = 'Brak użytkowników'
 

@@ -25,12 +25,13 @@ class UserSessionTableView(UserIsAdminMixin, FilteredSingleTableView):
 
 class DeleteUserSessionView(UserIsAdminMixin, View):
     def post(self, request, *args, **kwargs):
-        user_session = get_object_or_404(UserSession, pk=request.POST.get('session'))
+        user_session = get_object_or_404(
+            UserSession, pk=request.POST.get('session'))
         user_session.delete()
         return JsonResponse({
             'status': 'success',
             'message': 'Sesja została usunięta.',
-            }, status=200)
+        }, status=200)
 
 
 class DeleteUserSessionsView(UserIsAdminMixin, View):
@@ -40,7 +41,7 @@ class DeleteUserSessionsView(UserIsAdminMixin, View):
         return JsonResponse({
             'status': 'success',
             'message': 'Sesje zostały usunięte.',
-            }, status=200)
+        }, status=200)
 
 
 class UserTableView(UserIsAdminMixin, FilteredSingleTableView):
@@ -60,7 +61,8 @@ class FirstStepLoginView(View):
         if defender.utils.is_already_locked(request, username=username):
             return self._account_locked_response()
 
-        user, user_not_blocked = self._authenticate(request, username, password)
+        user, user_not_blocked = self._authenticate(
+            request, username, password)
 
         if not user_not_blocked:
             return self._account_locked_response()
@@ -68,19 +70,19 @@ class FirstStepLoginView(View):
             return JsonResponse({
                 'status': 'error',
                 'message': 'Podana nazwa użytkownika lub hasło są nieprawidłowe.'
-                }, status=401)
+            }, status=401)
         if settings.TWO_STEP_LOGIN_ENABLED and user.email:
             django_rq.enqueue(send_token_email, user)
             return JsonResponse({
                 'status': 'success',
                 'code': 'token',
                 'message': 'Token autoryzacyjny jest wymagany.'
-                }, status=200)
+            }, status=200)
         return JsonResponse({
-                'status': 'success',
-                'code': 'login_success',
-                'message': 'Dane logowania prawidłowe.'
-                }, status=200)
+            'status': 'success',
+            'code': 'login_success',
+            'message': 'Dane logowania prawidłowe.'
+        }, status=200)
 
     def _authenticate(self, request, username, password):
         user = authenticate(request, username=username, password=password)
@@ -105,4 +107,4 @@ class FirstStepLoginView(View):
             'status': 'error',
             'message': message,
             'blocked': True
-            }, status=401)
+        }, status=401)

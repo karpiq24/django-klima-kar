@@ -23,8 +23,10 @@ class Command(BaseCommand):
         parser.add_argument('--mycloud', action='store_true')
 
     def handle(self, *args, **options):
-        print("Backing up database for: {}".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-        zip_name = "{}-django-klimakar-jsondump.zip".format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+        print("Backing up database for: {}".format(
+            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        zip_name = "{}-django-klimakar-jsondump.zip".format(
+            datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
         temp_zip_file = zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED)
         dbx = dropbox.Dropbox(DROPBOX_TOKEN)
         try:
@@ -41,7 +43,8 @@ class Command(BaseCommand):
 
         try:
             with open(zip_name, 'rb') as f:
-                dbx.files_upload(f.read(), '/{}'.format(zip_name), mode=WriteMode('overwrite'))
+                dbx.files_upload(f.read(), '/{}'.format(zip_name),
+                                 mode=WriteMode('overwrite'))
         except ApiError as err:
             if (err.error.is_path() and err.error.get_path().reason.is_insufficient_space()):
                 print("ERROR: Cannot back up; insufficient space.")
@@ -60,6 +63,7 @@ class Command(BaseCommand):
 
     def upload_to_mycloud(self, file_name, file_path):
         cloud = MyCloudHome.load()
-        r = cloud.create_file(file_name, open(file_path, 'rb').read(), cloud.BACKUP_DIR_ID)
+        r = cloud.create_file(file_name, open(
+            file_path, 'rb').read(), cloud.BACKUP_DIR_ID)
         if r.status_code == 409 or r.status_code != 201:
             mail_admins('JSON dump backup save failed!', r.text)

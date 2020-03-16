@@ -27,15 +27,23 @@ class SaleInvoiceModelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['number'].widget.attrs.update({'placeholder': 'Podaj numer faktury'})
-        self.fields['contractor'].widget.attrs.update({'data-placeholder': 'Podaj nazwę, NIP albo numer telefonu'})
-        self.fields['issue_date'].widget.attrs.update({'placeholder': 'Wybierz datę'})
+        self.fields['number'].widget.attrs.update(
+            {'placeholder': 'Podaj numer faktury'})
+        self.fields['contractor'].widget.attrs.update(
+            {'data-placeholder': 'Podaj nazwę, NIP albo numer telefonu'})
+        self.fields['issue_date'].widget.attrs.update(
+            {'placeholder': 'Wybierz datę'})
         self.fields['issue_date'].widget.attrs.update({'class': 'date-input'})
-        self.fields['completion_date'].widget.attrs.update({'placeholder': 'Wybierz datę'})
-        self.fields['completion_date'].widget.attrs.update({'class': 'date-input'})
-        self.fields['payment_date'].widget.attrs.update({'placeholder': 'Wybierz datę'})
-        self.fields['payment_date'].widget.attrs.update({'class': 'date-input'})
-        self.fields['payment_type_other'].widget.attrs.update({'placeholder': 'Podaj formę płatności'})
+        self.fields['completion_date'].widget.attrs.update(
+            {'placeholder': 'Wybierz datę'})
+        self.fields['completion_date'].widget.attrs.update(
+            {'class': 'date-input'})
+        self.fields['payment_date'].widget.attrs.update(
+            {'placeholder': 'Wybierz datę'})
+        self.fields['payment_date'].widget.attrs.update(
+            {'class': 'date-input'})
+        self.fields['payment_type_other'].widget.attrs.update(
+            {'placeholder': 'Podaj formę płatności'})
 
         contractor = self.initial.get('contractor')
         if contractor:
@@ -67,7 +75,8 @@ class SaleInvoiceModelForm(forms.ModelForm):
 
     class Meta:
         model = SaleInvoice
-        exclude = ['refrigerant_weidghts', 'number_value', 'number_year', 'payed', 'legacy']
+        exclude = ['refrigerant_weidghts', 'number_value',
+                   'number_year', 'payed', 'legacy']
         widgets = {
             'comment': forms.Textarea(attrs={'rows': 2}),
             'payment_date': EnableDisableDateInput(),
@@ -86,7 +95,8 @@ class CorrectiveSaleInvoiceModelForm(SaleInvoiceModelForm):
 
     class Meta:
         model = CorrectiveSaleInvoice
-        exclude = ['refrigerant_weidghts', 'number_value', 'number_year', 'payed', 'legacy']
+        exclude = ['refrigerant_weidghts', 'number_value',
+                   'number_year', 'payed', 'legacy']
         widgets = {
             'comment': forms.Textarea(attrs={'rows': 2}),
             'reason': forms.Textarea(attrs={'rows': 2}),
@@ -116,7 +126,8 @@ class NipInput(forms.TextInput):
 
 
 class ContractorModelForm(forms.ModelForm):
-    ignore_duplicated_phone = forms.CharField(required=False, widget=forms.HiddenInput())
+    ignore_duplicated_phone = forms.CharField(
+        required=False, widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -127,14 +138,22 @@ class ContractorModelForm(forms.ModelForm):
             nip_prefix = ''
         self.fields['nip'].widget = NipInput(prefix=nip_prefix)
         self.fields['nip'].widget.attrs.update({'placeholder': 'Podaj NIP'})
-        self.fields['address_1'].widget.attrs.update({'placeholder': 'Podaj adres'})
-        self.fields['address_2'].widget.attrs.update({'placeholder': 'Podaj adres'})
-        self.fields['city'].widget.attrs.update({'placeholder': 'Podaj miasto'})
-        self.fields['postal_code'].widget.attrs.update({'placeholder': 'Podaj kod pocztowy'})
-        self.fields['email'].widget.attrs.update({'placeholder': 'Podaj adres e-mail'})
-        self.fields['phone_1'].widget.attrs.update({'placeholder': 'Podaj numer telefonu'})
-        self.fields['phone_2'].widget.attrs.update({'placeholder': 'Podaj numer telefonu'})
-        self.fields['bdo_number'].widget.attrs.update({'placeholder': 'Podaj numer BDO'})
+        self.fields['address_1'].widget.attrs.update(
+            {'placeholder': 'Podaj adres'})
+        self.fields['address_2'].widget.attrs.update(
+            {'placeholder': 'Podaj adres'})
+        self.fields['city'].widget.attrs.update(
+            {'placeholder': 'Podaj miasto'})
+        self.fields['postal_code'].widget.attrs.update(
+            {'placeholder': 'Podaj kod pocztowy'})
+        self.fields['email'].widget.attrs.update(
+            {'placeholder': 'Podaj adres e-mail'})
+        self.fields['phone_1'].widget.attrs.update(
+            {'placeholder': 'Podaj numer telefonu'})
+        self.fields['phone_2'].widget.attrs.update(
+            {'placeholder': 'Podaj numer telefonu'})
+        self.fields['bdo_number'].widget.attrs.update(
+            {'placeholder': 'Podaj numer BDO'})
 
     class Meta:
         model = Contractor
@@ -164,7 +183,8 @@ class ContractorModelForm(forms.ModelForm):
         return data
 
     def _check_duplicate_phones(self, number):
-        queryset = Contractor.objects.filter(Q(phone_1=number) | Q(phone_2=number))
+        queryset = Contractor.objects.filter(
+            Q(phone_1=number) | Q(phone_2=number))
         if self.instance and self.instance.pk:
             queryset = queryset.exclude(pk=self.instance.pk)
         if queryset.exists():
@@ -194,22 +214,31 @@ class SaleInvoiceItemModelForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['name'].widget.attrs.update({'placeholder': 'Podaj nazwę'})
         self.fields['name'].widget.attrs.update({'class': 'item-name'})
-        self.fields['description'].widget.attrs.update({'placeholder': 'Podaj opis'})
-        self.fields['description'].widget.attrs.update({'class': 'item-description'})
+        self.fields['description'].widget.attrs.update(
+            {'placeholder': 'Podaj opis'})
+        self.fields['description'].widget.attrs.update(
+            {'class': 'item-description'})
         self.fields['quantity'].widget.attrs.update({'placeholder': 'Ilość'})
         self.fields['quantity'].widget.attrs.update({'class': 'item-quantity'})
-        self.fields['price_netto'].widget.attrs.update({'placeholder': 'Netto'})
+        self.fields['price_netto'].widget.attrs.update(
+            {'placeholder': 'Netto'})
         self.fields['price_netto'].widget.attrs.update({'class': 'item-netto'})
-        self.fields['price_brutto'].widget.attrs.update({'placeholder': 'Brutto'})
-        self.fields['price_brutto'].widget.attrs.update({'class': 'item-brutto'})
-        self.fields['ware'].widget.attrs.update({'data-placeholder': 'Wybierz towar'})
+        self.fields['price_brutto'].widget.attrs.update(
+            {'placeholder': 'Brutto'})
+        self.fields['price_brutto'].widget.attrs.update(
+            {'class': 'item-brutto'})
+        self.fields['ware'].widget.attrs.update(
+            {'data-placeholder': 'Wybierz towar'})
         self.fields['ware'].widget.attrs.update({'class': 'item-ware'})
-        self.fields['service'].widget.attrs.update({'data-placeholder': 'Wybierz usługę'})
+        self.fields['service'].widget.attrs.update(
+            {'data-placeholder': 'Wybierz usługę'})
         self.fields['service'].widget.attrs.update({'class': 'item-service'})
 
     class Meta:
         model = SaleInvoiceItem
-        fields = ['name', 'description', 'quantity', 'price_netto', 'price_brutto', 'ware', 'service']
+        fields = ['name', 'description', 'quantity',
+                  'price_netto', 'price_brutto', 'ware', 'service']
+        localized_fields = ['price_netto', 'price_brutto']
 
 
 class SaleInvoiceItemsInline(InlineFormSet):
@@ -225,7 +254,8 @@ class SaleInvoiceItemsInline(InlineFormSet):
 
     def get_initial(self):
         if not self.object and self.original_invoice:
-            items = SaleInvoiceItem.objects.filter(sale_invoice=self.original_invoice)
+            items = SaleInvoiceItem.objects.filter(
+                sale_invoice=self.original_invoice)
             initial = [model_to_dict(item) for item in items]
             return initial
         if not self.object and self.commission:
@@ -247,13 +277,15 @@ class AlwaysChangedModelForm(forms.ModelForm):
     '''
     Force saving RefrigerantWeightsInline formset with default values
     '''
+
     def has_changed(self):
         return True
 
 
 class RefrigerantWeightsInline(InlineFormSet):
     model = RefrigerantWeights
-    factory_kwargs = {'max_num': 1, 'min_num': 1, 'extra': 0, 'can_delete': False}
+    factory_kwargs = {'max_num': 1, 'min_num': 1,
+                      'extra': 0, 'can_delete': False}
     form_class = AlwaysChangedModelForm
     fields = '__all__'
 
@@ -271,20 +303,29 @@ class ServiceTemplateModelForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['name'].widget.attrs.update({'placeholder': 'Podaj nazwę'})
         self.fields['name'].widget.attrs.update({'class': 'item-name'})
-        self.fields['description'].widget.attrs.update({'placeholder': 'Podaj opis'})
-        self.fields['description'].widget.attrs.update({'class': 'item-description'})
-        self.fields['quantity'].widget.attrs.update({'placeholder': 'Podaj ilość'})
+        self.fields['description'].widget.attrs.update(
+            {'placeholder': 'Podaj opis'})
+        self.fields['description'].widget.attrs.update(
+            {'class': 'item-description'})
+        self.fields['quantity'].widget.attrs.update(
+            {'placeholder': 'Podaj ilość'})
         self.fields['quantity'].widget.attrs.update({'class': 'item-quantity'})
-        self.fields['price_netto'].widget.attrs.update({'placeholder': 'Podaj cenę netto'})
+        self.fields['price_netto'].widget.attrs.update(
+            {'placeholder': 'Podaj cenę netto'})
         self.fields['price_netto'].widget.attrs.update({'class': 'item-netto'})
-        self.fields['price_brutto'].widget.attrs.update({'placeholder': 'Podaj cenę brutto'})
-        self.fields['price_brutto'].widget.attrs.update({'class': 'item-brutto'})
-        self.fields['ware'].widget.attrs.update({'data-placeholder': 'Wybierz towar'})
+        self.fields['price_brutto'].widget.attrs.update(
+            {'placeholder': 'Podaj cenę brutto'})
+        self.fields['price_brutto'].widget.attrs.update(
+            {'class': 'item-brutto'})
+        self.fields['ware'].widget.attrs.update(
+            {'data-placeholder': 'Wybierz towar'})
         self.fields['ware'].widget.attrs.update({'class': 'item-ware'})
 
     class Meta:
         model = ServiceTemplate
-        fields = ['name', 'description', 'quantity', 'price_netto', 'price_brutto', 'ware']
+        fields = ['name', 'description', 'quantity',
+                  'price_netto', 'price_brutto', 'ware']
+        localized_fields = ['price_netto', 'price_brutto']
 
 
 class EmailForm(forms.Form):
@@ -301,4 +342,5 @@ class EmailForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['sale_invoice'].queryset = SaleInvoice.objects.filter(pk=self.initial['sale_invoice'].pk)
+        self.fields['sale_invoice'].queryset = SaleInvoice.objects.filter(
+            pk=self.initial['sale_invoice'].pk)

@@ -45,7 +45,8 @@ class Ware(models.Model):
 
     @property
     def last_price(self):
-        last_invoice = InvoiceItem.objects.filter(ware=self).order_by('-invoice__date')
+        last_invoice = InvoiceItem.objects.filter(
+            ware=self).order_by('-invoice__date')
         if last_invoice:
             return last_invoice[0].price
         else:

@@ -78,7 +78,8 @@ class Command(BaseCommand):
                     if number and not Invoice.objects.filter(number=number,
                                                              supplier=self.settings.PROFIAUTO_SUPPLIER).exists():
                         invoice_id = row.find('a')['href'].split('/')[-1]
-                        url = 'https://matusiewicz.profiauto.net/Klient/faktury/EksportXML/{}'.format(invoice_id)
+                        url = 'https://matusiewicz.profiauto.net/Klient/faktury/EksportXML/{}'.format(
+                            invoice_id)
                         r = s.get(url, headers=headers)
                         result = self.parse_invoice(r.text)
                         new_invoices = new_invoices + result[0]
@@ -90,7 +91,8 @@ class Command(BaseCommand):
         xml_doc = parseString(xml_string).documentElement
         invoice_xml = xml_doc.getElementsByTagName('nag')[0]
         number = self.getData(invoice_xml, 'numer')
-        issue_date = dateutil.parser.parse(self.getData(invoice_xml, 'dat_w')).date()
+        issue_date = dateutil.parser.parse(
+            self.getData(invoice_xml, 'dat_w')).date()
 
         invoice = Invoice.objects.create(
             number=number,
@@ -110,12 +112,15 @@ class Command(BaseCommand):
                 description = ''
             if not index:
                 print("Skipped ware without index.")
-                self.report_admins('Invalid data in invoice {}. Please verify.'.format(number))
+                self.report_admins(
+                    'Invalid data in invoice {}. Please verify.'.format(number))
                 continue
             try:
-                ware = Ware.objects.get(Q(index=index) | Q(index_slug=Ware.slugify(index)))
+                ware = Ware.objects.get(Q(index=index) | Q(
+                    index_slug=Ware.slugify(index)))
             except Ware.DoesNotExist:
-                ware = Ware.objects.create(index=index, name=name, description=description)
+                ware = Ware.objects.create(
+                    index=index, name=name, description=description)
                 new_wares = new_wares + 1
             InvoiceItem.objects.create(
                 invoice=invoice,

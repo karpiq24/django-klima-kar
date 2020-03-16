@@ -46,7 +46,8 @@ class Command(BaseCommand):
         ]
 
         temp_dir = tempfile.mkdtemp()
-        file_name = "{}-django-klimakar-backup.sql".format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+        file_name = "{}-django-klimakar-backup.sql".format(
+            datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
         if options['directory']:
             write_path = os.path.join(options['directory'], file_name)
         else:
@@ -60,7 +61,8 @@ class Command(BaseCommand):
         )
         process.wait()
         if options['mycloud'] or options['dropbox']:
-            zip_name = "{}-django-klimakar-sqldump.zip".format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+            zip_name = "{}-django-klimakar-sqldump.zip".format(
+                datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
             zip_path = os.path.join(temp_dir, zip_name)
             with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as temp_zip_file:
                 temp_zip_file.write(write_path, file_name)
@@ -73,7 +75,8 @@ class Command(BaseCommand):
 
     def upload_to_mycloud(self, file_name, file_path):
         cloud = MyCloudHome.load()
-        r = cloud.create_file(file_name, open(file_path, 'rb').read(), cloud.BACKUP_DIR_ID)
+        r = cloud.create_file(file_name, open(
+            file_path, 'rb').read(), cloud.BACKUP_DIR_ID)
         if r.status_code == 409 or r.status_code != 201:
             mail_admins('Postgres backup save failed!', r.text)
 
@@ -89,7 +92,8 @@ class Command(BaseCommand):
             return
         try:
             with open(file_path, 'rb') as f:
-                dbx.files_upload(f.read(), '/sqldump/{}'.format(file_name), mode=WriteMode('overwrite'))
+                dbx.files_upload(
+                    f.read(), '/sqldump/{}'.format(file_name), mode=WriteMode('overwrite'))
         except ApiError as err:
             if (err.error.is_path() and err.error.get_path().reason.is_insufficient_space()):
                 mail_admins(

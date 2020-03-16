@@ -10,7 +10,8 @@ class WareModelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(WareModelForm, self).__init__(*args, **kwargs)
-        self.fields['index'].widget.attrs.update({'placeholder': 'Podaj indeks'})
+        self.fields['index'].widget.attrs.update(
+            {'placeholder': 'Podaj indeks'})
         self.fields['name'].widget.attrs.update({'placeholder': 'Podaj nazwę'})
 
     class Meta:
@@ -19,6 +20,7 @@ class WareModelForm(forms.ModelForm):
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3}),
         }
+        localized_fields = ['retail_price']
 
     class Media:
         js = ('js/warehouse/ware.js',)
@@ -34,9 +36,12 @@ class InvoiceModelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(InvoiceModelForm, self).__init__(*args, **kwargs)
-        self.fields['number'].widget.attrs.update({'placeholder': 'Podaj numer faktury'})
-        self.fields['supplier'].widget.attrs.update({'data-placeholder': 'Wybierz dostawcę'})
-        self.fields['date'].widget.attrs.update({'placeholder': 'Wybierz datę'})
+        self.fields['number'].widget.attrs.update(
+            {'placeholder': 'Podaj numer faktury'})
+        self.fields['supplier'].widget.attrs.update(
+            {'data-placeholder': 'Wybierz dostawcę'})
+        self.fields['date'].widget.attrs.update(
+            {'placeholder': 'Wybierz datę'})
         self.fields['date'].widget.attrs.update({'class': 'date-input'})
 
     class Meta:
@@ -63,16 +68,19 @@ class InvoiceItemModelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(InvoiceItemModelForm, self).__init__(*args, **kwargs)
-        self.fields['quantity'].widget.attrs.update({'placeholder': 'Podaj ilość'})
+        self.fields['quantity'].widget.attrs.update(
+            {'placeholder': 'Podaj ilość'})
         self.fields['quantity'].widget.attrs.update({'class': 'item-quantity'})
         self.fields['price'].widget.attrs.update({'placeholder': 'Podaj cenę'})
         self.fields['price'].widget.attrs.update({'class': 'item-price'})
         self.fields['ware'].widget.attrs.update({'class': 'item-ware'})
-        self.fields['ware'].widget.attrs.update({'data-placeholder': 'Wybierz towar'})
+        self.fields['ware'].widget.attrs.update(
+            {'data-placeholder': 'Wybierz towar'})
 
     class Meta:
         model = InvoiceItem
         fields = ['ware', 'quantity', 'price']
+        localized_fields = ['quantity', 'price']
 
 
 class InvoiceItemsInline(InlineFormSet):

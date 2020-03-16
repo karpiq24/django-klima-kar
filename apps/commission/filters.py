@@ -28,14 +28,19 @@ class VehicleFilter(django_filters.FilterSet):
 
     class Meta:
         model = Vehicle
-        fields = ['brand', 'model', 'registration_plate', 'vin', 'production_year']
+        fields = ['brand', 'model', 'registration_plate',
+                  'vin', 'production_year']
 
 
 class ComponentFilter(django_filters.FilterSet):
-    component_type = django_filters.ChoiceFilter(choices=Component.TYPE_CHOICES)
-    model = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    serial_number = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
-    catalog_number = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput())
+    component_type = django_filters.ChoiceFilter(
+        choices=Component.TYPE_CHOICES)
+    model = django_filters.CharFilter(
+        lookup_expr='icontains', widget=forms.TextInput())
+    serial_number = django_filters.CharFilter(
+        lookup_expr='icontains', widget=forms.TextInput())
+    catalog_number = django_filters.CharFilter(
+        lookup_expr='icontains', widget=forms.TextInput())
 
     class Meta:
         model = Component
@@ -81,7 +86,8 @@ class CommissionFilter(django_filters.FilterSet):
 
     class Meta:
         model = Commission
-        fields = ['status', 'pk', 'vc_name', 'contractor', 'description', 'start_date', 'end_date']
+        fields = ['status', 'pk', 'vc_name', 'contractor',
+                  'description', 'start_date', 'end_date']
 
     def has_files_filter(self, queryset, name, value):
         if value == self.YES:

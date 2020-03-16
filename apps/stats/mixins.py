@@ -107,10 +107,12 @@ class BigChartHistoryMixin(ChartDataMixin, View):
 
     def _get_week(self):
         date = datetime.today() - relativedelta(days=6)
-        self.objects = self.objects.filter(**self._get_date_filter_kwargs(date))
+        self.objects = self.objects.filter(
+            **self._get_date_filter_kwargs(date))
         self.objects = self.objects.values(self.date_field)
         self.objects = self._annotate(self.objects)
-        self.objects = self.objects.values_list('total', self.date_field).order_by(self.date_field)
+        self.objects = self.objects.values_list(
+            'total', self.date_field).order_by(self.date_field)
         values = list(self.objects.values_list('total', flat=True))
         days_between = (datetime.today() - date).days
         for i in range(days_between + 1):
@@ -120,14 +122,17 @@ class BigChartHistoryMixin(ChartDataMixin, View):
 
         self.response_data['data']['labels'] = [DAYS[(date + relativedelta(days=i)).weekday()]
                                                 for i in range(days_between + 1)]
-        self.response_data['data']['datasets'].append(self.get_dataset(values, COLORS[0]))
+        self.response_data['data']['datasets'].append(
+            self.get_dataset(values, COLORS[0]))
 
     def _get_month(self):
         date = datetime.today() - relativedelta(months=1)
-        self.objects = self.objects.filter(**self._get_date_filter_kwargs(date))
+        self.objects = self.objects.filter(
+            **self._get_date_filter_kwargs(date))
         self.objects = self.objects.values(self.date_field)
         self.objects = self._annotate(self.objects)
-        self.objects = self.objects.values_list('total', self.date_field).order_by(self.date_field)
+        self.objects = self.objects.values_list(
+            'total', self.date_field).order_by(self.date_field)
         values = list(self.objects.values_list('total', flat=True))
         days_between = (date.today() - date).days
         for i in range(days_between + 1):
@@ -141,12 +146,15 @@ class BigChartHistoryMixin(ChartDataMixin, View):
             values, COLORS[0]))
 
     def _get_year(self):
-        date = (datetime.today() - relativedelta(years=1, months=-1)).replace(day=1)
-        self.objects = self.objects.filter(**self._get_date_filter_kwargs(date))
+        date = (datetime.today() -
+                relativedelta(years=1, months=-1)).replace(day=1)
+        self.objects = self.objects.filter(
+            **self._get_date_filter_kwargs(date))
         self.objects = self.objects.annotate(
-                month=ExtractMonth(self.date_field), year=ExtractYear(self.date_field)).values('year', 'month')
+            month=ExtractMonth(self.date_field), year=ExtractYear(self.date_field)).values('year', 'month')
         self.objects = self._annotate(self.objects)
-        self.objects = self.objects.values_list('year', 'month', 'total').order_by('year', 'month')
+        self.objects = self.objects.values_list(
+            'year', 'month', 'total').order_by('year', 'month')
         values = list(self.objects.values_list('total', flat=True))
         months = list(self.objects.values_list('month', flat=True))
         self.response_data['data']['labels'] = [MONTHS[i - 1] for i in months]
@@ -155,16 +163,19 @@ class BigChartHistoryMixin(ChartDataMixin, View):
 
     def _get_all_monthly(self):
         years = self.objects.annotate(year=ExtractYear(self.date_field)).values_list(
-                'year', flat=True).distinct().order_by('year')
+            'year', flat=True).distinct().order_by('year')
         self.response_data['data']['labels'] = MONTHS
         self.response_data['options']['legend']['display'] = True
 
         colors = COLORS[len(years)-1::-1]
         for i, year in enumerate(years):
-            year_objects = self.objects.filter(**{'{}__year'.format(self.date_field): year})
-            year_objects = year_objects.annotate(month=ExtractMonth(self.date_field)).values('month')
+            year_objects = self.objects.filter(
+                **{'{}__year'.format(self.date_field): year})
+            year_objects = year_objects.annotate(
+                month=ExtractMonth(self.date_field)).values('month')
             year_objects = self._annotate(year_objects)
-            year_objects = year_objects.values_list('month', 'total').order_by('month')
+            year_objects = year_objects.values_list(
+                'month', 'total').order_by('month')
             values = list(year_objects.values_list('total', flat=True))
             values = [val for val in values if val]
             for j in range(1, 13):
@@ -178,11 +189,14 @@ class BigChartHistoryMixin(ChartDataMixin, View):
                     values, colors[i], label=year, fill=False, borderColor=colors[i], hidden=hidden))
 
     def _get_all_yearly(self):
-        self.objects = self.objects.annotate(year=ExtractYear(self.date_field)).values('year')
+        self.objects = self.objects.annotate(
+            year=ExtractYear(self.date_field)).values('year')
         self.objects = self._annotate(self.objects)
-        self.objects = self.objects.values_list('year', 'total').exclude(total=0).order_by('year')
+        self.objects = self.objects.values_list(
+            'year', 'total').exclude(total=0).order_by('year')
 
-        self.response_data['data']['labels'] = list(self.objects.values_list('year', flat=True))
+        self.response_data['data']['labels'] = list(
+            self.objects.values_list('year', flat=True))
         self.response_data['data']['datasets'].append(self.get_dataset(
             list(self.objects.values_list('total', flat=True)),
             COLORS[0]))

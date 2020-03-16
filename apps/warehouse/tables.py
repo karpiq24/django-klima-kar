@@ -42,7 +42,8 @@ class WareTable(tables.Table):
     class Meta:
         model = Ware
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['index', 'name', 'description', 'last_price', 'retail_price', 'stock']
+        fields = ['index', 'name', 'description',
+                  'last_price', 'retail_price', 'stock']
         order_by = 'index'
         empty_text = 'Brak towarów'
 
@@ -138,7 +139,8 @@ class SupplierTable(tables.Table):
     def order_all_invoices_value(self, queryset, is_descending):
         queryset = queryset.annotate(
             max_price=Sum(
-                F('invoice__invoiceitem__price') * F('invoice__invoiceitem__quantity'),
+                F('invoice__invoiceitem__price') *
+                F('invoice__invoiceitem__quantity'),
                 output_field=FloatField())).order_by(('-' if is_descending else '') + 'max_price')
         return (queryset, True)
 

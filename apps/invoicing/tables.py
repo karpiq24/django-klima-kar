@@ -89,7 +89,8 @@ class SaleInvoiceWithTypeTable(SaleInvoiceTable):
     class Meta:
         model = SaleInvoice
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['invoice_type', 'number', 'contractor', 'issue_date', 'total_value_brutto']
+        fields = ['invoice_type', 'number', 'contractor',
+                  'issue_date', 'total_value_brutto']
         order_by = '-number'
         empty_text = 'Brak faktur'
 
@@ -121,7 +122,8 @@ class SaleInvoiceItemTable(tables.Table):
     class Meta:
         model = SaleInvoiceItem
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['name', 'description', 'ware', 'quantity', 'price_netto', 'price_brutto']
+        fields = ['name', 'description', 'ware',
+                  'quantity', 'price_netto', 'price_brutto']
         empty_text = 'Brak pozycji'
 
 

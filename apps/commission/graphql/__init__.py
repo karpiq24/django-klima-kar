@@ -9,4 +9,5 @@ from apps.commission.graphql.types import commission, commission_type, commissio
 
 CommissionTypeDefs = load_schema_from_path(
     os.path.join(settings.BASE_DIR, 'apps/commission/graphql/'))
-CommissionTypes = [commission, commission_type, commission_status, query, mutation, vehicle, component]
+CommissionTypes = [commission, commission_type,
+                   commission_status, query, mutation, vehicle, component]

@@ -79,7 +79,8 @@ class MyCloudHomeInitializeView(SuperUserOnlyMixin, View):
             return JsonResponse({'status': 'error', 'message': 'Podaj kod autoryzacyjny.'}, status=400)
         cloud = MyCloudHome.load()
         if cloud.authorize_connection(self.request.POST.get('code')):
-            messages.add_message(self.request, messages.SUCCESS, 'Autoryzacja zakończona powodzeniem.')
+            messages.add_message(self.request, messages.SUCCESS,
+                                 'Autoryzacja zakończona powodzeniem.')
             return JsonResponse({'status': 'success'})
         else:
             return JsonResponse({'status': 'error', 'message': 'Coś poszło nie tak. Spróbuj ponownie'}, status=400)

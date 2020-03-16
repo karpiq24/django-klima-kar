@@ -8,7 +8,8 @@ from apps.invoicing.models import SaleInvoice
 
 def get_next_invoice_number(invoice_type):
     year = datetime.date.today().year
-    invoices = SaleInvoice.objects.filter(invoice_type=invoice_type, number_year=year)
+    invoices = SaleInvoice.objects.filter(
+        invoice_type=invoice_type, number_year=year)
     if invoice_type == SaleInvoice.TYPE_VAT:
         invoices = (invoices | SaleInvoice.objects.filter(
             invoice_type=SaleInvoice.TYPE_WDT, number_year=year)).distinct()
@@ -65,12 +66,17 @@ def generate_refrigerant_weights_report(queryset):
     for invoice in queryset.order_by('number_year', 'number_value'):
         worksheet.write(row, col, invoice.get_invoice_type_display(), border)
         worksheet.write(row, col + 1, invoice.number, border)
-        worksheet.write(row, col + 2, invoice.issue_date.strftime('%d.%m.%Y'), border)
+        worksheet.write(
+            row, col + 2, invoice.issue_date.strftime('%d.%m.%Y'), border)
         worksheet.write(row, col + 3, invoice.contractor.name, border)
-        worksheet.write(row, col + 4, invoice.refrigerantweights.r134a, border_weight)
-        worksheet.write(row, col + 5, invoice.refrigerantweights.r1234yf, border_weight)
-        worksheet.write(row, col + 6, invoice.refrigerantweights.r12, border_weight)
-        worksheet.write(row, col + 7, invoice.refrigerantweights.r404, border_weight)
+        worksheet.write(
+            row, col + 4, invoice.refrigerantweights.r134a, border_weight)
+        worksheet.write(
+            row, col + 5, invoice.refrigerantweights.r1234yf, border_weight)
+        worksheet.write(
+            row, col + 6, invoice.refrigerantweights.r12, border_weight)
+        worksheet.write(
+            row, col + 7, invoice.refrigerantweights.r404, border_weight)
         row += 1
 
     worksheet.write(row + 1, 0, 'SUMA', bold)

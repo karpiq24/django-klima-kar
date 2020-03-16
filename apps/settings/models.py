@@ -324,7 +324,8 @@ class MyCloudHome(SingletonModel):
         return r.json()['data']['componentMap']['cloud.service.urls'][endpoint]
 
     def get_auth_url(self):
-        url = os.path.join(self._get_endpoint('service.auth0.url'), 'authorize')
+        url = os.path.join(self._get_endpoint(
+            'service.auth0.url'), 'authorize')
         params = {
             'scope': 'profile openid offline_access nas_read_write nas_read_only user_read device_read',
             'response_type': 'code',
@@ -340,7 +341,8 @@ class MyCloudHome(SingletonModel):
         return pr.url
 
     def _get_access_and_refresh_token(self, code):
-        url = os.path.join(self._get_endpoint('service.auth0.url'), 'oauth', 'token')
+        url = os.path.join(self._get_endpoint(
+            'service.auth0.url'), 'oauth', 'token')
         data = {
             'code': code,
             'audience': 'mycloud.com',
@@ -363,7 +365,8 @@ class MyCloudHome(SingletonModel):
         return True
 
     def _refresh_token(self):
-        url = os.path.join(self._get_endpoint('service.auth0.url'), 'oauth', 'token')
+        url = os.path.join(self._get_endpoint(
+            'service.auth0.url'), 'oauth', 'token')
         data = {
             'audience': 'mycloud.com',
             'client_id': self.WD_CLIENT_ID,
@@ -424,7 +427,8 @@ class MyCloudHome(SingletonModel):
         return r
 
     def get_files(self, directory='root'):
-        url = os.path.join(self.DEVICE_INTERNAL_URL, 'sdk', 'v2', 'filesSearch', 'parents')
+        url = os.path.join(self.DEVICE_INTERNAL_URL, 'sdk',
+                           'v2', 'filesSearch', 'parents')
         params = {
             'ids': directory
         }
@@ -440,7 +444,8 @@ class MyCloudHome(SingletonModel):
             raise Exception("Cannot delete WD files when in DEBUG mode.")
         if file_id == self.APP_DIR_ID:
             return False
-        url = os.path.join(self.DEVICE_INTERNAL_URL, 'sdk', 'v2', 'files', file_id)
+        url = os.path.join(self.DEVICE_INTERNAL_URL,
+                           'sdk', 'v2', 'files', file_id)
         r = requests.delete(url, headers=self._get_auth_headers())
         if self._has_auth_errors(r):
             return self.delete_file(file_id)
@@ -449,7 +454,8 @@ class MyCloudHome(SingletonModel):
     def download_file(self, file_id):
         if file_id == self.APP_DIR_ID:
             return None
-        url = os.path.join(self.DEVICE_INTERNAL_URL, 'sdk', 'v2', 'files', file_id, 'content')
+        url = os.path.join(self.DEVICE_INTERNAL_URL, 'sdk',
+                           'v2', 'files', file_id, 'content')
         r = requests.get(url, headers=self._get_auth_headers())
         if self._has_auth_errors(r, check_text=False, check_json=False):
             return self.download_file(file_id)

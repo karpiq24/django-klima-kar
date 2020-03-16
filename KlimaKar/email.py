@@ -22,7 +22,8 @@ def mail_admins(subject, message, fail_silently=False):
     """Send a message to the admins, as defined by the ADMINS setting."""
     if not settings.ADMINS:
         return
-    mail = get_email_message(f'{settings.EMAIL_SUBJECT_PREFIX} {subject}', message, [a[1] for a in settings.ADMINS])
+    mail = get_email_message(f'{settings.EMAIL_SUBJECT_PREFIX} {subject}', message, [
+                             a[1] for a in settings.ADMINS])
     mail.send(fail_silently=fail_silently)
 
 
@@ -30,5 +31,6 @@ def mail_managers(subject, message, fail_silently=False):
     """Send a message to the managers, as defined by the MANAGERS setting."""
     if not settings.MANAGERS:
         return
-    mail = get_email_message(f'{settings.EMAIL_SUBJECT_PREFIX} {subject}', message, [a[1] for a in settings.MANAGERS])
+    mail = get_email_message(f'{settings.EMAIL_SUBJECT_PREFIX} {subject}', message, [
+                             a[1] for a in settings.MANAGERS])
     mail.send(fail_silently=fail_silently)

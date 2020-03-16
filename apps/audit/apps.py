@@ -38,4 +38,5 @@ class AuditConfig(AppConfig):
             pre_delete.connect(pre_delete_handler, sender=model)
             for field in model._meta.get_fields():
                 if type(field) is ManyToManyField:
-                    m2m_changed.connect(m2m_changed_handler, sender=getattr(model, field.attname).through)
+                    m2m_changed.connect(m2m_changed_handler, sender=getattr(
+                        model, field.attname).through)

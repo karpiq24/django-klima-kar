@@ -55,10 +55,12 @@ class SaleInvoiceDetailView(SingleTableAjaxMixin, DetailView):
         site_settings = SiteSettings.load()
         subject = ''
         if site_settings.SALE_INVOICE_EMAIL_TITLE:
-            subject = Template(site_settings.SALE_INVOICE_EMAIL_TITLE).render(Context({'invoice': self.object}))
+            subject = Template(site_settings.SALE_INVOICE_EMAIL_TITLE).render(
+                Context({'invoice': self.object}))
         message = ''
         if site_settings.SALE_INVOICE_EMAIL_BODY:
-            message = Template(site_settings.SALE_INVOICE_EMAIL_BODY).render(Context({'invoice': self.object}))
+            message = Template(site_settings.SALE_INVOICE_EMAIL_BODY).render(
+                Context({'invoice': self.object}))
         email_data = {
             'sale_invoice': self.object,
             'subject': subject,
@@ -68,7 +70,8 @@ class SaleInvoiceDetailView(SingleTableAjaxMixin, DetailView):
         context['email_form'] = EmailForm(initial=email_data)
         context['email_url'] = reverse('invoicing:sale_invoice_email')
         key = "{}_params".format(self.model.__name__)
-        context['back_url'] = reverse('invoicing:sale_invoices') + '?' + urlencode(self.request.session.get(key, ''))
+        context['back_url'] = reverse(
+            'invoicing:sale_invoices') + '?' + urlencode(self.request.session.get(key, ''))
         return context
 
     def get_table_data(self):
@@ -116,7 +119,8 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
                     'type': slugify(dict(SaleInvoice.INVOICE_TYPES)[self.invoice_type])
                 })))
         else:
-            messages.add_message(self.request, messages.SUCCESS, 'Zapisano fakturę.')
+            messages.add_message(
+                self.request, messages.SUCCESS, 'Zapisano fakturę.')
         return super().forms_valid(form, inlines)
 
     def get_success_url(self, **kwargs):
@@ -179,12 +183,14 @@ class SaleInvoiceUpdateView(UpdateWithInlinesView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = "Edycja faktury sprzedażowej ({})".format(self.get_object().get_invoice_type_display())
+        context['title'] = "Edycja faktury sprzedażowej ({})".format(
+            self.get_object().get_invoice_type_display())
         return context
 
     def forms_valid(self, form, inlines):
         self.generate_pdf = 'generate_pdf' in form.data
-        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Zapisano zmiany.')
         return super().forms_valid(form, inlines)
 
     def get_success_url(self, **kwargs):
@@ -208,7 +214,8 @@ class CorrectiveSaleInvoiceCreateView(SaleInvoiceCreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = context['title'].replace(')', ' do faktury {})'.format(self.original_invoice))
+        context['title'] = context['title'].replace(
+            ')', ' do faktury {})'.format(self.original_invoice))
         context['original_invoice'] = self.original_invoice
         return context
 
@@ -237,7 +244,8 @@ class CorrectiveSaleInvoiceUpdateView(SaleInvoiceUpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = context['title'].replace(')', ' do faktury {})'.format(self.invoice.original_invoice))
+        context['title'] = context['title'].replace(')', ' do faktury {})'.format(
+            self.invoice.original_invoice))
         context['original_invoice'] = self.invoice.original_invoice
         return context
 
@@ -271,13 +279,15 @@ class SaleInvoicePDFView(View):
         response['Content-Encoding'] = None
         response['Content-Type'] = 'application/pdf'
         if not self.print_version:
-            response['Content-Disposition'] = 'attachment;' + response['Content-Disposition']
+            response['Content-Disposition'] = 'attachment;' + \
+                response['Content-Disposition']
         return response
 
 
 class SendEmailView(View):
     def post(self, request, *args, **kwargs):
-        invoice = get_object_or_404(SaleInvoice, pk=request.POST.get('sale_invoice'))
+        invoice = get_object_or_404(
+            SaleInvoice, pk=request.POST.get('sale_invoice'))
         pdf_file = invoice.generate_pdf()
         email = get_email_message(
             subject=request.POST.get('subject'),
@@ -310,7 +320,8 @@ class ExportRefrigerantWeights(View):
         filters = request.session[key]
         if filters.get('invoice_type') == '__ALL__':
             filters.pop('invoice_type')
-        queryset = SaleInvoiceFilter(filters, queryset=SaleInvoice.objects.all()).qs
+        queryset = SaleInvoiceFilter(
+            filters, queryset=SaleInvoice.objects.all()).qs
         output = generate_refrigerant_weights_report(queryset)
         response = HttpResponse(output.read(),
                                 content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -349,7 +360,7 @@ class ServiceTemplateCreateView(CreateView):
 
     def form_valid(self, form):
         messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejną usługę.</a>'.format(
-                reverse('invoicing:service_template_create')))
+            reverse('invoicing:service_template_create')))
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
@@ -370,7 +381,8 @@ class ServiceTemplateUpdateView(UpdateView):
         return context
 
     def form_valid(self, form):
-        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Zapisano zmiany.')
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
@@ -384,7 +396,8 @@ class ServiceTemplateAutocomplete(CustomSelect2QuerySetView):
     def get_queryset(self):
         qs = ServiceTemplate.objects.all()
         if self.q:
-            qs = qs.filter(Q(name__icontains=self.q) | Q(description__icontains=self.q))
+            qs = qs.filter(Q(name__icontains=self.q) |
+                           Q(description__icontains=self.q))
         return qs
 
 
@@ -433,13 +446,15 @@ class ContractorDetailView(MultiTableAjaxMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         key = "{}_params".format(self.model.__name__)
-        context['back_url'] = reverse('invoicing:contractors') + '?' + urlencode(self.request.session.get(key, ''))
+        context['back_url'] = reverse(
+            'invoicing:contractors') + '?' + urlencode(self.request.session.get(key, ''))
         return context
 
     def get_tables_data(self):
         return {
             self.SALE_INVOIDE_ID: SaleInvoice.objects.filter(contractor=self.get_object()),
-            self.COMMISSION_ID: Commission.objects.filter(contractor=self.get_object())
+            self.COMMISSION_ID: Commission.objects.filter(
+                contractor=self.get_object())
         }
 
 
@@ -455,7 +470,7 @@ class ContractorCreateView(CreateView):
 
     def form_valid(self, form):
         messages.add_message(self.request, messages.SUCCESS, '<a href="{}">Dodaj kolejnego kontrahenta.</a>'.format(
-                reverse('invoicing:contractor_create')))
+            reverse('invoicing:contractor_create')))
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
@@ -476,7 +491,8 @@ class ContractorUpdateView(UpdateView):
         return context
 
     def form_valid(self, form):
-        messages.add_message(self.request, messages.SUCCESS, 'Zapisano zmiany.')
+        messages.add_message(
+            self.request, messages.SUCCESS, 'Zapisano zmiany.')
         return super().form_valid(form)
 
     def get_success_url(self, **kwargs):
@@ -517,7 +533,8 @@ class ContractorGUS(View):
         if request_type == 'address':
             response_data = GUS.get_gus_address(nip)
         elif request_type == 'pkd':
-            response_data = {'pkd': sorted(GUS.get_gus_pkd(nip), key=lambda k: k['main'], reverse=True)}
+            response_data = {'pkd': sorted(GUS.get_gus_pkd(
+                nip), key=lambda k: k['main'], reverse=True)}
         elif request_type == 'all':
             response_data = {'pkd': sorted(GUS.get_gus_pkd(nip), key=lambda k: k['main'], reverse=True),
                              'info': GUS.get_gus_data(nip)}
@@ -563,7 +580,7 @@ class ContractorGetDataView(View):
 
     def _check_polish_vat(self, contractor):
         url = 'https://wl-api.mf.gov.pl/api/search/nip/{}?date={}'.format(
-                        contractor.nip, str(datetime.date.today()))
+            contractor.nip, str(datetime.date.today()))
         r = requests.get(url)
         vat_subject = r.json().get('result', {}).get('subject', {})
         if vat_subject is None:
@@ -576,7 +593,8 @@ class ContractorGetDataView(View):
         }
 
     def _check_ue_vat(self, contractor):
-        client = ZeepClient('http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl')
+        client = ZeepClient(
+            'http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl')
         vat = client.service.checkVat(contractor.nip_prefix, contractor.nip)
         return {
             'vat_valid': vat['valid'],

@@ -45,7 +45,8 @@ class Command(BaseCommand):
             zip_ref.extractall(temp_dir)
 
         for app in self.apps_to_load:
-            call_command('loaddata', os.path.join(temp_dir, '{}.json'.format(app)))
+            call_command('loaddata', os.path.join(
+                temp_dir, '{}.json'.format(app)))
         shutil.rmtree(temp_dir)
 
     def _clear_warehouse(self):

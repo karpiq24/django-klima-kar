@@ -88,7 +88,8 @@ def m2m_changed_handler(sender, instance, action, pk_set, **kwargs):
     for field in model._meta.get_fields():
         if type(field) is ManyToManyField and getattr(model, field.attname).through is sender:
             the_field = field
-            old_pk_set = [f.pk for f in getattr(instance, the_field.attname).all()]
+            old_pk_set = [f.pk for f in getattr(
+                instance, the_field.attname).all()]
     if action == 'pre_add':
         new_pk_set = old_pk_set + list(pk_set)
     elif action == 'pre_remove':

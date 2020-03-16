@@ -35,7 +35,8 @@ class AuditLogTable(tables.Table):
 
         model = AuditLog
         attrs = {'class': 'table table-striped table-hover table-bordered'}
-        fields = ['action_time', 'content_type', 'object_repr', 'diffrence', 'actions']
+        fields = ['action_time', 'content_type',
+                  'object_repr', 'diffrence', 'actions']
         order_by = '-action_time'
         empty_text = 'Brak logów'
         row_attrs = {
