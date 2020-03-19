@@ -9,12 +9,14 @@
         <div><span class="motto">komfortowy klimat w zasięgu ręki</span></div>
     </div>
     <div id="topbar-middle">
+        {% if user.is_authenticated %}
         <form action="{% url 'search:search' %}" id="inline-search-form">
             <button type="submit" title="Wyszukaj">
                 <i class="fa fa-search fa-lg"></i>
             </button>
             <input class="form-control form-control-lg" name="q" placeholder="Wyszukiwanie...">
         </form>
+        {% endif %}
     </div>
     {% if user.is_authenticated %}
         <div id="topbar-right">
