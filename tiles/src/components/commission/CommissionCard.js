@@ -12,7 +12,13 @@ import { faUsers, faCar, faMicrochip } from "@fortawesome/free-solid-svg-icons";
 const CommissionCard = ({ commission, openContractorModal, openVehicleModal, openComponentModal }) => {
     const history = useHistory();
     return (
-        <Card key={commission.id} bg="light" border="dark" className="commission-card">
+        <Card
+            key={commission.id}
+            bg="light"
+            border="dark"
+            className="commission-card"
+            onClick={() => history.push(`/tiles/zlecenia/${commission.id}`)}
+        >
             <Card.Header>
                 Zlecenie {commission.id}: {commission.vc_name}
             </Card.Header>

@@ -14,8 +14,9 @@ class Command(BaseCommand):
         with open(options["path"]) as f:
             lines = f.readlines()
         for line in lines:
-            index, price = line.split(",")
-            index = line.strip()
+            splitted = line.strip().split(",")
+            index = splitted[0]
+            price = splitted[1]
             try:
                 price = float(price)
             except ValueError:

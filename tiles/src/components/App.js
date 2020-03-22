@@ -5,6 +5,7 @@ import { ApolloProvider } from "@apollo/react-hooks";
 
 import client from "../graphql";
 import CommissionList from "./commission/CommissionList";
+import CommissionForm from "./commission/CommissionForm";
 
 function App() {
     return (
@@ -13,6 +14,8 @@ function App() {
                 <div className="content">
                     <Switch>
                         <Route exact path="/tiles" component={CommissionList} />
+                        <Route exact path="/tiles/zlecenia/nowe" component={CommissionForm} />
+                        <Route path="/tiles/zlecenia/:id" component={CommissionForm} />
                     </Switch>
                 </div>
             </BrowserRouter>
