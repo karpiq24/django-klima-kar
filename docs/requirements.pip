@@ -1,4 +1,4 @@
-ariadne==0.10.0
+ariadne==0.11.0
 beautifulsoup4==4.8.2
 django-autocomplete-light==3.5.1
 django-defender==0.7.0
