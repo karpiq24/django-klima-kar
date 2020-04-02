@@ -13,14 +13,15 @@
     margin-bottom: 1rem;
 }
 
-.commission-buttons {
+.commission-status-buttons {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
     margin-bottom: 2rem;
     margin-top: 1rem;
 }
 
-.commission-buttons button:not(:last-child) {
+.commission-status-buttons button:not(:last-child) {
     margin-right: 1rem;
 }
 
@@ -62,50 +63,24 @@
     font-size: 0.8rem;
 }
 
-@media screen and (max-width: 1440px) {
-    .pretty-select.btn-group {
-        flex-direction: column;
-        width: 100%;
-    }
-    .pretty-select.btn-group > .btn {
-        width: 100%;
-    }
-    .pretty-select.btn-group > .pretty-select.btn-group:not(:first-child),
-    .pretty-select.btn-group > .btn:not(:first-child) {
-        margin-top: -1px;
-    }
-    .pretty-select.btn-group > .btn:not(:first-child) {
-        margin-left: 0;
-    }
-    .pretty-select.btn-group > .btn:not(:last-child):not(.dropdown-toggle) {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-        border-top-left-radius: 0.25rem;
-        border-top-right-radius: 0.25rem;
-    }
-    .pretty-select.btn-group > .btn:not(:first-child):not(:last-child) {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-    }
-    .pretty-select.btn-group > .btn:not(:first-child) {
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-        border-bottom-left-radius: 0.25rem;
-        border-bottom-right-radius: 0.25rem;
-    }
-    .pretty-select.form-control {
-        height: auto;
-    }
-
-    .commission-buttons {
-        justify-content: center;
-    }
+.new-commission-btn {
+    margin-left: auto;
 }
 
 @media screen and (max-width: 450px) {
     .btn-footer span {
         display: none;
+    }
+}
+
+@media screen and (max-width: 1440px) {
+    .new-commission-btn {
+        margin-left: 0;
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    .new-commission-btn button {
+        width: 100%;
     }
 }

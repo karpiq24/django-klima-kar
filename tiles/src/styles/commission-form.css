@@ -1,0 +1,87 @@
+h1 {
+    font-size: 6rem;
+}
+
+h2 {
+    font-size: 4rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.form-step-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 4rem 0 2rem 0;
+}
+
+.type-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.type-buttons p,
+.form-step-buttons {
+    font-size: 2rem;
+}
+
+.type-buttons button {
+    width: 48%;
+    font-size: 4rem;
+    padding: 4rem 4rem;
+}
+
+.big-area {
+    font-size: 2rem;
+}
+
+.back-button {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+}
+
+.service-button-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    grid-column-gap: 1rem;
+    grid-row-gap: 1rem;
+}
+
+.th-ware {
+    max-width: 100%;
+    min-width: 400px;
+}
+
+.th-price {
+    width: 200px;
+    min-width: 200px;
+}
+
+.th-quantity {
+    width: 150px;
+    min-width: 150px;
+}
+
+.th-sum {
+    width: 200px;
+    min-width: 200px;
+}
+
+.th-actions {
+    width: 100px;
+    min-width: 100px;
+}
+
+@media screen and (max-width: 1400px) {
+    .service-button-container {
+        grid-template-columns: auto auto;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .service-button-container {
+        grid-template-columns: auto;
+    }
+}

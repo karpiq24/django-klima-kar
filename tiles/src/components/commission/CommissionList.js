@@ -17,6 +17,7 @@ import ContractorModal from "../invoicing/ContractorModal";
 import VehicleModal from "../commission/VehicleModal";
 import ComponentModal from "../commission/ComponentModal";
 import CommissionCard from "./CommissionCard";
+import { Link } from "react-router-dom";
 
 const COMISSIONS = gql`
     query getComissions($pagination: PageInput, $filters: CommissionFilter) {
@@ -128,7 +129,7 @@ const CommissionList = props => {
             {component ? (
                 <ComponentModal id={component} show={componentModalShow} onHide={() => setComponentModalShow(false)} />
             ) : null}
-            <div className="commission-buttons">
+            <div className="commission-status-buttons">
                 <ToggleButtonGroup
                     type="radio"
                     name="type"
@@ -152,7 +153,13 @@ const CommissionList = props => {
                         ANULOWANE
                     </ToggleButton>
                 </ToggleButtonGroup>
+                <Link className="new-commission-btn" to="/tiles/zlecenia/nowe">
+                    <Button variant="success" size="xl">
+                        NOWE
+                    </Button>
+                </Link>
             </div>
+
             {!loading ? (
                 <>
                     <Masonry

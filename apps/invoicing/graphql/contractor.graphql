@@ -28,3 +28,17 @@ input ContractorFilter {
     id: ID
     name__icontains: String
 }
+
+input ContractorInput {
+    name: String!
+    nip: String
+    nip_prefix: String
+    address_1: String
+    address_2: String
+    city: String
+    postal_code: String
+    email: String
+    bdo_number: String
+    phone_1: String
+    phone_2: String
+}

@@ -7,6 +7,8 @@ from django.forms.models import model_to_dict
 from django.db.models import Q
 
 from KlimaKar.widgets import PrettySelect
+from KlimaKar.forms import ToggleInput
+
 from apps.invoicing.models import (
     Contractor,
     SaleInvoice,
@@ -15,7 +17,6 @@ from apps.invoicing.models import (
     RefrigerantWeights,
     CorrectiveSaleInvoice,
 )
-from apps.warehouse.models import Ware
 from apps.commission.models import CommissionItem
 
 
@@ -234,12 +235,6 @@ class ContractorModelForm(forms.ModelForm):
 
 
 class SaleInvoiceItemModelForm(forms.ModelForm):
-    ware = forms.ModelChoiceField(
-        label="Towar",
-        queryset=Ware.objects.all(),
-        required=False,
-        widget=autocomplete.ModelSelect2(url="warehouse:ware_autocomplete"),
-    )
     service = forms.ModelChoiceField(
         label="Usługa",
         queryset=ServiceTemplate.objects.all(),
@@ -259,8 +254,6 @@ class SaleInvoiceItemModelForm(forms.ModelForm):
         self.fields["price_netto"].widget.attrs.update({"class": "item-netto"})
         self.fields["price_brutto"].widget.attrs.update({"placeholder": "Brutto"})
         self.fields["price_brutto"].widget.attrs.update({"class": "item-brutto"})
-        self.fields["ware"].widget.attrs.update({"data-placeholder": "Wybierz towar"})
-        self.fields["ware"].widget.attrs.update({"class": "item-ware"})
         self.fields["service"].widget.attrs.update(
             {"data-placeholder": "Wybierz usługę"}
         )
@@ -274,7 +267,6 @@ class SaleInvoiceItemModelForm(forms.ModelForm):
             "quantity",
             "price_netto",
             "price_brutto",
-            "ware",
             "service",
         ]
         localized_fields = ["price_netto", "price_brutto"]
@@ -328,16 +320,12 @@ class RefrigerantWeightsInline(InlineFormSet):
 
 
 class ServiceTemplateModelForm(forms.ModelForm):
-    ware = forms.ModelChoiceField(
-        label="Towar",
-        queryset=Ware.objects.all(),
-        required=False,
-        widget=autocomplete.ModelSelect2(url="warehouse:ware_autocomplete"),
-    )
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["name"].widget.attrs.update({"placeholder": "Podaj nazwę"})
+        self.fields["ware_filter"].widget.attrs.update(
+            {"placeholder": "Podaj nazwę towaru"}
+        )
         self.fields["name"].widget.attrs.update({"class": "item-name"})
         self.fields["description"].widget.attrs.update({"placeholder": "Podaj opis"})
         self.fields["description"].widget.attrs.update({"class": "item-description"})
@@ -351,8 +339,6 @@ class ServiceTemplateModelForm(forms.ModelForm):
             {"placeholder": "Podaj cenę brutto"}
         )
         self.fields["price_brutto"].widget.attrs.update({"class": "item-brutto"})
-        self.fields["ware"].widget.attrs.update({"data-placeholder": "Wybierz towar"})
-        self.fields["ware"].widget.attrs.update({"class": "item-ware"})
 
     class Meta:
         model = ServiceTemplate
@@ -362,8 +348,11 @@ class ServiceTemplateModelForm(forms.ModelForm):
             "quantity",
             "price_netto",
             "price_brutto",
-            "ware",
+            "display_as_button",
+            "is_ware_service",
+            "ware_filter",
         ]
+        widgets = {"display_as_button": ToggleInput, "is_ware_service": ToggleInput}
         localized_fields = ["price_netto", "price_brutto"]
 
 

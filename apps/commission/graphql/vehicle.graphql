@@ -2,6 +2,10 @@ extend type Query {
     vehicles(pagination: PageInput, filters: VehicleFilter): VehicleConnection!
 }
 
+extend type Mutation {
+    addVehicle(data: VehicleInput!): VehiclePayload!
+}
+
 type VehicleConnection {
     pageInfo: PageInfo!
     objects: [Vehicle]!
@@ -22,4 +26,20 @@ type Vehicle {
 input VehicleFilter {
     id: ID
     registration_plate__icontains: String
+}
+
+input VehicleInput {
+    registration_plate: String!
+    vin: String
+    brand: String!
+    model: String
+    engine_volume: Int
+    engine_power: Int
+    production_year: Int
+}
+
+type VehiclePayload {
+    status: Boolean!
+    errors: [Error]
+    object: Vehicle
 }

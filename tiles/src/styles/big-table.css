@@ -1,0 +1,6 @@
+table.big-table td,
+table.big-table th {
+    padding: 1rem;
+    font-size: 1.5rem;
+    vertical-align: middle !important;
+}

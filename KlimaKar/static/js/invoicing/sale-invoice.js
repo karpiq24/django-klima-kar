@@ -186,10 +186,6 @@ $(function() {
             .find(".item-description")
             .val("");
         $(item_form)
-            .find(".item-ware")
-            .val("")
-            .change();
-        $(item_form)
             .find(".item-quantity")
             .val(1);
         $(item_form)
@@ -370,13 +366,6 @@ $(function() {
                     .find(".item-quantity")
                     .val(result.service.quantity);
 
-                if (result.service.ware) {
-                    var $option = $("<option selected></option>")
-                        .val(result.service.ware.pk)
-                        .text(result.service.ware.index);
-                    var $sel2 = $(item_form).find(".item-ware");
-                    $sel2.append($option).trigger("change");
-                }
                 if (result.service.price_brutto) {
                     $(item_form)
                         .find(".item-brutto")
@@ -419,9 +408,6 @@ $(function() {
                 .val() ||
             $(item_form)
                 .find(".item-description")
-                .val() ||
-            $(item_form)
-                .find(".item-ware")
                 .val() ||
             $(item_form)
                 .find(".item-netto")

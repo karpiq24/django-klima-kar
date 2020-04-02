@@ -1,0 +1,27 @@
+extend type Query {
+    services(pagination: PageInput, filters: ServiceFilter): ServiceConnection!
+}
+
+type Service {
+    id: ID!
+    name: String!
+    description: String
+    quantity: Int
+    price_netto: Float
+    price_brutto: Float
+    ware: Ware
+    display_as_button: Boolean!
+    is_ware_service: Boolean!
+    ware_filter: String
+}
+
+type ServiceConnection {
+    pageInfo: PageInfo!
+    objects: [Service]!
+}
+
+input ServiceFilter {
+    id: ID
+    display_as_button: Boolean
+    name__icontains: String
+}

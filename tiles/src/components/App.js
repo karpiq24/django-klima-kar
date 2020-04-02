@@ -7,6 +7,12 @@ import client from "../graphql";
 import CommissionList from "./commission/CommissionList";
 import CommissionForm from "./commission/CommissionForm";
 
+import { registerLocale, setDefaultLocale } from "react-datepicker";
+import pl from "date-fns/locale/pl";
+
+registerLocale("pl", pl);
+setDefaultLocale("pl");
+
 function App() {
     return (
         <ApolloProvider client={client}>

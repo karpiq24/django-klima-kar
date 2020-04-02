@@ -4,6 +4,7 @@ extend type Query {
 
 extend type Mutation {
     updateStatus(id: ID!, status: CommissionStatus!): Commission!
+    addComission(data: CommissionInput!): CommissionPayload!
 }
 
 type CommissionConnection {
@@ -26,6 +27,12 @@ type Commission {
     upload: Boolean!
     value: Float!
     items: [CommissionItem]
+}
+
+type CommissionPayload {
+    status: Boolean!
+    errors: [Error]
+    object: Commission
 }
 
 input CommissionFilter {
@@ -54,4 +61,24 @@ type CommissionItem {
     quantity: Int!
     price: Float!
     ware: Ware
+}
+
+input CommissionItemInput {
+    name: String!
+    description: String
+    quantity: Int!
+    price: Float!
+}
+
+input CommissionInput {
+    commission_type: CommissionType!
+    status: CommissionStatus!
+    vc_name: String
+    vehicle: ID
+    component: ID
+    contractor: ID
+    description: String
+    start_date: String!
+    end_date: String
+    items: [CommissionItemInput]
 }

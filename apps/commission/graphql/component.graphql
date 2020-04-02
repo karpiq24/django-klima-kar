@@ -2,6 +2,10 @@ extend type Query {
     components(pagination: PageInput, filters: ComponentFilter): ComponentConnection!
 }
 
+extend type Mutation {
+    addComponent(data: ComponentInput!): ComponentPayload!
+}
+
 type ComponentConnection {
     pageInfo: PageInfo!
     objects: [Component]!
@@ -17,9 +21,28 @@ type Component {
     commissions: [Commission]
 }
 
+enum ComponentType {
+    COMPRESSOR
+    HEATER
+    OTHER
+}
+
 input ComponentFilter {
     id: ID
     model__icontains: String
     serial_number__icontains: String
     catalog_number__icontains: String
+}
+
+input ComponentInput {
+    component_type: ComponentType!
+    model: String
+    serial_number: String
+    catalog_number: String
+}
+
+type ComponentPayload {
+    status: Boolean!
+    errors: [Error]
+    object: Component
 }

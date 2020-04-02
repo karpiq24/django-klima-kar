@@ -88,7 +88,7 @@ class CommissionModelForm(forms.ModelForm):
     )
 
     upload_key = forms.CharField(
-        label="Klucz wysyłania plików", widget=forms.HiddenInput()
+        label="Klucz wysyłania plików", widget=forms.HiddenInput(), required=False
     )
 
     def __init__(self, *args, **kwargs):
@@ -125,12 +125,14 @@ class CommissionModelForm(forms.ModelForm):
         self.fields["upload_key"].initial = get_random_string(length=32)
 
     def clean(self):
-        cleaned_data = super().clean()
-        status = cleaned_data["status"]
-        end_date = cleaned_data["end_date"]
+        status = self.cleaned_data["status"]
+        end_date = self.cleaned_data["end_date"]
         if status in [Commission.DONE, Commission.CANCELLED] and not end_date:
-            cleaned_data["end_date"] = datetime.date.today()
-        return cleaned_data
+            self.cleaned_data["end_date"] = datetime.date.today()
+        vc = self.cleaned_data.get("vehicle", self.cleaned_data.get("component"))
+        if vc:
+            self.cleaned_data["vc_name"] = str(vc)
+        return self.cleaned_data
 
     class Meta:
         model = Commission

@@ -393,10 +393,6 @@ $(function() {
             .find(".item-description")
             .val("");
         $(item_form)
-            .find(".item-ware")
-            .val("")
-            .change();
-        $(item_form)
             .find(".item-quantity")
             .val(1);
         $(item_form)
@@ -475,14 +471,6 @@ $(function() {
                 $(item_form)
                     .find(".item-quantity")
                     .val(result.service.quantity);
-
-                if (result.service.ware) {
-                    let $option = $("<option selected></option>")
-                        .val(result.service.ware.pk)
-                        .text(result.service.ware.index);
-                    let $sel2 = $(item_form).find(".item-ware");
-                    $sel2.append($option).trigger("change");
-                }
                 $(item_form)
                     .find(".item-price")
                     .change();
@@ -499,9 +487,6 @@ $(function() {
                 .val() ||
             $(item_form)
                 .find(".item-description")
-                .val() ||
-            $(item_form)
-                .find(".item-ware")
                 .val() ||
             $(item_form)
                 .find(".item-price")

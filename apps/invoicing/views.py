@@ -490,16 +490,10 @@ class ServiceTemplateGetDataView(View):
             response = {
                 "name": service.name,
                 "description": service.description,
-                "ware": None,
                 "quantity": service.quantity,
                 "price_netto": service.price_netto,
                 "price_brutto": service.price_brutto,
             }
-            if service.ware:
-                response["ware"] = {
-                    "pk": service.ware.pk,
-                    "index": service.ware.index,
-                }
             return JsonResponse({"status": "ok", "service": response})
         return JsonResponse({"status": "error", "service": []})
 

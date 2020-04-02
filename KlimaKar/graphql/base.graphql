@@ -18,3 +18,10 @@ input PageInput {
     page: Int
     pageSize: Int
 }
+
+type Error {
+    field: String
+    inline: String
+    message: String
+    code: String
+}
