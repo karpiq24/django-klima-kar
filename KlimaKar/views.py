@@ -480,3 +480,13 @@ class SendSMSView(View):
             .replace("ł", "l")
             .replace("Ł", "L")
         )
+
+
+class ChangeLogView(TemplateView):
+    template_name = "changelog.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        with open("CHANGELOG.md") as f:
+            context["changelog"] = f.read()
+        return context

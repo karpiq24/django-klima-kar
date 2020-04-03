@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div id="changelog" data-changelog="{{ changelog }}"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function() {
+        const converter = new showdown.Converter();
+        const html = converter.makeHtml($("#changelog").data("changelog"));
+        $("#changelog").html(html);
+    });
+</script>
+{% endblock %}

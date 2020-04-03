@@ -29,9 +29,14 @@
                     </div>
                 {% endif %}
                 <div class="left-line">
-                    <button href="#" title="Zgłoszenie" data-toggle="modal" data-target="#issue_modal">
+                    <button title="Zgłoszenie" data-toggle="modal" data-target="#issue_modal">
                         <i class="fas fa-exclamation-triangle" style="cursor: pointer;"></i>
                     </button>
+                </div>
+                <div class="left-line" id="changlog-button">
+                    <a href="{% url 'changelog' %}" title="Lista zmian">
+                        <i class="fas fa-history" style="cursor: pointer;"></i>
+                    </a>
                 </div>
                 <div class="left-line">
                     <a href="{% url 'accounts:logout' %}" title="Wyloguj">

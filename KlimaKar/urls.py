@@ -3,7 +3,7 @@ from django.contrib import admin
 
 from ariadne.contrib.django.views import GraphQLView
 
-from KlimaKar.views import HomeView, SendIssueView, SendSMSView
+from KlimaKar.views import HomeView, SendIssueView, SendSMSView, ChangeLogView
 from KlimaKar.graphql import schema
 
 urlpatterns = [
@@ -21,6 +21,7 @@ urlpatterns = [
     path("tiles/", include("tiles.urls")),
     path("send_issue", SendIssueView.as_view(), name="send_issue"),
     path("send_sms", SendSMSView.as_view(), name="send_sms"),
+    path("lista-zmian", ChangeLogView.as_view(), name="changelog"),
     path("django-rq/", include("django_rq.urls")),
     path(
         "graphql/",
