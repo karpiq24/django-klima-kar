@@ -4,7 +4,7 @@ pip install -r docs/requirements.pip
 ./manage.py makemigrations
 ./manage.py migrate
 cd tiles/
-npm install
+npm ci
 npm run build
 cd ..
 ./manage.py collectstatic --noinput
