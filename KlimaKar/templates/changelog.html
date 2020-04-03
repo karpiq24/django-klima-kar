@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="{% static 'js/showdown.min.js' %}"></script>
 <script>
     $(function() {
         const converter = new showdown.Converter();
