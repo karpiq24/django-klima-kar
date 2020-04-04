@@ -739,13 +739,7 @@ ul.sidenav li i:hover {
     }
 }
 
-@media screen and (max-width: 662px) {
-    #changlog-button {
-        display: none;
-    }
-}
-
-@media screen and (max-width: 505px) {
+@media screen and (max-width: 555px) {
     #topbar #inline-search-form input {
         display: none;
     }
@@ -899,19 +893,18 @@ input:checked + .slider:before {
 */
 
 #changelog h2 {
-    margin: 1em 0 0.6em 1rem !important;
-    width: 50% !important;
+    margin: 1rem 0 0.6rem 0 !important;
 }
 
 #changelog h3 {
-    margin: 1em 0 0.6em 2rem !important;
+    margin: 0 0 0 2rem !important;
 }
 
 #changelog ul {
-    margin: 0 0 0 4em !important;
+    margin: 0 0 0 4rem !important;
     padding: 0;
 }
 
 #changelog p {
-    margin: 0 0 0 2em !important;
+    margin: 0 0 0 2rem !important;
 }
