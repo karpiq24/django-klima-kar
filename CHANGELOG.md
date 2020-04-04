@@ -9,10 +9,10 @@
 
 ## 2020-04-03
 ### Dodano
-- Ten plik CHANGELOG
-- Wyświetlanie listy zmian bezpośrednio na stronie
+- ten plik CHANGELOG
+- wyświetlanie listy zmian bezpośrednio na stronie
 ### Naprawiono
-- skrypt instalacyjny zmiany (npm ci zamiast npm install)
+- skrypt instalacyjny zmian na serwerze produkcyjnym (npm ci zamiast npm install)
 
 ## przed 2020-04-03
 Nie śledzono zmian w projekcie
