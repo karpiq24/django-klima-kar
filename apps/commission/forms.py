@@ -21,6 +21,9 @@ class VehicleModelForm(forms.ModelForm):
             {"placeholder": "Podaj numer rejestracyjny"}
         )
         self.fields["vin"].widget.attrs.update({"placeholder": "Podaj numer VIN"})
+        self.fields["registration_date"].widget.attrs.update(
+            {"class": "date-input", "placeholder": "Wybierz datę"}
+        )
 
     def clean_registration_plate(self):
         data = self.cleaned_data["registration_plate"]
@@ -44,6 +47,8 @@ class VehicleModelForm(forms.ModelForm):
             "engine_volume",
             "engine_power",
             "production_year",
+            "fuel_type",
+            "registration_date",
         ]
 
 

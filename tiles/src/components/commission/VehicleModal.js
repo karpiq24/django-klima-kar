@@ -20,6 +20,8 @@ const VEHICLE = gql`
                 engine_volume
                 engine_power
                 production_year
+                registration_date
+                get_fuel_type_display
             }
         }
     }
@@ -27,7 +29,7 @@ const VEHICLE = gql`
 
 const VehicleModal = ({ id, show, onHide }) => {
     const { loading, data } = useQuery(VEHICLE, {
-        variables: { filters: { id: id } }
+        variables: { filters: { id: id } },
     });
     let vehicle = null;
     if (!loading) {
@@ -78,6 +80,18 @@ const VehicleModal = ({ id, show, onHide }) => {
                                         <td>{vehicle.production_year}</td>
                                     </tr>
                                 ) : null}
+                                {vehicle.registration_date ? (
+                                    <tr>
+                                        <td>Data pierwszej rejestracji</td>
+                                        <td>{vehicle.registration_date}</td>
+                                    </tr>
+                                ) : null}
+                                {vehicle.get_fuel_type_display ? (
+                                    <tr>
+                                        <td>Rodzaj paliwa</td>
+                                        <td>{vehicle.get_fuel_type_display}</td>
+                                    </tr>
+                                ) : null}
                             </tbody>
                         </Table>
                     </Modal.Body>
@@ -95,7 +109,7 @@ const VehicleModal = ({ id, show, onHide }) => {
 VehicleModal.propTypes = {
     id: PropTypes.number.isRequired,
     show: PropTypes.bool.isRequired,
-    onHide: PropTypes.func.isRequired
+    onHide: PropTypes.func.isRequired,
 };
 
 export default VehicleModal;

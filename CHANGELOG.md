@@ -1,11 +1,18 @@
 # Lista zmian
 
+## 2020-04-04
+### Dodano
+- ignorowanie spacji przy wszukiwaniu kontrahenta podając numer telefonu
+- ignorowanie znaków nie alfanumerycznych przy wszukiwaniu pojazdu
+- pola data pierwszej rejestracji oraz rodzaj paliwa pojazdu
+- zapisywanie nowych pól podczas skanowania dowodów rejestracyjnych
+
 ## 2020-04-03
 ### Dodano
 - Ten plik CHANGELOG
 - Wyświetlanie listy zmian bezpośrednio na stronie
 ### Naprawiono
-- skrypt instalacyujny zmiany (npm ci zamiast npm install)
+- skrypt instalacyjny zmiany (npm ci zamiast npm install)
 
 ## przed 2020-04-03
 Nie śledzono zmian w projekcie

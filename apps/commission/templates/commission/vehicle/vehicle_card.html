@@ -36,6 +36,18 @@
                 <td>{{ vehicle.production_year }}</td>
             </tr>
             {% endif %}
+            {% if vehicle.fuel_type %}
+            <tr>
+                <td class="detail-label">Rodzaj paliwa</td>
+                <td>{{ vehicle.get_fuel_type_display }}</td>
+            </tr>
+            {% endif %}
+            {% if vehicle.registration_date %}
+            <tr>
+                <td class="detail-label">Data pierwszej rejestracji</td>
+                <td>{{ vehicle.registration_date }}</td>
+            </tr>
+            {% endif %}
     </table>
     </div>
     <div class="card-footer">

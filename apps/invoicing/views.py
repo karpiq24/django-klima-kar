@@ -600,6 +600,8 @@ class ContractorAutocomplete(CustomSelect2QuerySetView):
     def get_queryset(self):
         qs = Contractor.objects.all()
         if self.q:
+            if self.q.replace(" ", "").isdigit():
+                self.q = self.q.replace(" ", "")
             qs = qs.filter(
                 Q(name__icontains=self.q)
                 | Q(nip__icontains=self.q)

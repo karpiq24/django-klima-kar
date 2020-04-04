@@ -1,3 +1,4 @@
+{% load static %}
 <form id="modal_form" method="post" onsubmit="submitAjaxForm('{{ url }}', '{{ identifier }}'); return false;">
     {% csrf_token %}
     <div class="modal-header">
@@ -16,6 +17,7 @@
 </form>
 
 {% block scripts %}
+<script src="{% static 'js/base/daterangepicker-init.js' %}"></script>
 <script>
     function submitAjaxForm(url, identifier) {
         $.ajax({

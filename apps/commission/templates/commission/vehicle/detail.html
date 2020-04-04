@@ -37,6 +37,14 @@
                 <td class="detail-label">Rok produkcji</td>
                 <td>{{ object.production_year|default_if_none:"—" }}</td>
             </tr>
+            <tr>
+                <td class="detail-label">Rodzaj paliwa</td>
+                <td>{{ object.get_fuel_type_display|default_if_none:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Data pierwszej rejestracji</td>
+                <td>{{ object.registration_date|default_if_none:"—" }}</td>
+            </tr>
         </table>
     </div>
 

@@ -21,6 +21,23 @@ type Vehicle {
     engine_power: Int
     production_year: Int
     commissions: [Commission]
+    registration_date: String
+    fuel_type: String
+    get_fuel_type_display: String
+}
+
+enum FuelType {
+    PETROL
+    DIESEL
+    MIXED
+    LPG
+    CNG
+    HYDROGEN
+    LNG
+    BIODIESEL
+    ETHANOL
+    ELECTRIC
+    OTHER
 }
 
 input VehicleFilter {
@@ -36,6 +53,8 @@ input VehicleInput {
     engine_volume: Int
     engine_power: Int
     production_year: Int
+    registration_date: String
+    fuel_type: FuelType
 }
 
 type VehiclePayload {

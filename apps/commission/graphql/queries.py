@@ -37,3 +37,8 @@ def resolve_vc_commissions(obj, info):
 @component.field("get_component_type_display")
 def resolve_get_component_type_display(obj, info):
     return obj.get_component_type_display()
+
+
+@vehicle.field("get_fuel_type_display")
+def resolve_get_fuel_type_display(obj, info):
+    return obj.get_fuel_type_display()

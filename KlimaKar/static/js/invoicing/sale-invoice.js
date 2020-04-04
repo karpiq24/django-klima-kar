@@ -8,12 +8,8 @@ function toCurrency(value) {
 
 function customSuccessCreate(data, identifier) {
     if (identifier == "1") {
-        var $option = $("<option selected></option>")
-            .val(data["pk"])
-            .text(data["text"]);
-        $("#id_contractor")
-            .append($option)
-            .trigger("change");
+        var $option = $("<option selected></option>").val(data["pk"]).text(data["text"]);
+        $("#id_contractor").append($option).trigger("change");
         $("#contractor-edit").prop("disabled", false);
     }
 }
@@ -23,22 +19,13 @@ function calculateInvoiceTotals() {
     var tax_multiplier = $("#id_tax_percent").val() / 100;
     $(".item-formset-row")
         .not(".readonly")
-        .each(function() {
+        .each(function () {
             if (!$(this).hasClass("d-none")) {
-                var price_netto = toCurrency(
-                    $(this)
-                        .find(".item-netto")
-                        .val()
-                        .replace(",", ".")
-                );
+                var price_netto = toCurrency($(this).find(".item-netto").val().replace(",", "."));
                 if (isNaN(price_netto)) {
                     price_netto = 0;
                 }
-                var quantity = parseInt(
-                    $(this)
-                        .find(".item-quantity")
-                        .val()
-                );
+                var quantity = parseInt($(this).find(".item-quantity").val());
                 var total_netto = toCurrency(quantity * price_netto);
                 invoice_total_netto = toCurrency(invoice_total_netto + total_netto);
             }
@@ -51,13 +38,11 @@ function calculateInvoiceTotals() {
     $("#invoice-total-brutto").text(invoice_total_brutto.toFixed(2).replace(".", ",") + " zł");
 }
 
-$(function() {
-    $(".sidenav #nav-saleinvoices")
-        .children(":first")
-        .addClass("active");
+$(function () {
+    $(".sidenav #nav-saleinvoices").children(":first").addClass("active");
     $(".sidenav #nav-invoicing").collapse("show");
 
-    $("#id_contractor").on("select2:selecting", function(e) {
+    $("#id_contractor").on("select2:selecting", function (e) {
         var data = e.params.args.data;
 
         if (data.create_id !== true) {
@@ -67,40 +52,40 @@ $(function() {
         $("#contractor-edit").prop("disabled", true);
 
         e.preventDefault();
-        if (isInt(data.id)) {
-            var initial = { nip: data.id };
+        let initial = {};
+        const input = data.id.replace(/ /g, "");
+        if (isInt(input)) {
+            if (input.length === 9) {
+                initial = { phone_1: input };
+            } else {
+                initial = { nip: input };
+            }
         } else {
-            var initial = { name: data.id };
+            initial = { name: data.id };
         }
         $.ajax({
             url: CREATE_CONTRACTOR,
             type: "get",
             dataType: "json",
             data: initial,
-            beforeSend: function() {
+            beforeSend: function () {
                 $("#modal-generic").modal("show");
             },
-            success: function(data) {
+            success: function (data) {
                 $("#modal-generic .modal-content").html(data.html_form);
-            }
+            },
         });
     });
 
-    $("#id_contractor").change(function() {
+    $("#id_contractor").change(function () {
         var parent = $("#id_contractor").parent();
         var contractor_pk = $("#id_contractor").val();
         $("#id_contractor").removeClass("is-valid");
         $("#id_contractor").removeClass("is-warning");
         $("#id_contractor").removeClass("is-invalid");
-        $(parent)
-            .find("div.valid-feedback")
-            .remove();
-        $(parent)
-            .find("div.invalid-feedback")
-            .remove();
-        $(parent)
-            .find("div.warning-feedback")
-            .remove();
+        $(parent).find("div.valid-feedback").remove();
+        $(parent).find("div.invalid-feedback").remove();
+        $(parent).find("div.warning-feedback").remove();
         $(parent).append(
             '<small id="loding-contractor" class="form-text text-muted"><i class="fas fa-spinner fa-spin"></i> Sprawdzam kontrahenta..</small>'
         );
@@ -108,13 +93,11 @@ $(function() {
             url: GET_CONTRACTOR_DATA,
             data: {
                 pk: contractor_pk,
-                validate_vat: true
+                validate_vat: true,
             },
             dataType: "json",
-            success: function(result) {
-                $(parent)
-                    .find("#loding-contractor")
-                    .remove();
+            success: function (result) {
+                $(parent).find("#loding-contractor").remove();
                 if (result.contractor.nip) {
                     $("#gus-data").data("nip", result.contractor.nip);
                     $("#gus-data").show();
@@ -156,129 +139,71 @@ $(function() {
                         }
                     }
                 }
-            }
+            },
         });
     });
 
-    $("#add_item_formset").click(function() {
-        var item_form = $("#item-rows")
-            .children(".d-none")
-            .first();
-        $(item_form)
-            .find(".item-DELETE")
-            .children("input")
-            .prop("checked", false);
+    $("#add_item_formset").click(function () {
+        var item_form = $("#item-rows").children(".d-none").first();
+        $(item_form).find(".item-DELETE").children("input").prop("checked", false);
         $(item_form).removeClass("d-none");
         $(item_form).insertAfter($("#item-rows tr:not('.d-none'):last"));
-        $(item_form)
-            .find(".form-control")
-            .first()
-            .focus();
+        $(item_form).find(".form-control").first().focus();
     });
 
-    $(".remove_item_formset").click(function() {
+    $(".remove_item_formset").click(function () {
         var item_form = $(this).parents(".item-formset-row");
         $(item_form).addClass("d-none");
-        $(item_form)
-            .find(".item-name")
-            .val("");
-        $(item_form)
-            .find(".item-description")
-            .val("");
-        $(item_form)
-            .find(".item-quantity")
-            .val(1);
-        $(item_form)
-            .find(".item-netto")
-            .val("");
-        $(item_form)
-            .find(".item-brutto")
-            .val("");
-        $(item_form)
-            .find(".item-DELETE")
-            .children("input")
-            .prop("checked", true);
+        $(item_form).find(".item-name").val("");
+        $(item_form).find(".item-description").val("");
+        $(item_form).find(".item-quantity").val(1);
+        $(item_form).find(".item-netto").val("");
+        $(item_form).find(".item-brutto").val("");
+        $(item_form).find(".item-DELETE").children("input").prop("checked", true);
         calculateInvoiceTotals();
     });
 
-    $(".item-netto").change(function() {
+    $(".item-netto").change(function () {
         var item_form = $(this).parents(".item-formset-row");
-        $(item_form)
-            .find(".item-brutto")
-            .removeClass("is-invalid");
+        $(item_form).find(".item-brutto").removeClass("is-invalid");
         var tax_multiplier = parseFloat($("#id_tax_percent").val()) / 100;
-        var price_netto = toCurrency(
-            $(item_form)
-                .find(".item-netto")
-                .val()
-                .replace(",", ".")
-        );
+        var price_netto = toCurrency($(item_form).find(".item-netto").val().replace(",", "."));
         var price_brutto = toCurrency(price_netto + price_netto * tax_multiplier);
-        var quantity = parseInt(
-            $(item_form)
-                .find(".item-quantity")
-                .val()
-        );
+        var quantity = parseInt($(item_form).find(".item-quantity").val());
         var total_netto = toCurrency(price_netto * quantity);
-        $(item_form)
-            .find(".item-brutto")
-            .val(String(price_brutto).replace(".", ","));
+        $(item_form).find(".item-brutto").val(String(price_brutto).replace(".", ","));
         $(item_form)
             .find(".item-total-netto")
             .text(total_netto.toFixed(2).replace(".", ",") + " zł");
         calculateInvoiceTotals();
     });
 
-    $(".item-brutto").change(function() {
+    $(".item-brutto").change(function () {
         var item_form = $(this).parents(".item-formset-row");
         var tax_multiplier = parseFloat($("#id_tax_percent").val()) / 100;
-        var price_brutto = toCurrency(
-            $(item_form)
-                .find(".item-brutto")
-                .val()
-                .replace(",", ".")
-        );
+        var price_brutto = toCurrency($(item_form).find(".item-brutto").val().replace(",", "."));
         var price_netto = toCurrency(price_brutto / (1 + tax_multiplier));
-        var quantity = parseInt(
-            $(item_form)
-                .find(".item-quantity")
-                .val()
-        );
+        var quantity = parseInt($(item_form).find(".item-quantity").val());
         var total_netto = toCurrency(price_netto * quantity);
-        $(item_form)
-            .find(".item-netto")
-            .val(String(price_netto).replace(".", ","));
+        $(item_form).find(".item-netto").val(String(price_netto).replace(".", ","));
         $(item_form)
             .find(".item-total-netto")
             .text(total_netto.toFixed(2).replace(".", ",") + " zł");
 
         var price_brutto_check = toCurrency(price_netto + price_netto * tax_multiplier);
         if (price_brutto != price_brutto_check) {
-            $(item_form)
-                .find(".item-brutto")
-                .addClass("is-invalid");
+            $(item_form).find(".item-brutto").addClass("is-invalid");
         } else {
-            $(item_form)
-                .find(".item-brutto")
-                .removeClass("is-invalid");
+            $(item_form).find(".item-brutto").removeClass("is-invalid");
         }
 
         calculateInvoiceTotals();
     });
 
-    $(".item-quantity").change(function() {
+    $(".item-quantity").change(function () {
         var item_form = $(this).parents(".item-formset-row");
-        var price_netto = toCurrency(
-            $(item_form)
-                .find(".item-netto")
-                .val()
-                .replace(",", ".")
-        );
-        var quantity = parseInt(
-            $(item_form)
-                .find(".item-quantity")
-                .val()
-        );
+        var price_netto = toCurrency($(item_form).find(".item-netto").val().replace(",", "."));
+        var quantity = parseInt($(item_form).find(".item-quantity").val());
         var total_netto = toCurrency(price_netto * quantity);
         $(item_form)
             .find(".item-total-netto")
@@ -286,28 +211,20 @@ $(function() {
         calculateInvoiceTotals();
     });
 
-    $("#id_tax_percent").change(function() {
+    $("#id_tax_percent").change(function () {
         var tax_multiplier = parseFloat($(this).val()) / 100;
-        $(".item-formset-row").each(function() {
-            $(this)
-                .find(".item-brutto")
-                .removeClass("is-invalid");
+        $(".item-formset-row").each(function () {
+            $(this).find(".item-brutto").removeClass("is-invalid");
             if (!$(this).hasClass("d-none")) {
-                var price_netto = toCurrency(
-                    $(this)
-                        .find(".item-netto")
-                        .val()
-                );
+                var price_netto = toCurrency($(this).find(".item-netto").val());
                 var price_brutto = toCurrency(price_netto + price_netto * tax_multiplier);
-                $(this)
-                    .find(".item-brutto")
-                    .val(price_brutto.toFixed(2));
+                $(this).find(".item-brutto").val(price_brutto.toFixed(2));
             }
         });
         calculateInvoiceTotals();
     });
 
-    $("#id_payed").change(function() {
+    $("#id_payed").change(function () {
         if ($("#id_payed").is(":checked")) {
             $("#id_payment_date").prop("hidden", true);
             $("#id_payment_date").val(null);
@@ -317,81 +234,61 @@ $(function() {
         }
     });
 
-    $("#id_payment_type").change(function(event, focus = true) {
+    $("#id_payment_type").change(function (event, focus = true) {
         if ($("input[type=radio][name=payment_type]:checked").val() === "4") {
-            $("#id_payment_type_other")
-                .parent()
-                .show();
+            $("#id_payment_type_other").parent().show();
             if (focus) {
-                setTimeout(function() {
+                setTimeout(function () {
                     $("#id_payment_type_other").focus();
                 }, 10);
             }
         } else {
-            $("#id_payment_type_other")
-                .parent()
-                .hide();
+            $("#id_payment_type_other").parent().hide();
             $("#id_payment_type_other").val("");
         }
     });
 
-    $(".choose_service").click(function() {
+    $(".choose_service").click(function () {
         var item_form = $(this).parents(".item-formset-row");
-        var service_pk = $(item_form)
-            .find(".item-service")
-            .val();
+        var service_pk = $(item_form).find(".item-service").val();
         if (service_pk === "") {
             return;
         }
         $.ajax({
             url: GET_SERVICE_DATA,
             data: {
-                pk: service_pk
+                pk: service_pk,
             },
             dataType: "json",
-            success: function(result) {
-                $(item_form)
-                    .find(".item-name")
-                    .val(result.service.name);
-                $(item_form)
-                    .find(".item-description")
-                    .val(result.service.description);
-                $(item_form)
-                    .find(".item-netto")
-                    .val(result.service.price_netto);
-                $(item_form)
-                    .find(".item-brutto")
-                    .val(result.service.price_brutto);
-                $(item_form)
-                    .find(".item-quantity")
-                    .val(result.service.quantity);
+            success: function (result) {
+                $(item_form).find(".item-name").val(result.service.name);
+                $(item_form).find(".item-description").val(result.service.description);
+                $(item_form).find(".item-netto").val(result.service.price_netto);
+                $(item_form).find(".item-brutto").val(result.service.price_brutto);
+                $(item_form).find(".item-quantity").val(result.service.quantity);
 
                 if (result.service.price_brutto) {
-                    $(item_form)
-                        .find(".item-brutto")
-                        .change();
+                    $(item_form).find(".item-brutto").change();
                 } else {
-                    $(item_form)
-                        .find(".item-netto")
-                        .change();
+                    $(item_form).find(".item-netto").change();
                 }
-            }
+            },
         });
     });
 
-    $("#contractor-edit").click(function() {
+    $("#contractor-edit").click(function () {
         var contractor_pk = $("#id_contractor").val();
         var url = UPDATE_CONTRACTOR.replace("0", contractor_pk);
         $.ajax({
             url: url,
             type: "get",
             dataType: "json",
-            beforeSend: function() {
+            beforeSend: function () {
                 $("#modal-generic").modal("show");
             },
-            success: function(data) {
+            success: function (data) {
                 $("#modal-generic .modal-content").html(data.html_form);
-            }
+            },
         });
     });
 
@@ -400,36 +297,22 @@ $(function() {
     }
 
     $("#item-rows tr:first").removeClass("d-none");
-    $(".item-formset-row").each(function() {
+    $(".item-formset-row").each(function () {
         var item_form = $(this);
         if (
-            $(item_form)
-                .find(".item-name")
-                .val() ||
-            $(item_form)
-                .find(".item-description")
-                .val() ||
-            $(item_form)
-                .find(".item-netto")
-                .val() != 0 ||
-            $(item_form)
-                .find(".item-brutto")
-                .val() != 0 ||
-            $(item_form)
-                .find(".item-quantity")
-                .val() != 1 ||
+            $(item_form).find(".item-name").val() ||
+            $(item_form).find(".item-description").val() ||
+            $(item_form).find(".item-netto").val() != 0 ||
+            $(item_form).find(".item-brutto").val() != 0 ||
+            $(item_form).find(".item-quantity").val() != 1 ||
             $(item_form).find(".invalid-feedback").length > 0
         ) {
             item_form.removeClass("d-none");
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has("value_type") && urlParams.get("value_type") === "netto") {
-                $(item_form)
-                    .find(".item-netto")
-                    .change();
+                $(item_form).find(".item-netto").change();
             } else {
-                $(item_form)
-                    .find(".item-brutto")
-                    .change();
+                $(item_form).find(".item-brutto").change();
             }
         }
     });

@@ -18,6 +18,32 @@ class Vehicle(models.Model):
     MODEL_COLOR = "#F09300"
     MODEL_ICON = "fas fa-car"
 
+    PETROL = "P"
+    DIESEL = "D"
+    MIXED = "M"
+    LPG = "LPG"
+    CNG = "CNG"
+    HYDROGEN = "H"
+    LNG = "LNG"
+    BIODIESEL = "BD"
+    ETHANOL = "E85"
+    ELECTRIC = "EE"
+    OTHER = "999"
+
+    FUEL_CHOICES = [
+        (PETROL, "benzyna"),
+        (DIESEL, "olej napędowy"),
+        (MIXED, "mieszanka (paliwo-olej)"),
+        (LPG, "gaz płynny (propan-butan)"),
+        (CNG, "gaz ziemny sprężony (metan)"),
+        (HYDROGEN, "wodór"),
+        (LNG, "gaz ziemny skroplony (metan)"),
+        (BIODIESEL, "biodiesel"),
+        (ETHANOL, "etanol"),
+        (ELECTRIC, "energia elektryczna"),
+        (OTHER, "inne"),
+    ]
+
     registration_plate = models.CharField(
         max_length=32, unique=True, verbose_name="Numer rejestracyjny"
     )
@@ -34,6 +60,16 @@ class Vehicle(models.Model):
     )
     production_year = models.PositiveSmallIntegerField(
         blank=True, null=True, verbose_name="Rok produkcji"
+    )
+    fuel_type = models.CharField(
+        max_length=2,
+        choices=FUEL_CHOICES,
+        verbose_name="Rodzaj paliwa",
+        null=True,
+        blank=True,
+    )
+    registration_date = models.DateField(
+        verbose_name="Data pierwszej rejestracji", null=True, blank=True
     )
 
     class Meta:

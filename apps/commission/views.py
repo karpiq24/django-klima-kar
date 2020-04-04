@@ -1,6 +1,7 @@
 import subprocess
 import datetime
 import os
+import re
 import json
 import django_rq
 import unicodedata
@@ -141,6 +142,7 @@ class VehicleAutocomplete(CustomSelect2QuerySetView):
     def get_queryset(self):
         qs = Vehicle.objects.all()
         if self.q:
+            self.q = re.sub(r"[\W_]+", "", self.q)
             qs = qs.filter(
                 Q(brand__icontains=self.q)
                 | Q(model__icontains=self.q)
@@ -149,8 +151,8 @@ class VehicleAutocomplete(CustomSelect2QuerySetView):
             )
         return qs
 
-    def extend_result_data(self, component):
-        commission = component.commission_set.last()
+    def extend_result_data(self, vehicle):
+        commission = vehicle.commission_set.last()
         if commission and commission.contractor:
             return {
                 "contractor": {
@@ -711,7 +713,7 @@ class DeleteTempFile(View):
         if os.path.exists(metapath):
             os.remove(metapath)
         return JsonResponse(
-            {"status": "success", "message": "Plik został usunięty.",}, status=200
+            {"status": "success", "message": "Plik został usunięty."}, status=200
         )
 
 
@@ -721,7 +723,7 @@ class DeleteCommissionFile(View):
         commission_file = get_object_or_404(CommissionFile, pk=request.POST.get("file"))
         commission_file.delete()
         return JsonResponse(
-            {"status": "success", "message": "Plik został usunięty.",}, status=200
+            {"status": "success", "message": "Plik został usunięty."}, status=200
         )
 
 
@@ -849,7 +851,7 @@ class UnassignInoiceView(View):
             )
         commission.sale_invoices.remove(invoice)
         return JsonResponse(
-            {"status": "success", "message": "Faktura odłączona od zlecenia.",},
+            {"status": "success", "message": "Faktura odłączona od zlecenia."},
             status=200,
         )
 
@@ -871,6 +873,10 @@ class DecodeAztecCode(View):
             "engine_volume": int(values[48].split(",")[0]),
             "engine_power": int(values[49].split(",")[0]),
             "production_year": int(values[56]),
+            "fuel_type": str(values[50]),
+            "registration_date": datetime.datetime.strptime(
+                values[51], "%Y-%m-%d"
+            ).strftime("%d.%m.%Y"),
         }
         try:
             vehicle = Vehicle.objects.get(vin=response_data["vin"])

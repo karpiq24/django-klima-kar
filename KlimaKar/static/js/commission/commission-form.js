@@ -7,24 +7,16 @@ function toCurrency(value) {
 }
 
 function customSuccessCreate(data, identifier) {
-    let $option = $("<option selected></option>")
-        .val(data["pk"])
-        .text(data["text"]);
+    let $option = $("<option selected></option>").val(data["pk"]).text(data["text"]);
     if (identifier == "1") {
-        $("#id_contractor")
-            .append($option)
-            .trigger("change");
+        $("#id_contractor").append($option).trigger("change");
         $("#contractor-edit").prop("disabled", false);
     } else if (identifier == "2") {
-        $("#id_vehicle")
-            .append($option)
-            .trigger("change");
+        $("#id_vehicle").append($option).trigger("change");
         $("#vehicle-component-edit").prop("disabled", false);
         $("#id_vc_name").val(data["text"]);
     } else if (identifier == "3") {
-        $("#id_component")
-            .append($option)
-            .trigger("change");
+        $("#id_component").append($option).trigger("change");
         $("#vehicle-component-edit").prop("disabled", false);
         $("#id_vc_name").val(data["text"]);
     }
@@ -34,22 +26,13 @@ function calculateInvoiceTotals() {
     let invoice_total = 0.0;
     $(".item-formset-row")
         .not(".readonly")
-        .each(function() {
+        .each(function () {
             if (!$(this).hasClass("d-none")) {
-                let price = toCurrency(
-                    $(this)
-                        .find(".item-price")
-                        .val()
-                        .replace(",", ".")
-                );
+                let price = toCurrency($(this).find(".item-price").val().replace(",", "."));
                 if (isNaN(price)) {
                     price = 0;
                 }
-                const quantity = parseInt(
-                    $(this)
-                        .find(".item-quantity")
-                        .val()
-                );
+                const quantity = parseInt($(this).find(".item-quantity").val());
                 const total_row = toCurrency(quantity * price);
                 invoice_total = toCurrency(invoice_total + total_row);
             }
@@ -75,18 +58,16 @@ function checkEndDate() {
     }
 }
 
-$(function() {
-    let debounce = (function() {
+$(function () {
+    let debounce = (function () {
         let timer = 0;
-        return function(callback, ms) {
+        return function (callback, ms) {
             clearTimeout(timer);
             timer = setTimeout(callback, ms);
         };
     })();
 
-    $(".sidenav #nav-commissions")
-        .children(":first")
-        .addClass("active");
+    $(".sidenav #nav-commissions").children(":first").addClass("active");
     $(".sidenav #nav-commission").collapse("show");
 
     const CREATE_CONTRACTOR = $("#create_contractor_url").val();
@@ -100,17 +81,17 @@ $(function() {
     const DECODE_CSV_VEHICLE = $("#decode_csv_vehicle_url").val();
     const GET_CONTRACTOR_DATA = $("#get_contractor_data_url").val();
 
-    $("#optionName").on("change", function() {
+    $("#optionName").on("change", function () {
         $("#vehicle-component-container").hide();
         $("#name-container").show();
     });
 
-    $("#optionObject").on("change", function() {
+    $("#optionObject").on("change", function () {
         $("#name-container").hide();
         $("#vehicle-component-container").css("display", "flex");
     });
 
-    $("#id_contractor").on("select2:selecting", function(e) {
+    $("#id_contractor").on("select2:selecting", function (e) {
         const data = e.params.args.data;
 
         if (data.create_id !== true) {
@@ -121,11 +102,12 @@ $(function() {
 
         e.preventDefault();
         let initial = {};
-        if (isInt(data.id)) {
-            if (data.id.length === 9) {
-                initial = { phone_1: data.id };
+        const input = data.id.replace(/ /g, "");
+        if (isInt(input)) {
+            if (input.length === 9) {
+                initial = { phone_1: input };
             } else {
-                initial = { nip: data.id };
+                initial = { nip: input };
             }
         } else {
             initial = { name: data.id };
@@ -135,33 +117,29 @@ $(function() {
             type: "get",
             dataType: "json",
             data: initial,
-            beforeSend: function() {
+            beforeSend: function () {
                 $("#modal-generic").modal("show");
             },
-            success: function(data) {
+            success: function (data) {
                 $("#modal-generic .modal-content").html(data.html_form);
-            }
+            },
         });
     });
 
-    $("#id_contractor").change(function() {
+    $("#id_contractor").change(function () {
         const parent = $("#id_contractor").parent();
         const contractor_pk = $("#id_contractor").val();
         $("#id_contractor").removeClass("is-invalid");
         $("#id_contractor").removeClass("is-warning");
-        $(parent)
-            .find("div.invalid-feedback")
-            .remove();
-        $(parent)
-            .find("div.warning-feedback")
-            .remove();
+        $(parent).find("div.invalid-feedback").remove();
+        $(parent).find("div.warning-feedback").remove();
         $.ajax({
             url: GET_CONTRACTOR_DATA,
             data: {
-                pk: contractor_pk
+                pk: contractor_pk,
             },
             dataType: "json",
-            success: function(result) {
+            success: function (result) {
                 if (result.contractor.id === "") {
                     $("#contractor-edit").prop("disabled", true);
                     $("#gus-data").hide();
@@ -185,23 +163,23 @@ $(function() {
                         '<div class="warning-feedback">Sprawdź numer telefonu - podany posiada niestandardową liczbę cyfr.</div>'
                     );
                 }
-            }
+            },
         });
     });
 
-    $("#contractor-edit").click(function() {
+    $("#contractor-edit").click(function () {
         const contractor_pk = $("#id_contractor").val();
         const url = UPDATE_CONTRACTOR.replace("0", contractor_pk);
         $.ajax({
             url: url,
             type: "get",
             dataType: "json",
-            beforeSend: function() {
+            beforeSend: function () {
                 $("#modal-generic").modal("show");
             },
-            success: function(data) {
+            success: function (data) {
                 $("#modal-generic .modal-content").html(data.html_form);
-            }
+            },
         });
     });
 
@@ -221,7 +199,7 @@ $(function() {
         $("#id_vc_name").prop("readonly", true);
     }
 
-    $("#id_vehicle").on("select2:selecting", function(e) {
+    $("#id_vehicle").on("select2:selecting", function (e) {
         const data = e.params.args.data;
 
         if (data.create_id !== true) {
@@ -236,15 +214,13 @@ $(function() {
                     focusCancel: false,
                     focusConfirm: true,
                     confirmButtonText: "Tak",
-                    cancelButtonText: "Nie"
-                }).then(change => {
+                    cancelButtonText: "Nie",
+                }).then((change) => {
                     if (change.value) {
                         const $option = $("<option selected></option>")
                             .val(data.contractor.id)
                             .text(data.contractor.text);
-                        $("#id_contractor")
-                            .append($option)
-                            .trigger("change");
+                        $("#id_contractor").append($option).trigger("change");
                         $("#contractor-edit").prop("disabled", false);
                     }
                 });
@@ -257,18 +233,18 @@ $(function() {
         $.ajax({
             url: CREATE_VEHICLE,
             type: "get",
-            data: { registration_plate: data.id },
+            data: { registration_plate: data.id.replace(/ /g, "") },
             dataType: "json",
-            beforeSend: function() {
+            beforeSend: function () {
                 $("#modal-generic").modal("show");
             },
-            success: function(data) {
+            success: function (data) {
                 $("#modal-generic .modal-content").html(data.html_form);
-            }
+            },
         });
     });
 
-    $("#id_vehicle").change(function() {
+    $("#id_vehicle").change(function () {
         const vehicle_pk = $("#id_vehicle").val();
         if (!isInt(vehicle_pk)) {
             $("#id_vc_name").val("");
@@ -279,7 +255,7 @@ $(function() {
         }
     });
 
-    $("#id_component").on("select2:selecting", function(e) {
+    $("#id_component").on("select2:selecting", function (e) {
         const data = e.params.args.data;
 
         if (data.create_id !== true) {
@@ -294,15 +270,13 @@ $(function() {
                     focusCancel: false,
                     focusConfirm: true,
                     confirmButtonText: "Tak",
-                    cancelButtonText: "Nie"
-                }).then(change => {
+                    cancelButtonText: "Nie",
+                }).then((change) => {
                     if (change.value) {
                         const $option = $("<option selected></option>")
                             .val(data.contractor.id)
                             .text(data.contractor.text);
-                        $("#id_contractor")
-                            .append($option)
-                            .trigger("change");
+                        $("#id_contractor").append($option).trigger("change");
                         $("#contractor-edit").prop("disabled", false);
                     }
                 });
@@ -317,16 +291,16 @@ $(function() {
             type: "get",
             data: { model: data.id },
             dataType: "json",
-            beforeSend: function() {
+            beforeSend: function () {
                 $("#modal-generic").modal("show");
             },
-            success: function(data) {
+            success: function (data) {
                 $("#modal-generic .modal-content").html(data.html_form);
-            }
+            },
         });
     });
 
-    $("#id_component").change(function() {
+    $("#id_component").change(function () {
         const component_pk = $("#id_component").val();
         if (!isInt(component_pk)) {
             $("#id_vc_name").val("");
@@ -337,7 +311,7 @@ $(function() {
         }
     });
 
-    $("#vehicle-component-edit").click(function() {
+    $("#vehicle-component-edit").click(function () {
         let pk = null;
         let url = null;
         if ($("#id_commission_type").val() === "VH") {
@@ -351,12 +325,12 @@ $(function() {
             url: url,
             type: "get",
             dataType: "json",
-            beforeSend: function() {
+            beforeSend: function () {
                 $("#modal-generic").modal("show");
             },
-            success: function(data) {
+            success: function (data) {
                 $("#modal-generic .modal-content").html(data.html_form);
-            }
+            },
         });
     });
 
@@ -367,57 +341,29 @@ $(function() {
         $("#vehicle-component-edit").prop("disabled", true);
     }
 
-    $("#add_item_formset").click(function() {
-        let item_form = $("#item-rows")
-            .children(".d-none")
-            .first();
-        $(item_form)
-            .find(".item-DELETE")
-            .children("input")
-            .prop("checked", false);
+    $("#add_item_formset").click(function () {
+        let item_form = $("#item-rows").children(".d-none").first();
+        $(item_form).find(".item-DELETE").children("input").prop("checked", false);
         $(item_form).removeClass("d-none");
         $(item_form).insertAfter($("#item-rows tr:not('.d-none'):last"));
-        $(item_form)
-            .find(".form-control")
-            .first()
-            .focus();
+        $(item_form).find(".form-control").first().focus();
     });
 
-    $(".remove_item_formset").click(function() {
+    $(".remove_item_formset").click(function () {
         let item_form = $(this).parents(".item-formset-row");
         $(item_form).addClass("d-none");
-        $(item_form)
-            .find(".item-name")
-            .val("");
-        $(item_form)
-            .find(".item-description")
-            .val("");
-        $(item_form)
-            .find(".item-quantity")
-            .val(1);
-        $(item_form)
-            .find(".item-price")
-            .val("");
-        $(item_form)
-            .find(".item-DELETE")
-            .children("input")
-            .prop("checked", true);
+        $(item_form).find(".item-name").val("");
+        $(item_form).find(".item-description").val("");
+        $(item_form).find(".item-quantity").val(1);
+        $(item_form).find(".item-price").val("");
+        $(item_form).find(".item-DELETE").children("input").prop("checked", true);
         calculateInvoiceTotals();
     });
 
-    $(".item-price").change(function() {
+    $(".item-price").change(function () {
         let item_form = $(this).parents(".item-formset-row");
-        const price = toCurrency(
-            $(item_form)
-                .find(".item-price")
-                .val()
-                .replace(",", ".")
-        );
-        const quantity = parseInt(
-            $(item_form)
-                .find(".item-quantity")
-                .val()
-        );
+        const price = toCurrency($(item_form).find(".item-price").val().replace(",", "."));
+        const quantity = parseInt($(item_form).find(".item-quantity").val());
         const total = toCurrency(price * quantity);
         $(item_form)
             .find(".item-total")
@@ -425,18 +371,10 @@ $(function() {
         calculateInvoiceTotals();
     });
 
-    $(".item-quantity").change(function() {
+    $(".item-quantity").change(function () {
         let item_form = $(this).parents(".item-formset-row");
-        const price = toCurrency(
-            $(item_form)
-                .find(".item-price")
-                .val()
-        );
-        const quantity = parseInt(
-            $(item_form)
-                .find(".item-quantity")
-                .val()
-        );
+        const price = toCurrency($(item_form).find(".item-price").val());
+        const quantity = parseInt($(item_form).find(".item-quantity").val());
         const total = toCurrency(price * quantity);
         $(item_form)
             .find(".item-total")
@@ -444,71 +382,46 @@ $(function() {
         calculateInvoiceTotals();
     });
 
-    $(".choose_service").click(function() {
+    $(".choose_service").click(function () {
         let item_form = $(this).parents(".item-formset-row");
-        const service_pk = $(item_form)
-            .find(".item-service")
-            .val();
+        const service_pk = $(item_form).find(".item-service").val();
         if (service_pk === "") {
             return;
         }
         $.ajax({
             url: GET_SERVICE_DATA,
             data: {
-                pk: service_pk
+                pk: service_pk,
             },
             dataType: "json",
-            success: function(result) {
-                $(item_form)
-                    .find(".item-name")
-                    .val(result.service.name);
-                $(item_form)
-                    .find(".item-description")
-                    .val(result.service.description);
-                $(item_form)
-                    .find(".item-price")
-                    .val(result.service.price_brutto);
-                $(item_form)
-                    .find(".item-quantity")
-                    .val(result.service.quantity);
-                $(item_form)
-                    .find(".item-price")
-                    .change();
-            }
+            success: function (result) {
+                $(item_form).find(".item-name").val(result.service.name);
+                $(item_form).find(".item-description").val(result.service.description);
+                $(item_form).find(".item-price").val(result.service.price_brutto);
+                $(item_form).find(".item-quantity").val(result.service.quantity);
+                $(item_form).find(".item-price").change();
+            },
         });
     });
 
     $("#item-rows tr:first").removeClass("d-none");
-    $(".item-formset-row").each(function() {
+    $(".item-formset-row").each(function () {
         let item_form = $(this);
         if (
-            $(item_form)
-                .find(".item-name")
-                .val() ||
-            $(item_form)
-                .find(".item-description")
-                .val() ||
-            $(item_form)
-                .find(".item-price")
-                .val() != 0 ||
-            $(item_form)
-                .find(".item-quantity")
-                .val() != 1 ||
+            $(item_form).find(".item-name").val() ||
+            $(item_form).find(".item-description").val() ||
+            $(item_form).find(".item-price").val() != 0 ||
+            $(item_form).find(".item-quantity").val() != 1 ||
             $(item_form).find(".invalid-feedback").length > 0
         ) {
             item_form.removeClass("d-none");
-            $(item_form)
-                .find(".item-price")
-                .change();
+            $(item_form).find(".item-price").change();
         }
     });
     calculateInvoiceTotals();
 
-    $("#id_vehicle").on("select2:opening", function(e) {
-        $(this)
-            .data("select2")
-            .$dropdown.find(":input.select2-search__field")
-            .addClass("vehicle");
+    $("#id_vehicle").on("select2:opening", function (e) {
+        $(this).data("select2").$dropdown.find(":input.select2-search__field").addClass("vehicle");
     });
 
     function decode_aztec(code) {
@@ -518,14 +431,14 @@ $(function() {
             dataType: "json",
             data: {
                 code: code,
-                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
             },
-            success: function(data) {
+            success: function (data) {
                 processVehicleData(data);
             },
-            error: function(data) {
+            error: function (data) {
                 addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
-            }
+            },
         });
     }
 
@@ -536,14 +449,14 @@ $(function() {
             dataType: "json",
             data: {
                 code: code,
-                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
             },
-            success: function(data) {
+            success: function (data) {
                 processVehicleData(data);
             },
-            error: function(data) {
+            error: function (data) {
                 addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
-            }
+            },
         });
     }
 
@@ -555,20 +468,16 @@ $(function() {
                 type: "get",
                 dataType: "json",
                 data: data,
-                beforeSend: function() {
+                beforeSend: function () {
                     $("#modal-generic").modal("show");
                 },
-                success: function(data) {
+                success: function (data) {
                     $("#modal-generic .modal-content").html(data.html_form);
-                }
+                },
             });
         } else {
-            const $option = $("<option selected></option>")
-                .val(data["pk"])
-                .text(data["label"]);
-            $("#id_vehicle")
-                .append($option)
-                .trigger("change");
+            const $option = $("<option selected></option>").val(data["pk"]).text(data["label"]);
+            $("#id_vehicle").append($option).trigger("change");
             $("#vehicle-component-edit").prop("disabled", false);
             $("#id_vc_name").val(data["label"]);
         }
@@ -576,25 +485,25 @@ $(function() {
 
     function processVehicleCode(code) {
         if (code.length > 50 && code.length <= 350) {
-            debounce(function() {
+            debounce(function () {
                 decode_csv(code);
             }, 300);
         } else if (code.length > 350) {
-            debounce(function() {
+            debounce(function () {
                 decode_aztec(code);
             }, 300);
         }
     }
 
-    $(document).on("input", ".select2-search__field.vehicle", function(e) {
+    $(document).on("input", ".select2-search__field.vehicle", function (e) {
         processVehicleCode($(this).val());
     });
 
-    $(document).on("paste", ".select2-search__field.vehicle", function(e) {
+    $(document).on("paste", ".select2-search__field.vehicle", function (e) {
         processVehicleCode(e.originalEvent.clipboardData.getData("Text"));
     });
 
-    $("input[type=radio][name=status]").change(function() {
+    $("input[type=radio][name=status]").change(function () {
         checkEndDate();
     });
     checkEndDate();
