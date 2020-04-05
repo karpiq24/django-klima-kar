@@ -21,7 +21,7 @@ pyotp==2.3.0
 pysolr==3.8.1
 python-dateutil==2.8.1
 requests==2.23.0
-smsapi-client==2.4.1
+smsapi-client==2.4.2
 tablib[xlsx, xls, ods]==1.1.0
 WeasyPrint==51
 XlsxWriter==1.2.8
