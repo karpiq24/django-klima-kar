@@ -1,5 +1,11 @@
 # Lista zmian
 
+## 2020-04-07
+
+### Dodano
+
+-   filtrowanie zleceń w zależności czy została przypisana faktura sprzedażowa
+
 ## 2020-04-04
 
 ### Dodano

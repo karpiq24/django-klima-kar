@@ -43,7 +43,7 @@ class ComponentFilter(django_filters.FilterSet):
 class CommissionFilter(django_filters.FilterSet):
     YES = "yes"
     NO = "no"
-    HAS_FILES = [(YES, "Tak"), (NO, "Nie")]
+    YESNO = [(YES, "Tak"), (NO, "Nie")]
 
     status = django_filters.CharFilter(widget=forms.HiddenInput())
     pk = django_filters.CharFilter(
@@ -59,9 +59,6 @@ class CommissionFilter(django_filters.FilterSet):
     description = django_filters.CharFilter(
         lookup_expr="icontains", widget=forms.TextInput()
     )
-    has_files = django_filters.ChoiceFilter(
-        choices=HAS_FILES, label="Załączono pliki", method="has_files_filter"
-    )
     start_date = django_filters.CharFilter(
         method="start_date_filter",
         label="Data przyjęcia",
@@ -71,6 +68,12 @@ class CommissionFilter(django_filters.FilterSet):
         method="end_date_filter",
         label="Data zamknięcia",
         widget=forms.TextInput(attrs={"class": "date-range-input"}),
+    )
+    has_files = django_filters.ChoiceFilter(
+        choices=YESNO, label="Załączono pliki", method="has_files_filter"
+    )
+    has_invoice = django_filters.ChoiceFilter(
+        choices=YESNO, label="Przypisano fakturę", method="has_invoice_filter",
     )
 
     class Meta:
@@ -83,6 +86,8 @@ class CommissionFilter(django_filters.FilterSet):
             "description",
             "start_date",
             "end_date",
+            "has_files",
+            "has_invoice",
         ]
 
     def has_files_filter(self, queryset, name, value):
@@ -90,6 +95,12 @@ class CommissionFilter(django_filters.FilterSet):
             return queryset.exclude(commissionfile=None)
         elif value == self.NO:
             return queryset.filter(commissionfile=None)
+
+    def has_invoice_filter(self, queryset, name, value):
+        if value == self.YES:
+            return queryset.exclude(sale_invoices=None)
+        elif value == self.NO:
+            return queryset.filter(sale_invoices=None)
 
     def start_date_filter(self, queryset, name, value):
         try:
