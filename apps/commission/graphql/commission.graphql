@@ -24,6 +24,7 @@ type Commission {
     status: String!
     start_date: String!
     end_date: String
+    sent_sms: Boolean!
     upload: Boolean!
     value: Float!
     items: [CommissionItem]

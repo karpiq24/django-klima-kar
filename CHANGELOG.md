@@ -5,6 +5,7 @@
 ### Dodano
 
 -   filtrowanie zleceń w zależności czy została przypisana faktura sprzedażowa
+-   informacje czy powiadomienie SMS do zlecenia zostało już wysłane
 
 ## 2020-04-04
 

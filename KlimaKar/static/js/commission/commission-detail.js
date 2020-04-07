@@ -8,12 +8,12 @@ function submitInvoiceForm(url, commission_pk) {
         url: url,
         type: "POST",
         data: data,
-        success: function(data) {
+        success: function (data) {
             window.location.href = data.url;
         },
-        error: function(data) {
+        error: function (data) {
             addAlert("Błąd!", "error", "Skontaktuj się z administratorem.");
-        }
+        },
     });
 }
 
@@ -26,20 +26,20 @@ function submitEmailForm(url) {
     Swal.fire({
         title: "Wysyłanie wiadomości email",
         html: '<i class="fas fa-spinner fa-spin fa-8x" style="margin: 26px;color: #00a0df;"></i>',
-        showConfirmButton: false
+        showConfirmButton: false,
     });
     $.ajax({
         url: url,
         type: "POST",
         data: data,
-        success: function(data) {
+        success: function (data) {
             $("#email_modal").modal("hide");
             addAlert("Sukces!", "success", data.message + ".");
         },
-        error: function(data) {
+        error: function (data) {
             addAlert("Błąd!", "error", data.responseJSON.message + ".");
             $("#email_modal").modal("show");
-        }
+        },
     });
 }
 
@@ -66,36 +66,32 @@ function print_pdf() {
     }
 }
 
-$(function() {
-    $(".sidenav #nav-commissions")
-        .children(":first")
-        .addClass("active");
+$(function () {
+    $(".sidenav #nav-commissions").children(":first").addClass("active");
     $(".sidenav #nav-commission").collapse("show");
 
     var url = window.location.href;
     if (url.indexOf("?pdf") != -1) print_pdf();
     else if (url.indexOf("&pdf") != -1) print_pdf();
 
-    $("#print-btn").click(function() {
+    $("#print-btn").click(function () {
         print_pdf();
     });
 
     if ($("#file-data").data("upload") == "True") {
-        let check = setInterval(function() {
+        let check = setInterval(function () {
             $.ajax({
                 url: $("#file-data").data("check-url"),
                 type: "get",
                 data: {
-                    pk: $("#file-data").data("commission")
+                    pk: $("#file-data").data("commission"),
                 },
                 dataType: "json",
-                success: function(data) {
+                success: function (data) {
                     if (data.status == "success") {
                         $("#file-data").empty();
-                        let fileList = $("#file-data")
-                            .append($('<ul class="simple-list"></ul>'))
-                            .find("ul");
-                        $.each(data.files, function(i, file) {
+                        let fileList = $("#file-data").append($('<ul class="simple-list"></ul>')).find("ul");
+                        $.each(data.files, function (i, file) {
                             var li = $(
                                 '<li><a href="' +
                                     file.url +
@@ -108,14 +104,14 @@ $(function() {
                         });
                         clearInterval(check);
                     }
-                }
+                },
             });
         }, 2000);
     }
 
     var last_status = $("#status-select input:checked");
 
-    $("#status-select input").on("change", function() {
+    $("#status-select input").on("change", function () {
         const that = this;
         Swal.fire({
             title: "Czy na pewno chcesz zmienić status?",
@@ -124,8 +120,8 @@ $(function() {
             focusCancel: false,
             focusConfirm: true,
             confirmButtonText: "Tak",
-            cancelButtonText: "Nie"
-        }).then(change => {
+            cancelButtonText: "Nie",
+        }).then((change) => {
             if (change.value) {
                 const status = $(this).data("value");
                 last_status = that;
@@ -136,9 +132,9 @@ $(function() {
                     data: {
                         status: status,
                         pk: $(this).data("pk"),
-                        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
                     },
-                    success: function(data) {
+                    success: function (data) {
                         $("#end_date").text(data.end_date);
                         if (status === $("#status-select").data("done")) {
                             $("#commission_done").hide();
@@ -149,8 +145,8 @@ $(function() {
                                 focusCancel: false,
                                 focusConfirm: true,
                                 confirmButtonText: "Tak",
-                                cancelButtonText: "Nie"
-                            }).then(make_invoice => {
+                                cancelButtonText: "Nie",
+                            }).then((make_invoice) => {
                                 if (make_invoice.value) {
                                     $("#add_invoice").click();
                                 }
@@ -174,7 +170,7 @@ $(function() {
                                     input: "radio",
                                     inputOptions: options,
                                     inputValue: phone1 !== undefined && phone1 !== "None" ? phone1 : phone2,
-                                    inputValidator: value => {
+                                    inputValidator: (value) => {
                                         if (!value) {
                                             return "Wybierz numer telefonu.";
                                         }
@@ -183,8 +179,8 @@ $(function() {
                                     focusCancel: false,
                                     focusConfirm: true,
                                     confirmButtonText: "Tak",
-                                    cancelButtonText: "Nie"
-                                }).then(send_sms => {
+                                    cancelButtonText: "Nie",
+                                }).then((send_sms) => {
                                     if (send_sms.value) {
                                         $.ajax({
                                             url: $("#status-select").data("sms-url"),
@@ -192,15 +188,19 @@ $(function() {
                                             dataType: "json",
                                             data: {
                                                 phone: send_sms.value,
-                                                message: $("#sms").val(),
-                                                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                                                commission: $(that).data("pk"),
+                                                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
                                             },
-                                            success: function(data) {
+                                            success: function (data) {
                                                 addAlert("Sukces!", "success", data.message);
                                             },
-                                            error: function() {
-                                                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
-                                            }
+                                            error: function (data) {
+                                                if (data.responseJSON.message) {
+                                                    addAlert("Uwaga!", "warning", data.responseJSON.message);
+                                                } else {
+                                                    addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
+                                                }
+                                            },
                                         });
                                     }
                                 });
@@ -208,25 +208,21 @@ $(function() {
                         } else {
                             $("#commission_done").show();
                         }
-                    }
+                    },
                 });
             } else {
-                $(that)
-                    .parent()
-                    .removeClass("active");
-                $(last_status)
-                    .parent()
-                    .addClass("active");
+                $(that).parent().removeClass("active");
+                $(last_status).parent().addClass("active");
             }
         });
     });
 
-    $("#assign_invoice").on("click", function() {
+    $("#assign_invoice").on("click", function () {
         $("#invoice-select").show();
         $("#id_sale_invoice").select2("open");
     });
 
-    $("#id_sale_invoice").change(function() {
+    $("#id_sale_invoice").change(function () {
         const invoice_pk = $(this).val();
         if (isInt(invoice_pk)) {
             $.ajax({
@@ -235,14 +231,12 @@ $(function() {
                 data: {
                     csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
                     invoice: invoice_pk,
-                    commission: $("#invoice-select").data("commission")
+                    commission: $("#invoice-select").data("commission"),
                 },
-                success: function(data) {
+                success: function (data) {
                     if (data.status === "success") {
                         addAlert("Sukces!", data.status, data.message);
-                        $("#invoice-list")
-                            .find(".li-none")
-                            .remove();
+                        $("#invoice-list").find(".li-none").remove();
                         $("#invoice-list").append(
                             '<li><a href="' +
                                 data.sale_invoice.url +
@@ -258,22 +252,20 @@ $(function() {
                         addAlert("Uwaga!", data.status, data.message);
                     }
                 },
-                error: function(data) {
+                error: function (data) {
                     addAlert("Błąd!", "error", data.responseJSON.message);
-                }
+                },
             });
-            $("#id_sale_invoice")
-                .val("")
-                .change();
+            $("#id_sale_invoice").val("").change();
         }
         $("#invoice-select").hide();
     });
 
-    $("#id_sale_invoice").on("select2:close", function(e) {
+    $("#id_sale_invoice").on("select2:close", function (e) {
         $("#invoice-select").hide();
     });
 
-    $(document).on("click", ".unassign-invoice", function() {
+    $(document).on("click", ".unassign-invoice", function () {
         let container = $(this).parent();
         Swal.fire({
             title: "Czy na pewno chcesz odłączyć fakturę od zlecenia?",
@@ -283,8 +275,8 @@ $(function() {
             focusCancel: true,
             focusConfirm: false,
             confirmButtonText: "Tak",
-            cancelButtonText: "Nie"
-        }).then(change => {
+            cancelButtonText: "Nie",
+        }).then((change) => {
             if (change.value) {
                 $.ajax({
                     url: $("#invoice-select").data("unassign-url"),
@@ -292,9 +284,9 @@ $(function() {
                     data: {
                         csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
                         invoice: $(this).data("pk"),
-                        commission: $("#invoice-select").data("commission")
+                        commission: $("#invoice-select").data("commission"),
                     },
-                    success: function(data) {
+                    success: function (data) {
                         if (data.status === "success") {
                             addAlert("Sukces!", data.status, data.message);
                             container.remove();
@@ -305,9 +297,9 @@ $(function() {
                             addAlert("Uwaga!", data.status, data.message);
                         }
                     },
-                    error: function(data) {
+                    error: function (data) {
                         addAlert("Błąd!", "error", data.responseJSON.message);
-                    }
+                    },
                 });
             }
         });

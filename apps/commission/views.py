@@ -4,7 +4,6 @@ import os
 import re
 import json
 import django_rq
-import unicodedata
 
 from urllib.parse import urlencode
 from smtplib import SMTPRecipientsRefused
@@ -29,6 +28,7 @@ from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
 from KlimaKar.mixins import AjaxFormMixin, SingleTableAjaxMixin
 from KlimaKar import settings
 from KlimaKar.templatetags.slugify import slugify
+from KlimaKar.functions import strip_accents, send_sms
 from apps.settings.models import SiteSettings
 from apps.commission.models import (
     Vehicle,
@@ -399,19 +399,8 @@ class CommissionDetailView(SingleTableAjaxMixin, DetailView):
             sms = Template(site_settings.COMMISSION_SMS_BODY).render(
                 Context({"commission": self.object})
             )
-        context["sms"] = self._strip_accents(sms)
+        context["sms"] = strip_accents(sms)
         return context
-
-    def _strip_accents(self, text):
-        return (
-            "".join(
-                c
-                for c in unicodedata.normalize("NFKD", text)
-                if unicodedata.category(c) != "Mn"
-            )
-            .replace("ł", "l")
-            .replace("Ł", "L")
-        )
 
     def get_table_data(self):
         return CommissionItem.objects.filter(commission=self.object)
@@ -909,3 +898,32 @@ class DecodeCsvVehicleData(View):
         except Vehicle.DoesNotExist:
             response_data["pk"] = None
         return JsonResponse(response_data)
+
+
+class SendSMSNotificationView(View):
+    def post(self, request, *args, **kwargs):
+        phone = request.POST.get("phone")
+        commission_pk = request.POST.get("commission")
+        try:
+            commission = Commission.objects.get(pk=commission_pk)
+        except Commission.DoesNotExist:
+            return JsonResponse({}, status=400)
+
+        if commission.sent_sms:
+            return JsonResponse(
+                {"message": "Nie można wysłać ponownie tego powiadomienia."}, status=400
+            )
+
+        site_settings = SiteSettings.load()
+        message = ""
+        if site_settings.COMMISSION_SMS_BODY:
+            message = Template(site_settings.COMMISSION_SMS_BODY).render(
+                Context({"commission": commission})
+            )
+        message = strip_accents(message)
+
+        if send_sms(phone, message):
+            commission.sent_sms = True
+            commission.save()
+            return JsonResponse({"message": "Wiadomość została wysłana."}, status=200)
+        return JsonResponse({}, status=400)

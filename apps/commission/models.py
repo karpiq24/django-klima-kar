@@ -202,6 +202,9 @@ class Commission(models.Model):
         verbose_name="Data przyjęcia", default=datetime.date.today
     )
     end_date = models.DateField(blank=True, null=True, verbose_name="Data zamknięcia")
+    sent_sms = models.BooleanField(
+        verbose_name="Powiadomienie SMS zostało wysłane", default=False
+    )
     upload = models.BooleanField(verbose_name="Pliki są wgrywane", default=False)
     mch_id = models.CharField(max_length=128, blank=True, null=True)
 
