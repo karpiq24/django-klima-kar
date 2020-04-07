@@ -66,6 +66,10 @@ div.content-full {
     }
 }
 
+#status-select.btn-group {
+    flex-wrap: wrap;
+}
+
 @media screen and (max-width: 768px) {
     .container-fluid {
         padding: 0;
