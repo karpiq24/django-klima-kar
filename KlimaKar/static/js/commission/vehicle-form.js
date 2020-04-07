@@ -1,7 +1,5 @@
-$(function() {
-    $(".sidenav #nav-vehicles")
-        .children(":first")
-        .addClass("active");
+$(function () {
+    $(".sidenav #nav-vehicles").children(":first").addClass("active");
     $(".sidenav #nav-commission").collapse("show");
 
     const DECODE_AZTEC = $("#decode_aztec_url").val();
@@ -14,14 +12,14 @@ $(function() {
             dataType: "json",
             data: {
                 code: code,
-                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
             },
-            success: function(data) {
+            success: function (data) {
                 processVehicleData(data);
             },
-            error: function(data) {
+            error: function (data) {
                 addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
-            }
+            },
         });
     }
 
@@ -32,14 +30,14 @@ $(function() {
             dataType: "json",
             data: {
                 code: code,
-                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
             },
-            success: function(data) {
+            success: function (data) {
                 processVehicleData(data);
             },
-            error: function(data) {
+            error: function (data) {
                 addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
-            }
+            },
         });
     }
 
@@ -51,12 +49,14 @@ $(function() {
         $("#id_production_year").val(data.production_year);
         $("#id_registration_plate").val(data.registration_plate);
         $("#id_vin").val(data.vin);
+        $("#id_fuel_type").val(data.fuel_type);
+        $("#id_registration_date").val(data.registration_date);
         $("#id_aztec").val("");
     }
 
-    let debounce = (function() {
+    let debounce = (function () {
         let timer = 0;
-        return function(callback, ms) {
+        return function (callback, ms) {
             clearTimeout(timer);
             timer = setTimeout(callback, ms);
         };
@@ -64,21 +64,21 @@ $(function() {
 
     function processCode(code) {
         if (code.length > 50 && code.length <= 350) {
-            debounce(function() {
+            debounce(function () {
                 decode_csv(code);
             }, 300);
         } else if (code.length > 350) {
-            debounce(function() {
+            debounce(function () {
                 decode_aztec(code);
             }, 300);
         }
     }
 
-    $(document).on("input", "#id_aztec", function(e) {
+    $(document).on("input", "#id_aztec", function (e) {
         processCode($(this).val());
     });
 
-    $(document).on("paste", "#id_aztec", function(e) {
+    $(document).on("paste", "#id_aztec", function (e) {
         processCode(e.originalEvent.clipboardData.getData("Text"));
     });
 });

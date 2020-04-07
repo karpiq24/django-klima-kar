@@ -7,6 +7,10 @@
 -   filtrowanie zleceń w zależności czy została przypisana faktura sprzedażowa
 -   informacje czy powiadomienie SMS do zlecenia zostało już wysłane
 
+### Naprawiono
+
+-   wczytywanie rodzaju paliwa i daty pierwszej rejestracji w formularzu pojazdu
+
 ## 2020-04-04
 
 ### Dodano
