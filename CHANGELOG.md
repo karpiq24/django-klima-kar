@@ -1,5 +1,11 @@
 # Lista zmian
 
+## 2020-04-08
+
+### Poprawiono
+
+-   kalendarz przy wyborze daty może pokazać się na górze kontrolki jeśli z dołu nie ma miejsca
+
 ## 2020-04-07
 
 ### Dodano
