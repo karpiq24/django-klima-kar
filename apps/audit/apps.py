@@ -28,6 +28,7 @@ class AuditConfig(AppConfig):
             commission.Commission,
             commission.CommissionItem,
             commission.CommissionFile,
+            commission.CommissionNote,
             invoicing.Contractor,
             invoicing.SaleInvoice,
             invoicing.RefrigerantWeights,

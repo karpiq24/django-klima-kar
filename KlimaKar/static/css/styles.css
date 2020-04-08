@@ -281,6 +281,20 @@ span.required {
     border: 1px solid #ffc107 !important;
 }
 
+.notes .close {
+    font-size: 1rem;
+}
+
+.notes .not-active {
+    color: #6c757d;
+    text-decoration: line-through;
+}
+
+.notes ul {
+    max-height: 700px;
+    overflow: auto;
+}
+
 /*
     MISC
 */
@@ -841,9 +855,19 @@ ul.sidenav li i:hover {
 */
 .toggle-switch {
     position: relative;
-    display: block;
-    width: 60px;
+    display: flex;
     height: 34px;
+    width: auto;
+    align-items: center;
+    cursor: pointer;
+}
+
+.swal2-content .toggle-switch {
+    display: inline-flex;
+}
+
+.toggle-switch :last-child:not(.slider) {
+    margin-left: 64px;
 }
 
 .toggle-switch input {
@@ -855,6 +879,7 @@ ul.sidenav li i:hover {
 .slider {
     position: absolute;
     cursor: pointer;
+    width: 60px;
     top: 0;
     left: 0;
     right: 0;

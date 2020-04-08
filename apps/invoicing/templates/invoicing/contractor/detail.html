@@ -55,8 +55,10 @@
     <div class="col-xs-12 col-lg-4">
         <div class="card-deck text-center">
             <div class="card bg-light">
+                <h5 class="card-header">
+                    Akcje
+                </h5>
                 <div class="card-body">
-                    <h5 class="card-title">Akcje</h5>
                     {% if object.nip %}
                         <button class="btn btn-outline-primary btn-lg" data-url="{% url 'invoicing:contractor_gus' %}" data-nip="{{ object.nip }}" id="gus-data"><i class="fas fa-eye"></i> Dane GUS</button>
                     {% endif %}

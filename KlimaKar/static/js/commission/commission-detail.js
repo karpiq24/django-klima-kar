@@ -304,4 +304,115 @@ $(function () {
             }
         });
     });
+
+    $("#addNote").on("click", function () {
+        const pk = $(this).data("pk");
+        Swal.fire({
+            title: "Podaj treść notatki.",
+            type: "info",
+            input: "textarea",
+            showCancelButton: true,
+            focusConfirm: true,
+            confirmButtonText: "Zapisz",
+            cancelButtonText: "Anuluj",
+            allowOutsideClick: true,
+        }).then(({ value }) => {
+            if (value === undefined) return;
+            $.ajax({
+                url: "/graphql/",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    query: `mutation {
+                        addCommissionNote(commission: "${pk}", contents: ${JSON.stringify(value)}) {
+                            id
+                            contents
+                            created
+                        }
+                    }`,
+                }),
+                success: function ({ data }) {
+                    const created = moment(data.addCommissionNote.created).locale("pl").format("D MMMM YYYY HH:mm");
+                    const contents = data.addCommissionNote.contents.replace(/\n/g, "<br/>");
+                    $(".notes ul").prepend(`
+                        <li class="list-group-item d-flex justify-content-between align-items-start" data-contents="${data.addCommissionNote.contents}" data-active="True">
+                            <div>
+                                <small class="font-weight-bold">${created}</small>
+                                <div>${contents}</div>
+                            </div>
+                            <button type="button" class="btn p-0 border-0 shadow-none close edit-note" data-pk="${data.addCommissionNote.id}">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                        </li>`);
+                },
+                error: function (data) {
+                    addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
+                },
+            });
+        });
+    });
+
+    $(document).on("click", ".edit-note", function () {
+        const pk = $(this).data("pk");
+        const element = $(this).parent("li");
+        Swal.fire({
+            title: "Edytuj notatkę.",
+            type: "info",
+            html: `
+                <textarea id="swal-contents" class="swal2-textarea" style="display: flex;" placeholder="">${$(
+                    element
+                ).data("contents")}</textarea>
+                <label class="toggle-switch">
+                    <input id="swal-active" type="checkbox" ${$(element).data("active") === "True" ? "checked" : null}>
+                    <span class="slider"></span>
+                    <span>Notatka aktywna</span>
+                </label>
+            `,
+            preConfirm: () => {
+                return [document.getElementById("swal-contents").value, document.getElementById("swal-active").checked];
+            },
+            showCancelButton: true,
+            focusConfirm: true,
+            confirmButtonText: "Zapisz",
+            cancelButtonText: "Anuluj",
+            allowOutsideClick: true,
+        }).then(({ value }) => {
+            if (value === undefined) return;
+            $.ajax({
+                url: "/graphql/",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    query: `mutation {
+                        updateCommissionNote(pk: "${pk}", contents: ${JSON.stringify(value[0])}, isActive: ${
+                        value[1]
+                    }) {
+                            id
+                            contents
+                            created
+                            last_edited
+                            is_active
+                        }
+                    }`,
+                }),
+                success: function ({ data }) {
+                    const created = moment(data.updateCommissionNote.created).locale("pl").format("D MMMM YYYY HH:mm");
+                    const last_edited = moment(data.updateCommissionNote.last_edited)
+                        .locale("pl")
+                        .format("D MMMM YYYY HH:mm");
+                    const contents = data.updateCommissionNote.contents.replace(/\n/g, "<br/>");
+                    $(element).data("contents", data.updateCommissionNote.contents);
+                    $(element).data("active", data.updateCommissionNote.is_active ? "True" : "False");
+                    $(element).find("div div").html(contents);
+                    $(element).find("small").text(`${created} (edytowano ${last_edited})`);
+                    !data.updateCommissionNote.is_active
+                        ? $(element).addClass("not-active")
+                        : $(element).removeClass("not-active");
+                },
+                error: function (data) {
+                    addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
+                },
+            });
+        });
+    });
 });

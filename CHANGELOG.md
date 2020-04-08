@@ -2,6 +2,10 @@
 
 ## 2020-04-08
 
+### Dodano
+
+-   możlwiość dodawania i edycji notatek do zleceń
+
 ### Poprawiono
 
 -   kalendarz przy wyborze daty może pokazać się na górze kontrolki jeśli z dołu nie ma miejsca

@@ -3,8 +3,10 @@ extend type Query {
 }
 
 extend type Mutation {
-    updateStatus(id: ID!, status: CommissionStatus!): Commission!
+    updateStatus(pk: ID!, status: CommissionStatus!): Commission!
     addComission(data: CommissionInput!): CommissionPayload!
+    addCommissionNote(commission: ID!, contents: String!): CommissionNote
+    updateCommissionNote(pk: ID!, contents: String!, isActive: Boolean!): CommissionNote!
 }
 
 type CommissionConnection {
@@ -28,6 +30,7 @@ type Commission {
     upload: Boolean!
     value: Float!
     items: [CommissionItem]
+    notes: [CommissionNote]
 }
 
 type CommissionPayload {
@@ -54,6 +57,14 @@ enum CommissionStatus {
 enum CommissionType {
     VEHICLE
     COMPONENT
+}
+
+type CommissionNote {
+    id: ID!
+    contents: String!
+    created: String!
+    last_edited: String!
+    is_active: Boolean!
 }
 
 type CommissionItem {

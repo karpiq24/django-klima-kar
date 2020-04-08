@@ -328,3 +328,25 @@ def file_pre_delete(sender, instance, **kwargs):
     if instance.mch_id:
         cloud = MyCloudHome.load()
         return cloud.delete_file(instance.mch_id)
+
+
+class CommissionNote(models.Model):
+    commission = models.ForeignKey(
+        Commission, on_delete=models.CASCADE, verbose_name="Zlecenie"
+    )
+    contents = models.TextField(verbose_name="Treść")
+    created = models.DateTimeField(auto_now_add=True, verbose_name="Czas utworzenia")
+    is_active = models.BooleanField(default=True, verbose_name="Aktywna")
+    last_edited = models.DateTimeField(auto_now=True, verbose_name="Czas edycji")
+
+    class Meta:
+        verbose_name = "Notatka zlecenia"
+        verbose_name_plural = "Notatki zleceń"
+        ordering = ["commission", "-created"]
+
+    def __str__(self):
+        return f"Notatka do zlecenia {self.commission.number}: {self.contents[:20]}"
+
+    @property
+    def was_edited(self):
+        return (self.last_edited - self.created).total_seconds() > 1
