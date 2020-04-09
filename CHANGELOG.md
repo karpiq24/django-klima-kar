@@ -4,8 +4,11 @@
 
 ### Dodano
 
-- url do szczegółów notatek w audycie zmian
-- wyświetlanie informacji o braku notatek w zleceniu zamiast pustej listy
+-   url do szczegółów notatek w audycie zmian
+
+### Zmieniono
+
+-   wyświetlanie informacji o braku notatek w zleceniu zamiast pustej listy
 
 ## 2020-04-08
 
