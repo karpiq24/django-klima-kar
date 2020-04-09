@@ -295,6 +295,10 @@ span.required {
     overflow: auto;
 }
 
+.notes li.empty-notes:not(:first-child) {
+    display: none !important;
+}
+
 /*
     MISC
 */

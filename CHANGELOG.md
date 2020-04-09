@@ -1,5 +1,12 @@
 # Lista zmian
 
+## 2020-04-09
+
+### Dodano
+
+- url do szczegółów notatek w audycie zmian
+- wyświetlanie informacji o braku notatek w zleceniu zamiast pustej listy
+
 ## 2020-04-08
 
 ### Dodano

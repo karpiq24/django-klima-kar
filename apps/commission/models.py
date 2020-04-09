@@ -347,6 +347,12 @@ class CommissionNote(models.Model):
     def __str__(self):
         return f"Notatka do zlecenia {self.commission.number}: {self.contents[:20]}"
 
+    def get_absolute_url(self):
+        return reverse(
+            "commission:commission_detail",
+            kwargs={"pk": self.commission.pk, "slug": slugify(self.commission)},
+        )
+
     @property
     def was_edited(self):
         return (self.last_edited - self.created).total_seconds() > 1
