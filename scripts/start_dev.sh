@@ -1,6 +1,5 @@
 POSTGRES_STATUS="$(service postgresql status)"
 REDIS_STATUS="$(sudo service redis-server status)"
-SOLR_STATUS="$(sudo service solr status)"
 
 if  [[ $POSTGRES_STATUS =~ 'down' ]];
 then
@@ -13,11 +12,6 @@ then
 fi
 
 if  [[ $SOLR_STATUS =~ 'No Solr nodes are running.' ]];
-then
-    sudo service solr start
-fi
-
-if  [[ $SOLR_STATUS =~ 'not found' ]];
 then
     sudo service solr start
 fi

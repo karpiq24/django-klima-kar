@@ -1,4 +1,4 @@
-{% load %}
+{% load highlight %}
 <div class="search-result-container">
     {% if query %}
         <h2>Wyniki wyszukiwania</h2>
@@ -7,14 +7,14 @@
             <div class="search-result">
                 <div class="result-icon">
                     <span class="search-result-icon fa-stack fa-2x">
-                        <i class="fas fa-circle fa-stack-2x" style="color:{{ result.object.MODEL_COLOR }}"></i>
-                        <i class="fa-inverse {{ result.object.MODEL_ICON }} fa-stack-1x" data-fa-transform="shrink-8"></i>
+                        <i class="fas fa-circle fa-stack-2x" style="color:{{ result.get_object.MODEL_COLOR }}"></i>
+                        <i class="fa-inverse {{ result.get_object.MODEL_ICON }} fa-stack-1x" data-fa-transform="shrink-8"></i>
                     </span>
                 </div>
                 <div class="result-detail">
-                    <a href="{{ result.object.get_absolute_url }}">{{ result.object }}</a>
+                    <a href="{{ result.get_object.get_absolute_url }}">{{ result.get_object }}</a>
                     <div>
-                        {{ result.highlighted.text.0|safe }}
+                        {{ result.text|highlight:query }}
                     </div>
                 </div>
             </div>

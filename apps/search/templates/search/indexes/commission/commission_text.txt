@@ -1,6 +1,9 @@
 {{ object.vc_name }}
 {{ object.contractor|default_if_none:"" }}
 {{ object.description|default_if_none:"" }}
+{% for note in object.commissionnote_set.all %}
+    {{ note.contents }}
+{% endfor %}
 {% for item in object.commissionitem_set.all %}
     {{ item.name }}
     {{ item.description|default_if_none:"" }}

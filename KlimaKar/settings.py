@@ -32,13 +32,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.postgres",
     "django_tables2",
     "django_filters",
     "widget_tweaks",
     "compressor",
     "django_rq",
     "defender",
-    "haystack",
     "ariadne.contrib.django",
     "KlimaKar",
     "apps.settings",
@@ -177,17 +177,6 @@ DEFAULT_LOGGING["loggers"]["commands"] = {
 # GEOIP2
 GEOIP_PATH = "data/"
 GEOIP_COUNTRY = "GeoLite2-Country.mmdb"
-
-
-# Haystack
-HAYSTACK_CONNECTIONS = {
-    "default": {
-        "ENGINE": "haystack.backends.solr_backend.SolrEngine",
-        "URL": "http://127.0.0.1:8983/solr/klimakar",
-        "ADMIN_URL": "http://127.0.0.1:8983/solr/admin/cores",
-    },
-}
-HAYSTACK_SIGNAL_PROCESSOR = "apps.search.signals.RQSignalProcessor"
 
 
 def FILTERS_VERBOSE_LOOKUPS():

@@ -82,7 +82,3 @@ COMPRESS_ENABLED = False
 # WD MyCloud Home
 WD_REDIRECT_URL = ""
 WD_DELETE_FILES = False
-
-
-# Haystack
-HAYSTACK_ENABLE_INDEXING = False

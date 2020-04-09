@@ -9,6 +9,7 @@
 ### Zmieniono
 
 -   wyświetlanie informacji o braku notatek w zleceniu zamiast pustej listy
+-   system wyszukiwania: z wykorzystaniem Postgres zamiast Solr i django-haystack
 
 ## 2020-04-08
 

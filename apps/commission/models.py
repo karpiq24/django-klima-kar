@@ -331,6 +331,8 @@ def file_pre_delete(sender, instance, **kwargs):
 
 
 class CommissionNote(models.Model):
+    PARENT_FIELD = "commission"
+
     commission = models.ForeignKey(
         Commission, on_delete=models.CASCADE, verbose_name="Zlecenie"
     )
