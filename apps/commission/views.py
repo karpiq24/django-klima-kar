@@ -855,14 +855,14 @@ class DecodeAztecCode(View):
             return JsonResponse({}, status=400)
         values = output.split("|")
         response_data = {
-            "registration_plate": values[7],
-            "vin": values[13],
-            "brand": values[8],
-            "model": values[12],
+            "registration_plate": values[7].strip(),
+            "vin": values[13].strip(),
+            "brand": values[8].strip(),
+            "model": values[12].strip(),
             "engine_volume": int(values[48].split(",")[0]),
             "engine_power": int(values[49].split(",")[0]),
             "production_year": int(values[56]),
-            "fuel_type": str(values[50]),
+            "fuel_type": str(values[50]).strip(),
             "registration_date": datetime.datetime.strptime(
                 values[51], "%Y-%m-%d"
             ).strftime("%d.%m.%Y"),
@@ -884,9 +884,9 @@ class DecodeCsvVehicleData(View):
             return JsonResponse({}, status=400)
         response_data = {
             "registration_plate": values[2],
-            "vin": values[3],
-            "brand": values[0],
-            "model": values[1],
+            "vin": values[3].strip(),
+            "brand": values[0].strip(),
+            "model": values[1].strip(),
             "engine_volume": int(values[5]),
             "engine_power": int(values[6]),
             "production_year": int(values[4]),
