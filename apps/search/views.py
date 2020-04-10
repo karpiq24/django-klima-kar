@@ -32,9 +32,7 @@ class AjaxSearchView(ListView):
             model_names = [m.split(".")[1] for m in models]
             qs = qs.filter(content_type__model__in=model_names)
 
-        vector = SearchVector("object_repr", weight="A") + SearchVector(
-            "text", weight="B"
-        )
+        vector = SearchVector("text_search", weight="A")
         query = SearchQuery(strip_accents(self.request.GET["q"]))
         qs = (
             qs.annotate(rank=SearchRank(vector, query))

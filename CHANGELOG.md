@@ -1,5 +1,11 @@
 # Lista zmian
 
+## 2020-04-10
+
+### Poprawiono
+
+-   wydajność nowego wyszukiwania (dodano zapisywanie wektora wyszukiwania, oraz indeks w bazie danych)
+
 ## 2020-04-09
 
 ### Dodano

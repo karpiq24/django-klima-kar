@@ -1,4 +1,6 @@
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.template.loader import get_template
 
@@ -30,10 +32,12 @@ class SearchDocument(models.Model):
     object_id = models.TextField(verbose_name="ID obiektu")
     object_repr = models.CharField("Etykieta obiektu", max_length=200)
     text = models.TextField(verbose_name="Tekstowa treść obiektu")
+    text_search = SearchVectorField(null=True, verbose_name="Wektor wyszukiwania")
 
     class Meta:
         verbose_name = "Dokument wyszukiwania"
         verbose_name_plural = "Dokumenty wyszukiwania"
+        indexes = [GinIndex(fields=["text_search"])]
 
     def __str__(self):
         return f"Dokument: {self.object_repr}"

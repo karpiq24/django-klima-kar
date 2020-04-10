@@ -61,11 +61,11 @@ Django project used in my family buisness. It provides warehouse management, inv
     ALTER ROLE admin SET timezone TO 'UTC';
     GRANT ALL PRIVILEGES ON DATABASE klimakar TO admin;
     ```
-   Restoring SQL dump data:
-   ```
-   sudo su postgres
-   psql klimakar < /path/to/dump.sql
-   ```
+    Restoring SQL dump data:
+    ```
+    sudo su postgres
+    psql klimakar < /path/to/dump.sql
+    ```
 3. Enable Redis server
     ```
     sudo systemctl enable redis-server.service
@@ -101,6 +101,10 @@ Django project used in my family buisness. It provides warehouse management, inv
 10. Migrating database
     ```
     ./manage.py makemigrations
+    ./manage.py makemigrations search --empty
+    ```
+    In empty search app migration paste contents of migration file located in /docs/search_migration.py
+    ```
     ./manage migrate
     ```
 11. Build search index, create superuser and run local server
