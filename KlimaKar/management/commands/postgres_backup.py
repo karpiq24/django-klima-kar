@@ -45,6 +45,7 @@ class Command(BaseCommand):
             f'--host={db["HOST"]}',
             f'--dbname={db["NAME"]}',
             f'--username={db["USER"]}',
+            f"--exclude-table-data=*search_searchdocument*",
             f"--no-password",
         ]
 
