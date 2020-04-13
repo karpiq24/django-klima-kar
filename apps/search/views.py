@@ -1,11 +1,6 @@
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 from django.views.generic import ListView
-from django.contrib.postgres.search import (
-    SearchQuery,
-    SearchRank,
-    SearchVector,
-)
 
 from KlimaKar.functions import strip_accents
 from apps.search.forms import SearchForm
@@ -31,15 +26,7 @@ class AjaxSearchView(ListView):
         if models:
             model_names = [m.split(".")[1] for m in models]
             qs = qs.filter(content_type__model__in=model_names)
-
-        vector = SearchVector("text_search", weight="A")
-        query = SearchQuery(strip_accents(self.request.GET["q"]))
-        qs = (
-            qs.annotate(rank=SearchRank(vector, query))
-            .filter(rank__gte=0.2)
-            .order_by("-rank", "pk")
-        )
-        return qs
+        return qs.filter(text_search__icontains=strip_accents(self.request.GET["q"]))
 
     def get(self, *args, **kwargs):
         response = super().get(self.request, *args, **kwargs)
