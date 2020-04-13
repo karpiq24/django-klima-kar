@@ -1,5 +1,11 @@
 # Lista zmian
 
+## 2020-04-13
+
+### Zmieniono
+
+-   wyłączono sortowanie wyników wyszukiwania dla znacznego zwiększenia wydajności
+
 ## 2020-04-10
 
 ### Poprawiono
