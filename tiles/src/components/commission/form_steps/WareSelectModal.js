@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button";
 
 import ContentLoading from "../../common/ContentLoading";
 import InfiniteSelect from "../../common/InfiniteSelect";
+import {displayZloty} from "../../../utils";
 
 const WareSelectModal = ({ show, onHide, onSelect, wareName }) => {
     if (!show) return null;
@@ -82,7 +83,7 @@ const WareSelectModal = ({ show, onHide, onSelect, wareName }) => {
                             loadMore={loadWares}
                             hasMore={data.wares.pageInfo.hasNextPage}
                             objects={data.wares.objects}
-                            getObjectLabel={ware => ware.index}
+                            getObjectLabel={ware => `${ware.index}${ware.retail_price !== null ? ` - ${displayZloty(ware.retail_price)}` : ''}`}
                             onChange={(value, label) => {
                                 onSelect(data.wares.objects.find(x => x.id === value));
                                 onHide();

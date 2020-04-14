@@ -13,7 +13,7 @@ const StatusInput = ({ currentStep, onChange, commission }) => {
                 <ToggleButtonGroup type="radio" name="type" className="pretty-select" value={commission.status}>
                     <ToggleButton
                         value={"OP"}
-                        variant="primary"
+                        variant="outline-primary"
                         size="xxl"
                         active
                         onClick={() => onChange({ status: "OP" }, true)}
@@ -22,7 +22,7 @@ const StatusInput = ({ currentStep, onChange, commission }) => {
                     </ToggleButton>
                     <ToggleButton
                         value={"RE"}
-                        variant="primary"
+                        variant="outline-primary"
                         size="xxl"
                         onClick={() => onChange({ status: "RE" }, true)}
                     >
@@ -30,7 +30,7 @@ const StatusInput = ({ currentStep, onChange, commission }) => {
                     </ToggleButton>
                     <ToggleButton
                         value={"DO"}
-                        variant="primary"
+                        variant="outline-primary"
                         size="xxl"
                         onClick={() => onChange({ status: "DO" }, true)}
                     >
@@ -38,7 +38,7 @@ const StatusInput = ({ currentStep, onChange, commission }) => {
                     </ToggleButton>
                     <ToggleButton
                         value={"HO"}
-                        variant="primary"
+                        variant="outline-primary"
                         size="xxl"
                         onClick={() => onChange({ status: "HO" }, true)}
                     >
@@ -46,7 +46,7 @@ const StatusInput = ({ currentStep, onChange, commission }) => {
                     </ToggleButton>
                     <ToggleButton
                         value={"CANCELLED"}
-                        variant="primary"
+                        variant="outline-primary"
                         size="xxl"
                         onClick={() => onChange({ status: "CA" }, true)}
                     >

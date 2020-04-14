@@ -68,7 +68,7 @@ const CommissionSummary = ({ currentStep, commission }) => {
                                     <div>{item.name}</div>
                                     {item.description ? <div className="mt-1">{item.description}</div> : null}
                                 </td>
-                                <td>{displayZloty(item.price)} zł</td>
+                                <td>{displayZloty(item.price)}</td>
                                 <td>{item.quantity}</td>
                                 <td>{displayZloty(item.price * item.quantity)}</td>
                             </tr>

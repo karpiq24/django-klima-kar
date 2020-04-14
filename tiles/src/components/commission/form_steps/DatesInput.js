@@ -9,8 +9,7 @@ import "../../../styles/big-datepicker.css";
 const DatesInput = ({ currentStep, onChange, commission }) => {
     if (currentStep !== 5) return null;
 
-    const [startDate, setStartDate] = useState(new Date());
-    const hasEndDate = commission.status === "DONE" || commission.status === "CANCELLED";
+    const hasEndDate = commission.status === "DO" || commission.status === "CA";
     return (
         <Form.Group className={`d-flex justify-content-${hasEndDate ? "between" : "center"} flex-wrap`}>
             <div className="text-center">

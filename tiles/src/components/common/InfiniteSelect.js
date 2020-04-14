@@ -72,14 +72,16 @@ const InfiniteSelect = props => {
                                     loader={<ContentLoading key="loading" />}
                                 >
                                     {props.objects.length == 0 ? (
-                                        <div
-                                            key="create-option"
-                                            className="infinite-select-create"
-                                            onClick={() => console.log("NOWA OPCJA")}
-                                        >
-                                            <FontAwesomeIcon icon={faPlusSquare} />{" "}
-                                            {props.createLabel ? props.createLabel : "Dodaj nowy"}
-                                        </div>
+                                        props.onCreate ? (
+                                            <div
+                                                key="create-option"
+                                                className="infinite-select-create"
+                                                onClick={() => props.onCreate(search)}
+                                            >
+                                                <FontAwesomeIcon icon={faPlusSquare} />{" "}
+                                                {props.createLabel ? props.createLabel : "Dodaj nowy"}
+                                            </div>
+                                        ) : <div>Brak wyników</div>
                                     ) : (
                                         props.objects.map(obj => (
                                             <div
@@ -106,6 +108,7 @@ InfiniteSelect.propTypes = {
     selectPlaceholder: PropTypes.string,
     searchPlaceholder: PropTypes.string,
     createLabel: PropTypes.string,
+    onCreate: PropTypes.func,
     autoFocus: PropTypes.bool,
     show: PropTypes.bool,
     loadMore: PropTypes.func.isRequired,

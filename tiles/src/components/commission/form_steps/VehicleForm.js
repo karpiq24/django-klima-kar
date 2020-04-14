@@ -93,6 +93,7 @@ const VehicleForm = ({ currentStep, commission, onChange }) => {
                         }
                         selected={commission.vehicle}
                         selectedLabel={commission.vc_name}
+                        onCreate={(value) => console.log(value)}
                         onChange={(value, label) =>
                             onChange(
                                 {

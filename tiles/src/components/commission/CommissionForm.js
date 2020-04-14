@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { gql } from "apollo-boost";
 import { useLazyQuery } from "@apollo/react-hooks";
 
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight, faSave, faMailBulk } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faArrowRight, faSave, faCheck } from "@fortawesome/free-solid-svg-icons";
 
 import ContentLoading from "../common/ContentLoading";
 import TypeInput from "./form_steps/TypeInput";
@@ -21,7 +21,7 @@ import DescriptionInput from "./form_steps/DescriptionInput";
 import ItemsInput from "./form_steps/ItemsInput";
 import CommissionSummary from "./form_steps/CommissionSummary";
 
-const CommissionForm = props => {
+const CommissionForm = (props) => {
     const STEP_COUNT = 8;
     const COMMISSION = gql`
         query getCommission($filters: CommissionFilter) {
@@ -59,7 +59,7 @@ const CommissionForm = props => {
     const [getCommission, { loading, data }] = useLazyQuery(COMMISSION, {
         variables: { filters: { id: id } },
         fetchPolicy: "no-cache",
-        onCompleted: data => {
+        onCompleted: (data) => {
             const obj = data.commissions.objects[0];
             setCommission({
                 commission_type: obj.commission_type,
@@ -72,16 +72,25 @@ const CommissionForm = props => {
                 description: obj.description,
                 start_date: new Date(obj.start_date),
                 end_date: obj.end_date ? new Date(obj.end_date) : null,
-                items: obj.items
+                items: obj.items,
             });
             setCurrentStep(STEP_COUNT);
-        }
+            setStepsStatus({
+                1: true,
+                2: true,
+                3: true,
+                4: true,
+                5: true,
+                6: true,
+                7: true,
+            });
+        },
     });
 
     const [currentStep, setCurrentStep] = useState(1);
     const [commission, setCommission] = useState({
-        commission_type: "VEHICLE",
-        status: "OPEN",
+        commission_type: "VH",
+        status: "OP",
         vc_name: null,
         vehicle: null,
         component: null,
@@ -91,7 +100,16 @@ const CommissionForm = props => {
         start_date: new Date(),
         end_date: null,
         items: [],
-        value: 0
+        value: 0,
+    });
+    const [stepsStatus, setStepsStatus] = useState({
+        1: false,
+        2: false,
+        3: false,
+        4: false,
+        5: false,
+        6: false,
+        7: false,
     });
     const [objectID, setObjectID] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -110,7 +128,7 @@ const CommissionForm = props => {
     const handleChanges = (changes, next) => {
         setCommission({
             ...commission,
-            ...changes
+            ...changes,
         });
         if (next) nextStep();
     };
@@ -122,43 +140,55 @@ const CommissionForm = props => {
                 ...commission.items.slice(0, index),
                 {
                     ...commission.items[index],
-                    ...changes
+                    ...changes,
                 },
-                ...commission.items.slice(index + 1)
-            ]
+                ...commission.items.slice(index + 1),
+            ],
         });
     };
 
-    const handleAddItem = item => {
+    const handleAddItem = (item) => {
         setCommission({
             ...commission,
-            items: [...commission.items, item]
+            items: [...commission.items, item],
         });
     };
 
-    const handleRemoveItem = index => {
+    const handleRemoveItem = (index) => {
         setCommission({
             ...commission,
-            items: [...commission.items.slice(0, index), ...commission.items.slice(index + 1)]
+            items: [...commission.items.slice(0, index), ...commission.items.slice(index + 1)],
         });
     };
 
-    const handleSubmit = event => {
+    const handleSubmit = (event) => {
         event.preventDefault();
         console.log(commission);
     };
 
     const nextStep = () => {
+        setStepsStatus({
+            ...stepsStatus,
+            [currentStep]: true,
+        });
         const step = currentStep >= STEP_COUNT - 1 ? STEP_COUNT : currentStep + 1;
         setCurrentStep(step);
     };
 
     const previousStep = () => {
+        setStepsStatus({
+            ...stepsStatus,
+            [currentStep]: true,
+        });
         const step = currentStep <= 1 ? 1 : currentStep - 1;
         setCurrentStep(step);
     };
 
-    const goToStep = step => {
+    const goToStep = (step) => {
+        setStepsStatus({
+            ...stepsStatus,
+            [currentStep]: true,
+        });
         if (step >= 1 && step <= STEP_COUNT) setCurrentStep(step);
     };
 
@@ -182,7 +212,84 @@ const CommissionForm = props => {
                     </Button>
                     <div className="text-center">
                         <h1>{id ? `Edycja zlecenia ${id}` : "Nowe zlecenie"}</h1>
-                        Krok {currentStep} z {STEP_COUNT}
+                        <ButtonGroup>
+                            <Button
+                                size="xl"
+                                variant={stepsStatus[1] ? "outline-success" : "outline-dark"}
+                                active={currentStep == 1}
+                                onClick={() => goToStep(1)}
+                            >
+                                Typ
+                            </Button>
+                            <Button
+                                size="xl"
+                                variant={
+                                    stepsStatus[2] && commission.vc_name !== null ? "outline-success" : "outline-dark"
+                                }
+                                active={currentStep == 2}
+                                onClick={() => goToStep(2)}
+                            >
+                                {commission.commission_type === "VH" ? "Pojazd" : "Podzespół"}
+                            </Button>
+                            <Button
+                                size="xl"
+                                variant={
+                                    stepsStatus[3] && commission.contractor !== null
+                                        ? "outline-success"
+                                        : "outline-dark"
+                                }
+                                active={currentStep == 3}
+                                onClick={() => goToStep(3)}
+                            >
+                                Kontrahent
+                            </Button>
+                            <Button
+                                size="xl"
+                                variant={
+                                    stepsStatus[4] && commission.status !== null ? "outline-success" : "outline-dark"
+                                }
+                                active={currentStep == 4}
+                                onClick={() => goToStep(4)}
+                            >
+                                Status
+                            </Button>
+                            <Button
+                                size="xl"
+                                variant={
+                                    stepsStatus[5] && commission.start_date !== null
+                                        ? "outline-success"
+                                        : "outline-dark"
+                                }
+                                active={currentStep == 5}
+                                onClick={() => goToStep(5)}
+                            >
+                                Data
+                            </Button>
+                            <Button
+                                size="xl"
+                                variant={stepsStatus[6] ? "outline-success" : "outline-dark"}
+                                active={currentStep == 6}
+                                onClick={() => goToStep(6)}
+                            >
+                                Opis
+                            </Button>
+                            <Button
+                                size="xl"
+                                variant={stepsStatus[7] ? "outline-success" : "outline-dark"}
+                                active={currentStep == 7}
+                                onClick={() => goToStep(7)}
+                            >
+                                Pozycje
+                            </Button>
+                            <Button
+                                size="xl"
+                                variant="outline-info"
+                                active={currentStep == 8}
+                                onClick={() => goToStep(8)}
+                            >
+                                Podsumowanie
+                            </Button>
+                        </ButtonGroup>
                     </div>
                     <Button
                         variant="outline-dark"

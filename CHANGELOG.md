@@ -1,5 +1,11 @@
 # Lista zmian
 
+## 2020-04-14
+
+### Poprawiono
+
+-   formularz dodawania/edycji zlecenia w wersji dla dużych ekranów dotykowych
+
 ## 2020-04-13
 
 ### Zmieniono

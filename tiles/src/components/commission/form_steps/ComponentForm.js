@@ -94,6 +94,7 @@ const ComponentForm = ({ currentStep, commission, onChange }) => {
                         }
                         selected={commission.component}
                         selectedLabel={commission.vc_name}
+                        onCreate={(value) => console.log(value)}
                         onChange={(value, label) =>
                             onChange(
                                 {

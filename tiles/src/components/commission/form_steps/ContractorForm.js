@@ -81,6 +81,7 @@ const ContractorForm = ({ currentStep, commission, onChange }) => {
                         getObjectLabel={contractor => contractor.name}
                         selected={commission.contractor}
                         selectedLabel={commission.contractorLabel}
+                        onCreate={(value) => console.log(value)}
                         onChange={(value, label) =>
                             onChange(
                                 {
