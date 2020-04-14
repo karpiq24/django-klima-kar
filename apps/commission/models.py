@@ -62,7 +62,7 @@ class Vehicle(models.Model):
         blank=True, null=True, verbose_name="Rok produkcji"
     )
     fuel_type = models.CharField(
-        max_length=2,
+        max_length=3,
         choices=FUEL_CHOICES,
         verbose_name="Rodzaj paliwa",
         null=True,
