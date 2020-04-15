@@ -72,14 +72,32 @@
     <script src="{% static 'js/base/alerts.js' %}"></script>
 
     <script>
-        $(document).on('focus', '.select2-selection--single', function(e) {
-            select2_open = $(this).parent().parent().siblings('select');
-            select2_open.select2('open');
+        $(function() {
+            $(document).on('focus', '.select2-selection--single', function(e) {
+                select2_open = $(this).parent().parent().siblings('select');
+                select2_open.select2('open');
+            });
+            $('#toggleMenu').on('click', function () {
+                $('.sidenav').toggle();
+                $('body').toggleClass('menu-shown');
+            });
+
+            $('#logout-button').on('click', function () {
+                Swal.fire({
+                    title: "Czy na pewno chcesz się wylogować?",
+                    type: "question",
+                    showCancelButton: true,
+                    focusCancel: false,
+                    focusConfirm: true,
+                    confirmButtonText: 'Tak',
+                    cancelButtonText: 'Nie'
+                }).then((deleteSession) => {
+                    if (deleteSession.value) {
+                        window.location.href = $(this).data('url');
+                    }
+                });
+            });
         });
-        $('#toggleMenu').on('click', function () {
-            $('.sidenav').toggle();
-            $('body').toggleClass('menu-shown');
-        })
     </script>
 {% endcompress %}
 {% compress js file page %}
