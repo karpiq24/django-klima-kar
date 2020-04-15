@@ -3,12 +3,12 @@ import zipfile
 import datetime
 import dropbox
 
+from io import StringIO
 from dropbox.files import WriteMode
 from dropbox.exceptions import ApiError, AuthError
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
-from django.utils.six import StringIO
 
 from KlimaKar.settings import DROPBOX_TOKEN
 from KlimaKar.email import mail_admins
