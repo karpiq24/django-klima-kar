@@ -4,6 +4,8 @@ import os
 import sys
 import logging
 
+from rq.worker import StopRequested
+
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "KlimaKar.settings")
     try:
@@ -25,6 +27,8 @@ if __name__ == "__main__":
     logger = logging.getLogger("commands")
     try:
         execute_from_command_line(sys.argv)
+    except StopRequested as e:
+        raise e
     except Exception as e:
         logger.error(
             "Admin Command Error: {}".format(" ".join(sys.argv)),
