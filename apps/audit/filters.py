@@ -14,8 +14,11 @@ class AuditLogFilter(django_filters.FilterSet):
         widget=forms.TextInput(attrs={"class": "date-range-input"}),
     )
     action_type = django_filters.ChoiceFilter(choices=AuditLog.ACTION_TYPES)
-    content_type = django_filters.ModelChoiceFilter(
-        queryset=ContentType.objects.exclude(auditlog=None)
+    content_type = django_filters.ChoiceFilter(
+        choices=[
+            (c.pk, c.model_class()._meta.verbose_name)
+            for c in ContentType.objects.exclude(auditlog=None)
+        ]
     )
     object_repr = django_filters.CharFilter(lookup_expr="icontains")
 

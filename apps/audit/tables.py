@@ -5,7 +5,10 @@ from apps.audit.models import AuditLog
 
 class AuditLogTable(tables.Table):
     action_time = tables.Column(attrs={"th": {"width": "15%"}})
-    content_type = tables.Column(attrs={"th": {"width": "15%"}})
+    content_type = tables.Column(
+        attrs={"th": {"width": "15%"}},
+        accessor="content_type.model_class._meta.verbose_name",
+    )
     object_repr = tables.Column(attrs={"th": {"width": "25%"}})
     diffrence = tables.TemplateColumn(
         attrs={"th": {"width": "38%"}},

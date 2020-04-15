@@ -4,6 +4,7 @@
 
 -   dodano alert z potwierdzeniem wylogowania
 -   zmieniono format pliku CHANGELOG.md
+-   poprawiono etykiety modeli w audycie zmian
 
 ## 2020-04-14
 
