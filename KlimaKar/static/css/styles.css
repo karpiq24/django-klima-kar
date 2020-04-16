@@ -756,7 +756,7 @@ ul.sidenav li i:hover {
     #topbar .motto {
         display: none;
     }
-    #topbar-right a > span {
+    #topbar-right button > span {
         display: none;
     }
 }
