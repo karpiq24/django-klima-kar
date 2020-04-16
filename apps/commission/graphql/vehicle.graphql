@@ -24,6 +24,8 @@ type Vehicle {
     registration_date: String
     fuel_type: String
     get_fuel_type_display: String
+    get_absolute_url: String!
+    last_commission: Commission
 }
 
 enum FuelType {

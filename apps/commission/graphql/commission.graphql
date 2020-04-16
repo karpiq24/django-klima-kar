@@ -31,6 +31,7 @@ type Commission {
     value: Float!
     items: [CommissionItem]
     notes: [CommissionNote]
+    get_absolute_url: String!
 }
 
 type CommissionPayload {

@@ -81,16 +81,6 @@ $(function () {
     const DECODE_CSV_VEHICLE = $("#decode_csv_vehicle_url").val();
     const GET_CONTRACTOR_DATA = $("#get_contractor_data_url").val();
 
-    $("#optionName").on("change", function () {
-        $("#vehicle-component-container").hide();
-        $("#name-container").show();
-    });
-
-    $("#optionObject").on("change", function () {
-        $("#name-container").hide();
-        $("#vehicle-component-container").css("display", "flex");
-    });
-
     $("#id_contractor").on("select2:selecting", function (e) {
         const data = e.params.args.data;
 
@@ -205,26 +195,6 @@ $(function () {
         if (data.create_id !== true) {
             $("#vehicle-component-edit").prop("disabled", false);
             $("#id_vc_name").val(data["text"]);
-            if (data.contractor) {
-                Swal.fire({
-                    title: "Ustawić kontrahenta?",
-                    text: data.contractor.text,
-                    type: "question",
-                    showCancelButton: true,
-                    focusCancel: false,
-                    focusConfirm: true,
-                    confirmButtonText: "Tak",
-                    cancelButtonText: "Nie",
-                }).then((change) => {
-                    if (change.value) {
-                        const $option = $("<option selected></option>")
-                            .val(data.contractor.id)
-                            .text(data.contractor.text);
-                        $("#id_contractor").append($option).trigger("change");
-                        $("#contractor-edit").prop("disabled", false);
-                    }
-                });
-            }
             return;
         }
         $("#vehicle-component-edit").prop("disabled", true);
@@ -251,9 +221,134 @@ $(function () {
             $("#vehicle-component-edit").prop("disabled", true);
             $("#id_vc_name").prop("readonly", false);
         } else {
+            getVehicleData(vehicle_pk);
             $("#id_vc_name").prop("readonly", true);
         }
     });
+
+    function getVehicleData(pk) {
+        $.ajax({
+            url: "/graphql/",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                query: `query {
+                    vehicles(filters: {id: "${pk}"}) {
+                        objects {
+                            get_absolute_url
+                            last_commission {
+                                get_absolute_url
+                                start_date
+                                contractor {
+                                    id
+                                    name
+                                }
+                            }
+                        }
+                    }
+                }`,
+            }),
+            success: function ({ data }) {
+                const parent = $("#id_vehicle").parent().parent().parent().parent();
+                $(parent).find("div.extra-feedback").remove();
+                $(parent).append(`<div class="extra-feedback d-flex justify-content-between flex-wrap"></div>`);
+                const feedback = $(parent).find("div.extra-feedback");
+                const vehicle = data.vehicles.objects[0];
+                const contractor = vehicle.last_commission.contractor;
+                if (contractor && contractor.id !== $("#id_contractor").val()) {
+                    Swal.fire({
+                        title: "Ustawić kontrahenta?",
+                        text: contractor.name,
+                        type: "question",
+                        showCancelButton: true,
+                        focusCancel: false,
+                        focusConfirm: true,
+                        confirmButtonText: "Tak",
+                        cancelButtonText: "Nie",
+                    }).then((change) => {
+                        if (change.value) {
+                            const $option = $("<option selected></option>").val(contractor.id).text(contractor.name);
+                            $("#id_contractor").append($option).trigger("change");
+                            $("#contractor-edit").prop("disabled", false);
+                        }
+                    });
+                }
+                $(feedback).append(
+                    `<small class="vehicle-details"><a href="${vehicle.get_absolute_url}" target="_blank">Szczegóły pojazdu</a></small>`
+                );
+                if (vehicle.last_commission.start_date) {
+                    $(feedback).append(
+                        `<small class="last-visit"><a href="${vehicle.last_commission.get_absolute_url}" target="_blank">Ostatnia wizyta: ${vehicle.last_commission.start_date}</a></small>`
+                    );
+                }
+            },
+            error: function (data) {
+                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
+            },
+        });
+    }
+
+    function getComponentData(pk) {
+        $.ajax({
+            url: "/graphql/",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                query: `query {
+                    components(filters: {id: "${pk}"}) {
+                        objects {
+                            get_absolute_url
+                            last_commission {
+                                get_absolute_url
+                                start_date
+                                contractor {
+                                    id
+                                    name
+                                }
+                            }
+                        }
+                    }
+                }`,
+            }),
+            success: function ({ data }) {
+                const parent = $("#id_component").parent();
+                $(parent).find("div.extra-feedback").remove();
+                $(parent).append(`<div class="extra-feedback d-flex justify-content-between flex-wrap"></div>`);
+                const feedback = $(parent).find("div.extra-feedback");
+                const component = data.components.objects[0];
+                const contractor = component.last_commission.contractor;
+                if (contractor && contractor.id !== $("#id_contractor").val()) {
+                    Swal.fire({
+                        title: "Ustawić kontrahenta?",
+                        text: contractor.name,
+                        type: "question",
+                        showCancelButton: true,
+                        focusCancel: false,
+                        focusConfirm: true,
+                        confirmButtonText: "Tak",
+                        cancelButtonText: "Nie",
+                    }).then((change) => {
+                        if (change.value) {
+                            const $option = $("<option selected></option>").val(contractor.id).text(contractor.name);
+                            $("#id_contractor").append($option).trigger("change");
+                            $("#contractor-edit").prop("disabled", false);
+                        }
+                    });
+                }
+                $(feedback).append(
+                    `<small class="component-details"><a href="${component.get_absolute_url}" target="_blank">Szczegóły podzespołu</a></small>`
+                );
+                if (component.last_commission.start_date) {
+                    $(feedback).append(
+                        `<small class="last-visit"><a href="${component.last_commission.get_absolute_url}" target="_blank">Ostatnia wizyta: ${component.last_commission.start_date}</a></small>`
+                    );
+                }
+            },
+            error: function (data) {
+                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
+            },
+        });
+    }
 
     $("#id_component").on("select2:selecting", function (e) {
         const data = e.params.args.data;
@@ -261,26 +356,6 @@ $(function () {
         if (data.create_id !== true) {
             $("#vehicle-component-edit").prop("disabled", false);
             $("#id_vc_name").val(data["text"]);
-            if (data.contractor) {
-                Swal.fire({
-                    title: "Ustawić kontrahenta?",
-                    text: data.contractor.text,
-                    type: "question",
-                    showCancelButton: true,
-                    focusCancel: false,
-                    focusConfirm: true,
-                    confirmButtonText: "Tak",
-                    cancelButtonText: "Nie",
-                }).then((change) => {
-                    if (change.value) {
-                        const $option = $("<option selected></option>")
-                            .val(data.contractor.id)
-                            .text(data.contractor.text);
-                        $("#id_contractor").append($option).trigger("change");
-                        $("#contractor-edit").prop("disabled", false);
-                    }
-                });
-            }
             return;
         }
         $("#vehicle-component-edit").prop("disabled", true);
@@ -307,6 +382,7 @@ $(function () {
             $("#vehicle-component-edit").prop("disabled", true);
             $("#id_vc_name").prop("readonly", false);
         } else {
+            getComponentData(component_pk);
             $("#id_vc_name").prop("readonly", true);
         }
     });
@@ -510,6 +586,12 @@ $(function () {
 
     if ($("#id_contractor").val() !== "") {
         $("#id_contractor").change();
+    }
+    if ($("#id_vehicle").val() !== "") {
+        $("#id_vehicle").change();
+    }
+    if ($("#id_component").val() !== "") {
+        $("#id_component").change();
     }
     bsCustomFileInput.init();
 });

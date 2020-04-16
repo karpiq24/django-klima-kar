@@ -19,6 +19,8 @@ type Component {
     serial_number: String
     catalog_number: String
     commissions: [Commission]
+    get_absolute_url: String!
+    last_commission: Commission
 }
 
 enum ComponentType {

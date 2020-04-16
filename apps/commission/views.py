@@ -151,20 +151,6 @@ class VehicleAutocomplete(CustomSelect2QuerySetView):
             )
         return qs
 
-    def extend_result_data(self, vehicle):
-        commission = vehicle.commission_set.last()
-        if commission and commission.contractor:
-            return {
-                "contractor": {
-                    "id": commission.contractor.id,
-                    "text": str(commission.contractor),
-                    "nip": commission.contractor.nip,
-                    "phone": commission.contractor.phone_1
-                    or commission.contractor.phone_2,
-                }
-            }
-        return {}
-
 
 class VehicleCreateAjaxView(AjaxFormMixin, CreateView):
     identifier = 2
@@ -268,20 +254,6 @@ class ComponentAutocomplete(CustomSelect2QuerySetView):
                 | Q(catalog_number__icontains=self.q)
             )
         return qs
-
-    def extend_result_data(self, component):
-        commission = component.commission_set.last()
-        if commission and commission.contractor:
-            return {
-                "contractor": {
-                    "id": commission.contractor.id,
-                    "text": str(commission.contractor),
-                    "nip": commission.contractor.nip,
-                    "phone": commission.contractor.phone_1
-                    or commission.contractor.phone_2,
-                }
-            }
-        return {}
 
 
 class ComponentCreateAjaxView(AjaxFormMixin, CreateView):

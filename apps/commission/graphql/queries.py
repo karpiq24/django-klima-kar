@@ -42,3 +42,16 @@ def resolve_get_component_type_display(obj, info):
 @vehicle.field("get_fuel_type_display")
 def resolve_get_fuel_type_display(obj, info):
     return obj.get_fuel_type_display()
+
+
+@commission.field("get_absolute_url")
+@component.field("get_absolute_url")
+@vehicle.field("get_absolute_url")
+def resolve_get_absolute_url(obj, info):
+    return obj.get_absolute_url()
+
+
+@component.field("last_commission")
+@vehicle.field("last_commission")
+def resolve_last_commission(obj, info):
+    return obj.commission_set.first()

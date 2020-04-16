@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-04-16
+
+-   dodano link do szczegółów pojazdu/podzespołu oraz ostatniego zlecenia po wyborze pojazdu/podzespołu w formularzu zlecenia
+
 ## 2020-04-15
 
 -   dodano alert z potwierdzeniem wylogowania

@@ -30,21 +30,25 @@
             {% endfor %}
             </div>
         {% endif %}
-        <div class="col-sm-6">
+        <div class="col-sm-6 form-group">
             <div style="display:flex;width:100%;">
-                <div style="width:calc(100% - 105px);">
-                    {% include 'forms/field.html' with field=form.visible_fields.1 %}
+                <div style="width:calc(100% - 105px);margin-bottom:-1rem;">
+                    {% if form.vehicle %}
+                        {% include 'forms/field.html' with field=form.vehicle %}
+                    {% else %}
+                        {% include 'forms/field.html' with field=form.component %}
+                    {% endif %}
                 </div>
                 <button disabled id="vehicle-component-edit" class="btn btn-outline-warning" style="margin-left:5px;margin-top:29px;height:38px;width:100px;" type="button"><i class="fas fa-edit"></i> Edytuj</button>
             </div>
         </div>
         <div class="col-sm-6">
-            {% include 'forms/field.html' with field=form.visible_fields.0 %}
+            {% include 'forms/field.html' with field=form.vc_name %}
         </div>
         <div class="col-sm-6">
             <div style="display:flex;width:100%;">
                 <div style="width:calc(100% - 105px);">
-                    {% include 'forms/field.html' with field=form.visible_fields.2 %}
+                    {% include 'forms/field.html' with field=form.contractor %}
                 </div>
                 <button disabled id="contractor-edit" class="btn btn-outline-warning" style="margin-left:5px;margin-top:29px;height:38px;width:100px;" type="button"><i class="fas fa-edit"></i> Edytuj</button>
             </div>
@@ -52,16 +56,16 @@
             {% include 'invoicing/contractor/gus_modal.html' %}
         </div>
         <div class="col-sm-6">
-            {% include 'forms/field.html' with field=form.visible_fields.4 pretty_select=True %}
+            {% include 'forms/field.html' with field=form.status pretty_select=True %}
         </div>
         <div class="col-sm-6">
-            {% include 'forms/field.html' with field=form.visible_fields.5 %}
+            {% include 'forms/field.html' with field=form.start_date %}
         </div>
         <div class="col-sm-6">
-            {% include 'forms/field.html' with field=form.visible_fields.6 %}
+            {% include 'forms/field.html' with field=form.end_date %}
         </div>
         <div class="col-sm-12">
-            {% include 'forms/field.html' with field=form.visible_fields.3 %}
+            {% include 'forms/field.html' with field=form.description %}
         </div>
     </div>
     <div class="row">
