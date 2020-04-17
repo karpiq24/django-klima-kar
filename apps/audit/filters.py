@@ -14,17 +14,19 @@ class AuditLogFilter(django_filters.FilterSet):
         widget=forms.TextInput(attrs={"class": "date-range-input"}),
     )
     action_type = django_filters.ChoiceFilter(choices=AuditLog.ACTION_TYPES)
-    content_type = django_filters.ChoiceFilter(
-        choices=[
-            (c.pk, c.model_class()._meta.verbose_name)
-            for c in ContentType.objects.exclude(auditlog=None)
-        ]
-    )
+    content_type = django_filters.ChoiceFilter()
     object_repr = django_filters.CharFilter(lookup_expr="icontains")
 
     class Meta:
         model = AuditLog
         fields = ["action_time", "action_type", "content_type", "object_repr"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.filters["content_type"].extra["choices"] = [
+            (c.pk, c.model_class()._meta.verbose_name)
+            for c in ContentType.objects.exclude(auditlog=None)
+        ]
 
     def action_time_filter(self, queryset, name, value):
         try:
