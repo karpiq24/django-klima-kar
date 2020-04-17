@@ -11,16 +11,25 @@ import { faPlusSquare } from "@fortawesome/free-solid-svg-icons";
 import ContentLoading from "./ContentLoading";
 import "../../styles/infinite-select.css";
 
-const InfiniteSelect = props => {
+const InfiniteSelect = (props) => {
     const [search, setSearch] = useState("");
     const [selected, setSelected] = useState(props.selected);
     const [selectedLabel, setSelectedLabel] = useState(props.selectedLabel);
     const [show, setShow] = useState(false);
     const ref = useRef(null);
 
-    const handleInputChange = value => {
+    const handleInputChange = (value) => {
         setSearch(value);
-        props.refetch(value);
+        let refetch = true;
+        if (props.barcodeEnabled) {
+            if (value.startsWith(props.barcodePrefix)) {
+                refetch = false;
+                if (value.length > 1 && value.endsWith(props.barcodeSufix)) {
+                    props.onBarcodeScanned(value.slice(1, -1));
+                }
+            }
+        }
+        if (refetch) props.refetch(value);
     };
 
     const selectOption = (value, label) => {
@@ -30,12 +39,12 @@ const InfiniteSelect = props => {
         props.onChange(value, label);
     };
 
-    const handleOpenSelect = event => {
+    const handleOpenSelect = (event) => {
         setShow(!show);
     };
 
     useEffect(() => {
-        const t = setTimeout(function() {
+        const t = setTimeout(function () {
             if (selected === null || selected === undefined) setShow(props.show);
         }, 10);
 
@@ -57,7 +66,7 @@ const InfiniteSelect = props => {
                             <Form.Control
                                 autoFocus={props.autoFocus}
                                 value={search}
-                                onChange={event => handleInputChange(event.target.value)}
+                                onChange={(event) => handleInputChange(event.target.value)}
                                 size="lg"
                                 placeholder={props.searchPlaceholder}
                                 className="infinite-select-search"
@@ -81,9 +90,11 @@ const InfiniteSelect = props => {
                                                 <FontAwesomeIcon icon={faPlusSquare} />{" "}
                                                 {props.createLabel ? props.createLabel : "Dodaj nowy"}
                                             </div>
-                                        ) : <div>Brak wyników</div>
+                                        ) : (
+                                            <div>Brak wyników</div>
+                                        )
                                     ) : (
-                                        props.objects.map(obj => (
+                                        props.objects.map((obj) => (
                                             <div
                                                 key={obj.id}
                                                 className="infinite-select-option"
@@ -117,7 +128,11 @@ InfiniteSelect.propTypes = {
     getObjectLabel: PropTypes.func.isRequired,
     selected: PropTypes.string,
     selectedLabel: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    barcodeEnabled: PropTypes.bool,
+    barcodePrefix: PropTypes.string,
+    barcodeSufix: PropTypes.string,
+    onBarcodeScanned: PropTypes.func,
 };
 
 export default InfiniteSelect;

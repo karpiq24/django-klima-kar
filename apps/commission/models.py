@@ -28,6 +28,7 @@ class Vehicle(models.Model):
     BIODIESEL = "BD"
     ETHANOL = "E85"
     ELECTRIC = "EE"
+    PETROL_ELECTRIC = "P EE"
     OTHER = "999"
 
     FUEL_CHOICES = [
@@ -41,6 +42,7 @@ class Vehicle(models.Model):
         (BIODIESEL, "biodiesel"),
         (ETHANOL, "etanol"),
         (ELECTRIC, "energia elektryczna"),
+        (PETROL_ELECTRIC, "benzyna, energia elektryczna"),
         (OTHER, "inne"),
     ]
 
@@ -62,7 +64,7 @@ class Vehicle(models.Model):
         blank=True, null=True, verbose_name="Rok produkcji"
     )
     fuel_type = models.CharField(
-        max_length=3,
+        max_length=4,
         choices=FUEL_CHOICES,
         verbose_name="Rodzaj paliwa",
         null=True,

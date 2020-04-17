@@ -1,5 +1,12 @@
 # Lista zmian
 
+## 2020-04-17
+
+-   dodano endpoint dekodowania kodów z dowodów rejestracyjnych i mPojazd do GraphQL
+-   dodano obsługę skanowania kodów w formularzu krokowym zleceń
+-   zmieniono wygląd podsumowania formularza zlecenia
+-   mniejsze poprawki w formularzu krokowym zleceń
+
 ## 2020-04-16
 
 -   dodano link do szczegółów pojazdu/podzespołu oraz ostatniego zlecenia po wyborze pojazdu/podzespołu w formularzu zlecenia

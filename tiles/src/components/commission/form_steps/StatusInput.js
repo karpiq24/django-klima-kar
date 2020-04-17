@@ -16,7 +16,7 @@ const StatusInput = ({ currentStep, onChange, commission }) => {
                         variant="outline-primary"
                         size="xxl"
                         active
-                        onClick={() => onChange({ status: "OP" }, true)}
+                        onClick={() => onChange({ status: "OP", end_date: null }, true)}
                     >
                         OTWARTE
                     </ToggleButton>
@@ -24,7 +24,7 @@ const StatusInput = ({ currentStep, onChange, commission }) => {
                         value={"RE"}
                         variant="outline-primary"
                         size="xxl"
-                        onClick={() => onChange({ status: "RE" }, true)}
+                        onClick={() => onChange({ status: "RE", end_date: null }, true)}
                     >
                         GOTOWE
                     </ToggleButton>
@@ -32,7 +32,14 @@ const StatusInput = ({ currentStep, onChange, commission }) => {
                         value={"DO"}
                         variant="outline-primary"
                         size="xxl"
-                        onClick={() => onChange({ status: "DO" }, true)}
+                        onClick={() => {
+                            if (commission.end_date === null) {
+                                onChange({ status: "DO", end_date: new Date() }, true);
+                            }
+                            else {
+                                onChange({ status: "DO" }, true);
+                            }
+                        }}
                     >
                         ZAMKNIĘTE
                     </ToggleButton>
@@ -40,7 +47,7 @@ const StatusInput = ({ currentStep, onChange, commission }) => {
                         value={"HO"}
                         variant="outline-primary"
                         size="xxl"
-                        onClick={() => onChange({ status: "HO" }, true)}
+                        onClick={() => onChange({ status: "HO", end_date: null }, true)}
                     >
                         WSTRZYMANE
                     </ToggleButton>
@@ -48,7 +55,14 @@ const StatusInput = ({ currentStep, onChange, commission }) => {
                         value={"CANCELLED"}
                         variant="outline-primary"
                         size="xxl"
-                        onClick={() => onChange({ status: "CA" }, true)}
+                        onClick={() => {
+                            if (commission.end_date === null) {
+                                onChange({ status: "CA", end_date: new Date() }, true);
+                            }
+                            else {
+                                onChange({ status: "CA" }, true);
+                            }
+                        }}
                     >
                         ANULOWANE
                     </ToggleButton>
@@ -61,7 +75,7 @@ const StatusInput = ({ currentStep, onChange, commission }) => {
 StatusInput.propTypes = {
     currentStep: PropTypes.number.isRequired,
     onChange: PropTypes.func.isRequired,
-    commission: PropTypes.object.isRequired
+    commission: PropTypes.object.isRequired,
 };
 
 export default StatusInput;

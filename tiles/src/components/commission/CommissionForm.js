@@ -20,6 +20,7 @@ import DatesInput from "./form_steps/DatesInput";
 import DescriptionInput from "./form_steps/DescriptionInput";
 import ItemsInput from "./form_steps/ItemsInput";
 import CommissionSummary from "./form_steps/CommissionSummary";
+import Container from "react-bootstrap/Container";
 
 const CommissionForm = (props) => {
     const STEP_COUNT = 8;
@@ -193,7 +194,7 @@ const CommissionForm = (props) => {
     };
 
     return (
-        <>
+        <Container fluid>
             <Link className="back-button" to="/tiles">
                 <Button variant="outline-primary" size="xl">
                     Wróć do listy zleceń
@@ -302,7 +303,7 @@ const CommissionForm = (props) => {
                     </Button>
                 </div>
                 <Form onSubmit={handleSubmit}>
-                    <TypeInput currentStep={currentStep} onChange={handleChanges} />
+                    <TypeInput currentStep={currentStep} commission={commission} onChange={handleChanges} />
                     {commission.commission_type === "VH" ? (
                         <VehicleForm currentStep={currentStep} onChange={handleChanges} commission={commission} />
                     ) : (
@@ -328,7 +329,7 @@ const CommissionForm = (props) => {
                     ) : null}
                 </Form>
             </div>
-        </>
+        </Container>
     );
 };
 

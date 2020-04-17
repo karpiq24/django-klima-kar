@@ -1,5 +1,6 @@
 extend type Query {
     vehicles(pagination: PageInput, filters: VehicleFilter): VehicleConnection!
+    decode(code: String!): ScannedVehicle
 }
 
 extend type Mutation {
@@ -26,6 +27,20 @@ type Vehicle {
     get_fuel_type_display: String
     get_absolute_url: String!
     last_commission: Commission
+}
+
+type ScannedVehicle {
+    pk: ID
+    label: String
+    registration_plate: String!
+    vin: String!
+    brand: String!
+    model: String!
+    engine_volume: Int!
+    engine_power: Int!
+    production_year: Int!
+    registration_date: String
+    fuel_type: String
 }
 
 enum FuelType {

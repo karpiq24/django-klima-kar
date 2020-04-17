@@ -1,10 +1,12 @@
+import datetime
 import os
 import json
 import shutil
+import subprocess
 
 from KlimaKar import settings
 from apps.settings.models import MyCloudHome
-from apps.commission.models import Commission, CommissionFile
+from apps.commission.models import Commission, CommissionFile, Vehicle
 
 
 def check_uploaded_files(upload_key):
@@ -81,3 +83,54 @@ def process_uploads(commission_pk, upload_key):
     commission.upload = False
     commission.save()
     return files_added
+
+
+def decode_aztec_code(code):
+    try:
+        output = subprocess.check_output(["./scripts/aztec", code])
+        output = output.decode("utf-16", errors="ignore").strip()
+    except subprocess.CalledProcessError:
+        return None
+    values = output.split("|")
+    data = {
+        "registration_plate": values[7].strip(),
+        "vin": values[13].strip(),
+        "brand": values[8].strip(),
+        "model": values[12].strip(),
+        "engine_volume": int(values[48].split(",")[0]),
+        "engine_power": int(values[49].split(",")[0]),
+        "production_year": int(values[56]),
+        "fuel_type": str(values[50]).strip(),
+        "registration_date": datetime.datetime.strptime(
+            values[51], "%Y-%m-%d"
+        ).strftime("%d.%m.%Y"),
+    }
+    try:
+        vehicle = Vehicle.objects.get(vin=data["vin"])
+        data["pk"] = vehicle.pk
+        data["label"] = str(vehicle)
+    except Vehicle.DoesNotExist:
+        data["pk"] = None
+    return data
+
+
+def decode_mpojazd(csv_data):
+    values = csv_data.split(";")
+    if len(values) != 17:
+        return None
+    data = {
+        "registration_plate": values[2],
+        "vin": values[3].strip(),
+        "brand": values[0].strip(),
+        "model": values[1].strip(),
+        "engine_volume": int(values[5]),
+        "engine_power": int(values[6]),
+        "production_year": int(values[4]),
+    }
+    try:
+        vehicle = Vehicle.objects.get(vin=data["vin"])
+        data["pk"] = vehicle.pk
+        data["label"] = str(vehicle)
+    except Vehicle.DoesNotExist:
+        data["pk"] = None
+    return data

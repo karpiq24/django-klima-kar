@@ -1,4 +1,5 @@
 from KlimaKar.graphql.utils import get_paginated_results
+from apps.commission.functions import decode_mpojazd, decode_aztec_code
 from apps.commission.models import Commission, Vehicle, Component
 from apps.commission.graphql import query, commission, vehicle, component
 
@@ -16,6 +17,14 @@ def resolve_vehicles(_, info, pagination=None, filters=None):
 @query.field("components")
 def resolve_components(_, info, pagination=None, filters=None):
     return get_paginated_results(Component.objects.all(), pagination, filters)
+
+
+@query.field("decode")
+def resolve_decode_scanned_code(_, info, code):
+    code = code.strip()
+    if ";" in code:
+        return decode_mpojazd(code)
+    return decode_aztec_code(code)
 
 
 @commission.field("saleInvoices")
