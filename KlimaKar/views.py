@@ -308,7 +308,7 @@ class SendIssueView(View):
                 status=200,
             )
         return JsonResponse(
-            {"status": "error", "message": "Wystąpił błąd. Spróbuj ponownie."},
+            {"status": "error", "message": "Coś poszło nie tak. Spróbuj ponownie."},
             status=400,
         )
 

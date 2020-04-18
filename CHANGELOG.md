@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-04-18
+
+-   skanowanie dowodów rejestracyjnych w formularzu pojazdu po wciśnięcku specjalnego przycisku zamiast w polu wyszukiwania
+
 ## 2020-04-17
 
 -   dodano endpoint dekodowania kodów z dowodów rejestracyjnych i mPojazd do GraphQL

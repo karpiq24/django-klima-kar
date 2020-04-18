@@ -73,21 +73,26 @@ class CommissionModelForm(forms.ModelForm):
         label="Kontrahent",
         queryset=Contractor.objects.all(),
         widget=autocomplete.ModelSelect2(
-            url="invoicing:contractor_autocomplete_create"
+            url="invoicing:contractor_autocomplete_create",
+            attrs={"data-placeholder": "Podaj nazwę, NIP albo numer telefonu"},
         ),
         required=False,
     )
     vehicle = forms.ModelChoiceField(
         label="Pojazd",
         queryset=Vehicle.objects.all(),
-        widget=autocomplete.ModelSelect2(url="commission:vehicle_autocomplete_create"),
+        widget=autocomplete.ModelSelect2(
+            url="commission:vehicle_autocomplete_create",
+            attrs={"data-placeholder": "Podaj numer rejestracyjny"},
+        ),
         required=False,
     )
     component = forms.ModelChoiceField(
         label="Podzespół",
         queryset=Component.objects.all(),
         widget=autocomplete.ModelSelect2(
-            url="commission:component_autocomplete_create"
+            url="commission:component_autocomplete_create",
+            attrs={"data-placeholder": "Podaj model, numer seryjny albo katalogowy"},
         ),
         required=False,
     )
@@ -102,15 +107,6 @@ class CommissionModelForm(forms.ModelForm):
         if not self.commission_type and self.instance and self.instance.commission_type:
             self.commission_type = self.instance.commission_type
         self.fields["vc_name"].widget.attrs.update({"placeholder": "Podaj nazwę"})
-        self.fields["contractor"].widget.attrs.update(
-            {"data-placeholder": "Podaj nazwę, NIP albo numer telefonu"}
-        )
-        self.fields["vehicle"].widget.attrs.update(
-            {"data-placeholder": "Podaj numer rejestracyjny albo zeskanuj dowód"}
-        )
-        self.fields["component"].widget.attrs.update(
-            {"data-placeholder": "Podaj model, numer seryjny albo katalogowy"}
-        )
         self.fields["start_date"].widget.attrs.update(
             {"class": "date-input", "placeholder": "Wybierz datę"}
         )

@@ -20,16 +20,7 @@ const InfiniteSelect = (props) => {
 
     const handleInputChange = (value) => {
         setSearch(value);
-        let refetch = true;
-        if (props.barcodeEnabled) {
-            if (value.startsWith(props.barcodePrefix)) {
-                refetch = false;
-                if (value.length > 1 && value.endsWith(props.barcodeSufix)) {
-                    props.onBarcodeScanned(value.slice(1, -1));
-                }
-            }
-        }
-        if (refetch) props.refetch(value);
+        props.refetch(value);
     };
 
     const selectOption = (value, label) => {
@@ -129,10 +120,6 @@ InfiniteSelect.propTypes = {
     selected: PropTypes.string,
     selectedLabel: PropTypes.string,
     onChange: PropTypes.func,
-    barcodeEnabled: PropTypes.bool,
-    barcodePrefix: PropTypes.string,
-    barcodeSufix: PropTypes.string,
-    onBarcodeScanned: PropTypes.func,
 };
 
 export default InfiniteSelect;

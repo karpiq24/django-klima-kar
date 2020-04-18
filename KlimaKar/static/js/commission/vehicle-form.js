@@ -2,45 +2,6 @@ $(function () {
     $(".sidenav #nav-vehicles").children(":first").addClass("active");
     $(".sidenav #nav-commission").collapse("show");
 
-    const DECODE_AZTEC = $("#decode_aztec_url").val();
-    const DECODE_CSV_VEHICLE = $("#decode_csv_vehicle_url").val();
-
-    function decode_aztec(code) {
-        $.ajax({
-            url: DECODE_AZTEC,
-            type: "post",
-            dataType: "json",
-            data: {
-                code: code,
-                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
-            },
-            success: function (data) {
-                processVehicleData(data);
-            },
-            error: function (data) {
-                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
-            },
-        });
-    }
-
-    function decode_csv(code) {
-        $.ajax({
-            url: DECODE_CSV_VEHICLE,
-            type: "post",
-            dataType: "json",
-            data: {
-                code: code,
-                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
-            },
-            success: function (data) {
-                processVehicleData(data);
-            },
-            error: function (data) {
-                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
-            },
-        });
-    }
-
     function processVehicleData(data) {
         $("#id_brand").val(data.brand);
         $("#id_engine_power").val(data.engine_power);
@@ -62,23 +23,46 @@ $(function () {
         };
     })();
 
-    function processCode(code) {
-        if (code.length > 50 && code.length <= 350) {
-            debounce(function () {
-                decode_csv(code);
-            }, 300);
-        } else if (code.length > 350) {
-            debounce(function () {
-                decode_aztec(code);
-            }, 300);
-        }
+    function processVehicleCode(code) {
+        debounce(function () {
+            Swal.close();
+            $.ajax({
+                url: "/graphql/",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    query: `query {
+                        decode(code: "${code}") {
+                            pk
+                            label
+                            registration_plate
+                            vin
+                            brand
+                            model
+                            engine_volume
+                            engine_power
+                            production_year
+                            registration_date
+                            fuel_type
+                        }
+                    }`,
+                }),
+                success: function ({ data }) {
+                    if (data.decode === null) genericErrorAlert();
+                    else processVehicleData(data.decode);
+                },
+                error: function (data) {
+                    genericErrorAlert();
+                },
+            });
+        }, 300);
     }
 
     $(document).on("input", "#id_aztec", function (e) {
-        processCode($(this).val());
+        processVehicleCode($(this).val());
     });
 
     $(document).on("paste", "#id_aztec", function (e) {
-        processCode(e.originalEvent.clipboardData.getData("Text"));
+        processVehicleCode(e.originalEvent.clipboardData.getData("Text"));
     });
 });

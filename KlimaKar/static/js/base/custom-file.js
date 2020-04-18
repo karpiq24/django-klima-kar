@@ -16,7 +16,7 @@ function humanFileSize(bytes, si) {
 
 function uploadFiles(files) {
     let data = new FormData();
-    Array.from(files).forEach(file => {
+    Array.from(files).forEach((file) => {
         data.append(file.name, file);
     });
     data.append("csrfmiddlewaretoken", $("input[name=csrfmiddlewaretoken]").val());
@@ -29,9 +29,9 @@ function uploadFiles(files) {
         cache: false,
         contentType: false,
         processData: false,
-        xhr: function() {
+        xhr: function () {
             var xhr = $.ajaxSettings.xhr();
-            xhr.upload.onprogress = function(e) {
+            xhr.upload.onprogress = function (e) {
                 if (e.lengthComputable) {
                     $(".custom-file .progress").css("display", "flex");
                     $(".custom-file .progress-bar").css("width", Math.floor((100 * e.loaded) / e.total) + "%");
@@ -39,7 +39,7 @@ function uploadFiles(files) {
             };
             return xhr;
         },
-        success: function(data) {
+        success: function (data) {
             if (!data.status) {
                 addAlert("Błąd!", "error", data.message);
             } else {
@@ -47,11 +47,11 @@ function uploadFiles(files) {
             }
             $(".custom-file-input").val("");
             $(".custom-file-label").text($(".custom-file-label").data("label"));
-            setTimeout(function() {
+            setTimeout(function () {
                 $(".custom-file .progress").css("display", "none");
                 $(".custom-file .progress-bar").css("width", "0%");
                 $("#file-list").empty();
-                data.files.forEach(file => {
+                data.files.forEach((file) => {
                     $("#file-list").append(
                         "<li>" +
                             '<span class="file-name">' +
@@ -66,87 +66,79 @@ function uploadFiles(files) {
                 });
             }, 800);
         },
-        error: function() {
-            addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
+        error: function () {
+            genericErrorAlert();
             $(".custom-file-input").val("");
             $(".custom-file-label").text($(".custom-file-label").data("label"));
-            setTimeout(function() {
+            setTimeout(function () {
                 $(".custom-file .progress").css("display", "none");
                 $(".custom-file .progress-bar").css("width", "0%");
             }, 800);
-        }
+        },
     });
 }
 
-$(function() {
+$(function () {
     const $form = $(".custom-file");
     if ($form) {
-        $(".custom-file-input").on("change", function() {
+        $(".custom-file-input").on("change", function () {
             uploadFiles($(this).prop("files"));
         });
-        $(".custom-file-input").on("dragover dragenter", function() {
-            $(this)
-                .parent()
-                .addClass("is-dragover");
+        $(".custom-file-input").on("dragover dragenter", function () {
+            $(this).parent().addClass("is-dragover");
         });
-        $(".custom-file-input").on("dragleave dragend drop", function() {
-            $(this)
-                .parent()
-                .removeClass("is-dragover");
+        $(".custom-file-input").on("dragleave dragend drop", function () {
+            $(this).parent().removeClass("is-dragover");
         });
     }
 
-    $(document).on("click", ".delete-file", function() {
+    $(document).on("click", ".delete-file", function () {
         const that = this;
         const data = {
             key: $("#id_upload_key").val(),
             csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
-            file: $(this).data("file")
+            file: $(this).data("file"),
         };
         $.ajax({
             url: $(".custom-file").data("delete-temp-url"),
             type: "POST",
             data: data,
-            success: function(data) {
+            success: function (data) {
                 if (!data.status) {
                     addAlert("Błąd!", "error", data.message);
                 } else {
                     addAlert("Sukces!", "success", data.message);
-                    $(that)
-                        .parents("li")
-                        .remove();
+                    $(that).parents("li").remove();
                 }
             },
-            error: function() {
-                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
-            }
+            error: function () {
+                genericErrorAlert();
+            },
         });
     });
 
-    $(document).on("click", ".delete-previous-file", function() {
+    $(document).on("click", ".delete-previous-file", function () {
         const that = this;
         const data = {
             object: $(this).data("object"),
             file: $(this).data("file"),
-            csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val()
+            csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
         };
         $.ajax({
             url: $(".custom-file").data("delete-previous-url"),
             type: "POST",
             data: data,
-            success: function(data) {
+            success: function (data) {
                 if (!data.status) {
                     addAlert("Błąd!", "error", data.message);
                 } else {
                     addAlert("Sukces!", "success", data.message);
-                    $(that)
-                        .parents("li")
-                        .remove();
+                    $(that).parents("li").remove();
                 }
             },
-            error: function() {
-                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
-            }
+            error: function () {
+                genericErrorAlert();
+            },
         });
     });
 });

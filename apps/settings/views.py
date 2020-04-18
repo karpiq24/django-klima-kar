@@ -92,7 +92,7 @@ class MyCloudHomeInitializeView(SuperUserOnlyMixin, View):
             return JsonResponse({"status": "success"})
         else:
             return JsonResponse(
-                {"status": "error", "message": "Coś poszło nie tak. Spróbuj ponownie"},
+                {"status": "error", "message": "Coś poszło nie tak. Spróbuj ponownie."},
                 status=400,
             )
 

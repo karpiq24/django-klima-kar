@@ -470,6 +470,22 @@ small#gus-data:hover {
     margin-right: 8px;
 }
 
+#vehicle-select .select2-selection--single {
+    display: flex !important;
+    justify-content: space-between;
+}
+
+#vehicle-select .scan-vehicle {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+#vehicle-select .scan-vehicle:hover {
+    opacity: 1;
+}
+
 /* 
     STATS
 */

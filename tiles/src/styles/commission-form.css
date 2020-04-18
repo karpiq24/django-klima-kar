@@ -74,6 +74,12 @@ h2 {
     min-width: 100px;
 }
 
+.vehicle-container p {
+    font-size: 2rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
 @media screen and (max-width: 1400px) {
     .service-button-container {
         grid-template-columns: auto auto;

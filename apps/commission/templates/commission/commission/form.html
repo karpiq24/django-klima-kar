@@ -14,8 +14,6 @@
     <input type="hidden" id="update_vehicle_url" value="{% url 'commission:vehicle_update_ajax' 0 %}">
     <input type="hidden" id="create_component_url" value="{% url 'commission:component_create_ajax' %}">
     <input type="hidden" id="update_component_url" value="{% url 'commission:component_update_ajax' 0 %}">
-    <input type="hidden" id="decode_aztec_url" value="{% url 'commission:decode_aztec' %}">
-    <input type="hidden" id="decode_csv_vehicle_url" value="{% url 'commission:decode_vehicle_csv' %}">
     <input type="hidden" id="get_contractor_data_url" value="{% url 'invoicing:get_contractor' %}">
     {% csrf_token %}
     <div class="row">
@@ -30,7 +28,10 @@
             {% endfor %}
             </div>
         {% endif %}
-        <div class="col-sm-6 form-group">
+        <div class="col-sm-6 form-group"{% if form.vehicle %} id="vehicle-select"{% endif %}>
+            <template id="scan-icon-template">
+                <i class="fa fa-qrcode scan-vehicle"></i>
+            </template>
             <div style="display:flex;width:100%;">
                 <div style="width:calc(100% - 105px);margin-bottom:-1rem;">
                     {% if form.vehicle %}

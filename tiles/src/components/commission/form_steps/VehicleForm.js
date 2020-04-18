@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { gql } from "apollo-boost";
 import { useQuery, useLazyQuery } from "@apollo/react-hooks";
@@ -7,6 +7,7 @@ import Form from "react-bootstrap/Form";
 
 import ContentLoading from "../../common/ContentLoading";
 import InfiniteSelect from "../../common/InfiniteSelect";
+import useDebounce from "../../common/useDebounce";
 
 const VehicleForm = ({ currentStep, commission, onChange }) => {
     if (currentStep !== 2) return null;
@@ -73,6 +74,9 @@ const VehicleForm = ({ currentStep, commission, onChange }) => {
         },
     });
 
+    const [code, setCode] = useState("");
+    const debouncedCode = useDebounce(code, 300, () => decodeScanned({ variables: { code: code } }));
+
     const loadVehicles = (page) => {
         fetchMore({
             variables: {
@@ -99,50 +103,58 @@ const VehicleForm = ({ currentStep, commission, onChange }) => {
             {data === undefined ? (
                 <ContentLoading />
             ) : (
-                <Form.Group>
-                    <h2>Wybierz pojazd:</h2>
-                    <InfiniteSelect
-                        refetch={(value) =>
-                            refetch({
-                                filters: { registration_plate__icontains: value.trim() },
-                                pagination: { page: 1 },
-                            })
-                        }
-                        searchPlaceholder="Podaj numer rejestracyjny albo zeskanuj dowód"
-                        createLabel="Dodaj nowy pojazd"
-                        autoFocus={true}
-                        show={true}
-                        loadMore={loadVehicles}
-                        hasMore={data.vehicles.pageInfo.hasNextPage}
-                        objects={data.vehicles.objects}
-                        getObjectLabel={(vehicle) =>
-                            [
-                                vehicle.registration_plate,
-                                vehicle.brand,
-                                vehicle.model,
-                                vehicle.production_year ? `(${vehicle.production_year})` : null,
-                            ]
-                                .filter(Boolean)
-                                .join(" ")
-                        }
-                        selected={commission.vehicle}
-                        selectedLabel={commission.vc_name}
-                        barcodeEnabled={true}
-                        barcodePrefix="@"
-                        barcodeSufix="@"
-                        onBarcodeScanned={(value) => decodeScanned({ variables: { code: value } })}
-                        onCreate={(value) => console.log(value)}
-                        onChange={(value, label) =>
-                            onChange(
-                                {
-                                    vehicle: value,
-                                    vc_name: label,
-                                },
-                                true
-                            )
-                        }
-                    />
-                </Form.Group>
+                <div className="d-flex justify-content-between align-items-end vehicle-container">
+                    <Form.Group className="w-100">
+                        <h2>Wybierz pojazd:</h2>
+                        <InfiniteSelect
+                            refetch={(value) =>
+                                refetch({
+                                    filters: { registration_plate__icontains: value.trim() },
+                                    pagination: { page: 1 },
+                                })
+                            }
+                            searchPlaceholder="Podaj numer rejestracyjny"
+                            createLabel="Dodaj nowy pojazd"
+                            autoFocus={true}
+                            show={true}
+                            loadMore={loadVehicles}
+                            hasMore={data.vehicles.pageInfo.hasNextPage}
+                            objects={data.vehicles.objects}
+                            getObjectLabel={(vehicle) =>
+                                [
+                                    vehicle.registration_plate,
+                                    vehicle.brand,
+                                    vehicle.model,
+                                    vehicle.production_year ? `(${vehicle.production_year})` : null,
+                                ]
+                                    .filter(Boolean)
+                                    .join(" ")
+                            }
+                            selected={commission.vehicle}
+                            selectedLabel={commission.vc_name}
+                            onCreate={(value) => console.log(value)}
+                            onChange={(value, label) =>
+                                onChange(
+                                    {
+                                        vehicle: value,
+                                        vc_name: label,
+                                    },
+                                    true
+                                )
+                            }
+                        />
+                    </Form.Group>
+                    <p>albo</p>
+                    <Form.Group className="w-100">
+                        <h2>Zeskanuj dowód rejestracyjny:</h2>
+                        <Form.Control
+                            size="lg"
+                            onChange={(e) => {
+                                setCode(e.target.value);
+                            }}
+                        />
+                    </Form.Group>
+                </div>
             )}
         </>
     );

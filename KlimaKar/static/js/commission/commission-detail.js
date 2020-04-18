@@ -198,7 +198,7 @@ $(function () {
                                                 if (data.responseJSON.message) {
                                                     addAlert("Uwaga!", "warning", data.responseJSON.message);
                                                 } else {
-                                                    addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
+                                                    genericErrorAlert();
                                                 }
                                             },
                                         });
@@ -346,7 +346,7 @@ $(function () {
                         </li>`);
                 },
                 error: function (data) {
-                    addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
+                    genericErrorAlert();
                 },
             });
         });
@@ -410,7 +410,7 @@ $(function () {
                         : $(element).removeClass("not-active");
                 },
                 error: function (data) {
-                    addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
+                    genericErrorAlert();
                 },
             });
         });

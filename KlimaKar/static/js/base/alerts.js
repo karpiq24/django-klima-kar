@@ -7,12 +7,16 @@ function addAlert(title, tag, text = "", html = "") {
         html: html,
         showConfirmButton: false,
         timer: 10000,
-        toast: true
+        toast: true,
     });
 }
 
-$(function() {
-    MESSAGES.forEach(function(message) {
+function genericErrorAlert() {
+    addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
+}
+
+$(function () {
+    MESSAGES.forEach(function (message) {
         var title = "";
         switch (message.tag) {
             case "success":

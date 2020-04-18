@@ -77,8 +77,6 @@ $(function () {
     const UPDATE_VEHICLE = $("#update_vehicle_url").val();
     const CREATE_COMPONENT = $("#create_component_url").val();
     const UPDATE_COMPONENT = $("#update_component_url").val();
-    const DECODE_AZTEC = $("#decode_aztec_url").val();
-    const DECODE_CSV_VEHICLE = $("#decode_csv_vehicle_url").val();
     const GET_CONTRACTOR_DATA = $("#get_contractor_data_url").val();
 
     $("#id_contractor").on("select2:selecting", function (e) {
@@ -226,6 +224,20 @@ $(function () {
         }
     });
 
+    $(document).on("click", ".scan-vehicle", function (e) {
+        $("#id_vehicle").select2("close");
+        Swal.fire({
+            title: "Zeskanuj dowód rejestracyjny.",
+            html: `<input id="swal-code" class="swal2-input" style="display: flex;" placeholder="" type="text">`,
+            showCancelButton: false,
+            showConfirmButton: false,
+        });
+    });
+
+    $(document).on("keyup paste", "#swal-code", function () {
+        processVehicleCode($(this).val());
+    });
+
     function getVehicleData(pk) {
         $.ajax({
             url: "/graphql/",
@@ -283,7 +295,7 @@ $(function () {
                 }
             },
             error: function (data) {
-                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
+                genericErrorAlert();
             },
         });
     }
@@ -311,7 +323,7 @@ $(function () {
                 }`,
             }),
             success: function ({ data }) {
-                const parent = $("#id_component").parent();
+                const parent = $("#id_component").parent().parent().parent().parent();
                 $(parent).find("div.extra-feedback").remove();
                 $(parent).append(`<div class="extra-feedback d-flex justify-content-between flex-wrap"></div>`);
                 const feedback = $(parent).find("div.extra-feedback");
@@ -345,7 +357,7 @@ $(function () {
                 }
             },
             error: function (data) {
-                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
+                genericErrorAlert();
             },
         });
     }
@@ -500,42 +512,6 @@ $(function () {
         $(this).data("select2").$dropdown.find(":input.select2-search__field").addClass("vehicle");
     });
 
-    function decode_aztec(code) {
-        $.ajax({
-            url: DECODE_AZTEC,
-            type: "post",
-            dataType: "json",
-            data: {
-                code: code,
-                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
-            },
-            success: function (data) {
-                processVehicleData(data);
-            },
-            error: function (data) {
-                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
-            },
-        });
-    }
-
-    function decode_csv(code) {
-        $.ajax({
-            url: DECODE_CSV_VEHICLE,
-            type: "post",
-            dataType: "json",
-            data: {
-                code: code,
-                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
-            },
-            success: function (data) {
-                processVehicleData(data);
-            },
-            error: function (data) {
-                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
-            },
-        });
-    }
-
     function processVehicleData(data) {
         $("#id_vehicle").select2("close");
         if (data.pk === null) {
@@ -560,24 +536,39 @@ $(function () {
     }
 
     function processVehicleCode(code) {
-        if (code.length > 50 && code.length <= 350) {
-            debounce(function () {
-                decode_csv(code);
-            }, 300);
-        } else if (code.length > 350) {
-            debounce(function () {
-                decode_aztec(code);
-            }, 300);
-        }
+        debounce(function () {
+            Swal.close();
+            $.ajax({
+                url: "/graphql/",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    query: `query {
+                        decode(code: "${code}") {
+                            pk
+                            label
+                            registration_plate
+                            vin
+                            brand
+                            model
+                            engine_volume
+                            engine_power
+                            production_year
+                            registration_date
+                            fuel_type
+                        }
+                    }`,
+                }),
+                success: function ({ data }) {
+                    if (data.decode === null) genericErrorAlert();
+                    else processVehicleData(data.decode);
+                },
+                error: function (data) {
+                    genericErrorAlert();
+                },
+            });
+        }, 300);
     }
-
-    $(document).on("input", ".select2-search__field.vehicle", function (e) {
-        processVehicleCode($(this).val());
-    });
-
-    $(document).on("paste", ".select2-search__field.vehicle", function (e) {
-        processVehicleCode(e.originalEvent.clipboardData.getData("Text"));
-    });
 
     $("input[type=radio][name=status]").change(function () {
         checkEndDate();
@@ -593,5 +584,6 @@ $(function () {
     if ($("#id_component").val() !== "") {
         $("#id_component").change();
     }
+    $("#vehicle-select .select2-selection").append($("#scan-icon-template").html());
     bsCustomFileInput.init();
 });

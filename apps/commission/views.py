@@ -1,4 +1,3 @@
-import subprocess
 import datetime
 import os
 import re
@@ -56,8 +55,6 @@ from apps.commission.functions import (
     process_uploads,
     check_uploaded_files,
     get_temporary_files,
-    decode_aztec_code,
-    decode_mpojazd,
 )
 from apps.invoicing.models import SaleInvoice
 
@@ -817,24 +814,6 @@ class UnassignInoiceView(View):
             {"status": "success", "message": "Faktura odłączona od zlecenia."},
             status=200,
         )
-
-
-class DecodeAztecCode(View):
-    def post(self, request, *args, **kwargs):
-        code = request.POST.get("code").strip().strip("@")
-        vehicle_data = decode_aztec_code(code)
-        if not vehicle_data:
-            return JsonResponse({}, status=400)
-        return JsonResponse(vehicle_data)
-
-
-class DecodeCsvVehicleData(View):
-    def post(self, request, *args, **kwargs):
-        csv_data = request.POST.get("code").strip().strip("@")
-        vehicle_data = decode_mpojazd(csv_data)
-        if not vehicle_data:
-            return JsonResponse({}, status=400)
-        return JsonResponse(vehicle_data)
 
 
 class SendSMSNotificationView(View):
