@@ -45,7 +45,7 @@ const InfiniteSelect = (props) => {
     }, []);
 
     return (
-        <div className="infinite-select" ref={ref}>
+        <div className={`infinite-select ${props.className}`} ref={ref}>
             {props.label ? <Form.Label>{props.label}</Form.Label> : null}
             <div className="infinite-select-display form-control form-control-lg" onClick={handleOpenSelect}>
                 {selected && selectedLabel ? selectedLabel : props.selectPlaceholder}
@@ -120,6 +120,7 @@ InfiniteSelect.propTypes = {
     selected: PropTypes.string,
     selectedLabel: PropTypes.string,
     onChange: PropTypes.func,
+    className: PropTypes.string,
 };
 
 export default InfiniteSelect;

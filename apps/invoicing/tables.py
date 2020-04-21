@@ -103,11 +103,12 @@ class SaleInvoiceWithTypeTable(SaleInvoiceTable):
 
 class SaleInvoiceItemTable(tables.Table):
     name = tables.Column(
-        attrs={"th": {"width": "25%"}}, verbose_name="Nazwa usługi/towaru"
+        attrs={"th": {"width": "20%"}}, verbose_name="Nazwa usługi/towaru"
     )
     description = tables.Column(
-        attrs={"th": {"width": "25%"}}, verbose_name="Opis usługi/towaru"
+        attrs={"th": {"width": "20%"}}, verbose_name="Opis usługi/towaru"
     )
+    ware = tables.Column(attrs={"th": {"width": "10%"}})
     quantity = tables.Column(attrs={"th": {"width": "10%"}})
     price_netto = tables.Column(
         attrs={"th": {"width": "20%"}}, verbose_name="Cena netto"
@@ -128,6 +129,7 @@ class SaleInvoiceItemTable(tables.Table):
         fields = [
             "name",
             "description",
+            "ware",
             "quantity",
             "price_netto",
             "price_brutto",
@@ -137,12 +139,13 @@ class SaleInvoiceItemTable(tables.Table):
 
 class ServiceTemplateTable(tables.Table):
     name = tables.Column(
-        attrs={"th": {"width": "30%"}}, verbose_name="Nazwa usługi/towaru"
+        attrs={"th": {"width": "25%"}}, verbose_name="Nazwa usługi/towaru"
     )
     description = tables.Column(
-        attrs={"th": {"width": "30%"}}, verbose_name="Opis usługi/towaru"
+        attrs={"th": {"width": "25%"}}, verbose_name="Opis usługi/towaru"
     )
-    quantity = tables.Column(attrs={"th": {"width": "13%"}})
+    ware = tables.Column(attrs={"th": {"width": "13%"}})
+    quantity = tables.Column(attrs={"th": {"width": "10%"}})
     price_netto = tables.Column(attrs={"th": {"width": "10%"}})
     price_brutto = tables.Column(attrs={"th": {"width": "10%"}})
     actions = tables.TemplateColumn(
@@ -161,5 +164,5 @@ class ServiceTemplateTable(tables.Table):
     class Meta:
         model = ServiceTemplate
         attrs = {"class": "table table-striped table-hover table-bordered"}
-        fields = ["name", "description", "price_netto", "price_brutto"]
+        fields = ["name", "description", "ware", "price_netto", "price_brutto"]
         empty_text = "Brak pozycji"

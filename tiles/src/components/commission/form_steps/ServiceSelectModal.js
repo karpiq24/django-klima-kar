@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button";
 
 import ContentLoading from "../../common/ContentLoading";
 import InfiniteSelect from "../../common/InfiniteSelect";
+import { displayZloty } from "../../../utils";
 
 const ServiceSelectModal = ({ show, onHide, onSelect }) => {
     if (!show) return null;
@@ -34,14 +35,14 @@ const ServiceSelectModal = ({ show, onHide, onSelect }) => {
     const { loading, data, fetchMore, refetch } = useQuery(SERVICES, {
         variables: {
             pagination: { page: 1 },
-            filters: { display_as_button: false }
-        }
+            filters: { display_as_button: false },
+        },
     });
 
-    const loadServices = page => {
+    const loadServices = (page) => {
         fetchMore({
             variables: {
-                pagination: { page: page }
+                pagination: { page: page },
             },
             updateQuery: (prev, { fetchMoreResult }) => {
                 if (!fetchMoreResult) return prev;
@@ -50,12 +51,12 @@ const ServiceSelectModal = ({ show, onHide, onSelect }) => {
                     services: {
                         ...data.services,
                         pageInfo: {
-                            ...fetchMoreResult.services.pageInfo
+                            ...fetchMoreResult.services.pageInfo,
                         },
-                        objects: [...prev.services.objects, ...fetchMoreResult.services.objects]
-                    }
+                        objects: [...prev.services.objects, ...fetchMoreResult.services.objects],
+                    },
                 };
-            }
+            },
         });
     };
 
@@ -70,10 +71,10 @@ const ServiceSelectModal = ({ show, onHide, onSelect }) => {
                     </Modal.Header>
                     <Modal.Body>
                         <InfiniteSelect
-                            refetch={value =>
+                            refetch={(value) =>
                                 refetch({
                                     filters: { display_as_button: false, name__icontains: value.trim() },
-                                    pagination: { page: 1 }
+                                    pagination: { page: 1 },
                                 })
                             }
                             searchPlaceholder="Podaj nazwę usługi"
@@ -82,9 +83,13 @@ const ServiceSelectModal = ({ show, onHide, onSelect }) => {
                             loadMore={loadServices}
                             hasMore={data.services.pageInfo.hasNextPage}
                             objects={data.services.objects}
-                            getObjectLabel={service => service.name}
+                            getObjectLabel={(service) =>
+                                `${service.name}${
+                                    service.price_brutto !== null ? ` - ${displayZloty(service.price_brutto)}` : ""
+                                }`
+                            }
                             onChange={(value, label) => {
-                                onSelect(data.services.objects.find(x => x.id === value));
+                                onSelect(data.services.objects.find((x) => x.id === value));
                                 onHide();
                             }}
                         />
@@ -103,7 +108,7 @@ const ServiceSelectModal = ({ show, onHide, onSelect }) => {
 ServiceSelectModal.propTypes = {
     show: PropTypes.bool.isRequired,
     onSelect: PropTypes.func.isRequired,
-    onHide: PropTypes.func.isRequired
+    onHide: PropTypes.func.isRequired,
 };
 
 export default ServiceSelectModal;

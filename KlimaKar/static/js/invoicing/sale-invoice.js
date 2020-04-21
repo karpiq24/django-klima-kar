@@ -156,6 +156,7 @@ $(function () {
         $(item_form).addClass("d-none");
         $(item_form).find(".item-name").val("");
         $(item_form).find(".item-description").val("");
+        $(item_form).find(".item-ware").val("").change();
         $(item_form).find(".item-quantity").val(1);
         $(item_form).find(".item-netto").val("");
         $(item_form).find(".item-brutto").val("");
@@ -263,6 +264,13 @@ $(function () {
             success: function (result) {
                 $(item_form).find(".item-name").val(result.service.name);
                 $(item_form).find(".item-description").val(result.service.description);
+                if (result.service.ware) {
+                    var $option = $("<option selected></option>")
+                        .val(result.service.ware.pk)
+                        .text(result.service.ware.index);
+                    var $sel2 = $(item_form).find(".item-ware");
+                    $sel2.append($option).trigger("change");
+                }
                 $(item_form).find(".item-netto").val(result.service.price_netto);
                 $(item_form).find(".item-brutto").val(result.service.price_brutto);
                 $(item_form).find(".item-quantity").val(result.service.quantity);
@@ -302,6 +310,7 @@ $(function () {
         if (
             $(item_form).find(".item-name").val() ||
             $(item_form).find(".item-description").val() ||
+            $(item_form).find(".item-ware").val() ||
             $(item_form).find(".item-netto").val() != 0 ||
             $(item_form).find(".item-brutto").val() != 0 ||
             $(item_form).find(".item-quantity").val() != 1 ||

@@ -1,8 +1,13 @@
 # Lista zmian
 
+## 2020-04-21
+
+-   przywrócono towar do pozycji faktur i zleceń
+-   dodano wybór towaru w pozycji zlecenia w iterfejsie kafelkowym
+
 ## 2020-04-18
 
--   skanowanie dowodów rejestracyjnych w formularzu pojazdu po wciśnięcku specjalnego przycisku zamiast w polu wyszukiwania
+-   skanowanie dowodów rejestracyjnych w formularzu pojazdu po wciśnięciu specjalnego przycisku zamiast w polu wyszukiwania
 
 ## 2020-04-17
 

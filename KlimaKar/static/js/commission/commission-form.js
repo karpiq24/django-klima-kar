@@ -442,6 +442,7 @@ $(function () {
         $(item_form).addClass("d-none");
         $(item_form).find(".item-name").val("");
         $(item_form).find(".item-description").val("");
+        $(item_form).find(".item-ware").val("").change();
         $(item_form).find(".item-quantity").val(1);
         $(item_form).find(".item-price").val("");
         $(item_form).find(".item-DELETE").children("input").prop("checked", true);
@@ -485,6 +486,13 @@ $(function () {
             success: function (result) {
                 $(item_form).find(".item-name").val(result.service.name);
                 $(item_form).find(".item-description").val(result.service.description);
+                if (result.service.ware) {
+                    let $option = $("<option selected></option>")
+                        .val(result.service.ware.pk)
+                        .text(result.service.ware.index);
+                    let $sel2 = $(item_form).find(".item-ware");
+                    $sel2.append($option).trigger("change");
+                }
                 $(item_form).find(".item-price").val(result.service.price_brutto);
                 $(item_form).find(".item-quantity").val(result.service.quantity);
                 $(item_form).find(".item-price").change();
@@ -498,6 +506,7 @@ $(function () {
         if (
             $(item_form).find(".item-name").val() ||
             $(item_form).find(".item-description").val() ||
+            $(item_form).find(".item-ware").val() ||
             $(item_form).find(".item-price").val() != 0 ||
             $(item_form).find(".item-quantity").val() != 1 ||
             $(item_form).find(".invalid-feedback").length > 0

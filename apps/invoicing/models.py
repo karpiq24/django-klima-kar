@@ -317,6 +317,9 @@ class ServiceTemplate(models.Model):
         blank=True,
         null=True,
     )
+    ware = models.ForeignKey(
+        Ware, on_delete=models.SET_NULL, blank=True, null=True, verbose_name="Towar"
+    )
     display_as_button = models.BooleanField(
         default=False, verbose_name="Wyświetl jako przycisk"
     )
@@ -356,6 +359,9 @@ class SaleInvoiceItem(models.Model):
     )
     price_brutto = models.DecimalField(
         max_digits=7, decimal_places=2, verbose_name="Cena brutto"
+    )
+    ware = models.ForeignKey(
+        Ware, on_delete=models.SET_NULL, blank=True, null=True, verbose_name="Towar"
     )
 
     class Meta:

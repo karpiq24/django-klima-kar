@@ -114,8 +114,9 @@ class CommissionTable(tables.Table):
 
 
 class CommissionItemTable(tables.Table):
-    name = tables.Column(attrs={"th": {"width": "25%"}})
-    description = tables.Column(attrs={"th": {"width": "25%"}})
+    name = tables.Column(attrs={"th": {"width": "20%"}})
+    description = tables.Column(attrs={"th": {"width": "20%"}})
+    ware = tables.Column(attrs={"th": {"width": "10%"}})
     quantity = tables.Column(attrs={"th": {"width": "10%"}})
     price = tables.Column(attrs={"th": {"width": "20%"}})
 
@@ -125,5 +126,5 @@ class CommissionItemTable(tables.Table):
     class Meta:
         model = CommissionItem
         attrs = {"class": "table table-striped table-hover table-bordered"}
-        fields = ["name", "description", "quantity", "price"]
+        fields = ["name", "description", "ware", "quantity", "price"]
         empty_text = "Brak pozycji"

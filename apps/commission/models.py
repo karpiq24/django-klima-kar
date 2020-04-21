@@ -11,6 +11,7 @@ from KlimaKar.templatetags.slugify import slugify
 from KlimaKar.models import TotalValueQuerySet
 from apps.settings.models import MyCloudHome
 from apps.invoicing.models import Contractor, SaleInvoice
+from apps.warehouse.models import Ware
 
 
 class Vehicle(models.Model):
@@ -274,6 +275,9 @@ class CommissionItem(models.Model):
     )
     quantity = models.IntegerField(default=1, verbose_name="Ilość")
     price = models.DecimalField(max_digits=7, decimal_places=2, verbose_name="Cena")
+    ware = models.ForeignKey(
+        Ware, on_delete=models.SET_NULL, blank=True, null=True, verbose_name="Towar"
+    )
 
     class Meta:
         verbose_name = "Pozycja zlecenia"

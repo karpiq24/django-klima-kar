@@ -14,7 +14,8 @@ import { gql } from "apollo-boost";
 import { useQuery } from "@apollo/react-hooks";
 import ContentLoading from "../../common/ContentLoading";
 import ServiceSelectModal from "./ServiceSelectModal";
-import WareSelectModal from "./WareSelectModal";
+import WareSelectModal from "../../warehouse/WareSelectModal";
+import WareSelect from "../../warehouse/WareSelect";
 
 const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) => {
     if (currentStep !== 7) return null;
@@ -32,6 +33,12 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                 objects {
                     id
                     name
+                    description
+                    ware {
+                        id
+                        index
+                        name
+                    }
                     quantity
                     price_brutto
                     is_ware_service
@@ -47,7 +54,7 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
     const [showWareModal, setShowWareModal] = useState(false);
     if (loading) return <ContentLoading />;
 
-    const handleWareService = service => {
+    const handleWareService = (service) => {
         setWareService(service);
         setShowWareModal(true);
     };
@@ -56,7 +63,7 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
         <Form.Group>
             <h2>Wybierz pozycje zlecenia:</h2>
             {commission.items.length > 0 ? (
-                <Table striped bordered hover responsive className="big-table">
+                <Table striped bordered hover className="big-table">
                     <thead>
                         <tr>
                             <th className="th-ware">Usługa/Towar</th>
@@ -74,14 +81,21 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                                         value={item.name}
                                         placeholder="Podaj nazwę"
                                         size="lg"
-                                        onChange={event => onChange(index, { name: event.target.value })}
+                                        onChange={(event) => onChange(index, { name: event.target.value })}
                                     />
                                     <Form.Control
                                         className="mt-1"
                                         value={item.description}
                                         placeholder="Podaj opis"
                                         size="lg"
-                                        onChange={event => onChange(index, { description: event.target.value })}
+                                        onChange={(event) => onChange(index, { description: event.target.value })}
+                                    />
+                                    <WareSelect
+                                        className="mt-1"
+                                        selectPlaceholder="Wybierz towar"
+                                        selected={item.ware}
+                                        selectedLabel={item.wareLabel}
+                                        onChange={(ware) => onChange(index, { ware: ware.id, wareLabel: ware.index })}
                                     />
                                 </td>
                                 <td>
@@ -91,7 +105,7 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                                             step="0.01"
                                             value={item.price}
                                             size="lg"
-                                            onChange={event => onChange(index, { price: event.target.value })}
+                                            onChange={(event) => onChange(index, { price: event.target.value })}
                                         />
                                         <span className="ml-2">zł</span>
                                     </div>
@@ -101,7 +115,7 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                                         type="number"
                                         value={item.quantity}
                                         size="lg"
-                                        onChange={event => onChange(index, { quantity: event.target.value })}
+                                        onChange={(event) => onChange(index, { quantity: event.target.value })}
                                     />
                                 </td>
                                 <td>{displayZloty(item.price * item.quantity)}</td>
@@ -128,7 +142,7 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                 </Table>
             ) : null}
             <div className="mb-2 service-button-container">
-                {data.services.objects.map(service => {
+                {data.services.objects.map((service) => {
                     if (service.is_ware_service) {
                         return (
                             <Button key={service.id} size="xxl mr-2" onClick={() => handleWareService(service)}>
@@ -143,9 +157,10 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                             onClick={() =>
                                 addItem({
                                     name: service.name,
-                                    price: service.price_brutto,
-                                    quantity: service.quantity,
-                                    description: service.description
+                                    price: service.price_brutto || "",
+                                    quantity: service.quantity || 1,
+                                    description: service.description || "",
+                                    ware: service.ware || "",
                                 })
                             }
                         >
@@ -159,12 +174,14 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                 <ServiceSelectModal
                     show={showOtherServices}
                     onHide={() => setShowOtherServices(false)}
-                    onSelect={service =>
+                    onSelect={(service) =>
                         addItem({
-                            name: service.name,
-                            price: service.price_brutto,
-                            quantity: service.quantity,
-                            description: service.description
+                            name: service.name || "",
+                            price: service.price_brutto || "",
+                            quantity: service.quantity || 1,
+                            description: service.description || "",
+                            ware: service.ware ? service.ware.id : null,
+                            wareLabel: service.ware ? service.ware.index : null,
                         })
                     }
                 />
@@ -173,12 +190,14 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                         show={showWareModal}
                         wareName={wareService.ware_filter}
                         onHide={() => setShowWareModal(false)}
-                        onSelect={ware =>
+                        onSelect={(ware) =>
                             addItem({
-                                name: wareService.name,
-                                price: ware.retail_price,
-                                quantity: 1,
-                                description: wareService.description
+                                name: wareService.name || "",
+                                price: ware.retail_price || "",
+                                quantity: wareService.quantity || 1,
+                                description: wareService.description || "",
+                                ware: ware.id,
+                                wareLabel: ware.index,
                             })
                         }
                     />
@@ -193,7 +212,7 @@ ItemsInput.propTypes = {
     onChange: PropTypes.func.isRequired,
     addItem: PropTypes.func.isRequired,
     commission: PropTypes.object.isRequired,
-    removeItem: PropTypes.func.isRequired
+    removeItem: PropTypes.func.isRequired,
 };
 
 export default ItemsInput;

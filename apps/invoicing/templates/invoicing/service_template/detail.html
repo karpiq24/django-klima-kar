@@ -18,6 +18,10 @@
                 <td>{{ object.description|default_if_none:"—" }}</td>
             </tr>
             <tr>
+                <td class="detail-label">Towar</td>
+                <td>{{ object.ware|default_if_none:"—" }}</td>
+            </tr>
+            <tr>
                 <td class="detail-label">Ilość</td>
                 <td>{{ object.quantity|default_if_none:"—" }}</td>
             </tr>
