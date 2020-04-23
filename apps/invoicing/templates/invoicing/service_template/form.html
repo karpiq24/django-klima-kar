@@ -31,6 +31,20 @@
     $(function () {
         $('.sidenav #nav-servicetemplates').children(':first').addClass('active');
         $('.sidenav #nav-invoicing').collapse('show');
+
+        function checkButtons() {
+            $("#id_button_name").attr("disabled", !$('#id_display_as_button').is(":checked"));
+            $("#id_ware_filter").attr("disabled", !$('#id_is_ware_service').is(":checked"));
+        }
+
+        $('#id_display_as_button').on('change', function () {
+            checkButtons();
+        });
+
+        $('#id_is_ware_service').on('change', function () {
+            checkButtons();
+        });
+        checkButtons();
     });
 </script>
 {% endblock %}

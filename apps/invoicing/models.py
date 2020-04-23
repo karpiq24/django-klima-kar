@@ -323,6 +323,9 @@ class ServiceTemplate(models.Model):
     display_as_button = models.BooleanField(
         default=False, verbose_name="Wyświetl jako przycisk"
     )
+    button_name = models.CharField(
+        max_length=255, verbose_name="Nazwa przycisku", blank=True, null=True
+    )
     is_ware_service = models.BooleanField(
         default=False, verbose_name="Usługa z filtrem towaru"
     )

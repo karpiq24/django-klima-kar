@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2020-04-23
+
+-   zamiast wyświetlać formularz po skanowaniu dowodu rejestracyjnego, pojazd jest zapisywany w tle
+-   dodano możliwosć ustawienia nazwy przycisku usług
+
 ## 2020-04-21
 
 -   przywrócono towar do pozycji faktur i zleceń

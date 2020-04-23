@@ -11,6 +11,7 @@ type Service {
     price_brutto: Float
     ware: Ware
     display_as_button: Boolean!
+    button_name: String
     is_ware_service: Boolean!
     ware_filter: String
 }

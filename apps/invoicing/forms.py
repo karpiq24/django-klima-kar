@@ -343,6 +343,9 @@ class ServiceTemplateModelForm(forms.ModelForm):
         self.fields["ware_filter"].widget.attrs.update(
             {"placeholder": "Podaj nazwę towaru"}
         )
+        self.fields["button_name"].widget.attrs.update(
+            {"placeholder": "Podaj nazwę przycisku"}
+        )
         self.fields["name"].widget.attrs.update({"class": "item-name"})
         self.fields["description"].widget.attrs.update({"placeholder": "Podaj opis"})
         self.fields["description"].widget.attrs.update({"class": "item-description"})
@@ -369,6 +372,7 @@ class ServiceTemplateModelForm(forms.ModelForm):
             "price_brutto",
             "ware",
             "display_as_button",
+            "button_name",
             "is_ware_service",
             "ware_filter",
         ]

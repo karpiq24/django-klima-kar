@@ -34,6 +34,7 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                     id
                     name
                     description
+                    button_name
                     ware {
                         id
                         index
@@ -164,7 +165,7 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                                 })
                             }
                         >
-                            {service.name}
+                            {service.button_name || service.name}
                         </Button>
                     );
                 })}
