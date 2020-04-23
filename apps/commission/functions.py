@@ -85,7 +85,7 @@ def process_uploads(commission_pk, upload_key):
     return files_added
 
 
-def decode_aztec_code(code):
+def decode_aztec_code(code, create=True):
     try:
         output = subprocess.check_output(["./scripts/aztec", code])
         output = output.decode("utf-16", errors="ignore").strip()
@@ -93,7 +93,7 @@ def decode_aztec_code(code):
         return None
     values = output.split("|")
     data = {
-        "registration_plate": values[7].strip(),
+        "registration_plate": values[7].strip().replace(" ", ""),
         "vin": values[13].strip(),
         "brand": values[8].strip(),
         "model": values[12].strip(),
@@ -101,20 +101,25 @@ def decode_aztec_code(code):
         "engine_power": int(values[49].split(",")[0]),
         "production_year": int(values[56]),
         "fuel_type": str(values[50]).strip(),
-        "registration_date": datetime.datetime.strptime(
-            values[51], "%Y-%m-%d"
-        ).strftime("%d.%m.%Y"),
+        "registration_date": values[51],
     }
-    try:
-        vehicle = Vehicle.objects.get(vin=data["vin"])
+    if create:
+        vehicle, created = Vehicle.objects.update_or_create(
+            registration_plate=data["registration_plate"], defaults=data
+        )
+    else:
+        try:
+            vehicle = Vehicle.objects.get(registration_plate=data["registration_plate"])
+        except Vehicle.DoesNotExist:
+            vehicle = None
+    if vehicle:
         data["pk"] = vehicle.pk
         data["label"] = str(vehicle)
-    except Vehicle.DoesNotExist:
-        data["pk"] = None
+        data["url"] = vehicle.get_absolute_url()
     return data
 
 
-def decode_mpojazd(csv_data):
+def decode_mpojazd(csv_data, create=True):
     values = csv_data.split(";")
     if len(values) != 17:
         return None
@@ -127,10 +132,17 @@ def decode_mpojazd(csv_data):
         "engine_power": int(values[6]),
         "production_year": int(values[4]),
     }
-    try:
-        vehicle = Vehicle.objects.get(vin=data["vin"])
+    if create:
+        vehicle, created = Vehicle.objects.update_or_create(
+            registration_plate=data["registration_plate"], defaults=data
+        )
+    else:
+        try:
+            vehicle = Vehicle.objects.get(registration_plate=data["registration_plate"])
+        except Vehicle.DoesNotExist:
+            vehicle = None
+    if vehicle:
         data["pk"] = vehicle.pk
         data["label"] = str(vehicle)
-    except Vehicle.DoesNotExist:
-        data["pk"] = None
+        data["url"] = vehicle.get_absolute_url()
     return data

@@ -1,6 +1,6 @@
 extend type Query {
     vehicles(pagination: PageInput, filters: VehicleFilter): VehicleConnection!
-    decode(code: String!): ScannedVehicle
+    decode(code: String!, create: Boolean!): ScannedVehicle
 }
 
 extend type Mutation {
@@ -41,6 +41,7 @@ type ScannedVehicle {
     production_year: Int!
     registration_date: String
     fuel_type: String
+    url: String!
 }
 
 enum FuelType {

@@ -521,29 +521,6 @@ $(function () {
         $(this).data("select2").$dropdown.find(":input.select2-search__field").addClass("vehicle");
     });
 
-    function processVehicleData(data) {
-        $("#id_vehicle").select2("close");
-        if (data.pk === null) {
-            $.ajax({
-                url: CREATE_VEHICLE,
-                type: "get",
-                dataType: "json",
-                data: data,
-                beforeSend: function () {
-                    $("#modal-generic").modal("show");
-                },
-                success: function (data) {
-                    $("#modal-generic .modal-content").html(data.html_form);
-                },
-            });
-        } else {
-            const $option = $("<option selected></option>").val(data["pk"]).text(data["label"]);
-            $("#id_vehicle").append($option).trigger("change");
-            $("#vehicle-component-edit").prop("disabled", false);
-            $("#id_vc_name").val(data["label"]);
-        }
-    }
-
     function processVehicleCode(code) {
         debounce(function () {
             Swal.close();
@@ -553,24 +530,23 @@ $(function () {
                 contentType: "application/json",
                 data: JSON.stringify({
                     query: `query {
-                        decode(code: "${code}") {
+                        decode(code: "${code}", create: true) {
                             pk
                             label
-                            registration_plate
-                            vin
-                            brand
-                            model
-                            engine_volume
-                            engine_power
-                            production_year
-                            registration_date
-                            fuel_type
                         }
                     }`,
                 }),
                 success: function ({ data }) {
                     if (data.decode === null) genericErrorAlert();
-                    else processVehicleData(data.decode);
+                    else {
+                        $("#id_vehicle").select2("close");
+                        const $option = $("<option selected></option>")
+                            .val(data.decode["pk"])
+                            .text(data.decode["label"]);
+                        $("#id_vehicle").append($option).trigger("change");
+                        $("#vehicle-component-edit").prop("disabled", false);
+                        $("#id_vc_name").val(data.decode["label"]);
+                    }
                 },
                 error: function (data) {
                     genericErrorAlert();

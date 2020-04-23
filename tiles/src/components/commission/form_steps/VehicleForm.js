@@ -34,19 +34,10 @@ const VehicleForm = ({ currentStep, commission, onChange }) => {
     `;
 
     const DECODE_SCANNDED = gql`
-        query decodeScanned($code: String!) {
-            decode(code: $code) {
+        query decodeScanned($code: String!, $create: Boolean!) {
+            decode(code: $code, create: $create) {
                 pk
                 label
-                registration_plate
-                vin
-                brand
-                model
-                engine_volume
-                engine_power
-                production_year
-                registration_date
-                fuel_type
             }
         }
     `;
@@ -60,7 +51,6 @@ const VehicleForm = ({ currentStep, commission, onChange }) => {
 
     const [decodeScanned] = useLazyQuery(DECODE_SCANNDED, {
         onCompleted: (data) => {
-            console.log(data);
             if (data.decode === null) return;
             if (data.decode.pk && data.decode.label) {
                 onChange(
@@ -75,7 +65,7 @@ const VehicleForm = ({ currentStep, commission, onChange }) => {
     });
 
     const [code, setCode] = useState("");
-    const debouncedCode = useDebounce(code, 300, () => decodeScanned({ variables: { code: code } }));
+    const debouncedCode = useDebounce(code, 300, () => decodeScanned({ variables: { code: code, create: true } }));
 
     const loadVehicles = (page) => {
         fetchMore({

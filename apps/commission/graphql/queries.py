@@ -20,11 +20,11 @@ def resolve_components(_, info, pagination=None, filters=None):
 
 
 @query.field("decode")
-def resolve_decode_scanned_code(_, info, code):
+def resolve_decode_scanned_code(_, info, code, create):
     code = code.strip()
     if ";" in code:
-        return decode_mpojazd(code)
-    return decode_aztec_code(code)
+        return decode_mpojazd(code, create)
+    return decode_aztec_code(code, create)
 
 
 @commission.field("saleInvoices")

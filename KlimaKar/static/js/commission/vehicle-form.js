@@ -11,7 +11,7 @@ $(function () {
         $("#id_registration_plate").val(data.registration_plate);
         $("#id_vin").val(data.vin);
         $("#id_fuel_type").val(data.fuel_type);
-        $("#id_registration_date").val(data.registration_date);
+        $("#id_registration_date").val(moment(data.registration_date).format("DD.MM.YYYY"));
         $("#id_aztec").val("");
     }
 
@@ -32,7 +32,7 @@ $(function () {
                 contentType: "application/json",
                 data: JSON.stringify({
                     query: `query {
-                        decode(code: "${code}") {
+                        decode(code: "${code}", create: false) {
                             pk
                             label
                             registration_plate
