@@ -101,7 +101,7 @@ const ComponentForm = ({ currentStep, commission, onChange }) => {
                                     component: value,
                                     vc_name: label
                                 },
-                                true
+                                value ? true : false
                             )
                         }
                     />

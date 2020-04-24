@@ -88,7 +88,7 @@ const ContractorForm = ({ currentStep, commission, onChange }) => {
                                     contractor: value,
                                     contractorLabel: label
                                 },
-                                true
+                                value ? true : false
                             )
                         }
                     />

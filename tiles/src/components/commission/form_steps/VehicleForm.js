@@ -129,7 +129,7 @@ const VehicleForm = ({ currentStep, commission, onChange }) => {
                                         vehicle: value,
                                         vc_name: label,
                                     },
-                                    true
+                                    value ? true : false
                                 )
                             }
                         />

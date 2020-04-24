@@ -6,7 +6,7 @@ import InfiniteScroll from "react-infinite-scroller";
 import Popover from "react-bootstrap/Popover";
 import Overlay from "react-bootstrap/Overlay";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusSquare } from "@fortawesome/free-solid-svg-icons";
+import { faPlusSquare, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 import ContentLoading from "./ContentLoading";
 import "../../styles/infinite-select.css";
@@ -45,12 +45,33 @@ const InfiniteSelect = (props) => {
     }, []);
 
     return (
-        <div className={`infinite-select ${props.className}`} ref={ref}>
+        <div className={`infinite-select${show ? " is-open" : ""} ${props.className ? props.className : ""}`} ref={ref}>
             {props.label ? <Form.Label>{props.label}</Form.Label> : null}
-            <div className="infinite-select-display form-control form-control-lg" onClick={handleOpenSelect}>
-                {selected && selectedLabel ? selectedLabel : props.selectPlaceholder}
+            <div className="infinite-select-display" onClick={handleOpenSelect}>
+                {selected && selectedLabel ? (
+                    <div className="d-flex align-items-center">
+                        {selectedLabel}
+                        <FontAwesomeIcon
+                            className="ml-2"
+                            icon={faTimes}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                selectOption(null, null);
+                            }}
+                        />
+                    </div>
+                ) : (
+                    <div className="infinite-select-placeholder">{props.selectPlaceholder}</div>
+                )}
             </div>
-            <Overlay show={show} placement="bottom" container={ref.current} containerPadding={0}>
+            <Overlay
+                show={show}
+                placement="bottom"
+                container={ref.current}
+                containerPadding={0}
+                rootClose={true}
+                onHide={() => setShow(false)}
+            >
                 <Popover>
                     <Popover.Content>
                         <div className="infinite-select-popup">
@@ -121,6 +142,7 @@ InfiniteSelect.propTypes = {
     selectedLabel: PropTypes.string,
     onChange: PropTypes.func,
     className: PropTypes.string,
+    required: PropTypes.bool,
 };
 
 export default InfiniteSelect;

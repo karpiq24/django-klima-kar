@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2020-04-24
+
+-   [TILES] Dodano możliwosć odznaczenia wybranego obiektu w niewymaganych polach wyboru
+-   [TILES] Poprawiono wygląd pól wyboru
+
 ## 2020-04-23
 
 -   zamiast wyświetlać formularz po skanowaniu dowodu rejestracyjnego, pojazd jest zapisywany w tle

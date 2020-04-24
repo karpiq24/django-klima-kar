@@ -63,6 +63,68 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
     return (
         <Form.Group>
             <h2>Wybierz pozycje zlecenia:</h2>
+            <div className="mb-2 service-button-container">
+                {data.services.objects.map((service) => {
+                    if (service.is_ware_service) {
+                        return (
+                            <Button key={service.id} size="xxl mr-2" onClick={() => handleWareService(service)}>
+                                {service.name}
+                            </Button>
+                        );
+                    }
+                    return (
+                        <Button
+                            key={service.id}
+                            size="xxl mr-2"
+                            onClick={() =>
+                                addItem({
+                                    name: service.name,
+                                    price: service.price_brutto || "",
+                                    quantity: service.quantity || 1,
+                                    description: service.description || "",
+                                    ware: service.ware || "",
+                                })
+                            }
+                        >
+                            {service.button_name || service.name}
+                        </Button>
+                    );
+                })}
+                <Button size="xxl mr-2" onClick={() => setShowOtherServices(true)}>
+                    Inne usługi
+                </Button>
+                <ServiceSelectModal
+                    show={showOtherServices}
+                    onHide={() => setShowOtherServices(false)}
+                    onSelect={(service) =>
+                        addItem({
+                            name: service.name || "",
+                            price: service.price_brutto || "",
+                            quantity: service.quantity || 1,
+                            description: service.description || "",
+                            ware: service.ware ? service.ware.id : null,
+                            wareLabel: service.ware ? service.ware.index : null,
+                        })
+                    }
+                />
+                {wareService ? (
+                    <WareSelectModal
+                        show={showWareModal}
+                        wareName={wareService.ware_filter}
+                        onHide={() => setShowWareModal(false)}
+                        onSelect={(ware) =>
+                            addItem({
+                                name: wareService.name || "",
+                                price: ware.retail_price || "",
+                                quantity: wareService.quantity || 1,
+                                description: wareService.description || "",
+                                ware: ware.id,
+                                wareLabel: ware.index,
+                            })
+                        }
+                    />
+                ) : null}
+            </div>
             {commission.items.length > 0 ? (
                 <Table striped bordered hover className="big-table">
                     <thead>
@@ -142,68 +204,6 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                     </tfoot>
                 </Table>
             ) : null}
-            <div className="mb-2 service-button-container">
-                {data.services.objects.map((service) => {
-                    if (service.is_ware_service) {
-                        return (
-                            <Button key={service.id} size="xxl mr-2" onClick={() => handleWareService(service)}>
-                                {service.name}
-                            </Button>
-                        );
-                    }
-                    return (
-                        <Button
-                            key={service.id}
-                            size="xxl mr-2"
-                            onClick={() =>
-                                addItem({
-                                    name: service.name,
-                                    price: service.price_brutto || "",
-                                    quantity: service.quantity || 1,
-                                    description: service.description || "",
-                                    ware: service.ware || "",
-                                })
-                            }
-                        >
-                            {service.button_name || service.name}
-                        </Button>
-                    );
-                })}
-                <Button size="xxl mr-2" onClick={() => setShowOtherServices(true)}>
-                    Inne usługi
-                </Button>
-                <ServiceSelectModal
-                    show={showOtherServices}
-                    onHide={() => setShowOtherServices(false)}
-                    onSelect={(service) =>
-                        addItem({
-                            name: service.name || "",
-                            price: service.price_brutto || "",
-                            quantity: service.quantity || 1,
-                            description: service.description || "",
-                            ware: service.ware ? service.ware.id : null,
-                            wareLabel: service.ware ? service.ware.index : null,
-                        })
-                    }
-                />
-                {wareService ? (
-                    <WareSelectModal
-                        show={showWareModal}
-                        wareName={wareService.ware_filter}
-                        onHide={() => setShowWareModal(false)}
-                        onSelect={(ware) =>
-                            addItem({
-                                name: wareService.name || "",
-                                price: ware.retail_price || "",
-                                quantity: wareService.quantity || 1,
-                                description: wareService.description || "",
-                                ware: ware.id,
-                                wareLabel: ware.index,
-                            })
-                        }
-                    />
-                ) : null}
-            </div>
         </Form.Group>
     );
 };
