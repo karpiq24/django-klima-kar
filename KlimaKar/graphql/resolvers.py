@@ -6,7 +6,8 @@ class BaseModelFormResolver(object):
     inlines = {}
     inlines_parent = None
 
-    def __init__(self, data):
+    def __init__(self, data, instance=None):
+        self.object = instance
         self.inlines_data = {}
         self.inlines_forms = {}
         for key, _ in self.inlines.items():
@@ -22,7 +23,7 @@ class BaseModelFormResolver(object):
         return data
 
     def validate(self):
-        self.form = self.form_class(data=self.data)
+        self.form = self.form_class(data=self.data, instance=self.object)
         valid = self.form.is_valid()
         for key, form_class in self.inlines.items():
             self.inlines_forms[key] = []
@@ -66,6 +67,5 @@ class BaseModelFormResolver(object):
     def process(self):
         if self.validate():
             obj = self.save()
-            print(obj)
             return {"status": True, "errors": [], "object": obj}
         return {"status": False, "errors": self.errors(), "object": None}

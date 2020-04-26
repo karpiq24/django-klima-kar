@@ -1,5 +1,11 @@
 extend type Query {
     contractors(pagination: PageInput, filters: ContractorFilter): ContractorConnection!
+    gusAddress(nip: String!): GusAddress
+}
+
+extend type Mutation {
+    addContractor(data: ContractorInput!): ContractorPayload!
+    updateContractor(id: ID!, data: ContractorInput!): ContractorPayload!
 }
 
 type Contractor {
@@ -24,6 +30,13 @@ type ContractorConnection {
     objects: [Contractor]!
 }
 
+type GusAddress {
+    name: String
+    street_address: String
+    postal_code: String
+    city: String
+}
+
 input ContractorFilter {
     id: ID
     name__icontains: String
@@ -41,4 +54,10 @@ input ContractorInput {
     bdo_number: String
     phone_1: String
     phone_2: String
+}
+
+type ContractorPayload {
+    status: Boolean!
+    errors: [Error]
+    object: Contractor
 }

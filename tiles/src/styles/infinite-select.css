@@ -1,5 +1,6 @@
 .infinite-select {
     position: relative;
+    width: 100%;
 }
 
 .infinite-select-display {

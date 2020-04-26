@@ -4,6 +4,7 @@ extend type Query {
 
 extend type Mutation {
     addComponent(data: ComponentInput!): ComponentPayload!
+    updateComponent(id: ID!, data: ComponentInput!): ComponentPayload!
 }
 
 type ComponentConnection {
@@ -23,12 +24,6 @@ type Component {
     last_commission: Commission
 }
 
-enum ComponentType {
-    COMPRESSOR
-    HEATER
-    OTHER
-}
-
 input ComponentFilter {
     id: ID
     model__icontains: String
@@ -37,7 +32,7 @@ input ComponentFilter {
 }
 
 input ComponentInput {
-    component_type: ComponentType!
+    component_type: String
     model: String
     serial_number: String
     catalog_number: String

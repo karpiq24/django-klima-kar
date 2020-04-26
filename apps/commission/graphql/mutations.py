@@ -1,5 +1,5 @@
 from KlimaKar.graphql.resolvers import BaseModelFormResolver
-from apps.commission.models import Commission, CommissionNote
+from apps.commission.models import Commission, CommissionNote, Component, Vehicle
 from apps.commission.forms import (
     CommissionModelForm,
     CommissionItemModelForm,
@@ -18,7 +18,7 @@ def resolve_update_status(_, info, pk, status):
     return c
 
 
-class AddCommissionResolver(BaseModelFormResolver):
+class CommissionFormResolver(BaseModelFormResolver):
     form_class = CommissionModelForm
     inlines = {"items": CommissionItemModelForm}
     inlines_parent = "commission"
@@ -26,25 +26,37 @@ class AddCommissionResolver(BaseModelFormResolver):
 
 @mutation.field("addComission")
 def resolve_add_comission(_, info, data):
-    return AddCommissionResolver(data).process()
+    return CommissionFormResolver(data).process()
 
 
-class AddComponentResolver(BaseModelFormResolver):
+class ComponentFormResolver(BaseModelFormResolver):
     form_class = ComponentModelForm
 
 
 @mutation.field("addComponent")
 def resolve_add_component(_, info, data):
-    return AddComponentResolver(data).process()
+    return ComponentFormResolver(data).process()
 
 
-class AddVehicleResolver(BaseModelFormResolver):
+@mutation.field("updateComponent")
+def resolve_update_component(_, info, id, data):
+    instance = Component.objects.get(pk=id)
+    return ComponentFormResolver(data, instance).process()
+
+
+class VehicleFormResolver(BaseModelFormResolver):
     form_class = VehicleModelForm
 
 
 @mutation.field("addVehicle")
 def resolve_add_vehicle(_, info, data):
-    return AddVehicleResolver(data).process()
+    return VehicleFormResolver(data).process()
+
+
+@mutation.field("updateVehicle")
+def resolve_update_vehicle(_, info, id, data):
+    instance = Vehicle.objects.get(pk=id)
+    return VehicleFormResolver(data, instance).process()
 
 
 @mutation.field("addCommissionNote")

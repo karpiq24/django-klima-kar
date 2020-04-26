@@ -1,6 +1,7 @@
 from KlimaKar.graphql.utils import get_paginated_results
 from apps.invoicing.models import Contractor, SaleInvoice, ServiceTemplate
 from apps.invoicing.graphql import query, invoice
+from apps.invoicing.gus import GUS
 
 
 @query.field("contractors")
@@ -16,6 +17,13 @@ def resolve_invoices(_, info, pagination=None, filters=None):
 @query.field("services")
 def resolve_services(_, info, pagination=None, filters=None):
     return get_paginated_results(ServiceTemplate.objects.all(), pagination, filters)
+
+
+@query.field("gusAddress")
+def resolve_gus_address(_, info, nip):
+    if len(nip) != 10:
+        return None
+    return GUS.get_gus_address(nip)
 
 
 @invoice.field("items")

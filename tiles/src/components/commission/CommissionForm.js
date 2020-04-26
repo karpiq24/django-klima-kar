@@ -4,7 +4,6 @@ import { gql } from "apollo-boost";
 import { useLazyQuery } from "@apollo/react-hooks";
 
 import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,9 +11,9 @@ import { faArrowLeft, faArrowRight, faSave, faCheck } from "@fortawesome/free-so
 
 import ContentLoading from "../common/ContentLoading";
 import TypeInput from "./form_steps/TypeInput";
-import VehicleForm from "./form_steps/VehicleForm";
-import ComponentForm from "./form_steps/ComponentForm";
-import ContractorForm from "./form_steps/ContractorForm";
+import VehicleInput from "./form_steps/VehicleInput";
+import ComponentInput from "./form_steps/ComponentInput";
+import ContractorInput from "./form_steps/ContractorInput";
 import StatusInput from "./form_steps/StatusInput";
 import DatesInput from "./form_steps/DatesInput";
 import DescriptionInput from "./form_steps/DescriptionInput";
@@ -302,14 +301,14 @@ const CommissionForm = (props) => {
                         Dalej <FontAwesomeIcon icon={faArrowRight} />
                     </Button>
                 </div>
-                <Form onSubmit={handleSubmit}>
+                <div>
                     <TypeInput currentStep={currentStep} commission={commission} onChange={handleChanges} />
                     {commission.commission_type === "VH" ? (
-                        <VehicleForm currentStep={currentStep} onChange={handleChanges} commission={commission} />
+                        <VehicleInput currentStep={currentStep} onChange={handleChanges} commission={commission} />
                     ) : (
-                        <ComponentForm currentStep={currentStep} onChange={handleChanges} commission={commission} />
+                        <ComponentInput currentStep={currentStep} onChange={handleChanges} commission={commission} />
                     )}
-                    <ContractorForm currentStep={currentStep} onChange={handleChanges} commission={commission} />
+                    <ContractorInput currentStep={currentStep} onChange={handleChanges} commission={commission} />
                     <StatusInput currentStep={currentStep} onChange={handleChanges} commission={commission} />
                     <DatesInput currentStep={currentStep} onChange={handleChanges} commission={commission} />
                     <DescriptionInput currentStep={currentStep} onChange={handleChanges} commission={commission} />
@@ -327,7 +326,7 @@ const CommissionForm = (props) => {
                             <FontAwesomeIcon icon={faSave} /> Zapisz
                         </Button>
                     ) : null}
-                </Form>
+                </div>
             </div>
         </Container>
     );

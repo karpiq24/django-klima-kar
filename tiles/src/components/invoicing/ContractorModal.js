@@ -31,7 +31,7 @@ const CONTRACTOR = gql`
 
 const ContractorModal = ({ id, show, onHide }) => {
     const { loading, data } = useQuery(CONTRACTOR, {
-        variables: { filters: { id: id } }
+        variables: { filters: { id: id } },
     });
     let contractor = null;
     if (!loading) {
@@ -124,7 +124,7 @@ const ContractorModal = ({ id, show, onHide }) => {
 ContractorModal.propTypes = {
     id: PropTypes.number.isRequired,
     show: PropTypes.bool.isRequired,
-    onHide: PropTypes.func.isRequired
+    onHide: PropTypes.func.isRequired,
 };
 
 export default ContractorModal;

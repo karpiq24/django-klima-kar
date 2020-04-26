@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2020-04-26
+
+-   Dodano możliwosć edycji pojazdów, podzespołów i kontrahentów poprzez API GraphQL
+-   [TILES] Dodano możliwość dodawania nowych oraz edycji pojazdów, podzespołów i kontrahentów
+
 ## 2020-04-24
 
 -   [TILES] Dodano możliwosć odznaczenia wybranego obiektu w niewymaganych polach wyboru

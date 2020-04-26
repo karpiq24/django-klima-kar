@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useQuery } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
 import moment from "moment";
@@ -17,7 +18,6 @@ import ContractorModal from "../invoicing/ContractorModal";
 import VehicleModal from "../commission/VehicleModal";
 import ComponentModal from "../commission/ComponentModal";
 import CommissionCard from "./CommissionCard";
-import { Link } from "react-router-dom";
 
 const COMISSIONS = gql`
     query getComissions($pagination: PageInput, $filters: CommissionFilter) {
@@ -57,7 +57,7 @@ const COMISSIONS = gql`
     }
 `;
 
-const CommissionList = props => {
+const CommissionList = (props) => {
     const pageSize = 25;
     const [status, setStatus] = useState(["OPEN"]);
     const [contractor, setContractor] = useState(null);
@@ -69,8 +69,8 @@ const CommissionList = props => {
     const { loading, data, refetch } = useQuery(COMISSIONS, {
         variables: {
             pagination: { pageSize: pageSize, page: 1 },
-            filters: { status: "OPEN" }
-        }
+            filters: { status: "OPEN" },
+        },
     });
 
     useEffect(() => {
@@ -83,10 +83,10 @@ const CommissionList = props => {
     const breakpointColumnsObj = {
         default: 3,
         1400: 2,
-        700: 1
+        700: 1,
     };
 
-    const handleStatusChange = val => {
+    const handleStatusChange = (val) => {
         setStatus(val);
         if (val === "DONE") {
             refetch({ filters: { status: val, end_date: moment().format("YYYY-MM-DD") } });
@@ -95,21 +95,21 @@ const CommissionList = props => {
         }
     };
 
-    const handlePageChange = page => {
+    const handlePageChange = (page) => {
         refetch({ pagination: { page: page, pageSize: pageSize } });
     };
 
-    const openContractorModal = value => {
+    const openContractorModal = (value) => {
         setContractor(Number(value));
         setContractorModalShow(true);
     };
 
-    const openVehicleModal = value => {
+    const openVehicleModal = (value) => {
         setVehicle(Number(value));
         setVehicleModalShow(true);
     };
 
-    const openComponentModal = value => {
+    const openComponentModal = (value) => {
         setComponent(Number(value));
         setComponentModalShow(true);
     };
@@ -167,7 +167,7 @@ const CommissionList = props => {
                         className="card-container"
                         columnClassName="card-container-column"
                     >
-                        {data.commissions.objects.map(commission => (
+                        {data.commissions.objects.map((commission) => (
                             <CommissionCard
                                 key={commission.id}
                                 commission={commission}

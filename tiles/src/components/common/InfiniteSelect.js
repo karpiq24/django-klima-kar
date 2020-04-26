@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 
-import Form from "react-bootstrap/Form";
 import InfiniteScroll from "react-infinite-scroller";
+
+import Form from "react-bootstrap/Form";
 import Popover from "react-bootstrap/Popover";
 import Overlay from "react-bootstrap/Overlay";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlusSquare, faTimes } from "@fortawesome/free-solid-svg-icons";
 
@@ -97,7 +99,10 @@ const InfiniteSelect = (props) => {
                                             <div
                                                 key="create-option"
                                                 className="infinite-select-create"
-                                                onClick={() => props.onCreate(search)}
+                                                onClick={() => {
+                                                    setShow(false);
+                                                    props.onCreate(search);
+                                                }}
                                             >
                                                 <FontAwesomeIcon icon={faPlusSquare} />{" "}
                                                 {props.createLabel ? props.createLabel : "Dodaj nowy"}

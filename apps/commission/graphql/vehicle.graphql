@@ -5,6 +5,7 @@ extend type Query {
 
 extend type Mutation {
     addVehicle(data: VehicleInput!): VehiclePayload!
+    updateVehicle(id: ID!, data: VehicleInput!): VehiclePayload!
 }
 
 type VehicleConnection {
@@ -44,20 +45,6 @@ type ScannedVehicle {
     url: String!
 }
 
-enum FuelType {
-    PETROL
-    DIESEL
-    MIXED
-    LPG
-    CNG
-    HYDROGEN
-    LNG
-    BIODIESEL
-    ETHANOL
-    ELECTRIC
-    OTHER
-}
-
 input VehicleFilter {
     id: ID
     registration_plate__icontains: String
@@ -72,7 +59,7 @@ input VehicleInput {
     engine_power: Int
     production_year: Int
     registration_date: String
-    fuel_type: FuelType
+    fuel_type: String
 }
 
 type VehiclePayload {

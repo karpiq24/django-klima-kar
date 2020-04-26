@@ -25,7 +25,7 @@ const COMPONENT = gql`
 
 const ComponentModal = ({ id, show, onHide }) => {
     const { loading, data } = useQuery(COMPONENT, {
-        variables: { filters: { id: id } }
+        variables: { filters: { id: id } },
     });
     let component = null;
     if (!loading) {
@@ -79,7 +79,7 @@ const ComponentModal = ({ id, show, onHide }) => {
 ComponentModal.propTypes = {
     id: PropTypes.number.isRequired,
     show: PropTypes.bool.isRequired,
-    onHide: PropTypes.func.isRequired
+    onHide: PropTypes.func.isRequired,
 };
 
 export default ComponentModal;
