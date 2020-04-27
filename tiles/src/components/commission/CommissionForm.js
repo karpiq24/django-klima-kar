@@ -251,7 +251,7 @@ const CommissionForm = (props) => {
             getCommission({ variables: { filters: { id: id } } });
         }
         setIsLoading(false);
-    }, []);
+    }, [props.match.params.id]);
 
     if (isLoading || loading) return <ContentLoading />;
 
