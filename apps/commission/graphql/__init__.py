@@ -5,8 +5,6 @@ from django.conf import settings
 
 from apps.commission.graphql.types import (
     commission,
-    commission_type,
-    commission_status,
     query,
     mutation,
     vehicle,
@@ -22,8 +20,6 @@ CommissionTypeDefs = load_schema_from_path(
 )
 CommissionTypes = [
     commission,
-    commission_type,
-    commission_status,
     query,
     mutation,
     vehicle,

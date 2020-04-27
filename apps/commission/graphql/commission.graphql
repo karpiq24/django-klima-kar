@@ -3,8 +3,9 @@ extend type Query {
 }
 
 extend type Mutation {
-    updateStatus(pk: ID!, status: CommissionStatus!): Commission!
-    addComission(data: CommissionInput!): CommissionPayload!
+    updateStatus(pk: ID!, status: String!): Commission!
+    addCommission(data: CommissionInput!): CommissionPayload!
+    updateCommission(id: ID!, data: CommissionInput!): CommissionPayload!
     addCommissionNote(commission: ID!, contents: String!): CommissionNote
     updateCommissionNote(pk: ID!, contents: String!, isActive: Boolean!): CommissionNote!
 }
@@ -42,22 +43,9 @@ type CommissionPayload {
 
 input CommissionFilter {
     id: ID
-    status: CommissionStatus
+    status: String
     vc_name__icontains: String
     end_date: String
-}
-
-enum CommissionStatus {
-    OPEN
-    READY
-    DONE
-    CANCELLED
-    ON_HOLD
-}
-
-enum CommissionType {
-    VEHICLE
-    COMPONENT
 }
 
 type CommissionNote {
@@ -69,6 +57,7 @@ type CommissionNote {
 }
 
 type CommissionItem {
+    id: ID!
     name: String!
     description: String
     quantity: Int!
@@ -77,21 +66,23 @@ type CommissionItem {
 }
 
 input CommissionItemInput {
-    name: String!
+    id: ID
+    name: String
     description: String
-    quantity: Int!
-    price: Float!
+    quantity: Int
+    price: Float
+    ware: ID
 }
 
 input CommissionInput {
-    commission_type: CommissionType!
-    status: CommissionStatus!
+    commission_type: String
+    status: String
     vc_name: String
     vehicle: ID
     component: ID
     contractor: ID
     description: String
-    start_date: String!
+    start_date: String
     end_date: String
     items: [CommissionItemInput]
 }

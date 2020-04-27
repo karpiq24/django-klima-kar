@@ -22,6 +22,7 @@ input PageInput {
 type Error {
     field: String
     inline: String
+    inline_id: ID
     message: String
     code: String
 }

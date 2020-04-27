@@ -38,6 +38,7 @@
     "react-infinite-scroller": "^1.2.4",
     "react-masonry-css": "^1.0.14",
     "react-router-dom": "^5.1.2",
+    "sweetalert2": "^9.10.12",
     "uniforms": "^2.6.6",
     "uniforms-bootstrap4": "^2.6.6",
     "uniforms-bridge-graphql": "^2.6.6"

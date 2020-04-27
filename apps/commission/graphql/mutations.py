@@ -24,9 +24,15 @@ class CommissionFormResolver(BaseModelFormResolver):
     inlines_parent = "commission"
 
 
-@mutation.field("addComission")
-def resolve_add_comission(_, info, data):
+@mutation.field("addCommission")
+def resolve_add_commission(_, info, data):
     return CommissionFormResolver(data).process()
+
+
+@mutation.field("updateCommission")
+def resolve_update_commission(_, info, id, data):
+    instance = Commission.objects.get(pk=id)
+    return CommissionFormResolver(data, instance).process()
 
 
 class ComponentFormResolver(BaseModelFormResolver):

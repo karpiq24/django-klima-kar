@@ -13,8 +13,9 @@ import ContentLoading from "../../common/ContentLoading";
 import InfiniteSelect from "../../common/InfiniteSelect";
 import ComponentForm from "../ComponentForm";
 import ModalForm from "../../common/ModalForm";
+import Alert from "react-bootstrap/Alert";
 
-const ComponentInput = ({ currentStep, commission, onChange }) => {
+const ComponentInput = ({ currentStep, commission, onChange, errors }) => {
     if (currentStep !== 2) return null;
 
     const COMPONENTS = gql`
@@ -75,90 +76,108 @@ const ComponentInput = ({ currentStep, commission, onChange }) => {
             {data === undefined ? (
                 <ContentLoading />
             ) : (
-                <Form.Group>
-                    <h2>Wybierz podzespół:</h2>
-                    <div className="d-flex">
-                        <InfiniteSelect
-                            refetch={(value) =>
-                                refetch({
-                                    filters: { model__icontains: value.trim() },
-                                    pagination: { page: 1 },
-                                })
-                            }
-                            searchPlaceholder="Podaj model"
-                            createLabel="Dodaj nowy podzespół"
-                            autoFocus={true}
-                            show={true}
-                            loadMore={loadComponents}
-                            hasMore={data.components.pageInfo.hasNextPage}
-                            objects={data.components.objects}
-                            getObjectLabel={(component) =>
-                                [
-                                    component.get_component_type_display,
-                                    component.model,
-                                    component.serial_number,
-                                    component.catalog_number,
-                                ]
-                                    .filter(Boolean)
-                                    .join(" ")
-                            }
-                            selected={commission.component}
-                            selectedLabel={commission.vc_name}
-                            onCreate={(value) => {
-                                setCreateInitial({ model: value });
-                                setShowModal(true);
-                            }}
-                            onChange={(value, label) =>
-                                onChange(
-                                    {
-                                        component: value,
-                                        vc_name: label,
-                                    },
-                                    value ? true : false
-                                )
-                            }
-                        />
-                        {commission.component ? (
-                            <Button
-                                variant="outline-warning"
-                                size="lg"
-                                className="ml-2 d-flex align-items-center"
-                                onClick={() => setShowModal(true)}
-                            >
-                                <FontAwesomeIcon className="mr-2" icon={faEdit} />
-                                Edytuj
-                            </Button>
-                        ) : null}
-
-                        <ModalForm
-                            show={showModal}
-                            onHide={() => setShowModal(false)}
-                            formId="component-form"
-                            title={createInitial ? "Dodaj nowy podzespół" : "Edycja podzespołu"}
-                        >
-                            <ComponentForm
-                                componentId={createInitial ? null : commission.component}
-                                initial={createInitial}
-                                onSaved={(component) =>
+                <>
+                    <div className="error-list">
+                        {errors.component
+                            ? errors.component.map((error, idx) => (
+                                  <Alert key={idx} variant="danger">
+                                      {error}
+                                  </Alert>
+                              ))
+                            : null}
+                        {errors.vc_name
+                            ? errors.vc_name.map((error, idx) => (
+                                  <Alert key={idx} variant="danger">
+                                      {error}
+                                  </Alert>
+                              ))
+                            : null}
+                    </div>
+                    <Form.Group>
+                        <h2>Wybierz podzespół:</h2>
+                        <div className="d-flex">
+                            <InfiniteSelect
+                                refetch={(value) =>
+                                    refetch({
+                                        filters: { model__icontains: value.trim() },
+                                        pagination: { page: 1 },
+                                    })
+                                }
+                                searchPlaceholder="Podaj model"
+                                createLabel="Dodaj nowy podzespół"
+                                autoFocus={true}
+                                show={true}
+                                loadMore={loadComponents}
+                                hasMore={data.components.pageInfo.hasNextPage}
+                                objects={data.components.objects}
+                                getObjectLabel={(component) =>
+                                    [
+                                        component.get_component_type_display,
+                                        component.model,
+                                        component.serial_number,
+                                        component.catalog_number,
+                                    ]
+                                        .filter(Boolean)
+                                        .join(" ")
+                                }
+                                selected={commission.component}
+                                selectedLabel={commission.vc_name}
+                                onCreate={(value) => {
+                                    setCreateInitial({ model: value });
+                                    setShowModal(true);
+                                }}
+                                onChange={(value, label) =>
                                     onChange(
                                         {
-                                            component: component.id,
-                                            vc_name: [
-                                                component.get_component_type_display,
-                                                component.model,
-                                                component.serial_number,
-                                                component.catalog_number,
-                                            ]
-                                                .filter(Boolean)
-                                                .join(" "),
+                                            component: value,
+                                            vc_name: label,
                                         },
-                                        true
+                                        value ? true : false
                                     )
                                 }
                             />
-                        </ModalForm>
-                    </div>
-                </Form.Group>
+                            {commission.component ? (
+                                <Button
+                                    variant="outline-warning"
+                                    size="lg"
+                                    className="ml-2 d-flex align-items-center"
+                                    onClick={() => setShowModal(true)}
+                                >
+                                    <FontAwesomeIcon className="mr-2" icon={faEdit} />
+                                    Edytuj
+                                </Button>
+                            ) : null}
+
+                            <ModalForm
+                                show={showModal}
+                                onHide={() => setShowModal(false)}
+                                formId="component-form"
+                                title={createInitial ? "Dodaj nowy podzespół" : "Edycja podzespołu"}
+                            >
+                                <ComponentForm
+                                    componentId={createInitial ? null : commission.component}
+                                    initial={createInitial}
+                                    onSaved={(component) =>
+                                        onChange(
+                                            {
+                                                component: component.id,
+                                                vc_name: [
+                                                    component.get_component_type_display,
+                                                    component.model,
+                                                    component.serial_number,
+                                                    component.catalog_number,
+                                                ]
+                                                    .filter(Boolean)
+                                                    .join(" "),
+                                            },
+                                            true
+                                        )
+                                    }
+                                />
+                            </ModalForm>
+                        </div>
+                    </Form.Group>
+                </>
             )}
         </>
     );

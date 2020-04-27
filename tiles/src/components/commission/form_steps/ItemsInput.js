@@ -16,8 +16,9 @@ import ContentLoading from "../../common/ContentLoading";
 import ServiceSelectModal from "./ServiceSelectModal";
 import WareSelectModal from "../../warehouse/WareSelectModal";
 import WareSelect from "../../warehouse/WareSelect";
+import FormField from "../../common/FormField";
 
-const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) => {
+const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, errors }) => {
     if (currentStep !== 7) return null;
 
     const SERVICES = gql`
@@ -79,10 +80,10 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                             onClick={() =>
                                 addItem({
                                     name: service.name,
-                                    price: service.price_brutto || "",
+                                    price: service.price_brutto,
                                     quantity: service.quantity || 1,
-                                    description: service.description || "",
-                                    ware: service.ware || "",
+                                    description: service.description,
+                                    ware: service.ware,
                                 })
                             }
                         >
@@ -98,10 +99,10 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                     onHide={() => setShowOtherServices(false)}
                     onSelect={(service) =>
                         addItem({
-                            name: service.name || "",
-                            price: service.price_brutto || "",
+                            name: service.name,
+                            price: service.price_brutto,
                             quantity: service.quantity || 1,
-                            description: service.description || "",
+                            description: service.description,
                             ware: service.ware ? service.ware.id : null,
                             wareLabel: service.ware ? service.ware.index : null,
                         })
@@ -114,10 +115,10 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                         onHide={() => setShowWareModal(false)}
                         onSelect={(ware) =>
                             addItem({
-                                name: wareService.name || "",
-                                price: ware.retail_price || "",
+                                name: wareService.name,
+                                price: ware.retail_price,
                                 quantity: wareService.quantity || 1,
-                                description: wareService.description || "",
+                                description: wareService.description,
                                 ware: ware.id,
                                 wareLabel: ware.index,
                             })
@@ -137,62 +138,81 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission }) 
                         </tr>
                     </thead>
                     <tbody>
-                        {commission.items.map((item, index) => (
-                            <tr key={item.id || `new_${index}`}>
-                                <td>
-                                    <Form.Control
-                                        value={item.name}
-                                        placeholder="Podaj nazwę"
-                                        size="lg"
-                                        onChange={(event) => onChange(index, { name: event.target.value })}
-                                    />
-                                    <Form.Control
-                                        className="mt-1"
-                                        value={item.description}
-                                        placeholder="Podaj opis"
-                                        size="lg"
-                                        onChange={(event) => onChange(index, { description: event.target.value })}
-                                    />
-                                    <WareSelect
-                                        className="mt-1"
-                                        selectPlaceholder="Wybierz towar"
-                                        selected={item.ware}
-                                        selectedLabel={item.wareLabel}
-                                        onChange={(ware) => onChange(index, { ware: ware.id, wareLabel: ware.index })}
-                                    />
-                                </td>
-                                <td>
-                                    <div className="d-flex align-items-center">
-                                        <Form.Control
-                                            type="number"
-                                            step="0.01"
-                                            value={item.price}
-                                            size="lg"
-                                            onChange={(event) => onChange(index, { price: event.target.value })}
+                        {commission.items.map((item, index) => {
+                            const hasError = errors.items !== undefined && errors.items[index] !== undefined;
+                            return (
+                                <tr key={item.id || `new_${index}`}>
+                                    <td>
+                                        <FormField
+                                            name="name"
+                                            placeholder="Podaj nazwę"
+                                            required={true}
+                                            value={item.name}
+                                            onChange={(event) => onChange(index, { name: event.target.value })}
+                                            errors={hasError ? errors.items[index].name : []}
                                         />
-                                        <span className="ml-2">zł</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <Form.Control
-                                        type="number"
-                                        value={item.quantity}
-                                        size="lg"
-                                        onChange={(event) => onChange(index, { quantity: event.target.value })}
-                                    />
-                                </td>
-                                <td>{displayZloty(item.price * item.quantity)}</td>
-                                <td>
-                                    <FontAwesomeIcon
-                                        icon={faTimes}
-                                        size="2x"
-                                        color="#ff0000"
-                                        cursor="pointer"
-                                        onClick={() => removeItem(index)}
-                                    />
-                                </td>
-                            </tr>
-                        ))}
+                                        <FormField
+                                            className="mt-1"
+                                            name="description"
+                                            placeholder="Podaj opis"
+                                            value={item.description}
+                                            onChange={(event) => onChange(index, { description: event.target.value })}
+                                            errors={hasError ? errors.items[index].description : []}
+                                        />
+                                        <WareSelect
+                                            className="mt-1"
+                                            errors={hasError ? errors.items[index].ware : undefined}
+                                            selectPlaceholder="Wybierz towar"
+                                            selected={item.ware}
+                                            selectedLabel={item.wareLabel}
+                                            onChange={(ware) =>
+                                                onChange(index, { ware: ware.id, wareLabel: ware.index })
+                                            }
+                                        />
+                                    </td>
+                                    <td>
+                                        <div className="d-flex align-items-center">
+                                            <FormField
+                                                name="price"
+                                                type="number"
+                                                step="0.01"
+                                                value={item.price}
+                                                onChange={(e) =>
+                                                    onChange(index, {
+                                                        price: e.target.value !== "" ? Number(e.target.value) : null,
+                                                    })
+                                                }
+                                                errors={hasError ? errors.items[index].price : []}
+                                            />
+                                            <span className="ml-2">zł</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <FormField
+                                            name="quantity"
+                                            type="number"
+                                            value={item.quantity}
+                                            onChange={(e) =>
+                                                onChange(index, {
+                                                    quantity: e.target.value !== "" ? Number(e.target.value) : null,
+                                                })
+                                            }
+                                            errors={hasError ? errors.items[index].quantity : []}
+                                        />
+                                    </td>
+                                    <td>{displayZloty(item.price * item.quantity)}</td>
+                                    <td>
+                                        <FontAwesomeIcon
+                                            icon={faTimes}
+                                            size="2x"
+                                            color="#ff0000"
+                                            cursor="pointer"
+                                            onClick={() => removeItem(index)}
+                                        />
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                     <tfoot>
                         <tr>

@@ -14,8 +14,9 @@ import InfiniteSelect from "../../common/InfiniteSelect";
 import ModalForm from "../../common/ModalForm";
 import ContractorForm from "../../invoicing/ContractorForm";
 import { isInt } from "../../../utils";
+import Alert from "react-bootstrap/Alert";
 
-const ContractorInput = ({ currentStep, commission, onChange }) => {
+const ContractorInput = ({ currentStep, commission, onChange, errors }) => {
     if (currentStep !== 3) return null;
 
     const CONTRACTORS = gql`
@@ -72,75 +73,86 @@ const ContractorInput = ({ currentStep, commission, onChange }) => {
             {data === undefined ? (
                 <ContentLoading />
             ) : (
-                <Form.Group>
-                    <h2>Wybierz kontrahenta:</h2>
-                    <div className="d-flex">
-                        <InfiniteSelect
-                            refetch={(value) =>
-                                refetch({
-                                    filters: { name__icontains: value.trim() },
-                                    pagination: { page: 1 },
-                                })
-                            }
-                            searchPlaceholder="Podaj nazwę"
-                            createLabel="Dodaj nowego kontrahenta"
-                            autoFocus={true}
-                            show={true}
-                            loadMore={loadContractors}
-                            hasMore={data.contractors.pageInfo.hasNextPage}
-                            objects={data.contractors.objects}
-                            getObjectLabel={(contractor) => contractor.name}
-                            selected={commission.contractor}
-                            selectedLabel={commission.contractorLabel}
-                            onCreate={(value) => {
-                                if (isInt(value) && value.length === 9) setCreateInitial({ phone_1: value });
-                                else if (isInt(value)) setCreateInitial({ nip: value });
-                                else setCreateInitial({ name: value });
-                                setShowModal(true);
-                            }}
-                            onChange={(value, label) =>
-                                onChange(
-                                    {
-                                        contractor: value,
-                                        contractorLabel: label,
-                                    },
-                                    value ? true : false
-                                )
-                            }
-                        />
-                        {commission.contractor ? (
-                            <Button
-                                variant="outline-warning"
-                                size="lg"
-                                className="ml-2 d-flex align-items-center"
-                                onClick={() => setShowModal(true)}
-                            >
-                                <FontAwesomeIcon className="mr-2" icon={faEdit} />
-                                Edytuj
-                            </Button>
-                        ) : null}
+                <>
+                    <div className="error-list">
+                        {errors.contractor
+                            ? errors.contractor.map((error, idx) => (
+                                  <Alert key={idx} variant="danger">
+                                      {error}
+                                  </Alert>
+                              ))
+                            : null}
                     </div>
-                    <ModalForm
-                        show={showModal}
-                        onHide={() => setShowModal(false)}
-                        formId="contractor-form"
-                        title={createInitial ? "Dodaj nowego kontrahenta" : "Edycja kontrahenta"}
-                    >
-                        <ContractorForm
-                            contractorId={createInitial ? null : commission.contractor}
-                            initial={createInitial}
-                            onSaved={(contractor) =>
-                                onChange(
-                                    {
-                                        contractor: contractor.id,
-                                        contractorLabel: contractor.name,
-                                    },
-                                    true
-                                )
-                            }
-                        />
-                    </ModalForm>
-                </Form.Group>
+                    <Form.Group>
+                        <h2>Wybierz kontrahenta:</h2>
+                        <div className="d-flex">
+                            <InfiniteSelect
+                                refetch={(value) =>
+                                    refetch({
+                                        filters: { name__icontains: value.trim() },
+                                        pagination: { page: 1 },
+                                    })
+                                }
+                                searchPlaceholder="Podaj nazwę"
+                                createLabel="Dodaj nowego kontrahenta"
+                                autoFocus={true}
+                                show={true}
+                                loadMore={loadContractors}
+                                hasMore={data.contractors.pageInfo.hasNextPage}
+                                objects={data.contractors.objects}
+                                getObjectLabel={(contractor) => contractor.name}
+                                selected={commission.contractor}
+                                selectedLabel={commission.contractorLabel}
+                                onCreate={(value) => {
+                                    if (isInt(value) && value.length === 9) setCreateInitial({ phone_1: value });
+                                    else if (isInt(value)) setCreateInitial({ nip: value });
+                                    else setCreateInitial({ name: value });
+                                    setShowModal(true);
+                                }}
+                                onChange={(value, label) =>
+                                    onChange(
+                                        {
+                                            contractor: value,
+                                            contractorLabel: label,
+                                        },
+                                        value ? true : false
+                                    )
+                                }
+                            />
+                            {commission.contractor ? (
+                                <Button
+                                    variant="outline-warning"
+                                    size="lg"
+                                    className="ml-2 d-flex align-items-center"
+                                    onClick={() => setShowModal(true)}
+                                >
+                                    <FontAwesomeIcon className="mr-2" icon={faEdit} />
+                                    Edytuj
+                                </Button>
+                            ) : null}
+                        </div>
+                        <ModalForm
+                            show={showModal}
+                            onHide={() => setShowModal(false)}
+                            formId="contractor-form"
+                            title={createInitial ? "Dodaj nowego kontrahenta" : "Edycja kontrahenta"}
+                        >
+                            <ContractorForm
+                                contractorId={createInitial ? null : commission.contractor}
+                                initial={createInitial}
+                                onSaved={(contractor) =>
+                                    onChange(
+                                        {
+                                            contractor: contractor.id,
+                                            contractorLabel: contractor.name,
+                                        },
+                                        true
+                                    )
+                                }
+                            />
+                        </ModalForm>
+                    </Form.Group>
+                </>
             )}
         </>
     );

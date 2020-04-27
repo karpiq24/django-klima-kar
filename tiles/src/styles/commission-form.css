@@ -80,6 +80,14 @@ h2 {
     margin-right: 1rem;
 }
 
+.error-list {
+    font-size: 2rem;
+    font-weight: bold;
+    width: 50%;
+    margin: auto;
+    text-align: center;
+}
+
 @media screen and (max-width: 1400px) {
     .service-button-container {
         grid-template-columns: auto auto;

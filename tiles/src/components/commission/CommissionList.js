@@ -18,9 +18,10 @@ import ContractorModal from "../invoicing/ContractorModal";
 import VehicleModal from "../commission/VehicleModal";
 import ComponentModal from "../commission/ComponentModal";
 import CommissionCard from "./CommissionCard";
+import { DONE, OPEN, READY, ON_HOLD, CANCELLED } from "./choices";
 
-const COMISSIONS = gql`
-    query getComissions($pagination: PageInput, $filters: CommissionFilter) {
+const COMMISSIONS = gql`
+    query getCommissions($pagination: PageInput, $filters: CommissionFilter) {
         commissions(pagination: $pagination, filters: $filters) {
             pageInfo {
                 hasPreviousPage
@@ -59,17 +60,17 @@ const COMISSIONS = gql`
 
 const CommissionList = (props) => {
     const pageSize = 25;
-    const [status, setStatus] = useState(["OPEN"]);
+    const [status, setStatus] = useState([OPEN]);
     const [contractor, setContractor] = useState(null);
     const [vehicle, setVehicle] = useState(null);
     const [component, setComponent] = useState(null);
     const [contractorModalShow, setContractorModalShow] = useState(false);
     const [vehicleModalShow, setVehicleModalShow] = useState(false);
     const [componentModalShow, setComponentModalShow] = useState(false);
-    const { loading, data, refetch } = useQuery(COMISSIONS, {
+    const { loading, data, refetch } = useQuery(COMMISSIONS, {
         variables: {
             pagination: { pageSize: pageSize, page: 1 },
-            filters: { status: "OPEN" },
+            filters: { status: OPEN },
         },
     });
 
@@ -88,7 +89,7 @@ const CommissionList = (props) => {
 
     const handleStatusChange = (val) => {
         setStatus(val);
-        if (val === "DONE") {
+        if (val === DONE) {
             refetch({ filters: { status: val, end_date: moment().format("YYYY-MM-DD") } });
         } else {
             refetch({ filters: { status: val } });
@@ -137,19 +138,19 @@ const CommissionList = (props) => {
                     onChange={handleStatusChange}
                     className="pretty-select"
                 >
-                    <ToggleButton value={"OPEN"} variant="primary" size="xl" active>
+                    <ToggleButton value={OPEN} variant="primary" size="xl" active>
                         OTWARTE
                     </ToggleButton>
-                    <ToggleButton value={"READY"} variant="primary" size="xl">
+                    <ToggleButton value={READY} variant="primary" size="xl">
                         GOTOWE
                     </ToggleButton>
-                    <ToggleButton value={"DONE"} variant="primary" size="xl">
+                    <ToggleButton value={DONE} variant="primary" size="xl">
                         ZAMKNIĘTE DZISIAJ
                     </ToggleButton>
-                    <ToggleButton value={"ON_HOLD"} variant="primary" size="xl">
+                    <ToggleButton value={ON_HOLD} variant="primary" size="xl">
                         WSTRZYMANE
                     </ToggleButton>
-                    <ToggleButton value={"CANCELLED"} variant="primary" size="xl">
+                    <ToggleButton value={CANCELLED} variant="primary" size="xl">
                         ANULOWANE
                     </ToggleButton>
                 </ToggleButtonGroup>

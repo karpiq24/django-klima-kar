@@ -85,8 +85,10 @@ const WareSelect = (props) => {
                         `${ware.index}${ware.retail_price !== null ? ` - ${displayZloty(ware.retail_price)}` : ""}`
                     }
                     onChange={(value, label) => {
+                        if (value === null) return null;
                         props.onChange(data.wares.objects.find((x) => x.id === value));
                     }}
+                    errors={props.errors}
                 />
             )}
         </>
@@ -103,6 +105,7 @@ WareSelect.propTypes = {
     selectedLabel: PropTypes.string,
     onChange: PropTypes.func,
     className: PropTypes.string,
+    errors: PropTypes.any,
 };
 
 export default WareSelect;

@@ -14,8 +14,9 @@ import InfiniteSelect from "../../common/InfiniteSelect";
 import useDebounce from "../../common/useDebounce";
 import ModalForm from "../../common/ModalForm";
 import VehicleForm from "../VehicleForm";
+import Alert from "react-bootstrap/Alert";
 
-const VehicleInput = ({ currentStep, commission, onChange }) => {
+const VehicleInput = ({ currentStep, commission, onChange, errors }) => {
     if (currentStep !== 2) return null;
 
     const VEHICLES = gql`
@@ -102,6 +103,14 @@ const VehicleInput = ({ currentStep, commission, onChange }) => {
                 <ContentLoading />
             ) : (
                 <>
+                    <div className="error-list">
+                        {errors.vehicle ? errors.vehicle.map((error, idx) => (
+                            <Alert key={idx} variant="danger">{error}</Alert>
+                        )) : null}
+                        {errors.vc_name ? errors.vc_name.map((error, idx) => (
+                            <Alert key={idx} variant="danger">{error}</Alert>
+                        )) : null}
+                    </div>
                     <div className="d-flex justify-content-between align-items-end vehicle-container">
                         <Form.Group className="w-100">
                             <h2>Wybierz pojazd:</h2>

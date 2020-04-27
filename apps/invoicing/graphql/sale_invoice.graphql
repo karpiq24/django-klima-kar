@@ -29,25 +29,10 @@ type SaleInvoice {
     commissions: [Commission]
 }
 
-enum SaleInvoiceType {
-    TYPE_VAT
-    TYPE_PRO_FORMA
-    TYPE_CORRECTIVE
-    TYPE_WDT
-    TYPE_WDT_PRO_FORMA
-}
-
-enum PaymentType {
-    CASH
-    CARD
-    TRANSFER
-    OTHER
-}
-
 input SaleInvoiceFilter {
     id: ID
-    invoice_type: SaleInvoiceType
-    payment_type: PaymentType
+    invoice_type: String
+    payment_type: String
 }
 
 type SaleInvoiceItem {

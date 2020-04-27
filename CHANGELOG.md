@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-04-27
+
+-   [TILES] Dodano zapisywanie nowych oraz edycję istniejących zleceń
+
 ## 2020-04-26
 
 -   Dodano możliwosć edycji pojazdów, podzespołów i kontrahentów poprzez API GraphQL

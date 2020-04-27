@@ -47,7 +47,12 @@ const InfiniteSelect = (props) => {
     }, []);
 
     return (
-        <div className={`infinite-select${show ? " is-open" : ""} ${props.className ? props.className : ""}`} ref={ref}>
+        <div
+            className={`infinite-select${show ? " is-open" : ""}${
+                props.errors !== undefined ? (props.errors.length > 0 ? " is-invalid" : " is-valid") : ""
+            } ${props.className ? props.className : ""}`}
+            ref={ref}
+        >
             {props.label ? <Form.Label>{props.label}</Form.Label> : null}
             <div className="infinite-select-display" onClick={handleOpenSelect}>
                 {selected && selectedLabel ? (
@@ -148,6 +153,8 @@ InfiniteSelect.propTypes = {
     onChange: PropTypes.func,
     className: PropTypes.string,
     required: PropTypes.bool,
+    isValid: PropTypes.bool,
+    isInvalid: PropTypes.bool,
 };
 
 export default InfiniteSelect;

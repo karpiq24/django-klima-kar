@@ -3,20 +3,12 @@ import PropTypes from "prop-types";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
 import { displayZloty } from "../../../utils";
-import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { COMMISSION_STATUS, VEHICLE } from "../choices";
 
 const CommissionSummary = ({ currentStep, commission }) => {
     if (currentStep !== 8) return null;
-
-    const statusLabels = {
-        OP: "Otwarte",
-        RE: "Gotowe",
-        DO: "Zamknięte",
-        CA: "Anulowane",
-        HO: "Wstrzymane",
-    };
 
     return (
         <Form.Group>
@@ -26,14 +18,14 @@ const CommissionSummary = ({ currentStep, commission }) => {
                         <tbody>
                             <tr>
                                 <td>Typ zlecenia</td>
-                                <td>{commission.commission_type === "VH" ? "Pojazd" : "Podzespół"}</td>
+                                <td>{commission.commission_type === VEHICLE ? "Pojazd" : "Podzespół"}</td>
                             </tr>
                             <tr>
                                 <td>Status zlecenia</td>
-                                <td>{statusLabels[commission.status]}</td>
+                                <td>{COMMISSION_STATUS.filter((x) => x.key === commission.status)[0].label}</td>
                             </tr>
                             <tr>
-                                <td>{commission.commission_type === "VH" ? "Pojazd" : "Podzespół"}</td>
+                                <td>{commission.commission_type === VEHICLE ? "Pojazd" : "Podzespół"}</td>
                                 <td>{commission.vc_name}</td>
                             </tr>
                             <tr>
@@ -46,11 +38,11 @@ const CommissionSummary = ({ currentStep, commission }) => {
                             </tr>
                             <tr>
                                 <td>Data przyjęcia</td>
-                                <td>{commission.start_date.toISOString().split("T")[0]}</td>
+                                <td>{commission.start_date}</td>
                             </tr>
                             <tr>
                                 <td>Data zakończenia</td>
-                                <td>{commission.end_date ? commission.end_date.toISOString().split("T")[0] : ""}</td>
+                                <td>{commission.end_date ? commission.end_date : ""}</td>
                             </tr>
                         </tbody>
                     </Table>

@@ -11,7 +11,7 @@ import { faAsterisk } from "@fortawesome/free-solid-svg-icons";
 
 const FormField = (props) => {
     return (
-        <>
+        <div>
             {props.label ? (
                 <Form.Label>
                     {props.label}
@@ -37,6 +37,7 @@ const FormField = (props) => {
                 />
             ) : props.type === "select" ? (
                 <Form.Control
+                    className={props.className ? props.className : ""}
                     as="select"
                     name={props.name}
                     value={props.value || ""}
@@ -56,13 +57,16 @@ const FormField = (props) => {
                 </Form.Control>
             ) : (
                 <Form.Control
+                    className={props.className ? props.className : ""}
                     name={props.name}
                     type={props.type}
-                    value={props.value || ""}
+                    step={props.step}
+                    value={props.value === null || props.value === undefined ? "" : props.value}
                     onChange={props.onChange}
                     size="lg"
                     isValid={props.errors === undefined}
                     isInvalid={props.errors !== undefined && props.errors.length > 0 ? true : false}
+                    placeholder={props.placeholder}
                 />
             )}
 
@@ -73,7 +77,7 @@ const FormField = (props) => {
                       </Form.Control.Feedback>
                   ))
                 : null}
-        </>
+        </div>
     );
 };
 
@@ -86,6 +90,9 @@ FormField.propTypes = {
     required: PropTypes.bool,
     type: PropTypes.string,
     options: PropTypes.array,
+    placeholder: PropTypes.string,
+    className: PropTypes.string,
+    step: PropTypes.string
 };
 
 export default FormField;

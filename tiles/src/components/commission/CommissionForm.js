@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { gql } from "apollo-boost";
-import { useLazyQuery } from "@apollo/react-hooks";
+import { useLazyQuery, useMutation } from "@apollo/react-hooks";
+import { useHistory } from "react-router-dom";
+import Swal from "sweetalert2";
 
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
+import Container from "react-bootstrap/Container";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight, faSave, faCheck } from "@fortawesome/free-solid-svg-icons";
@@ -19,44 +22,88 @@ import DatesInput from "./form_steps/DatesInput";
 import DescriptionInput from "./form_steps/DescriptionInput";
 import ItemsInput from "./form_steps/ItemsInput";
 import CommissionSummary from "./form_steps/CommissionSummary";
-import Container from "react-bootstrap/Container";
+import { OPEN, VEHICLE } from "./choices";
+import useDebounce from "../common/useDebounce";
 
-const CommissionForm = (props) => {
-    const STEP_COUNT = 8;
-    const COMMISSION = gql`
-        query getCommission($filters: CommissionFilter) {
-            commissions(filters: $filters) {
-                objects {
+const COMMISSION = gql`
+    query getCommission($filters: CommissionFilter) {
+        commissions(filters: $filters) {
+            objects {
+                id
+                vc_name
+                vehicle {
                     id
-                    vc_name
-                    vehicle {
-                        id
-                    }
-                    component {
-                        id
-                    }
-                    commission_type
-                    status
-                    contractor {
-                        id
-                        name
-                    }
+                }
+                component {
+                    id
+                }
+                commission_type
+                status
+                contractor {
+                    id
+                    name
+                }
+                description
+                start_date
+                end_date
+                items {
+                    id
+                    name
                     description
-                    start_date
-                    end_date
-                    value
-                    items {
-                        name
-                        description
-                        quantity
-                        price
+                    quantity
+                    price
+                    ware {
+                        id
+                        index
                     }
                 }
             }
         }
-    `;
+    }
+`;
+
+const ADD_COMMISSION = gql`
+    mutation AddCommission($data: CommissionInput!) {
+        addCommission(data: $data) {
+            status
+            errors {
+                field
+                message
+                inline
+                inline_id
+            }
+            object {
+                id
+                vc_name
+            }
+        }
+    }
+`;
+
+const UPDATE_COMMISSION = gql`
+    mutation UpdateCommission($id: ID!, $data: CommissionInput!) {
+        updateCommission(id: $id, data: $data) {
+            status
+            errors {
+                field
+                message
+                inline
+                inline_id
+            }
+            object {
+                id
+                vc_name
+            }
+        }
+    }
+`;
+
+const CommissionForm = (props) => {
+    const STEP_COUNT = 8;
     const id = props.match.params.id;
-    const [getCommission, { loading, data }] = useLazyQuery(COMMISSION, {
+    const history = useHistory();
+
+    const [getCommission, { loading }] = useLazyQuery(COMMISSION, {
         variables: { filters: { id: id } },
         fetchPolicy: "no-cache",
         onCompleted: (data) => {
@@ -70,9 +117,13 @@ const CommissionForm = (props) => {
                 contractor: obj.contractor ? obj.contractor.id : null,
                 contractorLabel: obj.contractor ? obj.contractor.name : null,
                 description: obj.description,
-                start_date: new Date(obj.start_date),
-                end_date: obj.end_date ? new Date(obj.end_date) : null,
-                items: obj.items,
+                start_date: obj.start_date,
+                end_date: obj.end_date,
+                items: obj.items.map((x) => ({
+                    ...x,
+                    ware: x.ware ? x.ware.id : null,
+                    wareLabel: x.ware ? x.ware.index : null,
+                })),
             });
             setCurrentStep(STEP_COUNT);
             setStepsStatus({
@@ -87,21 +138,85 @@ const CommissionForm = (props) => {
         },
     });
 
+    const handleErrors = (errors) => {
+        let newErrors = {};
+        errors.forEach((error) => {
+            if (error.inline === "items") {
+                if (newErrors.items === undefined) newErrors["items"] = {};
+                if (newErrors.items[error.inline_id] === undefined) newErrors.items[error.inline_id] = {};
+                if (newErrors.items[error.inline_id][error.field])
+                    newErrors.items[error.inline_id][error.field].push(error.message);
+                else newErrors.items[error.inline_id][error.field] = [error.message];
+            } else {
+                if (newErrors[error.field]) newErrors[error.field].push(error.message);
+                else newErrors[error.field] = [error.message];
+            }
+        });
+        setErrors(newErrors);
+        Swal.fire({
+            icon: "error",
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 5000,
+            timerProgressBar: true,
+            title: "Błąd!",
+            text: "Popraw wprowadzone dane.",
+            toast: true,
+        });
+    };
+
+    const [addCommission] = useMutation(ADD_COMMISSION, {
+        onCompleted: (data) => {
+            if (data.addCommission.status === true) {
+                Swal.fire({
+                    icon: "success",
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 5000,
+                    timerProgressBar: true,
+                    title: "Sukces!",
+                    text: "Zlecenie zostało zapisane.",
+                    toast: true,
+                });
+                setErrors({});
+                history.push(`/tiles/zlecenia/${data.addCommission.object.id}`);
+            } else handleErrors(data.addCommission.errors);
+        },
+    });
+
+    const [updateCommission] = useMutation(UPDATE_COMMISSION, {
+        onCompleted: (data) => {
+            if (data.updateCommission.status === true) {
+                Swal.fire({
+                    icon: "success",
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 5000,
+                    timerProgressBar: true,
+                    title: "Sukces!",
+                    text: "Zmiany zostały zapisane.",
+                    toast: true,
+                });
+                setErrors({});
+            } else handleErrors(data.updateCommission.errors);
+        },
+    });
+
     const [currentStep, setCurrentStep] = useState(1);
     const [commission, setCommission] = useState({
-        commission_type: "VH",
-        status: "OP",
+        commission_type: VEHICLE,
+        status: OPEN,
         vc_name: null,
         vehicle: null,
         component: null,
         contractor: null,
         contractorLabel: null,
         description: "",
-        start_date: new Date(),
+        start_date: new Date().toISOString().split("T")[0],
         end_date: null,
         items: [],
-        value: 0,
     });
+    const [errors, setErrors] = useState({});
     const [stepsStatus, setStepsStatus] = useState({
         1: false,
         2: false,
@@ -113,6 +228,21 @@ const CommissionForm = (props) => {
     });
     const [objectID, setObjectID] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    const debouncedCommission = useDebounce(commission, 3000, () => {
+        if (id && !isLoading && !loading)
+            updateCommission({
+                variables: {
+                    id: id,
+                    data: {
+                        ...commission,
+                        contractorLabel: undefined,
+                        __typename: undefined,
+                        items: commission.items.map((x) => ({ ...x, wareLabel: undefined, __typename: undefined })),
+                    },
+                },
+            });
+    });
 
     useEffect(() => {
         const id = props.match.params.id;
@@ -161,9 +291,16 @@ const CommissionForm = (props) => {
         });
     };
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        console.log(commission);
+    const handleSubmit = () => {
+        addCommission({
+            variables: {
+                data: {
+                    ...commission,
+                    contractorLabel: undefined,
+                    items: commission.items.map((x) => ({ ...x, wareLabel: undefined })),
+                },
+            },
+        });
     };
 
     const nextStep = () => {
@@ -215,7 +352,13 @@ const CommissionForm = (props) => {
                         <ButtonGroup>
                             <Button
                                 size="xl"
-                                variant={stepsStatus[1] ? "outline-success" : "outline-dark"}
+                                variant={
+                                    errors.commission_type !== undefined
+                                        ? "outline-danger"
+                                        : stepsStatus[1]
+                                        ? "outline-success"
+                                        : "outline-dark"
+                                }
                                 active={currentStep == 1}
                                 onClick={() => goToStep(1)}
                             >
@@ -224,17 +367,25 @@ const CommissionForm = (props) => {
                             <Button
                                 size="xl"
                                 variant={
-                                    stepsStatus[2] && commission.vc_name !== null ? "outline-success" : "outline-dark"
+                                    errors.commission !== undefined ||
+                                    errors.vehicle !== undefined ||
+                                    errors.vc_name !== undefined
+                                        ? "outline-danger"
+                                        : stepsStatus[2] && commission.vc_name !== null
+                                        ? "outline-success"
+                                        : "outline-dark"
                                 }
                                 active={currentStep == 2}
                                 onClick={() => goToStep(2)}
                             >
-                                {commission.commission_type === "VH" ? "Pojazd" : "Podzespół"}
+                                {commission.commission_type === VEHICLE ? "Pojazd" : "Podzespół"}
                             </Button>
                             <Button
                                 size="xl"
                                 variant={
-                                    stepsStatus[3] && commission.contractor !== null
+                                    errors.contractor !== undefined
+                                        ? "outline-danger"
+                                        : stepsStatus[3] && commission.contractor !== null
                                         ? "outline-success"
                                         : "outline-dark"
                                 }
@@ -246,7 +397,11 @@ const CommissionForm = (props) => {
                             <Button
                                 size="xl"
                                 variant={
-                                    stepsStatus[4] && commission.status !== null ? "outline-success" : "outline-dark"
+                                    errors.status !== undefined
+                                        ? "outline-danger"
+                                        : stepsStatus[4] && commission.status !== null
+                                        ? "outline-success"
+                                        : "outline-dark"
                                 }
                                 active={currentStep == 4}
                                 onClick={() => goToStep(4)}
@@ -256,7 +411,9 @@ const CommissionForm = (props) => {
                             <Button
                                 size="xl"
                                 variant={
-                                    stepsStatus[5] && commission.start_date !== null
+                                    errors.start_date !== undefined || errors.end_date !== undefined
+                                        ? "outline-danger"
+                                        : stepsStatus[5] && commission.start_date !== null
                                         ? "outline-success"
                                         : "outline-dark"
                                 }
@@ -267,7 +424,13 @@ const CommissionForm = (props) => {
                             </Button>
                             <Button
                                 size="xl"
-                                variant={stepsStatus[6] ? "outline-success" : "outline-dark"}
+                                variant={
+                                    errors.description !== undefined
+                                        ? "outline-danger"
+                                        : stepsStatus[6]
+                                        ? "outline-success"
+                                        : "outline-dark"
+                                }
                                 active={currentStep == 6}
                                 onClick={() => goToStep(6)}
                             >
@@ -275,7 +438,13 @@ const CommissionForm = (props) => {
                             </Button>
                             <Button
                                 size="xl"
-                                variant={stepsStatus[7] ? "outline-success" : "outline-dark"}
+                                variant={
+                                    errors.items !== undefined
+                                        ? "outline-danger"
+                                        : stepsStatus[7]
+                                        ? "outline-success"
+                                        : "outline-dark"
+                                }
                                 active={currentStep == 7}
                                 onClick={() => goToStep(7)}
                             >
@@ -302,27 +471,63 @@ const CommissionForm = (props) => {
                     </Button>
                 </div>
                 <div>
-                    <TypeInput currentStep={currentStep} commission={commission} onChange={handleChanges} />
-                    {commission.commission_type === "VH" ? (
-                        <VehicleInput currentStep={currentStep} onChange={handleChanges} commission={commission} />
+                    <TypeInput
+                        currentStep={currentStep}
+                        commission={commission}
+                        onChange={handleChanges}
+                        errors={errors}
+                    />
+                    {commission.commission_type === VEHICLE ? (
+                        <VehicleInput
+                            currentStep={currentStep}
+                            onChange={handleChanges}
+                            commission={commission}
+                            errors={errors}
+                        />
                     ) : (
-                        <ComponentInput currentStep={currentStep} onChange={handleChanges} commission={commission} />
+                        <ComponentInput
+                            currentStep={currentStep}
+                            onChange={handleChanges}
+                            commission={commission}
+                            errors={errors}
+                        />
                     )}
-                    <ContractorInput currentStep={currentStep} onChange={handleChanges} commission={commission} />
-                    <StatusInput currentStep={currentStep} onChange={handleChanges} commission={commission} />
-                    <DatesInput currentStep={currentStep} onChange={handleChanges} commission={commission} />
-                    <DescriptionInput currentStep={currentStep} onChange={handleChanges} commission={commission} />
+                    <ContractorInput
+                        currentStep={currentStep}
+                        onChange={handleChanges}
+                        commission={commission}
+                        errors={errors}
+                    />
+                    <StatusInput
+                        currentStep={currentStep}
+                        onChange={handleChanges}
+                        commission={commission}
+                        errors={errors}
+                    />
+                    <DatesInput
+                        currentStep={currentStep}
+                        onChange={handleChanges}
+                        commission={commission}
+                        errors={errors}
+                    />
+                    <DescriptionInput
+                        currentStep={currentStep}
+                        onChange={handleChanges}
+                        commission={commission}
+                        errors={errors}
+                    />
                     <ItemsInput
                         currentStep={currentStep}
                         onChange={handleItemChanges}
                         addItem={handleAddItem}
                         removeItem={handleRemoveItem}
                         commission={commission}
+                        errors={errors}
                     />
                     <CommissionSummary currentStep={currentStep} commission={commission} />
 
-                    {currentStep === STEP_COUNT ? (
-                        <Button className="flex-align-end" variant="outline-success" size="xxl" type="submit" disabled>
+                    {currentStep === STEP_COUNT && id === undefined ? (
+                        <Button className="flex-align-end" variant="outline-success" size="xxl" onClick={handleSubmit}>
                             <FontAwesomeIcon icon={faSave} /> Zapisz
                         </Button>
                     ) : null}

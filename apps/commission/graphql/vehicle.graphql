@@ -51,9 +51,9 @@ input VehicleFilter {
 }
 
 input VehicleInput {
-    registration_plate: String!
+    registration_plate: String
     vin: String
-    brand: String!
+    brand: String
     model: String
     engine_volume: Int
     engine_power: Int

@@ -28,7 +28,12 @@ class BaseModelFormResolver(object):
         for key, form_class in self.inlines.items():
             self.inlines_forms[key] = []
             for form_data in self.inlines_data[key]:
-                form = form_class(data=form_data)
+                pk = form_data.pop("id", None)
+                if pk:
+                    instance = form_class._meta.model.objects.get(id=pk)
+                else:
+                    instance = None
+                form = form_class(data=form_data, instance=instance)
                 self.inlines_forms[key].append(form)
                 if not form.is_valid():
                     valid = False
@@ -47,7 +52,8 @@ class BaseModelFormResolver(object):
                     for error in error_list:
                         errors.append(
                             {
-                                "inline": f"{key}.{index}",
+                                "inline": key,
+                                "inline_id": index,
                                 "field": field,
                                 "message": error["message"],
                                 "code": error["code"],
@@ -58,10 +64,14 @@ class BaseModelFormResolver(object):
     def save(self):
         self.object = self.form.save()
         for key, form_list in self.inlines_forms.items():
+            model = self.inlines[key]._meta.model
+            to_remove = model.objects.filter(**{self.inlines_parent: self.object})
             for form in form_list:
                 obj = form.save(commit=False)
                 setattr(obj, self.inlines_parent, self.object)
                 obj.save()
+                to_remove = to_remove.exclude(pk=obj.pk)
+            to_remove.delete()
         return self.object
 
     def process(self):
