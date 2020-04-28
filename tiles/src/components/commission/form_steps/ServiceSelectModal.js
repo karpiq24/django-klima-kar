@@ -13,8 +13,8 @@ import { displayZloty } from "../../../utils";
 const ServiceSelectModal = ({ show, onHide, onSelect }) => {
     if (!show) return null;
     const SERVICES = gql`
-        query getServices($pagination: PageInput, $filters: ServiceFilter) {
-            services(pagination: $pagination, filters: $filters) {
+        query getServices($pagination: PageInput, $filters: ServiceFilter, $search: String) {
+            services(pagination: $pagination, filters: $filters, search: $search) {
                 pageInfo {
                     hasPreviousPage
                     hasNextPage
@@ -73,7 +73,8 @@ const ServiceSelectModal = ({ show, onHide, onSelect }) => {
                         <InfiniteSelect
                             refetch={(value) =>
                                 refetch({
-                                    filters: { display_as_button: false, name__icontains: value.trim() },
+                                    search: value.trim(),
+                                    filters: { display_as_button: false },
                                     pagination: { page: 1 },
                                 })
                             }

@@ -1,5 +1,5 @@
 extend type Query {
-    services(pagination: PageInput, filters: ServiceFilter): ServiceConnection!
+    services(pagination: PageInput, filters: ServiceFilter, search: String): ServiceConnection!
 }
 
 type Service {

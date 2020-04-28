@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-04-28
+
+-   [TILES] Poprawiono możliwości wyszukiwania w polach wyboru (wyszukiwanie w więcej niż 1 polu modelu)
+
 ## 2020-04-27
 
 -   [TILES] Dodano zapisywanie nowych oraz edycję istniejących zleceń

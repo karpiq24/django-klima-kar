@@ -20,8 +20,8 @@ const VehicleInput = ({ currentStep, commission, onChange, errors }) => {
     if (currentStep !== 2) return null;
 
     const VEHICLES = gql`
-        query getVehicles($pagination: PageInput, $filters: VehicleFilter) {
-            vehicles(pagination: $pagination, filters: $filters) {
+        query getVehicles($pagination: PageInput, $filters: VehicleFilter, $search: String) {
+            vehicles(pagination: $pagination, filters: $filters, search: $search) {
                 pageInfo {
                     hasPreviousPage
                     hasNextPage
@@ -104,12 +104,20 @@ const VehicleInput = ({ currentStep, commission, onChange, errors }) => {
             ) : (
                 <>
                     <div className="error-list">
-                        {errors.vehicle ? errors.vehicle.map((error, idx) => (
-                            <Alert key={idx} variant="danger">{error}</Alert>
-                        )) : null}
-                        {errors.vc_name ? errors.vc_name.map((error, idx) => (
-                            <Alert key={idx} variant="danger">{error}</Alert>
-                        )) : null}
+                        {errors.vehicle
+                            ? errors.vehicle.map((error, idx) => (
+                                  <Alert key={idx} variant="danger">
+                                      {error}
+                                  </Alert>
+                              ))
+                            : null}
+                        {errors.vc_name
+                            ? errors.vc_name.map((error, idx) => (
+                                  <Alert key={idx} variant="danger">
+                                      {error}
+                                  </Alert>
+                              ))
+                            : null}
                     </div>
                     <div className="d-flex justify-content-between align-items-end vehicle-container">
                         <Form.Group className="w-100">
@@ -118,7 +126,7 @@ const VehicleInput = ({ currentStep, commission, onChange, errors }) => {
                                 <InfiniteSelect
                                     refetch={(value) =>
                                         refetch({
-                                            filters: { registration_plate__icontains: value.trim() },
+                                            search: value.trim(),
                                             pagination: { page: 1 },
                                         })
                                     }

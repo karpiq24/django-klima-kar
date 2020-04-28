@@ -1,5 +1,5 @@
 extend type Query {
-    contractors(pagination: PageInput, filters: ContractorFilter): ContractorConnection!
+    contractors(pagination: PageInput, filters: ContractorFilter, search: String): ContractorConnection!
     gusAddress(nip: String!): GusAddress
 }
 

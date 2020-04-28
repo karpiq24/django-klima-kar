@@ -20,8 +20,8 @@ const ContractorInput = ({ currentStep, commission, onChange, errors }) => {
     if (currentStep !== 3) return null;
 
     const CONTRACTORS = gql`
-        query getContractors($pagination: PageInput, $filters: ContractorFilter) {
-            contractors(pagination: $pagination, filters: $filters) {
+        query getContractors($pagination: PageInput, $filters: ContractorFilter, $search: String) {
+            contractors(pagination: $pagination, filters: $filters, search: $search) {
                 pageInfo {
                     hasPreviousPage
                     hasNextPage
@@ -89,11 +89,11 @@ const ContractorInput = ({ currentStep, commission, onChange, errors }) => {
                             <InfiniteSelect
                                 refetch={(value) =>
                                     refetch({
-                                        filters: { name__icontains: value.trim() },
+                                        search: value.trim(),
                                         pagination: { page: 1 },
                                     })
                                 }
-                                searchPlaceholder="Podaj nazwę"
+                                searchPlaceholder="Podaj nazwę, NIP albo numer telefonu"
                                 createLabel="Dodaj nowego kontrahenta"
                                 autoFocus={true}
                                 show={true}

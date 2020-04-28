@@ -1,5 +1,5 @@
 extend type Query {
-    wares(pagination: PageInput, filters: WareFilter): WareConnection!
+    wares(pagination: PageInput, filters: WareFilter, search: String): WareConnection!
 }
 
 type Ware {
@@ -21,6 +21,6 @@ type WareConnection {
 input WareFilter {
     id: ID
     name__icontains: String
-    index_custom: String
+    index_icontains: String
     name: String
 }

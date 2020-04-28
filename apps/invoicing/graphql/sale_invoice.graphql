@@ -1,5 +1,5 @@
 extend type Query {
-    saleInvoices(pagination: PageInput, filters: SaleInvoiceFilter): SaleInvoiceConnection!
+    saleInvoices(pagination: PageInput, filters: SaleInvoiceFilter, search: String): SaleInvoiceConnection!
 }
 
 type SaleInvoiceConnection {

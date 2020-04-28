@@ -1,5 +1,5 @@
 extend type Query {
-    suppliers(pagination: PageInput, filters: SupplierFilter): SupplierConnection!
+    suppliers(pagination: PageInput, filters: SupplierFilter, search: String): SupplierConnection!
 }
 
 type Supplier {

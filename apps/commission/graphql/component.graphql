@@ -1,5 +1,5 @@
 extend type Query {
-    components(pagination: PageInput, filters: ComponentFilter): ComponentConnection!
+    components(pagination: PageInput, filters: ComponentFilter, search: String): ComponentConnection!
 }
 
 extend type Mutation {

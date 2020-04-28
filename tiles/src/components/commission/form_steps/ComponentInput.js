@@ -19,8 +19,8 @@ const ComponentInput = ({ currentStep, commission, onChange, errors }) => {
     if (currentStep !== 2) return null;
 
     const COMPONENTS = gql`
-        query getComponents($pagination: PageInput, $filters: ComponentFilter) {
-            components(pagination: $pagination, filters: $filters) {
+        query getComponents($pagination: PageInput, $filters: ComponentFilter, $search: String) {
+            components(pagination: $pagination, filters: $filters, search: $search) {
                 pageInfo {
                     hasPreviousPage
                     hasNextPage
@@ -99,7 +99,7 @@ const ComponentInput = ({ currentStep, commission, onChange, errors }) => {
                             <InfiniteSelect
                                 refetch={(value) =>
                                     refetch({
-                                        filters: { model__icontains: value.trim() },
+                                        search: value.trim(),
                                         pagination: { page: 1 },
                                     })
                                 }

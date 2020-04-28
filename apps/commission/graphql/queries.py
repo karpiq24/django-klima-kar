@@ -1,3 +1,6 @@
+import re
+from django.db.models import Q
+
 from KlimaKar.graphql.utils import get_paginated_results
 from apps.commission.functions import decode_mpojazd, decode_aztec_code
 from apps.commission.models import Commission, Vehicle, Component
@@ -5,18 +8,52 @@ from apps.commission.graphql import query, commission, vehicle, component
 
 
 @query.field("commissions")
-def resolve_commissions(_, info, pagination=None, filters=None):
-    return get_paginated_results(Commission.objects.all(), pagination, filters)
+def resolve_commissions(_, info, pagination=None, filters=None, search=None):
+    def search_filter(qs):
+        if not search:
+            return qs
+        try:
+            return qs.filter(pk=search)
+        except ValueError:
+            return qs.filter(vc_name__icontains=search)
+
+    return get_paginated_results(
+        Commission.objects.all(), pagination, filters, custom_filter=search_filter
+    )
 
 
 @query.field("vehicles")
-def resolve_vehicles(_, info, pagination=None, filters=None):
-    return get_paginated_results(Vehicle.objects.all(), pagination, filters)
+def resolve_vehicles(_, info, pagination=None, filters=None, search=None):
+    def search_filter(qs):
+        if not search:
+            return qs
+        q = re.sub(r"[\W_]+", "", search)
+        return qs.filter(
+            Q(brand__icontains=search)
+            | Q(model__icontains=search)
+            | Q(vin__icontains=q)
+            | Q(registration_plate__icontains=q)
+        )
+
+    return get_paginated_results(
+        Vehicle.objects.all(), pagination, filters, custom_filter=search_filter
+    )
 
 
 @query.field("components")
-def resolve_components(_, info, pagination=None, filters=None):
-    return get_paginated_results(Component.objects.all(), pagination, filters)
+def resolve_components(_, info, pagination=None, filters=None, search=None):
+    def search_filter(qs):
+        if not search:
+            return qs
+        return qs.filter(
+            Q(model__icontains=search)
+            | Q(serial_number__icontains=search)
+            | Q(catalog_number__icontains=search)
+        )
+
+    return get_paginated_results(
+        Component.objects.all(), pagination, filters, custom_filter=search_filter
+    )
 
 
 @query.field("decode")

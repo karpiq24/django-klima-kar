@@ -9,8 +9,8 @@ import { displayZloty } from "../../utils";
 
 const WareSelect = (props) => {
     const WARES = gql`
-        query getWares($pagination: PageInput, $filters: WareFilter) {
-            wares(pagination: $pagination, filters: $filters) {
+        query getWares($pagination: PageInput, $filters: WareFilter, $search: String) {
+            wares(pagination: $pagination, filters: $filters, search: $search) {
                 pageInfo {
                     hasPreviousPage
                     hasNextPage
@@ -68,9 +68,8 @@ const WareSelect = (props) => {
                     selectedLabel={props.selectedLabel}
                     refetch={(value) =>
                         refetch({
-                            filters: props.wareName
-                                ? { name: props.wareName, index_custom: value.trim() }
-                                : { index_custom: value.trim() },
+                            search: value.trim(),
+                            filters: props.wareName ? { name: props.wareName } : null,
                             pagination: { page: 1 },
                         })
                     }

@@ -1,5 +1,5 @@
 extend type Query {
-    vehicles(pagination: PageInput, filters: VehicleFilter): VehicleConnection!
+    vehicles(pagination: PageInput, filters: VehicleFilter, search: String): VehicleConnection!
     decode(code: String!, create: Boolean!): ScannedVehicle
 }
 

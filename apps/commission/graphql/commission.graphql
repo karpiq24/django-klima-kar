@@ -1,5 +1,5 @@
 extend type Query {
-    commissions(pagination: PageInput, filters: CommissionFilter): CommissionConnection!
+    commissions(pagination: PageInput, filters: CommissionFilter, search: String): CommissionConnection!
 }
 
 extend type Mutation {
