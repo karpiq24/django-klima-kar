@@ -29,8 +29,8 @@ def update_index(content_type_pk, instance_pk):
 
 
 def remove_from_index(content_type_pk, instance_pk):
-    model, instance = get_model_and_instance(content_type_pk, instance_pk)
-    SearchDocument.remove(instance)
+    model = ContentType.objects.get_for_id(content_type_pk).model_class()
+    SearchDocument.remove(content_type_pk, instance_pk)
     for rel in getattr(model, "RELATED_MODELS", []):
         model = get_model(rel[0])
         objects = model.objects.filter(**{f"{rel[1]}": instance_pk})

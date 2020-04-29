@@ -61,12 +61,10 @@ class SearchDocument(models.Model):
         )
 
     @staticmethod
-    def remove(instance):
-        model = instance._meta.model
+    def remove(conent_type_pk, instance_pk):
         try:
             SearchDocument.objects.get(
-                content_type=ContentType.objects.get_for_model(model),
-                object_id=str(instance.pk),
+                content_type__pk=conent_type_pk, object_id=str(instance_pk),
             ).delete()
         except SearchDocument.DoesNotExist:
             pass
