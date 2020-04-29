@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2020-04-29
+
+-   Naprawiono pobieranie faktur DEKO
+-   Naprawiono usuwanie obiektów z indeksu wyszukiwania
+
 ## 2020-04-28
 
 -   [TILES] Poprawiono możliwości wyszukiwania w polach wyboru (wyszukiwanie w więcej niż 1 polu modelu)
