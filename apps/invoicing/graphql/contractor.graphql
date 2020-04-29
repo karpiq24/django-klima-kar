@@ -23,11 +23,17 @@ type Contractor {
     phone_2: String
     saleInvoices: [SaleInvoice]
     commissions: [Commission]
+    vatStatus: VatStatus
 }
 
 type ContractorConnection {
     pageInfo: PageInfo!
     objects: [Contractor]!
+}
+
+type VatStatus {
+    status: Boolean
+    url: String
 }
 
 type GusAddress {

@@ -1,8 +1,14 @@
+import requests
+import datetime
+
+from zeep import Client as ZeepClient
+
 from django.db.models import Q
+from django.conf import settings
 
 from KlimaKar.graphql.utils import get_paginated_results
 from apps.invoicing.models import Contractor, SaleInvoice, ServiceTemplate
-from apps.invoicing.graphql import query, invoice
+from apps.invoicing.graphql import query, invoice, contractor
 from apps.invoicing.gus import GUS
 
 
@@ -66,3 +72,29 @@ def resolve_items(obj, info):
 @invoice.field("commissions")
 def resolve_vc_commissions(obj, info):
     return obj.commission.all()
+
+
+@contractor.field("vatStatus")
+def resolve_vat_status(obj, info):
+    if not obj.nip:
+        return None
+    if obj.nip_prefix:
+        client = ZeepClient(settings.UE_VALIDATE_VAT)
+        vat = client.service.checkVat(obj.nip_prefix, obj.nip)
+        return {
+            "status": vat["valid"],
+            "url": settings.UE_VIEW_VAT,
+        }
+    else:
+        r = requests.get(
+            settings.PL_VALIDATE_VAT.format(obj.nip, str(datetime.date.today()))
+        )
+        vat_subject = r.json().get("result", {}).get("subject", {})
+        if vat_subject is None:
+            vat_valid = False
+        else:
+            vat_valid = vat_subject.get("statusVat", False) == "Czynny"
+        return {
+            "status": vat_valid,
+            "url": settings.PL_VIEW_VAT,
+        }

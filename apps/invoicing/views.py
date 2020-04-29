@@ -641,66 +641,6 @@ class ContractorGUS(View):
         return JsonResponse(response_data)
 
 
-class ContractorGetDataView(View):
-    def get(self, *args, **kwargs):
-        contractor_pk = self.request.GET.get("pk", None)
-        validate_vat = self.request.GET.get("validate_vat", False)
-        if contractor_pk:
-            contractor = Contractor.objects.get(pk=contractor_pk)
-            response = {
-                "name": contractor.name,
-                "nip": contractor.nip,
-                "nip_prefix": contractor.nip_prefix,
-                "address_1": contractor.address_1,
-                "address_2": contractor.address_2,
-                "city": contractor.city,
-                "postal_code": contractor.postal_code,
-                "email": contractor.email,
-                "phone": contractor.phone_1 or contractor.phone_2 or None,
-                "vat_valid": None,
-            }
-            if validate_vat:
-                response.update(self._validate_vat(contractor))
-            return JsonResponse({"status": "success", "contractor": response})
-        return JsonResponse({"status": "error", "contractor": {}})
-
-    def _validate_vat(self, contractor):
-        try:
-            if contractor.nip:
-                if contractor.nip_prefix:
-                    return self._check_ue_vat(contractor)
-                else:
-                    return self._check_polish_vat(contractor)
-        except Exception:
-            return {"vat_valid": "failed"}
-        return {}
-
-    def _check_polish_vat(self, contractor):
-        url = "https://wl-api.mf.gov.pl/api/search/nip/{}?date={}".format(
-            contractor.nip, str(datetime.date.today())
-        )
-        r = requests.get(url)
-        vat_subject = r.json().get("result", {}).get("subject", {})
-        if vat_subject is None:
-            vat_valid = False
-        else:
-            vat_valid = vat_subject.get("statusVat", False)
-        return {
-            "vat_valid": vat_valid == "Czynny",
-            "vat_url": "https://www.podatki.gov.pl/wykaz-podatnikow-vat-wyszukiwarka",
-        }
-
-    def _check_ue_vat(self, contractor):
-        client = ZeepClient(
-            "http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl"
-        )
-        vat = client.service.checkVat(contractor.nip_prefix, contractor.nip)
-        return {
-            "vat_valid": vat["valid"],
-            "vat_url": "http://ec.europa.eu/taxation_customs/vies/?locale=pl",
-        }
-
-
 class SaleInvoiceSetPayed(GroupAccessControlMixin, View):
     allowed_groups = ["boss"]
 

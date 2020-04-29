@@ -127,9 +127,4 @@ urlpatterns = [
         views.ContractorAutocomplete.as_view(modal_create=True),
         name="contractor_autocomplete_create",
     ),
-    path(
-        "get_contractor_data",
-        views.ContractorGetDataView.as_view(),
-        name="get_contractor",
-    ),
 ]

@@ -77,7 +77,6 @@ $(function () {
     const UPDATE_VEHICLE = $("#update_vehicle_url").val();
     const CREATE_COMPONENT = $("#create_component_url").val();
     const UPDATE_COMPONENT = $("#update_component_url").val();
-    const GET_CONTRACTOR_DATA = $("#get_contractor_data_url").val();
 
     $("#id_contractor").on("select2:selecting", function (e) {
         const data = e.params.args.data;
@@ -121,36 +120,55 @@ $(function () {
         $("#id_contractor").removeClass("is-warning");
         $(parent).find("div.invalid-feedback").remove();
         $(parent).find("div.warning-feedback").remove();
-        $.ajax({
-            url: GET_CONTRACTOR_DATA,
-            data: {
-                pk: contractor_pk,
-            },
-            dataType: "json",
-            success: function (result) {
-                if (result.contractor.id === "") {
-                    $("#contractor-edit").prop("disabled", true);
-                    $("#gus-data").hide();
-                    return;
-                }
+        $(parent).find("div.extra-feedback").remove();
+        $(parent).append(`<div class="extra-feedback d-flex flex-column"></div>`);
+        const feedback = $(parent).find("div.extra-feedback");
 
-                if (result.contractor.nip) {
-                    $("#gus-data").data("nip", result.contractor.nip);
+        $.ajax({
+            url: "/graphql/",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                query: `query {
+                    contractors(filters: {id: "${contractor_pk}"}) {
+                        objects {
+                            nip
+                            phone_1
+                            phone_2
+                        }
+                    }
+                }`,
+            }),
+            success: function ({ data }) {
+                const contractor = data.contractors.objects[0];
+                if (contractor.nip !== null) {
+                    $("#gus-data").data("nip", contractor.nip);
                     $("#gus-data").show();
                 } else {
                     $("#gus-data").hide();
                 }
-                if (result.contractor.phone == null) {
+                if (contractor.phone_1 === null && contractor.phone_2 === null) {
                     $("#id_contractor").addClass("is-invalid");
                     $(parent).append(
                         '<div class="invalid-feedback">Wybrany kontrahent nie ma podanego numeru telefonu.</div>'
                     );
-                } else if (result.contractor.phone.length !== 9) {
-                    $("#id_contractor").addClass("is-warning");
-                    $(parent).append(
-                        '<div class="warning-feedback">Sprawdź numer telefonu - podany posiada niestandardową liczbę cyfr.</div>'
-                    );
+                } else {
+                    contractor.phone_1
+                        ? $(feedback).append(`<small>Numer telefonu: ${contractor.phone_1}</small>`)
+                        : null;
+                    contractor.phone_2
+                        ? $(feedback).append(`<small>Numer telefonu: ${contractor.phone_2}</small>`)
+                        : null;
+                    if (contractor.phone_1.length !== 9 || contractor.phone_2.length !== 9) {
+                        $("#id_contractor").addClass("is-warning");
+                        $(parent).append(
+                            '<div class="warning-feedback">Sprawdź numer telefonu - podany posiada niestandardową liczbę cyfr.</div>'
+                        );
+                    }
                 }
+            },
+            error: function (data) {
+                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
             },
         });
     });

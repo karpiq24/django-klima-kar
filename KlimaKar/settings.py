@@ -179,6 +179,13 @@ GEOIP_PATH = "data/"
 GEOIP_COUNTRY = "GeoLite2-Country.mmdb"
 
 
+# VAT
+UE_VALIDATE_VAT = "http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl"
+UE_VIEW_VAT = "http://ec.europa.eu/taxation_customs/vies/?locale=pl"
+PL_VALIDATE_VAT = "https://wl-api.mf.gov.pl/api/search/nip/{}?date={}"
+PL_VIEW_VAT = "https://www.podatki.gov.pl/wykaz-podatnikow-vat-wyszukiwarka"
+
+
 def FILTERS_VERBOSE_LOOKUPS():
     from django_filters.conf import DEFAULTS
 

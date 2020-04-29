@@ -89,56 +89,65 @@ $(function () {
         $(parent).append(
             '<small id="loding-contractor" class="form-text text-muted"><i class="fas fa-spinner fa-spin"></i> Sprawdzam kontrahenta..</small>'
         );
+
         $.ajax({
-            url: GET_CONTRACTOR_DATA,
-            data: {
-                pk: contractor_pk,
-                validate_vat: true,
-            },
-            dataType: "json",
-            success: function (result) {
+            url: "/graphql/",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                query: `query {
+                    contractors(filters: {id: "${contractor_pk}"}) {
+                        objects {
+                            nip
+                            nip_prefix
+                            phone_1
+                            phone_2
+                            vatStatus {
+                                status
+                                url
+                            }
+                        }
+                    }
+                }`,
+            }),
+            success: function ({ data }) {
+                const contractor = data.contractors.objects[0];
                 $(parent).find("#loding-contractor").remove();
-                if (result.contractor.nip) {
-                    $("#gus-data").data("nip", result.contractor.nip);
+                if (contractor.nip) {
+                    $("#gus-data").data("nip", contractor.nip);
                     $("#gus-data").show();
                 } else {
                     $("#gus-data").hide();
                 }
-                if (result.contractor.vat_valid === false) {
-                    $("#id_contractor").addClass("is-warning");
-                    $(parent).append(
-                        '<div class="warning-feedback vat-invalid">Wybrany kontrahent nie jest płatnikiem VAT. <a href="' +
-                            result.contractor.vat_url +
-                            '" target="_blank">(sprawdź tutaj)</a></div>'
-                    );
-                } else if (result.contractor.vat_valid === "failed") {
+                if (contractor.vatStatus === null) {
                     $("#id_contractor").addClass("is-warning");
                     $(parent).append(
                         '<div class="warning-feedback vat-failed">Nie udało się sprawdzić statusu płatnika VAT. Sprawdź ręcznie.</div>'
                     );
-                } else if (result.contractor.vat_valid !== null) {
+                } else if (contractor.vatStatus.status === false) {
+                    $("#id_contractor").addClass("is-warning");
+                    $(parent).append(
+                        '<div class="warning-feedback vat-invalid">Wybrany kontrahent nie jest płatnikiem VAT. <a href="' +
+                            contractor.vatStatus.url +
+                            '" target="_blank">(sprawdź tutaj)</a></div>'
+                    );
+                } else {
                     $("#id_contractor").addClass("is-valid");
                     $(parent).append('<div class="valid-feedback">Kontrahent jest płatnikiem VAT</div>');
                 }
+
                 if (INVOICE_TYPE === "4" || INVOICE_TYPE === "5") {
-                    if (result.contractor.nip_prefix == null) {
+                    if (contractor.nip_prefix == null) {
                         $("#id_contractor").addClass("is-invalid");
                         $("#id_contractor").removeClass("is-valid");
                         $(parent).append(
                             '<div class="invalid-feedback no-prefix">Wybrany kontrahent nie ma podanego prefiksu NIP.</div>'
                         );
-                    } else {
-                        if (
-                            $(parent).find("div.invalid-feedback").length == 0 &&
-                            $(parent).find("div.warning-feedback").length == 0
-                        ) {
-                            $("#id_contractor").addClass("is-valid");
-                            $(parent).append(
-                                '<div class="valid-feedback">Wybrany kontrahent ma podany prefiks NIP.</div>'
-                            );
-                        }
                     }
                 }
+            },
+            error: function (data) {
+                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
             },
         });
     });

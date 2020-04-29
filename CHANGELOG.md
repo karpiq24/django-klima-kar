@@ -4,6 +4,8 @@
 
 -   Naprawiono pobieranie faktur DEKO
 -   Naprawiono usuwanie obiektów z indeksu wyszukiwania
+-   Dodano wyświetlanie numerów telefonu kontrahenta bezpośrednio podczas edycji zlecenia
+-   Przeniesiono funkcjonalność pobieranie szczegółów kontrahenta do GraphQL
 
 ## 2020-04-28
 

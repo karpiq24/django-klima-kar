@@ -8,13 +8,11 @@
 <form id="sale-invoice-form" action="" method="post">
     <input type="hidden" id="create_contractor_url" value="{% url 'invoicing:contractor_create_ajax' %}">
     <input type="hidden" id="update_contractor_url" value="{% url 'invoicing:contractor_update_ajax' 0 %}">
-    <input type="hidden" id="contractor_detail_url" value="{% url 'invoicing:get_contractor' %}">
     <input type="hidden" id="service_detail_url" value="{% url 'invoicing:get_service_template' %}">
     <input type="hidden" id="create_vehicle_url" value="{% url 'commission:vehicle_create_ajax' %}">
     <input type="hidden" id="update_vehicle_url" value="{% url 'commission:vehicle_update_ajax' 0 %}">
     <input type="hidden" id="create_component_url" value="{% url 'commission:component_create_ajax' %}">
     <input type="hidden" id="update_component_url" value="{% url 'commission:component_update_ajax' 0 %}">
-    <input type="hidden" id="get_contractor_data_url" value="{% url 'invoicing:get_contractor' %}">
     {% csrf_token %}
     <div class="row">
         {% for hidden_field in form.hidden_fields %}
