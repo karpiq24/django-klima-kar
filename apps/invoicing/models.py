@@ -302,6 +302,26 @@ class RefrigerantWeights(models.Model):
 
 
 class ServiceTemplate(models.Model):
+    PRIMARY = "primary"
+    SECONDARY = "secondary"
+    SUCCESS = "success"
+    DANGER = "danger"
+    WARNING = "warning"
+    INFO = "info"
+    LIGHT = "light"
+    DARK = "dark"
+
+    BUTTON_COLORS = [
+        (PRIMARY, "Niebieski"),
+        (SECONDARY, "Szary"),
+        (SUCCESS, "Zielony"),
+        (DANGER, "Czerwony"),
+        (WARNING, "Żółty"),
+        (INFO, "Cyjan"),
+        (LIGHT, "Biały"),
+        (DARK, "Czarny"),
+    ]
+
     name = models.CharField(max_length=255, verbose_name="Nazwa usługi/towaru")
     description = models.CharField(
         max_length=255, verbose_name="Opis usługi/towaru", blank=True, null=True
@@ -325,6 +345,12 @@ class ServiceTemplate(models.Model):
     )
     button_name = models.CharField(
         max_length=255, verbose_name="Nazwa przycisku", blank=True, null=True
+    )
+    button_color = models.CharField(
+        max_length=10,
+        choices=BUTTON_COLORS,
+        default=PRIMARY,
+        verbose_name="Kolor przycisku",
     )
     is_ware_service = models.BooleanField(
         default=False, verbose_name="Usługa z filtrem towaru"

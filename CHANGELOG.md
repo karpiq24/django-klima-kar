@@ -4,6 +4,7 @@
 
 -   [TILES] Poprawiono wyświetlanie nazwy usług z filtrem towaru
 -   [TILES] Zmieniono układ strony przy wprowadzaniu pozycji
+-   Dodano możliwość zmienienia koloru przycisku usługi
 
 ## 2020-04-29
 

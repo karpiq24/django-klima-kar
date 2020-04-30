@@ -38,6 +38,7 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, er
                     name
                     description
                     button_name
+                    button_color
                     ware {
                         id
                         index
@@ -202,7 +203,12 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, er
                         {data.services.objects.map((service) => {
                             if (service.is_ware_service) {
                                 return (
-                                    <Button key={service.id} size="xxl" onClick={() => handleWareService(service)}>
+                                    <Button
+                                        variant={service.button_color}
+                                        key={service.id}
+                                        size="xxl"
+                                        onClick={() => handleWareService(service)}
+                                    >
                                         {service.button_name || service.name}
                                     </Button>
                                 );
@@ -210,6 +216,7 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, er
                             return (
                                 <Button
                                     key={service.id}
+                                    variant={service.button_color}
                                     size="xxl"
                                     onClick={() =>
                                         addItem({

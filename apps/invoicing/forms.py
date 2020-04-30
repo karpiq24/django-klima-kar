@@ -371,6 +371,7 @@ class ServiceTemplateModelForm(forms.ModelForm):
             "price_netto",
             "price_brutto",
             "ware",
+            "button_color",
             "display_as_button",
             "button_name",
             "is_ware_service",

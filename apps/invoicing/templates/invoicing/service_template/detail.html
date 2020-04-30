@@ -52,6 +52,18 @@
                 </td>
             </tr>
             <tr>
+                <td class="detail-label">Nazwa przycisku</td>
+                <td>
+                    {{ object.button_name|default_if_none:"—" }}
+                </td>
+            </tr>
+            <tr>
+                <td class="detail-label">Kolor przycisku</td>
+                <td>
+                    {{ object.get_button_color_display }}
+                </td>
+            </tr>
+            <tr>
                 <td class="detail-label">Usługa z filtrem towaru</td>
                 <td>
                     {{ object.is_ware_service|yesno:"Tak,Nie" }}
