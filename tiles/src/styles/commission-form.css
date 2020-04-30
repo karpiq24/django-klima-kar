@@ -53,6 +53,7 @@ h2 {
 .service-button-container button {
     font-size: 1.25rem;
     font-weight: bold;
+    min-height: 100px;
 }
 
 .th-ware {

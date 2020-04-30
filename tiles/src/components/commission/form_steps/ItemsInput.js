@@ -202,7 +202,7 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, er
                         {data.services.objects.map((service) => {
                             if (service.is_ware_service) {
                                 return (
-                                    <Button key={service.id} size="lg" onClick={() => handleWareService(service)}>
+                                    <Button key={service.id} size="xxl" onClick={() => handleWareService(service)}>
                                         {service.button_name || service.name}
                                     </Button>
                                 );
@@ -210,15 +210,15 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, er
                             return (
                                 <Button
                                     key={service.id}
-                                    size="lg"
+                                    size="xxl"
                                     onClick={() =>
                                         addItem({
                                             name: service.name,
                                             price: service.price_brutto,
                                             quantity: service.quantity || 1,
                                             description: service.description,
-                                            ware: service.ware.id,
-                                            wareLabel: service.ware.index,
+                                            ware: service.ware ? service.ware.id : null,
+                                            wareLabel: service.ware ? service.ware.index : null,
                                         })
                                     }
                                 >
@@ -226,7 +226,7 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, er
                                 </Button>
                             );
                         })}
-                        <Button size="lg" variant="info" onClick={() => setShowOtherServices(true)}>
+                        <Button size="xxl" variant="info" onClick={() => setShowOtherServices(true)}>
                             Inne usługi
                         </Button>
                         <ServiceSelectModal
