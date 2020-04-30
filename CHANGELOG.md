@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2020-04-30
+
+-   [TILES] Poprawiono wyświetlanie nazwy usług z filtrem towaru
+-   [TILES] Zmieniono układ strony przy wprowadzaniu pozycji
+
 ## 2020-04-29
 
 -   Naprawiono pobieranie faktur DEKO
