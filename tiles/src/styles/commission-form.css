@@ -2,6 +2,12 @@ h1 {
     font-size: 6rem;
 }
 
+h1 p.new-alert {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: red;
+}
+
 h2 {
     font-size: 4rem;
     text-align: center;
@@ -92,6 +98,19 @@ h2 {
     width: 50%;
     margin: auto;
     text-align: center;
+}
+
+@keyframes shadow-pulse {
+    0% {
+        box-shadow: 0 0 0 0px rgba(0, 64, 133, 0.4);
+    }
+    100% {
+        box-shadow: 0 0 0 15px rgba(0, 64, 133, 0);
+    }
+}
+
+.detail-description-alert {
+    animation: shadow-pulse 1s 10;
 }
 
 @media screen and (min-width: 1800px) {

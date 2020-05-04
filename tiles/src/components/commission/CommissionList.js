@@ -130,7 +130,7 @@ const CommissionList = (props) => {
             {component ? (
                 <ComponentModal id={component} show={componentModalShow} onHide={() => setComponentModalShow(false)} />
             ) : null}
-            <div className="commission-status-buttons">
+            <div className="commission-status-buttons mt-4 mb-4">
                 <ToggleButtonGroup
                     type="radio"
                     name="type"

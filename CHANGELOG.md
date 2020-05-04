@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-05-04
+
+- [TILES] Dodano nowy wygląd podsumowania zlecenia
+
 ## 2020-04-30
 
 -   [TILES] Poprawiono wyświetlanie nazwy usług z filtrem towaru

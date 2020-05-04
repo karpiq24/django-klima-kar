@@ -348,7 +348,10 @@ const CommissionForm = (props) => {
                         <FontAwesomeIcon icon={faArrowLeft} /> Wstecz
                     </Button>
                     <div className="text-center">
-                        <h1>{id ? `Edycja zlecenia ${id}` : "Nowe zlecenie"}</h1>
+                        <h1>
+                            {id ? `Edycja zlecenia ${id}` : "Nowe zlecenie"}
+                            {id ? null : <p className="new-alert">To zlecenie nie zostało jeszcze zapisane.</p>}
+                        </h1>
                         <ButtonGroup>
                             <Button
                                 size="xl"
@@ -427,7 +430,7 @@ const CommissionForm = (props) => {
                                 variant={
                                     errors.description !== undefined
                                         ? "outline-danger"
-                                        : stepsStatus[6]
+                                        : stepsStatus[6] && commission.description
                                         ? "outline-success"
                                         : "outline-dark"
                                 }
@@ -441,7 +444,7 @@ const CommissionForm = (props) => {
                                 variant={
                                     errors.items !== undefined
                                         ? "outline-danger"
-                                        : stepsStatus[7]
+                                        : stepsStatus[7] && commission.items.length > 0
                                         ? "outline-success"
                                         : "outline-dark"
                                 }
@@ -524,10 +527,10 @@ const CommissionForm = (props) => {
                         commission={commission}
                         errors={errors}
                     />
-                    <CommissionSummary currentStep={currentStep} commission={commission} />
+                    <CommissionSummary currentStep={currentStep} commission={commission} onChange={handleChanges} />
 
                     {currentStep === STEP_COUNT && id === undefined ? (
-                        <Button className="flex-align-end" variant="outline-success" size="xxl" onClick={handleSubmit}>
+                        <Button className="flex-align-end mt-4" variant="outline-success" size="xxl" onClick={handleSubmit}>
                             <FontAwesomeIcon icon={faSave} /> Zapisz
                         </Button>
                     ) : null}

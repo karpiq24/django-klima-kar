@@ -17,8 +17,6 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    margin-bottom: 2rem;
-    margin-top: 1rem;
 }
 
 .commission-status-buttons button:not(:last-child) {
@@ -26,6 +24,15 @@
 }
 
 .commission-card {
+    cursor: pointer;
+}
+
+.card-header {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.accordion .card-header {
     cursor: pointer;
 }
 
