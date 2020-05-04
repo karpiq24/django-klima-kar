@@ -2,7 +2,8 @@
 
 ## 2020-05-04
 
-- [TILES] Dodano nowy wygląd podsumowania zlecenia
+-   [TILES] Dodano nowy wygląd podsumowania zlecenia
+-   [TILES] Dodano informacje o niezapisanym zleceniu
 
 ## 2020-04-30
 
