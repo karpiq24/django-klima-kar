@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-05-05
+
+-   Dodano ostrzeżenie o tworzeniu nowej faktury bez przypisanego zlecenia
+
 ## 2020-05-04
 
 -   [TILES] Dodano nowy wygląd podsumowania zlecenia

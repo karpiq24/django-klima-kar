@@ -205,6 +205,7 @@ class SaleInvoiceCommissionCreateView(SaleInvoiceCreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["from_commission"] = True
         context["title"] = "Nowa faktura sprzedażowa ({}) dla zlecenia {}".format(
             dict(SaleInvoice.INVOICE_TYPES)[self.invoice_type], str(self.commission.pk)
         )

@@ -5,6 +5,11 @@
 <div>
     <h1>{{ title }}</h1>
 </div>
+{% if not from_commission %}
+    <div class="alert alert-danger">
+        Tworzysz nową fakturę bez przypisanego zlecenia. Najlepiej otwórz odpowiednie zlecenie i tam wybierz funkcję dodawania faktury do zlecenia.
+    </div>
+{% endif %}
 <form id="sale-invoice-form" action="" method="post">
     {% csrf_token %}
     <div class="row">
