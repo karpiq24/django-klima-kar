@@ -103,18 +103,32 @@ class SaleInvoiceWithTypeTable(SaleInvoiceTable):
 
 class SaleInvoiceItemTable(tables.Table):
     name = tables.Column(
-        attrs={"th": {"width": "20%"}}, verbose_name="Nazwa usługi/towaru"
+        attrs={
+            "th": {"width": "20%"},
+            "tf": {"colspan": "4", "class": "text-right border-right-0"},
+        },
+        verbose_name="Nazwa usługi/towaru",
+        footer="Razem:",
     )
     description = tables.Column(
-        attrs={"th": {"width": "20%"}}, verbose_name="Opis usługi/towaru"
+        attrs={"th": {"width": "20%"}, "tf": {"class": "d-none"}},
+        verbose_name="Opis usługi/towaru",
     )
-    ware = tables.Column(attrs={"th": {"width": "10%"}})
-    quantity = tables.Column(attrs={"th": {"width": "10%"}})
+    ware = tables.Column(attrs={"th": {"width": "10%"}, "tf": {"class": "d-none"}})
+    quantity = tables.Column(attrs={"th": {"width": "10%"}, "tf": {"class": "d-none"}})
     price_netto = tables.Column(
-        attrs={"th": {"width": "20%"}}, verbose_name="Cena netto"
+        attrs={"th": {"width": "20%"}, "tf": {"class": "border-left-0 border-right-0"}},
+        verbose_name="Cena netto",
+        footer=lambda table: "{0:.2f} zł".format(
+            table.data[0].sale_invoice.total_value_netto
+        ).replace(".", ","),
     )
     price_brutto = tables.Column(
-        attrs={"th": {"width": "20%"}}, verbose_name="Cena brutto"
+        attrs={"th": {"width": "20%"}, "tf": {"class": "border-left-0"}},
+        verbose_name="Cena brutto",
+        footer=lambda table: "{0:.2f} zł".format(
+            table.data[0].sale_invoice.total_value_brutto
+        ).replace(".", ","),
     )
 
     def render_price_netto(self, value):

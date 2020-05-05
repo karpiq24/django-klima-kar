@@ -114,11 +114,24 @@ class CommissionTable(tables.Table):
 
 
 class CommissionItemTable(tables.Table):
-    name = tables.Column(attrs={"th": {"width": "20%"}})
-    description = tables.Column(attrs={"th": {"width": "20%"}})
-    ware = tables.Column(attrs={"th": {"width": "10%"}})
-    quantity = tables.Column(attrs={"th": {"width": "10%"}})
-    price = tables.Column(attrs={"th": {"width": "20%"}})
+    name = tables.Column(
+        attrs={
+            "th": {"width": "20%"},
+            "tf": {"colspan": "4", "class": "text-right border-right-0"},
+        },
+        footer="Razem:",
+    )
+    description = tables.Column(
+        attrs={"th": {"width": "20%"}, "tf": {"class": "d-none"}}
+    )
+    ware = tables.Column(attrs={"th": {"width": "10%"}, "tf": {"class": "d-none"}})
+    quantity = tables.Column(attrs={"th": {"width": "10%"}, "tf": {"class": "d-none"}})
+    price = tables.Column(
+        attrs={"th": {"width": "20%"}, "tf": {"class": "border-left-0"}},
+        footer=lambda table: "{0:.2f} zł".format(
+            table.data[0].commission.value
+        ).replace(".", ","),
+    )
 
     def render_price(self, value):
         return "{0:.2f} zł".format(value).replace(".", ",")

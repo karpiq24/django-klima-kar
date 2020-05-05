@@ -4,6 +4,7 @@
 
 -   Dodano ostrzeżenie o tworzeniu nowej faktury bez przypisanego zlecenia
 -   Dodano wybór czy opis zlecenia powienien być załączony w wydruku lub pliku PDF
+-   Dodano wyświetlanie sum faktur i zleceń w stopce tabel pozycji
 
 ## 2020-05-04
 

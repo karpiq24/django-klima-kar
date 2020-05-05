@@ -138,15 +138,33 @@ class SupplierTable(tables.Table):
 
 
 class InvoiceItemTable(tables.Table):
-    index = tables.Column(attrs={"th": {"width": "28%"}}, accessor="ware.index")
-    name = tables.Column(attrs={"th": {"width": "35%"}}, accessor="ware.name")
-    quantity = tables.Column(attrs={"th": {"width": "10%"}})
-    price = tables.Column(attrs={"th": {"width": "10%"}}, verbose_name="Cena netto")
+    index = tables.Column(
+        attrs={
+            "th": {"width": "28%"},
+            "tf": {"colspan": "4", "class": "text-right border-right-0"},
+        },
+        accessor="ware.index",
+        footer="Razem:",
+    )
+    name = tables.Column(
+        attrs={"th": {"width": "35%"}, "tf": {"class": "d-none"}}, accessor="ware.name"
+    )
+    quantity = tables.Column(attrs={"th": {"width": "10%"}, "tf": {"class": "d-none"}})
+    price = tables.Column(
+        attrs={"th": {"width": "10%"}, "tf": {"class": "d-none"}},
+        verbose_name="Cena netto",
+        footer="Razem:",
+    )
     total = tables.Column(
-        attrs={"th": {"width": "10%"}}, empty_values=(), verbose_name="Razem"
+        attrs={"th": {"width": "10%"}, "tf": {"class": "border-left-0 border-right-0"}},
+        empty_values=(),
+        verbose_name="Razem",
+        footer=lambda table: "{0:.2f} zł".format(
+            table.data[0].invoice.total_value
+        ).replace(".", ","),
     )
     actions = tables.TemplateColumn(
-        attrs={"th": {"width": "7%"}},
+        attrs={"th": {"width": "7%"}, "tf": {"class": "border-left-0"}},
         verbose_name="Akcje",
         template_name="warehouse/invoice/invoiceitem_actions.html",
         orderable=False,
