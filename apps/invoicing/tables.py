@@ -120,7 +120,7 @@ class SaleInvoiceItemTable(tables.Table):
         attrs={"th": {"width": "20%"}, "tf": {"class": "border-left-0 border-right-0"}},
         verbose_name="Cena netto",
         footer=lambda table: "{0:.2f} zł".format(
-            table.data[0].sale_invoice.total_value_netto
+            table.data[0].sale_invoice.total_value_netto if table.data else 0
         ).replace(".", ","),
     )
     price_brutto = tables.Column(

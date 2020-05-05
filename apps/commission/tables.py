@@ -129,7 +129,7 @@ class CommissionItemTable(tables.Table):
     price = tables.Column(
         attrs={"th": {"width": "20%"}, "tf": {"class": "border-left-0"}},
         footer=lambda table: "{0:.2f} zł".format(
-            table.data[0].commission.value
+            table.data[0].commission.value if table.data else 0
         ).replace(".", ","),
     )
 

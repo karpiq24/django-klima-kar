@@ -160,7 +160,7 @@ class InvoiceItemTable(tables.Table):
         empty_values=(),
         verbose_name="Razem",
         footer=lambda table: "{0:.2f} zł".format(
-            table.data[0].invoice.total_value
+            table.data[0].invoice.total_value if table.data else 0
         ).replace(".", ","),
     )
     actions = tables.TemplateColumn(
