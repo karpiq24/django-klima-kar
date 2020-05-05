@@ -517,7 +517,10 @@ class CommissionPDFView(View):
 
     def get(self, request, *args, **kwargs):
         commission = get_object_or_404(Commission, pk=kwargs.get("pk"))
-        pdf_file = commission.generate_pdf()
+        include_description = (
+            self.request.GET.get("include_description", "True") == "True"
+        )
+        pdf_file = commission.generate_pdf(include_description=include_description)
         response = HttpResponse(content_type="application/pdf")
         response.write(pdf_file)
         response["Content-Disposition"] = 'filename="Zlecenie {}.pdf"'.format(
@@ -548,7 +551,8 @@ class CommissionFileDownloadView(View):
 class CommissionSendEmailView(View):
     def post(self, request, *args, **kwargs):
         commission = get_object_or_404(Commission, pk=request.POST.get("commission"))
-        pdf_file = commission.generate_pdf()
+        include_description = request.POST.get("include_description", "off") == "on"
+        pdf_file = commission.generate_pdf(include_description=include_description)
         email = get_email_message(
             subject=request.POST.get("subject"),
             body=request.POST.get("message"),

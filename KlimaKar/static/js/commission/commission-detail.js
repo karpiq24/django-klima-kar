@@ -57,13 +57,28 @@ function printJSSupported() {
 }
 
 function print_pdf() {
-    var url = $("#print-btn").attr("data-url");
-    if (printJSSupported()) {
-        printJS({ printable: url, type: "pdf", showModal: true, modalMessage: "Przygotowywanie zlecenia..." });
-    } else {
-        var w = window.open(url);
-        w.print();
-    }
+    Swal.fire({
+        title: "Umieścić opis zlecenia na wydruku?",
+        type: "question",
+        showCancelButton: true,
+        focusCancel: false,
+        focusConfirm: true,
+        confirmButtonText: "Tak",
+        cancelButtonText: "Nie",
+    }).then(({ value }) => {
+        let url = $("#print-btn").data("url");
+        if (value) {
+            url = `${url}?include_description=True`;
+        } else {
+            url = `${url}?include_description=False`;
+        }
+        if (printJSSupported()) {
+            printJS({ printable: url, type: "pdf", showModal: true, modalMessage: "Przygotowywanie zlecenia..." });
+        } else {
+            const w = window.open(url);
+            w.print();
+        }
+    });
 }
 
 $(function () {
@@ -76,6 +91,26 @@ $(function () {
 
     $("#print-btn").click(function () {
         print_pdf();
+    });
+
+    $("#pdf-btn").click(function () {
+        Swal.fire({
+            title: "Umieścić opis zlecenia w pliku PDF?",
+            type: "question",
+            showCancelButton: true,
+            focusCancel: false,
+            focusConfirm: true,
+            confirmButtonText: "Tak",
+            cancelButtonText: "Nie",
+        }).then(({ value }) => {
+            let url = $("#pdf-btn").data("url");
+            if (value) {
+                url = `${url}?include_description=True`;
+            } else {
+                url = `${url}?include_description=False`;
+            }
+            window.location.href = url;
+        });
     });
 
     if ($("#file-data").data("upload") == "True") {

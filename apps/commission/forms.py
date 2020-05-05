@@ -6,6 +6,7 @@ from extra_views import InlineFormSet
 from django import forms
 from django.utils.crypto import get_random_string
 
+from KlimaKar.forms import ToggleInput
 from KlimaKar.widgets import PrettySelect
 from apps.commission.models import Vehicle, Component, Commission, CommissionItem
 from apps.invoicing.models import Contractor, ServiceTemplate
@@ -240,6 +241,9 @@ class CommissionEmailForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea, label="Treść")
     commission = forms.ModelChoiceField(
         queryset=Commission.objects.none(), widget=forms.HiddenInput()
+    )
+    include_description = forms.BooleanField(
+        label="Opis zlecenie w pliku", widget=ToggleInput, initial=True, required=False
     )
 
     def __init__(self, *args, **kwargs):

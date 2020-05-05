@@ -51,7 +51,9 @@
 		      <div class="date">Status: {{ commission.get_status_display }}</div>
         </div>
       </div>
+    {% if include_description %}
 	  <div id="info">{{ commission.description }}</div>
+    {% endif %}
     <table>
       <thead>
         <tr>

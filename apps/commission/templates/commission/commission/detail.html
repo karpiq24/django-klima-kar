@@ -134,7 +134,7 @@
                 </h5>
                 <div class="card-body">
                     <button id="print-btn" class="btn btn-outline-primary btn-lg" data-url="{% url 'commission:commission_print_pdf' object|slugify object.pk %}"><i class="fas fa-print"></i> Drukuj</button>
-                    <a class="btn btn-outline-primary btn-lg" href="{% url 'commission:commission_pdf' object|slugify object.pk %}"><i class="far fa-file-pdf"></i> PDF</a>
+                    <button class="btn btn-outline-primary btn-lg" id="pdf-btn" data-url="{% url 'commission:commission_pdf' object|slugify object.pk %}"><i class="far fa-file-pdf"></i> PDF</button>
                     <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#email_modal"><i class="far fa-envelope"></i> E-mail</button>
                     <a class="btn btn-outline-warning btn-lg" href="{% url 'commission:commission_update' object|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
                     {% if request.user.is_superuser %}

@@ -3,6 +3,7 @@
 ## 2020-05-05
 
 -   Dodano ostrzeżenie o tworzeniu nowej faktury bez przypisanego zlecenia
+-   Dodano wybór czy opis zlecenia powienien być załączony w wydruku lub pliku PDF
 
 ## 2020-05-04
 
