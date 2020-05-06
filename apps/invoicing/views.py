@@ -125,6 +125,7 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
         context["title"] = "Nowa faktura sprzedażowa ({})".format(
             dict(SaleInvoice.INVOICE_TYPES)[self.invoice_type]
         )
+        context["commission_alert"] = True
         return context
 
     def get_initial(self):
@@ -205,7 +206,7 @@ class SaleInvoiceCommissionCreateView(SaleInvoiceCreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["from_commission"] = True
+        context["commission_alert"] = False
         context["title"] = "Nowa faktura sprzedażowa ({}) dla zlecenia {}".format(
             dict(SaleInvoice.INVOICE_TYPES)[self.invoice_type], str(self.commission.pk)
         )
