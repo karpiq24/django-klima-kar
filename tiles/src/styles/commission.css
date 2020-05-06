@@ -25,6 +25,8 @@
 
 .commission-card {
     cursor: pointer;
+    border-width: 3px !important;
+    border-radius: 0.5rem !important;
 }
 
 .card-header {

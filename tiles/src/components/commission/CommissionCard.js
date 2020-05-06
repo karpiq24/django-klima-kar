@@ -68,7 +68,7 @@ const CommissionCard = ({ commission, openContractorModal, openVehicleModal, ope
                         variant="outline-primary"
                         size="lg"
                         className="btn-footer"
-                        onClick={e => {
+                        onClick={(e) => {
                             e.stopPropagation();
                             openContractorModal(commission.contractor.id);
                         }}
@@ -82,7 +82,7 @@ const CommissionCard = ({ commission, openContractorModal, openVehicleModal, ope
                         variant="outline-info"
                         size="lg"
                         className="btn-footer"
-                        onClick={e => {
+                        onClick={(e) => {
                             e.stopPropagation();
                             openVehicleModal(commission.vehicle.id);
                         }}
@@ -96,7 +96,7 @@ const CommissionCard = ({ commission, openContractorModal, openVehicleModal, ope
                         variant="outline-info"
                         size="lg"
                         className="btn-footer"
-                        onClick={e => {
+                        onClick={(e) => {
                             e.stopPropagation();
                             openComponentModal(commission.component.id);
                         }}
@@ -114,7 +114,7 @@ CommissionCard.propTypes = {
     commission: PropTypes.object.isRequired,
     openContractorModal: PropTypes.func.isRequired,
     openVehicleModal: PropTypes.func.isRequired,
-    openComponentModal: PropTypes.func.isRequired
+    openComponentModal: PropTypes.func.isRequired,
 };
 
 export default CommissionCard;
