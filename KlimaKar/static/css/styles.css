@@ -277,7 +277,7 @@ span.required {
     color: #ffc107;
 }
 
-.is-warning ~ .select2-container .selection .select2-selection--single {
+.is-warning ~ .select2-container .selection .select2-selection {
     border: 1px solid #ffc107 !important;
 }
 
@@ -418,14 +418,17 @@ small#gus-data:hover {
     SELECT2
 */
 
-.select2-selection.select2-selection--single {
-    height: 38px;
+.select2-selection.select2-selection {
     padding: 0.375rem 0.25rem;
     font-size: 1rem;
     line-height: 1.5;
     color: #495057;
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
+}
+
+.select2-selection.select2-selection--single {
+    height: 38px;
 }
 .select2-selection__clear {
     margin-left: 5px;
@@ -438,7 +441,8 @@ small#gus-data:hover {
 .select2-results__option {
     color: black;
 }
-.select2-container--default .select2-selection--single[aria-expanded="true"],
+.select2-container--default .select2-selection[aria-expanded="true"],
+.select2-container--default.select2-container--focus .select2-selection,
 .select2-dropdown {
     border-color: #80bdff;
     border-radius: 0.25rem;
@@ -450,13 +454,38 @@ small#gus-data:hover {
     border-radius: 0.25rem;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
+
+.select2-container .select2-selection--multiple {
+    height: auto;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: #ffffff;
+    font-size: 1rem;
+    margin-right: 0.25rem;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+    color: #343a40;
+}
+
 .select2-search--dropdown {
     margin: 4px;
 }
-.is-invalid ~ .select2-container .selection .select2-selection--single {
+.is-invalid ~ .select2-container .selection .select2-selection {
     border: 1px solid #dc3545 !important;
 }
-.is-valid ~ .select2-container .selection .select2-selection--single {
+.is-valid ~ .select2-container .selection .select2-selection {
     border: 1px solid #28a745 !important;
 }
 

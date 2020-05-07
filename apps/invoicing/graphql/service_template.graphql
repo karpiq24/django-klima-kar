@@ -15,6 +15,8 @@ type Service {
     button_color: String
     is_ware_service: Boolean!
     ware_filter: String
+    is_group: Boolean!
+    services: [Service]
 }
 
 type ServiceConnection {
@@ -26,4 +28,5 @@ input ServiceFilter {
     id: ID
     display_as_button: Boolean
     name__icontains: String
+    servicetemplate: ID
 }

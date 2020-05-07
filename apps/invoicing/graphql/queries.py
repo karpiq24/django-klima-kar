@@ -8,7 +8,7 @@ from django.conf import settings
 
 from KlimaKar.graphql.utils import get_paginated_results
 from apps.invoicing.models import Contractor, SaleInvoice, ServiceTemplate
-from apps.invoicing.graphql import query, invoice, contractor
+from apps.invoicing.graphql import query, invoice, contractor, service
 from apps.invoicing.gus import GUS
 
 
@@ -98,3 +98,8 @@ def resolve_vat_status(obj, info):
             "status": vat_valid,
             "url": settings.PL_VIEW_VAT,
         }
+
+
+@service.field("services")
+def resolve_services(obj, info):
+    return obj.services.all()

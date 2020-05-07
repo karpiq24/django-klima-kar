@@ -336,6 +336,14 @@ class ServiceTemplateModelForm(forms.ModelForm):
         required=False,
         widget=autocomplete.ModelSelect2(url="warehouse:ware_autocomplete"),
     )
+    services = forms.ModelMultipleChoiceField(
+        label="Usługi",
+        queryset=ServiceTemplate.objects.all(),
+        required=False,
+        widget=autocomplete.ModelSelect2Multiple(
+            url="invoicing:service_template_autocomplete"
+        ),
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -361,6 +369,9 @@ class ServiceTemplateModelForm(forms.ModelForm):
         self.fields["price_brutto"].widget.attrs.update({"class": "item-brutto"})
         self.fields["ware"].widget.attrs.update({"data-placeholder": "Wybierz towar"})
         self.fields["ware"].widget.attrs.update({"class": "item-ware"})
+        self.fields["services"].widget.attrs.update(
+            {"data-placeholder": "Wybierz usługi"}
+        )
 
     class Meta:
         model = ServiceTemplate
@@ -376,8 +387,14 @@ class ServiceTemplateModelForm(forms.ModelForm):
             "button_name",
             "is_ware_service",
             "ware_filter",
+            "is_group",
+            "services",
         ]
-        widgets = {"display_as_button": ToggleInput, "is_ware_service": ToggleInput}
+        widgets = {
+            "display_as_button": ToggleInput,
+            "is_ware_service": ToggleInput,
+            "is_group": ToggleInput,
+        }
         localized_fields = ["price_netto", "price_brutto"]
 
 

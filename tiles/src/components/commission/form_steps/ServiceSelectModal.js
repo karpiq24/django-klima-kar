@@ -10,7 +10,7 @@ import ContentLoading from "../../common/ContentLoading";
 import InfiniteSelect from "../../common/InfiniteSelect";
 import { displayZloty } from "../../../utils";
 
-const ServiceSelectModal = ({ show, onHide, onSelect }) => {
+const ServiceSelectModal = ({ show, onHide, onSelect, serviceGroup }) => {
     if (!show) return null;
     const SERVICES = gql`
         query getServices($pagination: PageInput, $filters: ServiceFilter, $search: String) {
@@ -32,12 +32,16 @@ const ServiceSelectModal = ({ show, onHide, onSelect }) => {
         }
     `;
 
-    const { loading, data, fetchMore, refetch } = useQuery(SERVICES, {
+    let queryOptions = {
         variables: {
             pagination: { page: 1 },
             filters: { display_as_button: false },
         },
-    });
+    };
+
+    if (serviceGroup) queryOptions.variables.filters["servicetemplate"] = serviceGroup;
+
+    const { loading, data, fetchMore, refetch } = useQuery(SERVICES, queryOptions);
 
     const loadServices = (page) => {
         fetchMore({
@@ -110,6 +114,7 @@ ServiceSelectModal.propTypes = {
     show: PropTypes.bool.isRequired,
     onSelect: PropTypes.func.isRequired,
     onHide: PropTypes.func.isRequired,
+    serviceGroup: PropTypes.any,
 };
 
 export default ServiceSelectModal;

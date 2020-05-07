@@ -120,7 +120,7 @@ const InfiniteSelect = (props) => {
                                             <div
                                                 key={obj.id}
                                                 className="infinite-select-option"
-                                                onClick={() => selectOption(obj.id, props.getObjectLabel(obj))}
+                                                onClick={() => selectOption(props.returnObject ? obj : obj.id, props.getObjectLabel(obj))}
                                             >
                                                 {props.getObjectLabel(obj)}
                                             </div>
@@ -155,6 +155,7 @@ InfiniteSelect.propTypes = {
     required: PropTypes.bool,
     isValid: PropTypes.bool,
     isInvalid: PropTypes.bool,
+    returnObject: PropTypes.bool,
 };
 
 export default InfiniteSelect;

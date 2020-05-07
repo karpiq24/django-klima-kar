@@ -75,6 +75,24 @@
                     {{ object.ware_filter|default_if_none:"—" }}
                 </td>
             </tr>
+            <tr>
+                <td class="detail-label">Grupa usług</td>
+                <td>
+                    {{ object.is_group|yesno:"Tak,Nie" }}
+                </td>
+            </tr>
+            <tr>
+                <td class="detail-label">Usługi</td>
+                <td>
+                    <ul class="simple-list">
+                        {% for service in object.services.all %}
+                            <li>{{ service.name }}</li>
+                        {% empty %}
+                            —
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
         </table>
     </div>
 

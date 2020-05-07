@@ -19,6 +19,9 @@ import ServiceSelectModal from "./ServiceSelectModal";
 import WareSelectModal from "../../warehouse/WareSelectModal";
 import WareSelect from "../../warehouse/WareSelect";
 import FormField from "../../common/FormField";
+import InfiniteSelect from "../../common/InfiniteSelect";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
 
 const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, errors }) => {
     if (currentStep !== 7) return null;
@@ -48,6 +51,7 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, er
                     price_brutto
                     is_ware_service
                     ware_filter
+                    is_group
                 }
             }
         }
@@ -56,6 +60,7 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, er
     const { loading, data } = useQuery(SERVICES);
     const [showOtherServices, setShowOtherServices] = useState(false);
     const [wareService, setWareService] = useState(null);
+    const [serviceGroup, setServiceGroup] = useState(null);
     const [showWareModal, setShowWareModal] = useState(false);
     if (loading) return <ContentLoading />;
 
@@ -213,6 +218,21 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, er
                                     </Button>
                                 );
                             }
+                            if (service.is_group) {
+                                return (
+                                    <Button
+                                        key={service.id}
+                                        variant={service.button_color}
+                                        size="xxl"
+                                        onClick={() => {
+                                            setServiceGroup(service.id);
+                                            setShowOtherServices(true);
+                                        }}
+                                    >
+                                        {service.button_name || service.name}
+                                    </Button>
+                                );
+                            }
                             return (
                                 <Button
                                     key={service.id}
@@ -233,11 +253,19 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, er
                                 </Button>
                             );
                         })}
-                        <Button size="xxl" variant="info" onClick={() => setShowOtherServices(true)}>
+                        <Button
+                            size="xxl"
+                            variant="info"
+                            onClick={() => {
+                                setServiceGroup(null);
+                                setShowOtherServices(true);
+                            }}
+                        >
                             Inne usługi
                         </Button>
                         <ServiceSelectModal
                             show={showOtherServices}
+                            serviceGroup={serviceGroup}
                             onHide={() => setShowOtherServices(false)}
                             onSelect={(service) =>
                                 addItem({

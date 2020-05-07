@@ -317,7 +317,7 @@ class ServiceTemplate(models.Model):
         (SUCCESS, "Zielony"),
         (DANGER, "Czerwony"),
         (WARNING, "Żółty"),
-        (INFO, "Cyjan"),
+        (INFO, "Cyjanowy"),
         (LIGHT, "Biały"),
         (DARK, "Czarny"),
     ]
@@ -357,6 +357,10 @@ class ServiceTemplate(models.Model):
     )
     ware_filter = models.CharField(
         max_length=255, verbose_name="Filtr nazwy towaru", blank=True, null=True,
+    )
+    is_group = models.BooleanField(default=False, verbose_name="Grupa usług")
+    services = models.ManyToManyField(
+        "invoicing.ServiceTemplate", verbose_name="Usługi", blank=True
     )
 
     class Meta:

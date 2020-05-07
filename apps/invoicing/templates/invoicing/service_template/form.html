@@ -34,6 +34,12 @@
 
         function checkButtons() {
             $("#id_button_name").attr("disabled", !$('#id_display_as_button').is(":checked"));
+            $("#id_services").attr("disabled", !$('#id_is_group').is(":checked"));
+            $("#id_description").attr("disabled", $('#id_is_group').is(":checked"));
+            $("#id_quantity").attr("disabled", $('#id_is_group').is(":checked"));
+            $("#id_price_netto").attr("disabled", $('#id_is_group').is(":checked") || $('#id_is_ware_service').is(":checked"));
+            $("#id_price_brutto").attr("disabled", $('#id_is_group').is(":checked") || $('#id_is_ware_service').is(":checked"));
+            $("#id_ware").attr("disabled", $('#id_is_group').is(":checked") || $('#id_is_ware_service').is(":checked"));
             $("#id_ware_filter").attr("disabled", !$('#id_is_ware_service').is(":checked"));
         }
 
@@ -42,6 +48,12 @@
         });
 
         $('#id_is_ware_service').on('change', function () {
+            if ($('#id_is_ware_service').is(":checked")) $('#id_is_group').prop("checked", false);
+            checkButtons();
+        });
+
+        $('#id_is_group').on('change', function () {
+            if ($('#id_is_group').is(":checked")) $('#id_is_ware_service').prop("checked", false);
             checkButtons();
         });
         checkButtons();
