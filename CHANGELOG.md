@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2020-05-08
+
+-   [TILES] Wyświetlanie wszystkich list usług w formie przycisków
+-   Dodano możliwość umieszczania grup usług oraz usług z filtrem towaru w innych grupach
+
 ## 2020-05-07
 
 -   Dodano możliwość grupowania usług

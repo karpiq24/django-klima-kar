@@ -267,16 +267,21 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, er
                             show={showOtherServices}
                             serviceGroup={serviceGroup}
                             onHide={() => setShowOtherServices(false)}
-                            onSelect={(service) =>
-                                addItem({
-                                    name: service.name,
-                                    price: service.price_brutto,
-                                    quantity: service.quantity || 1,
-                                    description: service.description,
-                                    ware: service.ware ? service.ware.id : null,
-                                    wareLabel: service.ware ? service.ware.index : null,
-                                })
-                            }
+                            onSelect={(service) => {
+                                if (service.is_ware_service) handleWareService(service);
+                                else if (service.is_group) {
+                                    setServiceGroup(service.id);
+                                    setShowOtherServices(true);
+                                } else
+                                    addItem({
+                                        name: service.name,
+                                        price: service.price_brutto,
+                                        quantity: service.quantity || 1,
+                                        description: service.description,
+                                        ware: service.ware ? service.ware.id : null,
+                                        wareLabel: service.ware ? service.ware.index : null,
+                                    });
+                            }}
                         />
                         {wareService ? (
                             <WareSelectModal

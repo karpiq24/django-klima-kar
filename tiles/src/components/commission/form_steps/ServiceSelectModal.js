@@ -3,11 +3,11 @@ import PropTypes from "prop-types";
 import { gql } from "apollo-boost";
 import { useQuery } from "@apollo/react-hooks";
 
+import InfiniteScroll from "react-infinite-scroller";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
 import ContentLoading from "../../common/ContentLoading";
-import InfiniteSelect from "../../common/InfiniteSelect";
 import { displayZloty } from "../../../utils";
 
 const ServiceSelectModal = ({ show, onHide, onSelect, serviceGroup }) => {
@@ -25,21 +25,37 @@ const ServiceSelectModal = ({ show, onHide, onSelect, serviceGroup }) => {
                 objects {
                     id
                     name
+                    description
+                    button_name
+                    button_color
+                    ware {
+                        id
+                        index
+                        name
+                    }
                     quantity
                     price_brutto
+                    is_ware_service
+                    ware_filter
+                    is_group
                 }
             }
         }
     `;
 
-    let queryOptions = {
-        variables: {
-            pagination: { page: 1 },
-            filters: { display_as_button: false },
-        },
-    };
-
-    if (serviceGroup) queryOptions.variables.filters["servicetemplate"] = serviceGroup;
+    const queryOptions = serviceGroup
+        ? {
+              variables: {
+                  pagination: { page: 1 },
+                  filters: { servicetemplate: serviceGroup },
+              },
+          }
+        : {
+              variables: {
+                  pagination: { page: 1 },
+                  filters: { display_as_button: false, servicetemplate: null },
+              },
+          };
 
     const { loading, data, fetchMore, refetch } = useQuery(SERVICES, queryOptions);
 
@@ -74,30 +90,29 @@ const ServiceSelectModal = ({ show, onHide, onSelect, serviceGroup }) => {
                         <Modal.Title>Wybierz usługę</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <InfiniteSelect
-                            refetch={(value) =>
-                                refetch({
-                                    search: value.trim(),
-                                    filters: { display_as_button: false },
-                                    pagination: { page: 1 },
-                                })
-                            }
-                            searchPlaceholder="Podaj nazwę usługi"
-                            autoFocus={true}
-                            show={true}
+                        <InfiniteScroll
+                            pageStart={1}
                             loadMore={loadServices}
                             hasMore={data.services.pageInfo.hasNextPage}
-                            objects={data.services.objects}
-                            getObjectLabel={(service) =>
-                                `${service.name}${
-                                    service.price_brutto !== null ? ` - ${displayZloty(service.price_brutto)}` : ""
-                                }`
-                            }
-                            onChange={(value, label) => {
-                                onSelect(data.services.objects.find((x) => x.id === value));
-                                onHide();
-                            }}
-                        />
+                            useWindow={false}
+                            loader={<ContentLoading key="loading" />}
+                        >
+                            <div className="service-button-container">
+                                {data.services.objects.map((service) => (
+                                    <Button
+                                        variant={service.button_color}
+                                        size="xxl"
+                                        key={service.id}
+                                        onClick={() => {
+                                            onHide();
+                                            onSelect(service);
+                                        }}
+                                    >
+                                        {service.button_name || service.name}
+                                    </Button>
+                                ))}
+                            </div>
+                        </InfiniteScroll>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="outline-dark" onClick={onHide}>

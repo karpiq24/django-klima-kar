@@ -56,6 +56,10 @@ h2 {
     grid-auto-rows: 1fr;
 }
 
+.modal-body .service-button-container {
+    grid-template-columns: auto auto auto;
+}
+
 .service-button-container button {
     font-size: 1.25rem;
     font-weight: bold;
@@ -120,13 +124,13 @@ h2 {
 }
 
 @media screen and (max-width: 1400px) {
-    .service-button-container {
+    :not(.modal-body) .service-button-container {
         grid-template-columns: auto auto;
     }
 }
 
 @media screen and (max-width: 700px) {
-    .service-button-container {
+    :not(.modal-body) .service-button-container {
         grid-template-columns: auto;
     }
 }
