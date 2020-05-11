@@ -1,3 +1,4 @@
+import inspect
 import json
 
 from django.db.utils import ProgrammingError
@@ -38,6 +39,16 @@ def get_object_json(obj):
             continue
         data[field.name] = val
     return json.dumps(data, cls=DjangoJSONEncoder) if data else None
+
+
+def inspect_user():
+    frame = inspect.currentframe()
+    while frame:
+        try:
+            return frame.f_locals["request"].user
+        except KeyError:
+            frame = frame.f_back
+    return None
 
 
 def pre_save_handler(sender, instance, **kwargs):

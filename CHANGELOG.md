@@ -4,6 +4,7 @@
 
 -   [TILES] Poprawiono obsługę błędów formularza zlecenia
 -   [TILES] Dodano dodatkowy przycisk zapisu widoczny w każdym kroku formularza
+-   Dodano zapisywanie użytkownika w logach audytu
 
 ## 2020-05-08
 

@@ -4,12 +4,13 @@ from apps.audit.models import AuditLog
 
 
 class AuditLogTable(tables.Table):
+    user = tables.Column(attrs={"th": {"width": "5%"}})
     action_time = tables.Column(attrs={"th": {"width": "15%"}})
     content_type = tables.Column(
         attrs={"th": {"width": "15%"}},
         accessor="content_type.model_class._meta.verbose_name",
     )
-    object_repr = tables.Column(attrs={"th": {"width": "25%"}})
+    object_repr = tables.Column(attrs={"th": {"width": "20%"}})
     diffrence = tables.TemplateColumn(
         attrs={"th": {"width": "38%"}},
         template_name="audit/audit_diffrence.html",
@@ -37,7 +38,14 @@ class AuditLogTable(tables.Table):
 
         model = AuditLog
         attrs = {"class": "table table-striped table-hover table-bordered"}
-        fields = ["action_time", "content_type", "object_repr", "diffrence", "actions"]
+        fields = [
+            "user",
+            "action_time",
+            "content_type",
+            "object_repr",
+            "diffrence",
+            "actions",
+        ]
         order_by = "-action_time"
         empty_text = "Brak logów"
         row_attrs = {

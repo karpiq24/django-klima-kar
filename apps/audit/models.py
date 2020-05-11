@@ -2,6 +2,7 @@ import json
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.conf import settings
 
 
 class AuditLogManager(models.Manager):
@@ -10,12 +11,15 @@ class AuditLogManager(models.Manager):
     def log_action(
         self, content_type, object_id, object_repr, action_type, diffrence=None
     ):
+        from apps.audit.functions import inspect_user
+
         return self.model.objects.create(
             content_type=content_type,
             object_id=str(object_id),
             object_repr=object_repr[:200],
             action_type=action_type,
             diffrence=diffrence,
+            user=inspect_user(),
         )
 
 
@@ -39,6 +43,13 @@ class AuditLog(models.Model):
         max_length=6, choices=ACTION_TYPES, verbose_name="Typ akcji"
     )
     diffrence = models.TextField(verbose_name="Zmiany", blank=True, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        verbose_name="Użytkownik",
+        blank=True,
+        null=True,
+    )
 
     objects = AuditLogManager()
 

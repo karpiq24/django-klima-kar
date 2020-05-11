@@ -4,11 +4,15 @@ from dateutil import parser as date_parser
 
 from django import forms
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User
 
 from apps.audit.models import AuditLog
 
 
 class AuditLogFilter(django_filters.FilterSet):
+    user = django_filters.ModelChoiceFilter(
+        label="Użytkownik", queryset=User.objects.all()
+    )
     action_time = django_filters.CharFilter(
         method="action_time_filter",
         widget=forms.TextInput(attrs={"class": "date-range-input"}),
@@ -19,7 +23,7 @@ class AuditLogFilter(django_filters.FilterSet):
 
     class Meta:
         model = AuditLog
-        fields = ["action_time", "action_type", "content_type", "object_repr"]
+        fields = ["user", "action_time", "action_type", "content_type", "object_repr"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
