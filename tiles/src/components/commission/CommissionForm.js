@@ -163,6 +163,14 @@ const CommissionForm = (props) => {
             text: "Popraw wprowadzone dane.",
             toast: true,
         });
+
+        if (newErrors.commission_type) return goToStep(1);
+        if (newErrors.component || newErrors.vehicle || newErrors.vc_name) return goToStep(2);
+        if (newErrors.contractor) return goToStep(3);
+        if (newErrors.status) return goToStep(4);
+        if (newErrors.start_date || newErrors.end_date) return goToStep(5);
+        if (newErrors.desc) return goToStep(6);
+        if (newErrors.items) return goToStep(7);
     };
 
     const [addCommission] = useMutation(ADD_COMMISSION, {
@@ -275,6 +283,16 @@ const CommissionForm = (props) => {
                 ...commission.items.slice(index + 1),
             ],
         });
+
+        if (errors.items && errors.items[index]) {
+            setErrors({
+                ...errors,
+                items: {
+                    ...errors.items,
+                    [index]: undefined,
+                },
+            });
+        }
     };
 
     const handleAddItem = (item) => {
@@ -288,6 +306,10 @@ const CommissionForm = (props) => {
         setCommission({
             ...commission,
             items: [...commission.items.slice(0, index), ...commission.items.slice(index + 1)],
+        });
+        setErrors({
+            ...errors,
+            items: undefined,
         });
     };
 
@@ -350,7 +372,19 @@ const CommissionForm = (props) => {
                     <div className="text-center">
                         <h1>
                             {id ? `Edycja zlecenia ${id}` : "Nowe zlecenie"}
-                            {id ? null : <p className="new-alert">To zlecenie nie zostało jeszcze zapisane.</p>}
+                            {id ? null : (
+                                <p className="new-alert d-flex align-items-baseline justify-content-center">
+                                    To zlecenie nie zostało jeszcze zapisane.
+                                    <Button
+                                        className="flex-align-end ml-3"
+                                        variant="outline-success"
+                                        size="lg"
+                                        onClick={handleSubmit}
+                                    >
+                                        <FontAwesomeIcon icon={faSave} /> Zapisz teraz
+                                    </Button>
+                                </p>
+                            )}
                         </h1>
                         <ButtonGroup>
                             <Button
@@ -530,7 +564,12 @@ const CommissionForm = (props) => {
                     <CommissionSummary currentStep={currentStep} commission={commission} onChange={handleChanges} />
 
                     {currentStep === STEP_COUNT && id === undefined ? (
-                        <Button className="flex-align-end mt-4" variant="outline-success" size="xxl" onClick={handleSubmit}>
+                        <Button
+                            className="flex-align-end mt-4"
+                            variant="outline-success"
+                            size="xxl"
+                            onClick={handleSubmit}
+                        >
                             <FontAwesomeIcon icon={faSave} /> Zapisz
                         </Button>
                     ) : null}

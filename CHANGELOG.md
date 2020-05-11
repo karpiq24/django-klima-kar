@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2020-05-11
+
+-   [TILES] Poprawiono obsługę błędów formularza zlecenia
+-   [TILES] Dodano dodatkowy przycisk zapisu widoczny w każdym kroku formularza
+
 ## 2020-05-08
 
 -   [TILES] Wyświetlanie wszystkich list usług w formie przycisków
