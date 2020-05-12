@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-05-12
+
+-   [TILES] Dodano ostrzeżenie przy wychodzeniu z niezapisanego zlecenia
+
 ## 2020-05-11
 
 -   [TILES] Poprawiono obsługę błędów formularza zlecenia

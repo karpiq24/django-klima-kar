@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import { gql } from "apollo-boost";
 import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import { useHistory } from "react-router-dom";
@@ -236,20 +235,23 @@ const CommissionForm = (props) => {
     });
     const [objectID, setObjectID] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [initialUpdate, setInitialUpdate] = useState(false);
 
-    const debouncedCommission = useDebounce(commission, 3000, () => {
+    const debouncedCommission = useDebounce(commission, initialUpdate ? 3000 : 5, () => {
         if (id && !isLoading && !loading)
-            updateCommission({
-                variables: {
-                    id: id,
-                    data: {
-                        ...commission,
-                        contractorLabel: undefined,
-                        __typename: undefined,
-                        items: commission.items.map((x) => ({ ...x, wareLabel: undefined, __typename: undefined })),
+            if (!initialUpdate) setInitialUpdate(true);
+            else
+                updateCommission({
+                    variables: {
+                        id: id,
+                        data: {
+                            ...commission,
+                            contractorLabel: undefined,
+                            __typename: undefined,
+                            items: commission.items.map((x) => ({ ...x, wareLabel: undefined, __typename: undefined })),
+                        },
                     },
-                },
-            });
+                });
     });
 
     useEffect(() => {
@@ -351,13 +353,28 @@ const CommissionForm = (props) => {
         if (step >= 1 && step <= STEP_COUNT) setCurrentStep(step);
     };
 
+    const handleBackButton = () => {
+        if (debouncedCommission !== commission || objectID === null)
+            Swal.fire({
+                icon: "warning",
+                showConfirmButton: true,
+                showCancelButton: true,
+                timerProgressBar: true,
+                title: "Zlecenie nie zostało jeszcze zapisane!",
+                text: "Na pewno opuścić formularz?",
+                cancelButtonText: "Nie",
+                confirmButtonText: "Tak",
+            }).then(({ value }) => {
+                if (value) history.push(`/tiles/`);
+            });
+        else history.push(`/tiles/`);
+    };
+
     return (
         <Container fluid>
-            <Link className="back-button" to="/tiles">
-                <Button variant="outline-primary" size="xl">
-                    Wróć do listy zleceń
-                </Button>
-            </Link>
+            <Button className="back-button" variant="outline-primary" size="xl" onClick={handleBackButton}>
+                Wróć do listy zleceń
+            </Button>
             <div>
                 <div className="form-step-buttons">
                     <Button

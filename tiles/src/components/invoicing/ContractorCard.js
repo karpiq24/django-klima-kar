@@ -119,7 +119,7 @@ const ContractorCard = ({ id, className, bg, border }) => {
 };
 
 ContractorCard.propTypes = {
-    id: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
     className: PropTypes.string,
     bg: PropTypes.string,
     border: PropTypes.string,

@@ -74,7 +74,7 @@ const ComponentCard = ({ id, className, bg, border }) => {
 };
 
 ComponentCard.propTypes = {
-    id: PropTypes.number.isRequired,
+    id: PropTypes.string.isRequired,
     className: PropTypes.string,
     bg: PropTypes.string,
     border: PropTypes.string,
