@@ -3,6 +3,7 @@
 ## 2020-05-12
 
 -   [TILES] Dodano ostrzeżenie przy wychodzeniu z niezapisanego zlecenia
+-   Dodano wsparcie nowego systemu usług w standardowym interfejsie (póki co bez usług z filtrem towaru)
 
 ## 2020-05-11
 

@@ -126,6 +126,7 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
             dict(SaleInvoice.INVOICE_TYPES)[self.invoice_type]
         )
         context["commission_alert"] = True
+        context["services"] = ServiceTemplate.objects.filter(display_as_button=True)
         return context
 
     def get_initial(self):
@@ -241,6 +242,7 @@ class SaleInvoiceUpdateView(UpdateWithInlinesView):
         context["title"] = "Edycja faktury sprzedażowej ({})".format(
             self.get_object().get_invoice_type_display()
         )
+        context["services"] = ServiceTemplate.objects.filter(display_as_button=True)
         return context
 
     def forms_valid(self, form, inlines):
@@ -482,25 +484,6 @@ class ServiceTemplateAutocomplete(CustomSelect2QuerySetView):
         if self.q:
             qs = qs.filter(Q(name__icontains=self.q) | Q(description__icontains=self.q))
         return qs
-
-
-class ServiceTemplateGetDataView(View):
-    def get(self, *args, **kwargs):
-        service_pk = self.request.GET.get("pk", None)
-        if service_pk:
-            service = ServiceTemplate.objects.get(pk=service_pk)
-            response = {
-                "name": service.name,
-                "description": service.description,
-                "ware": {"pk": service.ware.pk, "index": service.ware.index}
-                if service.ware
-                else None,
-                "quantity": service.quantity,
-                "price_netto": service.price_netto,
-                "price_brutto": service.price_brutto,
-            }
-            return JsonResponse({"status": "ok", "service": response})
-        return JsonResponse({"status": "error", "service": []})
 
 
 class ContractorTableView(ExportMixin, FilteredSingleTableView):

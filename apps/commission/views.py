@@ -56,7 +56,7 @@ from apps.commission.functions import (
     check_uploaded_files,
     get_temporary_files,
 )
-from apps.invoicing.models import SaleInvoice
+from apps.invoicing.models import SaleInvoice, ServiceTemplate
 
 
 class VehicleTableView(ExportMixin, FilteredSingleTableView):
@@ -389,6 +389,7 @@ class CommissionCreateView(CreateWithInlinesView):
         context["title"] = "Nowe zlecenie ({})".format(
             dict(Commission.COMMISSION_TYPES)[self.commission_type]
         )
+        context["services"] = ServiceTemplate.objects.filter(display_as_button=True)
         return context
 
     def get_initial(self):
@@ -442,6 +443,7 @@ class CommissionUpdateView(UpdateWithInlinesView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["services"] = ServiceTemplate.objects.filter(display_as_button=True)
         context["title"] = "Edycja zlecenia ({})".format(str(self.get_object()))
         upload_key = self.request.POST.get("upload_key")
         if upload_key:

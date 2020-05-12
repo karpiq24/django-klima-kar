@@ -242,12 +242,6 @@ class SaleInvoiceItemModelForm(forms.ModelForm):
         required=False,
         widget=autocomplete.ModelSelect2(url="warehouse:ware_autocomplete"),
     )
-    service = forms.ModelChoiceField(
-        label="Usługa",
-        queryset=ServiceTemplate.objects.all(),
-        required=False,
-        widget=autocomplete.ModelSelect2(url="invoicing:service_template_autocomplete"),
-    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -263,10 +257,6 @@ class SaleInvoiceItemModelForm(forms.ModelForm):
         self.fields["price_brutto"].widget.attrs.update({"class": "item-brutto"})
         self.fields["ware"].widget.attrs.update({"data-placeholder": "Wybierz towar"})
         self.fields["ware"].widget.attrs.update({"class": "item-ware"})
-        self.fields["service"].widget.attrs.update(
-            {"data-placeholder": "Wybierz usługę"}
-        )
-        self.fields["service"].widget.attrs.update({"class": "item-service"})
 
     class Meta:
         model = SaleInvoiceItem
@@ -277,7 +267,6 @@ class SaleInvoiceItemModelForm(forms.ModelForm):
             "price_netto",
             "price_brutto",
             "ware",
-            "service",
         ]
         localized_fields = ["price_netto", "price_brutto"]
 

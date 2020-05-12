@@ -19,9 +19,6 @@ import ServiceSelectModal from "./ServiceSelectModal";
 import WareSelectModal from "../../warehouse/WareSelectModal";
 import WareSelect from "../../warehouse/WareSelect";
 import FormField from "../../common/FormField";
-import InfiniteSelect from "../../common/InfiniteSelect";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Popover from "react-bootstrap/Popover";
 
 const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, errors }) => {
     if (currentStep !== 7) return null;

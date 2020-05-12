@@ -72,7 +72,6 @@ $(function () {
 
     const CREATE_CONTRACTOR = $("#create_contractor_url").val();
     const UPDATE_CONTRACTOR = $("#update_contractor_url").val();
-    const GET_SERVICE_DATA = $("#service_detail_url").val();
     const CREATE_VEHICLE = $("#create_vehicle_url").val();
     const UPDATE_VEHICLE = $("#update_vehicle_url").val();
     const CREATE_COMPONENT = $("#create_component_url").val();
@@ -489,35 +488,6 @@ $(function () {
         calculateInvoiceTotals();
     });
 
-    $(".choose_service").click(function () {
-        let item_form = $(this).parents(".item-formset-row");
-        const service_pk = $(item_form).find(".item-service").val();
-        if (service_pk === "") {
-            return;
-        }
-        $.ajax({
-            url: GET_SERVICE_DATA,
-            data: {
-                pk: service_pk,
-            },
-            dataType: "json",
-            success: function (result) {
-                $(item_form).find(".item-name").val(result.service.name);
-                $(item_form).find(".item-description").val(result.service.description);
-                if (result.service.ware) {
-                    let $option = $("<option selected></option>")
-                        .val(result.service.ware.pk)
-                        .text(result.service.ware.index);
-                    let $sel2 = $(item_form).find(".item-ware");
-                    $sel2.append($option).trigger("change");
-                }
-                $(item_form).find(".item-price").val(result.service.price_brutto);
-                $(item_form).find(".item-quantity").val(result.service.quantity);
-                $(item_form).find(".item-price").change();
-            },
-        });
-    });
-
     $("#item-rows tr:first").removeClass("d-none");
     $(".item-formset-row").each(function () {
         let item_form = $(this);
@@ -572,6 +542,67 @@ $(function () {
             });
         }, 300);
     }
+
+    $(".service-button").on("click", function () {
+        const pk = $(this).data("pk");
+        $.ajax({
+            url: "/graphql/",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                query: `query {
+                    services(filters: {id: "${pk}"}) {
+                        objects {
+                            name
+                            description
+                            button_name
+                            button_color
+                            ware {
+                                id
+                                index
+                                name
+                            }
+                            quantity
+                            price_brutto
+                            is_ware_service
+                            ware_filter
+                            is_group
+                            services {
+                                id
+                                name
+                                button_name
+                                button_color
+                            }
+                        }
+                    }
+                }`,
+            }),
+            success: function ({ data }) {
+                const service = data.services.objects[0];
+                $(".modal").modal("hide");
+                if (service.is_group) {
+                    $(".modal").modal("hide");
+                    $(`#serviceModal_${pk}`).modal("show");
+                } else {
+                    const item_form = $(".item-formset-row.d-none").first();
+                    $(item_form).find(".item-name").val(service.name);
+                    $(item_form).find(".item-description").val(service.description);
+                    if (service.ware) {
+                        let $option = $("<option selected></option>").val(service.ware.id).text(service.ware.index);
+                        let $sel2 = $(item_form).find(".item-ware");
+                        $sel2.append($option).trigger("change");
+                    }
+                    $(item_form).find(".item-price").val(service.price_brutto);
+                    $(item_form).find(".item-quantity").val(service.quantity);
+                    $(item_form).find(".item-price").change();
+                    $(item_form).removeClass("d-none");
+                }
+            },
+            error: function (data) {
+                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
+            },
+        });
+    });
 
     $("input[type=radio][name=status]").change(function () {
         checkEndDate();

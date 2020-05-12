@@ -258,37 +258,69 @@ $(function () {
         }
     });
 
-    $(".choose_service").click(function () {
-        var item_form = $(this).parents(".item-formset-row");
-        var service_pk = $(item_form).find(".item-service").val();
-        if (service_pk === "") {
-            return;
-        }
+    $(".service-button").on("click", function () {
+        const pk = $(this).data("pk");
         $.ajax({
-            url: GET_SERVICE_DATA,
-            data: {
-                pk: service_pk,
-            },
-            dataType: "json",
-            success: function (result) {
-                $(item_form).find(".item-name").val(result.service.name);
-                $(item_form).find(".item-description").val(result.service.description);
-                if (result.service.ware) {
-                    var $option = $("<option selected></option>")
-                        .val(result.service.ware.pk)
-                        .text(result.service.ware.index);
-                    var $sel2 = $(item_form).find(".item-ware");
-                    $sel2.append($option).trigger("change");
-                }
-                $(item_form).find(".item-netto").val(result.service.price_netto);
-                $(item_form).find(".item-brutto").val(result.service.price_brutto);
-                $(item_form).find(".item-quantity").val(result.service.quantity);
-
-                if (result.service.price_brutto) {
-                    $(item_form).find(".item-brutto").change();
+            url: "/graphql/",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                query: `query {
+                    services(filters: {id: "${pk}"}) {
+                        objects {
+                            name
+                            description
+                            button_name
+                            button_color
+                            ware {
+                                id
+                                index
+                                name
+                            }
+                            quantity
+                            price_brutto
+                            is_ware_service
+                            ware_filter
+                            is_group
+                            services {
+                                id
+                                name
+                                button_name
+                                button_color
+                            }
+                        }
+                    }
+                }`,
+            }),
+            success: function ({ data }) {
+                const service = data.services.objects[0];
+                if (service.is_group) {
+                    $(".modal").modal("hide");
+                    $(`#serviceModal_${pk}`).modal("show");
                 } else {
-                    $(item_form).find(".item-netto").change();
+                    const item_form = $(".item-formset-row.d-none").first();
+                    $(".modal").modal("hide");
+                    $(item_form).find(".item-name").val(service.name);
+                    $(item_form).find(".item-description").val(service.description);
+                    if (service.ware) {
+                        let $option = $("<option selected></option>").val(service.ware.id).text(service.ware.index);
+                        let $sel2 = $(item_form).find(".item-ware");
+                        $sel2.append($option).trigger("change");
+                    }
+                    $(item_form).find(".item-netto").val(service.price_netto);
+                    $(item_form).find(".item-brutto").val(service.price_brutto);
+                    $(item_form).find(".item-quantity").val(service.quantity);
+
+                    if (service.price_brutto) {
+                        $(item_form).find(".item-brutto").change();
+                    } else {
+                        $(item_form).find(".item-netto").change();
+                    }
+                    $(item_form).removeClass("d-none");
                 }
+            },
+            error: function (data) {
+                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
             },
         });
     });

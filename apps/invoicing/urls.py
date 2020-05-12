@@ -85,11 +85,6 @@ urlpatterns = [
         views.ServiceTemplateAutocomplete.as_view(),
         name="service_template_autocomplete",
     ),
-    path(
-        "get_service_data",
-        views.ServiceTemplateGetDataView.as_view(),
-        name="get_service_template",
-    ),
     path("kontrahenci", views.ContractorTableView.as_view(), name="contractors"),
     path(
         "kontrahenci/<str:slug>,<int:pk>",

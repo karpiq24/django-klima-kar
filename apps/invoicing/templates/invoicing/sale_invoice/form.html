@@ -57,6 +57,7 @@
 
     <div class="row">
         <div class="col-12">
+            {% include 'invoicing/service_template/service_buttons.html' with services=services %}
             {{ inlines.1.management_form }}
             {% include 'forms/form.html' with form=inlines.1.0 as_table=True %}
 
@@ -101,27 +102,6 @@
                                     0,00 zł
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-outline-info btn-sm btn-table" title="Wybierz usługę" data-toggle="modal" data-target="#id_item-{{ forloop.counter }}-service_modal">
-                                        Usługa
-                                    </button>
-                                    <div class="modal fade" id="id_item-{{ forloop.counter }}-service_modal" tabindex="-1" role="dialog" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Wybierz usługę</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    {% include 'forms/field.html' with field=item_form.service hide_label=True %}
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-outline-primary choose_service" data-dismiss="modal">Wybierz</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <button type="button" class="btn btn-outline-danger btn-sm btn-table remove_item_formset" title="Usuń">
                                         Usuń
                                     </button>
@@ -177,7 +157,6 @@
 <script>
     var CREATE_CONTRACTOR = "{% url 'invoicing:contractor_create_ajax' %}";
     var UPDATE_CONTRACTOR = "{% url 'invoicing:contractor_update_ajax' 0 %}";
-    var GET_SERVICE_DATA = "{% url 'invoicing:get_service_template' %}";
     var INVOICE_TYPE = "{{ form.initial.invoice_type }}";
 </script>
 <script src="{% static 'js/invoicing/sale-invoice.js' %}"></script>

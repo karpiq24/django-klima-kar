@@ -1,0 +1,31 @@
+<div class="modal fade" id="serviceModal_{{ service.pk }}" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">{{ service.name }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group d-flex flex-column">
+                {% for s in service.services.all %}
+                    {% if not s.is_ware_service %}
+                        <button type="button" class="btn btn-{{ s.button_color }} btn-lg ml-1 mr-1 mt-2 service-button" data-pk="{{ s.pk }}">{{ s.name }}</button>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Zamknij</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% for s in service.services.all %}
+    {% if s.is_group %}
+        {% include 'invoicing/service_template/select_modal.html' with service=s %}
+    {% endif %}
+{% endfor %}

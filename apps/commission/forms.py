@@ -195,12 +195,6 @@ class CommissionItemModelForm(forms.ModelForm):
         required=False,
         widget=autocomplete.ModelSelect2(url="warehouse:ware_autocomplete"),
     )
-    service = forms.ModelChoiceField(
-        label="Usługa",
-        queryset=ServiceTemplate.objects.all(),
-        required=False,
-        widget=autocomplete.ModelSelect2(url="invoicing:service_template_autocomplete"),
-    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -219,13 +213,10 @@ class CommissionItemModelForm(forms.ModelForm):
         self.fields["ware"].widget.attrs.update(
             {"data-placeholder": "Wybierz towar", "class": "item-ware"}
         )
-        self.fields["service"].widget.attrs.update(
-            {"data-placeholder": "Wybierz usługę", "class": "item-service"}
-        )
 
     class Meta:
         model = CommissionItem
-        fields = ["name", "description", "quantity", "price", "ware", "service"]
+        fields = ["name", "description", "quantity", "price", "ware"]
         localized_fields = ["price"]
 
 
