@@ -270,24 +270,15 @@ $(function () {
                         objects {
                             name
                             description
-                            button_name
-                            button_color
                             ware {
                                 id
                                 index
-                                name
                             }
                             quantity
                             price_brutto
+                            price_netto
                             is_ware_service
-                            ware_filter
                             is_group
-                            services {
-                                id
-                                name
-                                button_name
-                                button_color
-                            }
                         }
                     }
                 }`,
@@ -311,12 +302,12 @@ $(function () {
                     $(item_form).find(".item-brutto").val(service.price_brutto);
                     $(item_form).find(".item-quantity").val(service.quantity);
 
+                    $(item_form).removeClass("d-none");
                     if (service.price_brutto) {
                         $(item_form).find(".item-brutto").change();
                     } else {
                         $(item_form).find(".item-netto").change();
                     }
-                    $(item_form).removeClass("d-none");
                 }
             },
             error: function (data) {

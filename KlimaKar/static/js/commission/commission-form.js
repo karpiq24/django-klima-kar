@@ -555,24 +555,13 @@ $(function () {
                         objects {
                             name
                             description
-                            button_name
-                            button_color
                             ware {
                                 id
                                 index
-                                name
                             }
                             quantity
                             price_brutto
-                            is_ware_service
-                            ware_filter
                             is_group
-                            services {
-                                id
-                                name
-                                button_name
-                                button_color
-                            }
                         }
                     }
                 }`,
@@ -594,8 +583,8 @@ $(function () {
                     }
                     $(item_form).find(".item-price").val(service.price_brutto);
                     $(item_form).find(".item-quantity").val(service.quantity);
-                    $(item_form).find(".item-price").change();
                     $(item_form).removeClass("d-none");
+                    $(item_form).find(".item-price").change();
                 }
             },
             error: function (data) {
