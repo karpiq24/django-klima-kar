@@ -11,7 +11,7 @@
                 <div class="form-group d-flex flex-column">
                 {% for s in service.services.all %}
                     {% if not s.is_ware_service %}
-                        <button type="button" class="btn btn-{{ s.button_color }} btn-lg ml-1 mr-1 mt-2 service-button" data-pk="{{ s.pk }}">{{ s.name }}</button>
+                        <button type="button" class="btn btn-{{ s.button_color }} btn-lg ml-1 mr-1 mt-2 service-button" data-pk="{{ s.pk }}">{% if s.button_name %}{{ s.button_name }}{% else %}{{ s.name }}{% endif %}</button>
                     {% endif %}
                 {% endfor %}
             </div>
