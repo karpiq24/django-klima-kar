@@ -37,6 +37,7 @@ def strip_accents(text):
         )
         .replace("ł", "l")
         .replace("Ł", "L")
+        .replace("'", "")
     )
 
 

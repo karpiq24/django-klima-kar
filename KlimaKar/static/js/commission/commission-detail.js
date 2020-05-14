@@ -190,7 +190,7 @@ $(function () {
                             $("#commission_done").show();
                             const phone1 = $("#status-select").data("phone1");
                             const phone2 = $("#status-select").data("phone2");
-                            options = {};
+                            let options = {};
                             if (phone2 !== undefined && phone2 !== "None") {
                                 options[phone2] = phone2;
                             }
@@ -218,23 +218,28 @@ $(function () {
                                 }).then((send_sms) => {
                                     if (send_sms.value) {
                                         $.ajax({
-                                            url: $("#status-select").data("sms-url"),
-                                            type: "post",
-                                            dataType: "json",
-                                            data: {
-                                                phone: send_sms.value,
-                                                commission: $(that).data("pk"),
-                                                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                                            url: "/graphql/",
+                                            type: "POST",
+                                            contentType: "application/json",
+                                            data: JSON.stringify({
+                                                query: `mutation {
+                                                    sendCommissionNotification(pk: "${$(that).data("pk")}", phone: "${
+                                                    send_sms.value
+                                                }") {
+                                                        status
+                                                        message
+                                                    }
+                                                }`,
+                                            }),
+                                            success: function ({ data }) {
+                                                addAlert(
+                                                    data.sendCommissionNotification.status ? "Sukces!" : "Błąd!",
+                                                    "error",
+                                                    data.sendCommissionNotification.message
+                                                );
                                             },
-                                            success: function (data) {
-                                                addAlert("Sukces!", "success", data.message);
-                                            },
-                                            error: function (data) {
-                                                if (data.responseJSON.message) {
-                                                    addAlert("Uwaga!", "warning", data.responseJSON.message);
-                                                } else {
-                                                    genericErrorAlert();
-                                                }
+                                            error: function () {
+                                                genericErrorAlert();
                                             },
                                         });
                                     }

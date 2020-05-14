@@ -42,6 +42,7 @@ const COMMISSION = gql`
                     id
                     name
                 }
+                sent_sms
                 description
                 start_date
                 end_date
@@ -108,6 +109,8 @@ const CommissionForm = (props) => {
         onCompleted: (data) => {
             const obj = data.commissions.objects[0];
             setCommission({
+                id: obj.id,
+                sent_sms: obj.sent_sms,
                 commission_type: obj.commission_type,
                 status: obj.status,
                 vc_name: obj.vc_name,
@@ -237,7 +240,7 @@ const CommissionForm = (props) => {
     const [isLoading, setIsLoading] = useState(true);
     const [initialUpdate, setInitialUpdate] = useState(false);
 
-    const debouncedCommission = useDebounce(commission, initialUpdate ? 3000 : 5, () => {
+    const debouncedCommission = useDebounce(commission, initialUpdate ? 5000 : 5, () => {
         if (id && !isLoading && !loading)
             if (!initialUpdate) setInitialUpdate(true);
             else
@@ -246,6 +249,8 @@ const CommissionForm = (props) => {
                         id: id,
                         data: {
                             ...commission,
+                            id: undefined,
+                            sent_sms: undefined,
                             contractorLabel: undefined,
                             __typename: undefined,
                             items: commission.items.map((x) => ({ ...x, wareLabel: undefined, __typename: undefined })),

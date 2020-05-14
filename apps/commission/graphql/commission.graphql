@@ -8,6 +8,7 @@ extend type Mutation {
     updateCommission(id: ID!, data: CommissionInput!): CommissionPayload!
     addCommissionNote(commission: ID!, contents: String!): CommissionNote
     updateCommissionNote(pk: ID!, contents: String!, isActive: Boolean!): CommissionNote!
+    sendCommissionNotification(pk: ID!, phone: String!): Response!
 }
 
 type CommissionConnection {
@@ -33,6 +34,7 @@ type Commission {
     items: [CommissionItem]
     notes: [CommissionNote]
     get_absolute_url: String!
+    smsBody: String
 }
 
 type CommissionPayload {

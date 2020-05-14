@@ -144,9 +144,4 @@ urlpatterns = [
         views.CommissionAutocomplete.as_view(),
         name="commission_autocomplete",
     ),
-    path(
-        "sms_notification",
-        views.SendSMSNotificationView.as_view(),
-        name="send_sms_notification",
-    ),
 ]

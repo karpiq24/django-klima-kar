@@ -26,3 +26,8 @@ type Error {
     message: String
     code: String
 }
+
+type Response {
+    status: Boolean!
+    message: String!
+}

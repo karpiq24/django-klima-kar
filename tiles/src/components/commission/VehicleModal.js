@@ -29,6 +29,7 @@ const VEHICLE = gql`
 
 const VehicleModal = ({ id, show, onHide }) => {
     const { loading, data } = useQuery(VEHICLE, {
+        fetchPolicy: "no-cache",
         variables: { filters: { id: id } },
     });
     let vehicle = null;

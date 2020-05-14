@@ -29,6 +29,7 @@ const VEHICLE = gql`
 
 const VehicleCard = ({ id, className, bg, border }) => {
     const { loading, data } = useQuery(VEHICLE, {
+        fetchPolicy: "no-cache",
         variables: { filters: { id: id } },
     });
     let vehicle = null;

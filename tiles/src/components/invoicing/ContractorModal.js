@@ -31,6 +31,7 @@ const CONTRACTOR = gql`
 
 const ContractorModal = ({ id, show, onHide }) => {
     const { loading, data } = useQuery(CONTRACTOR, {
+        fetchPolicy: "no-cache",
         variables: { filters: { id: id } },
     });
     let contractor = null;

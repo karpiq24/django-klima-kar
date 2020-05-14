@@ -25,6 +25,7 @@ const COMPONENT = gql`
 
 const ComponentCard = ({ id, className, bg, border }) => {
     const { loading, data } = useQuery(COMPONENT, {
+        fetchPolicy: "no-cache",
         variables: { filters: { id: id } },
     });
     let component = null;

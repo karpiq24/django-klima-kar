@@ -70,7 +70,6 @@ const ContractorForm = (props) => {
         city: props.initial ? props.initial.city : null,
         address_1: props.initial ? props.initial.address_1 : null,
         address_2: props.initial ? props.initial.address_2 : null,
-        city: props.initial ? props.initial.city : null,
         postal_code: props.initial ? props.initial.postal_code : null,
         email: props.initial ? props.initial.email : null,
         phone_1: props.initial ? props.initial.phone_1 : null,

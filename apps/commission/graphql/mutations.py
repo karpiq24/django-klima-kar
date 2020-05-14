@@ -1,3 +1,6 @@
+from django.template import Template, Context
+
+from KlimaKar.functions import send_sms
 from KlimaKar.graphql.resolvers import BaseModelFormResolver
 from apps.commission.models import Commission, CommissionNote, Component, Vehicle
 from apps.commission.forms import (
@@ -8,6 +11,7 @@ from apps.commission.forms import (
 )
 
 from apps.commission.graphql.types import mutation
+from apps.settings.models import SiteSettings
 
 
 @mutation.field("updateStatus")
@@ -85,3 +89,28 @@ def resolve_update_commission_note(_, info, pk, contents, isActive):
     note.is_active = isActive
     note.save()
     return note
+
+
+@mutation.field("sendCommissionNotification")
+def resolve_send_commission_notification(_, info, pk, phone):
+    try:
+        commission = Commission.objects.get(pk=pk)
+    except Commission.DoesNotExist:
+        return {"status": False, "message": "To zlecenie nie istnieje."}
+    if commission.sent_sms:
+        return {
+            "status": False,
+            "message": "Nie można ponownie wysłać tego powiadomienia.",
+        }
+    site_settings = SiteSettings.load()
+    if site_settings.COMMISSION_SMS_BODY:
+        message = Template(site_settings.COMMISSION_SMS_BODY).render(
+            Context({"commission": commission})
+        )
+    else:
+        return {"status": False, "message": "Treść wiadomości nie została ustawiona."}
+    if send_sms(phone, message):
+        commission.sent_sms = True
+        commission.save()
+        return {"status": True, "message": "Wiadomość została wysłana."}
+    return {"status": False, "message": "Coś poszło nie tak. Spróbuj ponownie."}

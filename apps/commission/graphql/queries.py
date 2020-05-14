@@ -1,10 +1,13 @@
 import re
 from django.db.models import Q
+from django.template import Template, Context
 
+from KlimaKar.functions import strip_accents
 from KlimaKar.graphql.utils import get_paginated_results
 from apps.commission.functions import decode_mpojazd, decode_aztec_code
 from apps.commission.models import Commission, Vehicle, Component
 from apps.commission.graphql import query, commission, vehicle, component
+from apps.settings.models import SiteSettings
 
 
 @query.field("commissions")
@@ -72,6 +75,17 @@ def resolve_contractors(obj, info):
 @commission.field("items")
 def resolve_items(obj, info):
     return obj.commissionitem_set.all()
+
+
+@commission.field("smsBody")
+def resolve_sms_body(obj, info):
+    site_settings = SiteSettings.load()
+    if site_settings.COMMISSION_SMS_BODY:
+        message = Template(site_settings.COMMISSION_SMS_BODY).render(
+            Context({"commission": obj})
+        )
+        return strip_accents(message)
+    return None
 
 
 @vehicle.field("commissions")

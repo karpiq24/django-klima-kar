@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-05-14
+
+-   [TILES] Dodano możliwość wysyłania powiadomień SMS przy zmianie statusu na GOTOWE
+
 ## 2020-05-12
 
 -   [TILES] Dodano ostrzeżenie przy wychodzeniu z niezapisanego zlecenia

@@ -820,32 +820,3 @@ class UnassignInoiceView(View):
             {"status": "success", "message": "Faktura odłączona od zlecenia."},
             status=200,
         )
-
-
-class SendSMSNotificationView(View):
-    def post(self, request, *args, **kwargs):
-        phone = request.POST.get("phone")
-        commission_pk = request.POST.get("commission")
-        try:
-            commission = Commission.objects.get(pk=commission_pk)
-        except Commission.DoesNotExist:
-            return JsonResponse({}, status=400)
-
-        if commission.sent_sms:
-            return JsonResponse(
-                {"message": "Nie można wysłać ponownie tego powiadomienia."}, status=400
-            )
-
-        site_settings = SiteSettings.load()
-        message = ""
-        if site_settings.COMMISSION_SMS_BODY:
-            message = Template(site_settings.COMMISSION_SMS_BODY).render(
-                Context({"commission": commission})
-            )
-        message = strip_accents(message)
-
-        if send_sms(phone, message):
-            commission.sent_sms = True
-            commission.save()
-            return JsonResponse({"message": "Wiadomość została wysłana."}, status=200)
-        return JsonResponse({}, status=400)

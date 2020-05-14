@@ -24,7 +24,7 @@
                 <td>
                     {% csrf_token %}
                     <input type="hidden" id="sms" value="{{ sms }}">
-                    <div id="status-select" class="btn-group btn-group-toggle" data-toggle="buttons" data-url="{% url 'commission:change_status' %}" data-done="{{ object.DONE }}" data-sms-url="{% url 'commission:send_sms_notification' %}" data-ready="{{ object.READY }}" {% if object.contractor %} data-phone1="{{ object.contractor.phone_1 }}" data-phone2="{{ object.contractor.phone_2 }}"{% endif %}>
+                    <div id="status-select" class="btn-group btn-group-toggle" data-toggle="buttons" data-url="{% url 'commission:change_status' %}" data-done="{{ object.DONE }}" data-ready="{{ object.READY }}" {% if object.contractor %} data-phone1="{{ object.contractor.phone_1 }}" data-phone2="{{ object.contractor.phone_2 }}"{% endif %}>
                         {% for status in object.STATUS_CHOICES %}
                             <label class="btn btn-outline-primary{% if object.status == status.0 %} active{% endif %}">
                                 <input type="radio" name="status" id="option_{{ status.0 }}" data-value="{{ status.0 }}" data-pk="{{ object.pk }}" autocomplete="off" {% if object.status == status.0 %}checked{% endif %}> {{ status.1 }}
