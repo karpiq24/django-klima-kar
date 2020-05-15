@@ -234,7 +234,7 @@ $(function () {
                                             success: function ({ data }) {
                                                 addAlert(
                                                     data.sendCommissionNotification.status ? "Sukces!" : "Błąd!",
-                                                    "error",
+                                                    data.sendCommissionNotification.status ? "success" : "error",
                                                     data.sendCommissionNotification.message
                                                 );
                                             },
