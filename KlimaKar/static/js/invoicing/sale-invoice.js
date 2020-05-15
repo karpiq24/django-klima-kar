@@ -301,13 +301,14 @@ $(function () {
                     $(item_form).find(".item-netto").val(service.price_netto);
                     $(item_form).find(".item-brutto").val(service.price_brutto);
                     $(item_form).find(".item-quantity").val(service.quantity);
-
+                    $(item_form).find(".item-DELETE").children("input").prop("checked", false);
                     $(item_form).removeClass("d-none");
                     if (service.price_brutto) {
                         $(item_form).find(".item-brutto").change();
                     } else {
                         $(item_form).find(".item-netto").change();
                     }
+                    $(item_form).insertAfter($("#item-rows tr:not('.d-none'):last"));
                 }
             },
             error: function (data) {
