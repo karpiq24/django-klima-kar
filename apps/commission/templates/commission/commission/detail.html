@@ -137,7 +137,7 @@
                     <button class="btn btn-outline-primary btn-lg" id="pdf-btn" data-url="{% url 'commission:commission_pdf' object|slugify object.pk %}"><i class="far fa-file-pdf"></i> PDF</button>
                     <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#email_modal"><i class="far fa-envelope"></i> E-mail</button>
                     <a class="btn btn-outline-warning btn-lg" href="{% url 'commission:commission_update' object|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
-                    {% if request.user.is_superuser %}
+                    {% if request.user.is_staff %}
                         <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:commission_commission_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
                     {% endif %}
                 </div>

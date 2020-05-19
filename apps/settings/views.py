@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.contrib import messages
 from django.http import JsonResponse
 
-from KlimaKar.mixins import GroupAccessControlMixin, SuperUserOnlyMixin
+from KlimaKar.mixins import StaffOnlyMixin, SuperUserOnlyMixin
 from apps.settings.models import SiteSettings, MyCloudHome, InvoiceDownloadSettings
 from apps.settings.forms import (
     EmailSettingsModelForm,
@@ -14,8 +14,7 @@ from apps.settings.forms import (
 )
 
 
-class EmailSettingsUpdateView(GroupAccessControlMixin, UpdateView):
-    allowed_groups = ["boss"]
+class EmailSettingsUpdateView(StaffOnlyMixin, UpdateView):
     model = SiteSettings
     form_class = EmailSettingsModelForm
     template_name = "settings/email.html"
@@ -27,8 +26,7 @@ class EmailSettingsUpdateView(GroupAccessControlMixin, UpdateView):
         return reverse("settings:email")
 
 
-class InvoicingSettingsUpdateView(GroupAccessControlMixin, UpdateView):
-    allowed_groups = ["boss"]
+class InvoicingSettingsUpdateView(StaffOnlyMixin, UpdateView):
     model = SiteSettings
     form_class = InvoicingSettingsModelForm
     template_name = "settings/invoicing.html"
@@ -40,8 +38,7 @@ class InvoicingSettingsUpdateView(GroupAccessControlMixin, UpdateView):
         return reverse("settings:invoicing")
 
 
-class CommissionSettingsUpdateView(GroupAccessControlMixin, UpdateView):
-    allowed_groups = ["boss"]
+class CommissionSettingsUpdateView(StaffOnlyMixin, UpdateView):
     model = SiteSettings
     form_class = CommissionSettingsModelForm
     template_name = "settings/commission.html"
@@ -53,8 +50,7 @@ class CommissionSettingsUpdateView(GroupAccessControlMixin, UpdateView):
         return reverse("settings:commission")
 
 
-class InvoiceDownloadSettingsUpdateView(GroupAccessControlMixin, UpdateView):
-    allowed_groups = ["boss"]
+class InvoiceDownloadSettingsUpdateView(StaffOnlyMixin, UpdateView):
     model = InvoiceDownloadSettings
     form_class = InvoiceDownloadSettingsModelForm
     template_name = "settings/invoice_download.html"
@@ -101,15 +97,9 @@ class MyCloudRedirectAuthorizeView(SuperUserOnlyMixin, RedirectView):
     pattern_name = "settings:mycloud"
     query_string = True
 
-    def test_func(self):
-        return self.request.user.is_superuser
-
 
 class MyCloudGetAuthUrl(SuperUserOnlyMixin, View):
     pattern_name = "settings:mycloud"
-
-    def test_func(self):
-        return self.request.user.is_superuser
 
     def get(self, *args, **kwargs):
         cloud = MyCloudHome.load()

@@ -1,5 +1,5 @@
 from django.template.loader import render_to_string
-from django.http import HttpResponseForbidden, JsonResponse
+from django.http import JsonResponse
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.mixins import UserPassesTestMixin
 
@@ -8,16 +8,14 @@ from django_tables2.views import TableMixinBase
 from django_tables2.config import RequestConfig
 
 
-class GroupAccessControlMixin(object):
-    allowed_groups = []
+class StaffOnlyMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
 
-    def dispatch(self, request, *args, **kwargs):
-        if not self.allowed_groups or request.user.is_superuser:
-            return super().dispatch(request, *args, **kwargs)
-        for group in self.allowed_groups:
-            if request.user.groups.filter(name=group).exists():
-                return super().dispatch(request, *args, **kwargs)
-        return HttpResponseForbidden("Brak wymaganych uprawnień.")
+
+class SuperUserOnlyMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
 
 
 class AjaxFormMixin(object):
@@ -135,8 +133,3 @@ class MultiTableAjaxMixin(TableMixinBase):
             )
         context[self.tables_context_key] = tables
         return context
-
-
-class SuperUserOnlyMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.is_superuser

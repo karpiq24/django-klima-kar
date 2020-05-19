@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.db.models import Sum, Avg, Count, F, FloatField
 from django.template.defaultfilters import date as _date
 
-from KlimaKar.mixins import GroupAccessControlMixin
+from KlimaKar.mixins import StaffOnlyMixin
 from KlimaKar.templatetags.slugify import slugify
 from apps.warehouse.models import Invoice, Ware, WarePriceChange, Supplier
 from apps.invoicing.models import SaleInvoice, Contractor, RefrigerantWeights
@@ -18,8 +18,7 @@ from apps.stats.mixins import ChartDataMixin, BigChartHistoryMixin
 from apps.stats.dictionaries import COLORS
 
 
-class SupplierPurchaseHistory(GroupAccessControlMixin, ChartDataMixin, View):
-    allowed_groups = ["boss"]
+class SupplierPurchaseHistory(StaffOnlyMixin, ChartDataMixin, View):
     max_positions = 8
 
     def get(self, *args, **kwargs):
@@ -140,8 +139,7 @@ class WarePurchaseHistory(ChartDataMixin, View):
         return JsonResponse(response_data)
 
 
-class PurchaseInvoicesHistory(GroupAccessControlMixin, BigChartHistoryMixin):
-    allowed_groups = ["boss"]
+class PurchaseInvoicesHistory(StaffOnlyMixin, BigChartHistoryMixin):
     model = Invoice
     date_field = "date"
     price_field = "invoiceitem__price"
@@ -159,8 +157,7 @@ class PurchaseInvoicesHistory(GroupAccessControlMixin, BigChartHistoryMixin):
         return "week"
 
 
-class SaleInvoicesHistory(GroupAccessControlMixin, BigChartHistoryMixin):
-    allowed_groups = ["boss"]
+class SaleInvoicesHistory(StaffOnlyMixin, BigChartHistoryMixin):
     model = SaleInvoice
     date_field = "issue_date"
     price_field = "saleinvoiceitem__price_"
@@ -191,8 +188,7 @@ class SaleInvoicesHistory(GroupAccessControlMixin, BigChartHistoryMixin):
         )
 
 
-class CommissionHistory(GroupAccessControlMixin, BigChartHistoryMixin):
-    allowed_groups = ["boss"]
+class CommissionHistory(StaffOnlyMixin, BigChartHistoryMixin):
     model = Commission
     date_field = "end_date"
     price_field = "commissionitem__price"
@@ -277,9 +273,7 @@ class WarePriceChanges(View):
         }
 
 
-class DuePayments(GroupAccessControlMixin, View):
-    allowed_groups = ["boss"]
-
+class DuePayments(StaffOnlyMixin, View):
     def get(self, *args, **kwargs):
         invoices = (
             SaleInvoice.objects.exclude(
@@ -340,9 +334,7 @@ class Metrics(View):
 
     def get(self, *args, **kwargs):
         self.has_permission = False
-        if self.request.user.is_superuser:
-            self.has_permission = True
-        elif self.request.user.groups.filter(name="boss").exists():
+        if self.request.user.is_staff:
             self.has_permission = True
 
         group = self.request.GET.get("group")
@@ -517,9 +509,7 @@ class Metrics(View):
         return self.ptus
 
 
-class PTUList(GroupAccessControlMixin, View):
-    allowed_groups = ["boss"]
-
+class PTUList(StaffOnlyMixin, View):
     def get(self, *args, **kwargs):
         try:
             date_from = date_parser.parse(self.request.GET.get("date_from")).date()
@@ -557,9 +547,7 @@ class PTUList(GroupAccessControlMixin, View):
         return JsonResponse(response)
 
 
-class GetPTUValue(GroupAccessControlMixin, View):
-    allowed_groups = ["boss"]
-
+class GetPTUValue(StaffOnlyMixin, View):
     def get(self, *args, **kwargs):
         try:
             date = date_parser.parse(self.request.GET.get("date")).date()
@@ -574,9 +562,7 @@ class GetPTUValue(GroupAccessControlMixin, View):
             return JsonResponse({"value": 0})
 
 
-class SavePTU(GroupAccessControlMixin, View):
-    allowed_groups = ["boss"]
-
+class SavePTU(StaffOnlyMixin, View):
     def post(self, *args, **kwargs):
         date = date_parser.parse(self.request.POST.get("date"), dayfirst=True).date()
         value = self.request.POST.get("value")
@@ -594,9 +580,7 @@ class SavePTU(GroupAccessControlMixin, View):
         return JsonResponse({"status": "success", "message": "Poprawnie zapisano PTU."})
 
 
-class GetSummary(GroupAccessControlMixin, View):
-    allowed_groups = ["boss"]
-
+class GetSummary(StaffOnlyMixin, View):
     def get(self, *args, **kwargs):
         try:
             date_from = date_parser.parse(self.request.GET.get("date_from")).date()

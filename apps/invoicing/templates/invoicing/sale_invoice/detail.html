@@ -129,7 +129,7 @@
                     {% if not object.corrected_invoice and not object.correctivesaleinvoice %}
                         <a class="btn btn-outline-info btn-lg" href="{% url 'invoicing:sale_invoice_create_corrective' object|slugify object.pk %}" title="Korekta">Korekta</a>
                     {% endif %}
-                    {% if request.user.is_superuser %}
+                    {% if request.user.is_staff %}
                         <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:invoicing_saleinvoice_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
                     {% endif %}
                 </div>

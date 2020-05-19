@@ -1,4 +1,3 @@
-{% load access_control %}
 <div id="topbar">
     <div id="topbar-left">
         {% if DEBUG %}
@@ -21,7 +20,7 @@
     {% if user.is_authenticated %}
         <div id="topbar-right">
             <div id="topbar-right-main">
-                {% if request.user|has_group:"boss" %}
+                {% if request.user.is_staff %}
                     <div>
                         <a href="{% url 'settings:settings' %}" title="Ustawienia">
                             <i class="fa fa-cogs fa-lg" style="cursor: pointer;"></i>

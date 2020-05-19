@@ -33,7 +33,7 @@ class KlimaKarAuthenticationForm(AuthenticationForm):
         super().confirm_login_allowed(user)
         client_ip, is_routable = get_client_ip(self.request)
         if not ipaddress.ip_address(client_ip).is_private:
-            if not user.is_superuser and not user.groups.filter(name="boss").exists():
+            if not user.is_staff:
                 raise forms.ValidationError(
                     "Niedozwolony zdalny dostęp.", code="remote_disallowed",
                 )

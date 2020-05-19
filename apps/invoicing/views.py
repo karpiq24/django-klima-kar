@@ -20,7 +20,7 @@ from KlimaKar.email import get_email_message
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
 from KlimaKar.mixins import (
     AjaxFormMixin,
-    GroupAccessControlMixin,
+    StaffOnlyMixin,
     SingleTableAjaxMixin,
     MultiTableAjaxMixin,
 )
@@ -626,9 +626,7 @@ class ContractorGUS(View):
         return JsonResponse(response_data)
 
 
-class SaleInvoiceSetPayed(GroupAccessControlMixin, View):
-    allowed_groups = ["boss"]
-
+class SaleInvoiceSetPayed(StaffOnlyMixin, View):
     def get(self, *args, **kwargs):
         invoice = SaleInvoice.objects.get(pk=kwargs.get("pk"))
         invoice.payed = True

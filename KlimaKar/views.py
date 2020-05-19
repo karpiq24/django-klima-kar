@@ -19,9 +19,7 @@ class HomeView(TemplateView):
         context = super().get_context_data(**kwargs)
 
         has_permission = False
-        if self.request.user.is_superuser:
-            has_permission = True
-        elif self.request.user.groups.filter(name="boss").exists():
+        if self.request.user.is_staff:
             has_permission = True
 
         context["has_permission"] = has_permission

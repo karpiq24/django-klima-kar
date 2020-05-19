@@ -8,40 +8,40 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.conf import settings
 
+from KlimaKar.mixins import StaffOnlyMixin
 from apps.accounts.tables import UserSessionTable, UserTable
 from apps.accounts.models import UserSession
 from apps.accounts.filters import UserSessionFilter, UserFilter
-from apps.accounts.mixins import UserIsAdminMixin
 from apps.accounts.functions import send_token_email
 from KlimaKar.views import FilteredSingleTableView
 
 
-class UserSessionTableView(UserIsAdminMixin, FilteredSingleTableView):
+class UserSessionTableView(StaffOnlyMixin, FilteredSingleTableView):
     model = UserSession
     table_class = UserSessionTable
     filter_class = UserSessionFilter
     template_name = "accounts/user_session_table.html"
 
 
-class DeleteUserSessionView(UserIsAdminMixin, View):
+class DeleteUserSessionView(StaffOnlyMixin, View):
     def post(self, request, *args, **kwargs):
         user_session = get_object_or_404(UserSession, pk=request.POST.get("session"))
         user_session.delete()
         return JsonResponse(
-            {"status": "success", "message": "Sesja została usunięta.",}, status=200
+            {"status": "success", "message": "Sesja została usunięta."}, status=200
         )
 
 
-class DeleteUserSessionsView(UserIsAdminMixin, View):
+class DeleteUserSessionsView(StaffOnlyMixin, View):
     def post(self, request, *args, **kwargs):
         user = get_object_or_404(User, pk=request.POST.get("user"))
         UserSession.delete_user_sessions(user)
         return JsonResponse(
-            {"status": "success", "message": "Sesje zostały usunięte.",}, status=200
+            {"status": "success", "message": "Sesje zostały usunięte."}, status=200
         )
 
 
-class UserTableView(UserIsAdminMixin, FilteredSingleTableView):
+class UserTableView(StaffOnlyMixin, FilteredSingleTableView):
     model = User
     table_class = UserTable
     filter_class = UserFilter

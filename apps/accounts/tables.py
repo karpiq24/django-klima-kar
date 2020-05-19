@@ -29,29 +29,23 @@ class UserSessionTable(tables.Table):
 
 
 class UserTable(tables.Table):
-    username = tables.Column(attrs={"th": {"width": "15%"}})
-    email = tables.Column(attrs={"th": {"width": "18%"}})
-    is_active = tables.BooleanColumn(yesno=("", ""), attrs={"th": {"width": "10%"}})
+    username = tables.Column(attrs={"th": {"width": "21%"}})
+    email = tables.Column(attrs={"th": {"width": "21%"}})
+    is_active = tables.BooleanColumn(yesno=("", ""), attrs={"th": {"width": "12%"}})
     is_staff = tables.BooleanColumn(
-        yesno=("", ""), verbose_name="Zespół", attrs={"th": {"width": "10%"}}
+        yesno=("", ""), verbose_name="Zespół", attrs={"th": {"width": "12%"}}
     )
     is_superuser = tables.BooleanColumn(
-        yesno=("", ""), verbose_name="Administrator", attrs={"th": {"width": "10%"}}
-    )
-    is_boss = tables.BooleanColumn(
-        yesno=("", ""),
-        verbose_name="Szef",
-        empty_values=(),
-        attrs={"th": {"width": "10%"}},
+        yesno=("", ""), verbose_name="Administrator", attrs={"th": {"width": "12%"}}
     )
     is_logged_in = tables.BooleanColumn(
         yesno=("", ""),
         verbose_name="Zalogowany",
         empty_values=(),
-        attrs={"th": {"width": "10%"}},
+        attrs={"th": {"width": "12%"}},
     )
     actions = tables.TemplateColumn(
-        attrs={"th": {"width": "7%"}},
+        attrs={"th": {"width": "10%"}},
         verbose_name="Akcje",
         template_name="accounts/user_actions.html",
         orderable=False,
@@ -67,15 +61,11 @@ class UserTable(tables.Table):
             "is_active",
             "is_staff",
             "is_superuser",
-            "is_boss",
             "is_logged_in",
             "actions",
         ]
         order_by = "username"
         empty_text = "Brak użytkowników"
-
-    def render_is_boss(self, record):
-        return self._render_bool(record.groups.filter(name="boss").exists())
 
     def render_is_logged_in(self, record):
         return self._render_bool(UserSession.objects.filter(user=record).exists())
