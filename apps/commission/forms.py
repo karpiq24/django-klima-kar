@@ -234,7 +234,7 @@ class CommissionEmailForm(forms.Form):
         queryset=Commission.objects.none(), widget=forms.HiddenInput()
     )
     include_description = forms.BooleanField(
-        label="Opis zlecenie w pliku", widget=ToggleInput, initial=True, required=False
+        label="Opis zlecenia w pliku", widget=ToggleInput, initial=True, required=False
     )
 
     def __init__(self, *args, **kwargs):
