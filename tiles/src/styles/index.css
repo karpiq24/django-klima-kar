@@ -1,28 +1,10 @@
+html {
+    font-size: 20px;
+}
+
 body {
     background-color: #f5f5f5;
     color: #343a40;
-}
-
-.content {
-    padding: 0 3rem;
-}
-
-@media screen and (max-width: 1400px) {
-    .content {
-        padding: 0 2rem;
-    }
-}
-
-@media screen and (max-width: 1000px) {
-    .content {
-        padding: 0 1rem;
-    }
-}
-
-@media screen and (max-width: 600px) {
-    .content {
-        padding: 0 0.2rem;
-    }
 }
 
 .content-loading {
@@ -33,14 +15,14 @@ body {
 
 .btn-xxl {
     padding: 1rem 2rem;
-    font-size: 2.5rem;
+    font-size: 2rem;
     line-height: 1.5;
     border-radius: 0.6rem;
 }
 
 .btn-xl {
-    padding: 0.75rem 1.5rem;
-    font-size: 2rem;
+    padding: 0.7rem 1.4rem;
+    font-size: 1.75rem;
     line-height: 1.5;
     border-radius: 0.6rem;
 }
@@ -92,7 +74,7 @@ body {
     display: block;
 }
 
-@media screen and (max-width: 1440px) {
+@media screen and (max-width: 1200px) {
     .pretty-select.btn-group {
         flex-direction: column;
         width: 100%;
@@ -127,5 +109,23 @@ body {
     }
     .pretty-select.form-control {
         height: auto;
+    }
+}
+
+@media screen and (max-width: 1660px) {
+    html {
+        font-size: 18px;
+    }
+}
+
+@media screen and (max-width: 1490px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 1300px) {
+    html {
+        font-size: 14px;
     }
 }

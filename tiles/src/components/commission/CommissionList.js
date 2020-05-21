@@ -8,6 +8,7 @@ import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import Container from "react-bootstrap/Container";
 import Masonry from "react-masonry-css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -116,7 +117,7 @@ const CommissionList = (props) => {
     };
 
     return (
-        <div>
+        <Container fluid>
             {contractor ? (
                 <ContractorModal
                     id={contractor}
@@ -209,7 +210,7 @@ const CommissionList = (props) => {
                     ) : null}
                 </>
             ) : null}
-        </div>
+        </Container>
     );
 };
 

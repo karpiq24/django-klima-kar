@@ -386,16 +386,17 @@ const CommissionForm = (props) => {
                         variant="outline-dark"
                         size="xl"
                         type="button"
+                        className="mr-2"
                         onClick={previousStep}
                         disabled={currentStep === 1}
                     >
-                        <FontAwesomeIcon icon={faArrowLeft} /> Wstecz
+                        <FontAwesomeIcon icon={faArrowLeft} />
                     </Button>
                     <div className="text-center">
                         <h1>
                             {id ? `Edycja zlecenia ${id}` : "Nowe zlecenie"}
                             {id ? null : (
-                                <p className="new-alert d-flex align-items-baseline justify-content-center">
+                                <p className="new-alert d-flex align-items-baseline justify-content-center mb-0">
                                     To zlecenie nie zostało jeszcze zapisane.
                                     <Button
                                         className="flex-align-end ml-3"
@@ -408,7 +409,7 @@ const CommissionForm = (props) => {
                                 </p>
                             )}
                         </h1>
-                        <ButtonGroup>
+                        <ButtonGroup className="mt-4 pretty-select">
                             <Button
                                 size="xl"
                                 variant={
@@ -523,10 +524,11 @@ const CommissionForm = (props) => {
                         variant="outline-dark"
                         size="xl"
                         type="button"
+                        className="ml-2"
                         onClick={nextStep}
                         disabled={currentStep === STEP_COUNT}
                     >
-                        Dalej <FontAwesomeIcon icon={faArrowRight} />
+                        <FontAwesomeIcon icon={faArrowRight} />
                     </Button>
                 </div>
                 <div>

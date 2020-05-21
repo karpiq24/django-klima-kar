@@ -160,7 +160,7 @@ const StatusButtons = ({ onChange, commission, size }) => {
                 </ToggleButtonGroup>
             </div>
             {commission.sent_sms ? (
-                <Alert className="mt-4" variant="info">
+                <Alert className="mt-3 mb-0" variant="info">
                     <div className="d-flex align-items-center">
                         <FontAwesomeIcon icon={faInfoCircle} size="2x" className="mr-2" />
                         Powiadomienie SMS zostało już wysłane.

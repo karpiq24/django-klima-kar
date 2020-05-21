@@ -22,8 +22,8 @@ const CONTRACTOR = gql`
                 postal_code
                 email
                 bdo_number
-                phone_1
-                phone_2
+                phone_1_formatted
+                phone_2_formatted
             }
         }
     }
@@ -61,16 +61,16 @@ const ContractorCard = ({ id, className, bg, border }) => {
                                             </td>
                                         </tr>
                                     ) : null}
-                                    {contractor.phone_1 ? (
+                                    {contractor.phone_1_formatted ? (
                                         <tr>
                                             <td>Numer telefonu</td>
-                                            <td>{contractor.phone_1}</td>
+                                            <td>{contractor.phone_1_formatted}</td>
                                         </tr>
                                     ) : null}
-                                    {contractor.phone_2 ? (
+                                    {contractor.phone_2_formatted ? (
                                         <tr>
                                             <td>Numer telefonu 2</td>
-                                            <td>{contractor.phone_2}</td>
+                                            <td>{contractor.phone_2_formatted}</td>
                                         </tr>
                                     ) : null}
                                     {contractor.address_1 ? (

@@ -19,18 +19,17 @@
     flex-wrap: wrap;
 }
 
-.commission-status-buttons button:not(:last-child) {
-    margin-right: 1rem;
-}
-
 .commission-card {
     cursor: pointer;
     border-width: 3px !important;
     border-radius: 0.5rem !important;
 }
 
+.commission-card .card-body div.alert {
+    white-space: pre-line;
+}
+
 .card-header {
-    font-size: 1.25rem;
     font-weight: bold;
 }
 

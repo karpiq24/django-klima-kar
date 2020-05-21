@@ -20,7 +20,7 @@ const CommissionSummary = ({ currentStep, commission, onChange }) => {
 
     return (
         <>
-            <div className="d-flex justify-content-between align-items-center flex-wrap">
+            <div className="d-flex justify-content-between align-items-center mb-4">
                 <div className="text-left">
                     <header className="font-weight-bold">Data przyjęcia</header>
                     <div>{commission.start_date}</div>
@@ -33,7 +33,7 @@ const CommissionSummary = ({ currentStep, commission, onChange }) => {
             </div>
 
             {commission.description ? (
-                <Alert className="mt-4 detail-description-alert" variant="primary">
+                <Alert className="mt-2 detail-description-alert" variant="primary">
                     <div className="d-flex align-items-center">
                         <FontAwesomeIcon icon={faExclamationCircle} size="3x" className="mr-2" />
                         {commission.description}
@@ -41,7 +41,7 @@ const CommissionSummary = ({ currentStep, commission, onChange }) => {
                 </Alert>
             ) : null}
 
-            <Accordion className="mt-4" defaultActiveKey="items">
+            <Accordion className="mt-4 mb-4" defaultActiveKey="items">
                 {commission.vehicle ? <VehicleCard id={commission.vehicle} bg="light" border="primary" /> : null}
                 {commission.component ? <ComponentCard id={commission.component} bg="light" border="primary" /> : null}
                 {commission.contractor ? (

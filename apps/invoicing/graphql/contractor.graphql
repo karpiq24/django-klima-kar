@@ -21,6 +21,8 @@ type Contractor {
     bdo_number: String
     phone_1: String
     phone_2: String
+    phone_1_formatted: String
+    phone_2_formatted: String
     saleInvoices: [SaleInvoice]
     commissions: [Commission]
     vatStatus: VatStatus
