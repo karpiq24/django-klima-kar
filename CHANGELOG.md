@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2020-05-21
+
+-   [TILES] Poprawiono wygląd aplikacji
+-   [TILES] Wyświetlanie sformatowanych numerów telefonów
+
 ## 2020-05-14
 
 -   [TILES] Dodano możliwość wysyłania powiadomień SMS przy zmianie statusu na GOTOWE
