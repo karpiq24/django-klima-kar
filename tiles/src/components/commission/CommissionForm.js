@@ -586,17 +586,6 @@ const CommissionForm = (props) => {
                         errors={errors}
                     />
                     <CommissionSummary currentStep={currentStep} commission={commission} onChange={handleChanges} />
-
-                    {currentStep === STEP_COUNT && id === undefined ? (
-                        <Button
-                            className="flex-align-end mt-4"
-                            variant="outline-success"
-                            size="xxl"
-                            onClick={handleSubmit}
-                        >
-                            <FontAwesomeIcon icon={faSave} /> Zapisz
-                        </Button>
-                    ) : null}
                 </div>
             </div>
         </Container>

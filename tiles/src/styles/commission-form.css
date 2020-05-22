@@ -143,6 +143,12 @@ h2 {
         top: 0;
         left: 0;
     }
+
+    .type-buttons,
+    .vehicle-select {
+        flex-direction: column;
+        align-items: center !important;
+    }
 }
 
 @media screen and (max-width: 1330px) {

@@ -119,7 +119,7 @@ const VehicleInput = ({ currentStep, commission, onChange, errors }) => {
                               ))
                             : null}
                     </div>
-                    <div className="d-flex justify-content-between align-items-end vehicle-container">
+                    <div className="d-flex justify-content-between align-items-end vehicle-container vehicle-select">
                         <Form.Group className="w-100">
                             <h2>Wybierz pojazd:</h2>
                             <div className="d-flex">

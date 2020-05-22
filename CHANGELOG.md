@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 202005-22
+
+-   [TILES] Dodano obsługę notatek zlecenia
+
 ## 2020-05-21
 
 -   [TILES] Poprawiono wygląd aplikacji

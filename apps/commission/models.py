@@ -249,6 +249,10 @@ class Commission(models.Model):
     def value(self):
         return self._meta.model.objects.filter(pk=self.pk).total()
 
+    @property
+    def notes(self):
+        return self.commissionnote_set.all()
+
     def generate_pdf(self, include_description=True):
         template = get_template("commission/pdf_commission.html")
         rendered_tpl = template.render(
