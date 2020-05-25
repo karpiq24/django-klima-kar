@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 
 import Modal from "react-bootstrap/Modal";
@@ -9,7 +9,7 @@ import { faSave } from "@fortawesome/free-solid-svg-icons";
 
 const ModalForm = (props) => {
     return (
-        <Modal show={props.show} onHide={props.onHide} size="lg" centered>
+        <Modal show={props.show} onHide={props.onHide} size="xl" centered>
             <Modal.Header closeButton>
                 <Modal.Title>{props.title}</Modal.Title>
             </Modal.Header>

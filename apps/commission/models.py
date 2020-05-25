@@ -253,6 +253,10 @@ class Commission(models.Model):
     def notes(self):
         return self.commissionnote_set.all()
 
+    @property
+    def has_notes(self):
+        return self.commissionnote_set.exists()
+
     def generate_pdf(self, include_description=True):
         template = get_template("commission/pdf_commission.html")
         rendered_tpl = template.render(

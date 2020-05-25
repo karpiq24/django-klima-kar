@@ -41,18 +41,25 @@
     margin-left: auto;
 }
 
-.btn-footer {
-    width: 50%;
-    align-items: center;
-    justify-content: center;
+.commission-card-footer {
+    display: flex;
+    justify-content: space-between;
 }
 
-.btn-footer:first-child:not(:last-child) {
+.commission-card-footer button {
+    flex: 1 1 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.commission-card-footer button:not(:last-child) {
     margin-right: 1rem;
 }
 
 .btn-footer svg {
-    margin-right: 0.5rem;
+    margin-bottom: 0.2rem;
 }
 
 .card-footer {

@@ -1,6 +1,11 @@
 # Lista zmian
 
-## 202005-22
+## 2020-05-25
+
+-   [TILES] Dodano wyświetlanie notatek w liście zleceń
+-   [TILES] Zwiększono rozmiar niektórych wyskakujących okienek
+
+## 2020-05-22
 
 -   [TILES] Dodano obsługę notatek zlecenia
 

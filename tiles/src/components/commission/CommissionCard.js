@@ -7,10 +7,10 @@ import Alert from "react-bootstrap/Alert";
 import Table from "react-bootstrap/Table";
 import Card from "react-bootstrap/Card";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers, faCar, faMicrochip } from "@fortawesome/free-solid-svg-icons";
+import { faUsers, faCar, faMicrochip, faStickyNote } from "@fortawesome/free-solid-svg-icons";
 import { displayZloty } from "../../utils";
 
-const CommissionCard = ({ commission, openContractorModal, openVehicleModal, openComponentModal }) => {
+const CommissionCard = ({ commission, openContractorModal, openVehicleModal, openComponentModal, openNotesModal }) => {
     const history = useHistory();
     return (
         <Card
@@ -20,8 +20,10 @@ const CommissionCard = ({ commission, openContractorModal, openVehicleModal, ope
             className="commission-card"
             onClick={() => history.push(`/tiles/zlecenia/${commission.id}`)}
         >
-            <Card.Header>
-                Zlecenie {commission.id}: {commission.vc_name}
+            <Card.Header className="d-flex justify-content-between">
+                <div>
+                    Zlecenie {commission.id}: {commission.vc_name}
+                </div>
             </Card.Header>
             <Card.Body>
                 <div className="commission-dates">
@@ -62,7 +64,7 @@ const CommissionCard = ({ commission, openContractorModal, openVehicleModal, ope
                     </Table>
                 ) : null}
             </Card.Body>
-            <Card.Footer>
+            <Card.Footer className="commission-card-footer">
                 {commission.contractor ? (
                     <Button
                         variant="outline-primary"
@@ -105,6 +107,18 @@ const CommissionCard = ({ commission, openContractorModal, openVehicleModal, ope
                         <span>Podzespół</span>
                     </Button>
                 ) : null}
+                <Button
+                    variant={commission.has_notes ? "outline-danger" : "outline-dark"}
+                    size="lg"
+                    className="btn-footer"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        openNotesModal(commission);
+                    }}
+                >
+                    <FontAwesomeIcon icon={faStickyNote} />
+                    <span>Notatki</span>
+                </Button>
             </Card.Footer>
         </Card>
     );
@@ -115,6 +129,7 @@ CommissionCard.propTypes = {
     openContractorModal: PropTypes.func.isRequired,
     openVehicleModal: PropTypes.func.isRequired,
     openComponentModal: PropTypes.func.isRequired,
+    openNotesModal: PropTypes.func.isRequired,
 };
 
 export default CommissionCard;

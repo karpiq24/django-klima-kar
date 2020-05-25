@@ -17,7 +17,8 @@ import ComponentCard from "../ComponentCard";
 import { displayZloty } from "../../../utils";
 import StatusButtons from "./StatusButtons";
 import { COMPONENT, VEHICLE } from "../choices";
-import CommissionNotesCard from "../CommissionNotesCard";
+import CommissionNotesCard from "../notes/CommissionNotesCard";
+import CommissionNotesProvider from "../notes/CommissionNotesProvider";
 
 const CommissionSummary = ({ currentStep, commission, onChange }) => {
     if (currentStep !== 8) return null;
@@ -131,7 +132,11 @@ const CommissionSummary = ({ currentStep, commission, onChange }) => {
                             </div>
                         </Alert>
                     ) : null}
-                    {commission.id ? <CommissionNotesCard id={commission.id} bg="light" border="dark" /> : null}
+                    {commission.id ? (
+                        <CommissionNotesProvider id={commission.id}>
+                            <CommissionNotesCard border="dark" bg="light" />
+                        </CommissionNotesProvider>
+                    ) : null}
                 </Col>
             </Row>
         </>

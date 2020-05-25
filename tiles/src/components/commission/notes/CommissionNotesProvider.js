@@ -2,16 +2,12 @@ import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
-import moment from "moment";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusSquare, faPencilAlt, faSave } from "@fortawesome/free-solid-svg-icons";
+import { faSave } from "@fortawesome/free-solid-svg-icons";
 
-import Card from "react-bootstrap/Card";
-import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/Button";
 
-import ContentLoading from "../common/ContentLoading";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import ToggleButton from "react-bootstrap/ToggleButton";
@@ -50,10 +46,10 @@ const UPDATE_NOTE = gql`
     }
 `;
 
-const CommissionNotesCard = ({ id, className, bg, border }) => {
+const CommissionNotesProvider = (props) => {
     const { loading, data, refetch } = useQuery(NOTES, {
         fetchPolicy: "no-cache",
-        variables: { filters: { id: id } },
+        variables: { filters: { id: props.id } },
     });
     let notes = [];
     if (!loading) {
@@ -93,7 +89,7 @@ const CommissionNotesCard = ({ id, className, bg, border }) => {
         else
             addNote({
                 variables: {
-                    commission: id,
+                    commission: props.id,
                     contents: currentNote.contents,
                 },
             });
@@ -102,59 +98,28 @@ const CommissionNotesCard = ({ id, className, bg, border }) => {
 
     const [addNote] = useMutation(ADD_NOTE, {
         onCompleted: (data) => {
-            refetch({ filters: { id: id } });
+            refetch({ filters: { id: props.id } });
         },
     });
 
     const [updateNote] = useMutation(UPDATE_NOTE, {
         onCompleted: (data) => {
-            refetch({ filters: { id: id } });
+            refetch({ filters: { id: props.id } });
         },
     });
 
+    const { children } = props;
+    const childrenPropped = React.Children.map(children, (child) =>
+        React.cloneElement(child, {
+            notes: notes,
+            handleEditModal: handleEditModal,
+            handleCreateModal: handleCreateModal,
+        })
+    );
+
     return (
         <>
-            <Card className={className} bg={bg} border={border}>
-                {loading ? (
-                    <ContentLoading />
-                ) : (
-                    <>
-                        <Card.Header>Notatki</Card.Header>
-                        <ListGroup>
-                            {notes.length > 0 ? (
-                                notes.map((note) => (
-                                    <ListGroup.Item
-                                        key={note.id}
-                                        className="d-flex justify-content-between align-items-start"
-                                    >
-                                        <div className={note.is_active ? "" : "not-active"}>
-                                            <small className="font-weight-bold">
-                                                {moment(note.created).locale("pl").calendar()}
-                                                {note.was_edited
-                                                    ? ` (edytowano ${moment(note.last_edited).locale("pl").calendar()})`
-                                                    : null}
-                                            </small>
-                                            <div className="commission-note">{note.contents}</div>
-                                        </div>
-                                        <FontAwesomeIcon
-                                            className="commission-note-edit"
-                                            icon={faPencilAlt}
-                                            onClick={() => handleEditModal(note)}
-                                        />
-                                    </ListGroup.Item>
-                                ))
-                            ) : (
-                                <ListGroup.Item>Brak notatek.</ListGroup.Item>
-                            )}
-                        </ListGroup>
-                        <Card.Footer>
-                            <Button size="lg" variant="outline-success" onClick={handleCreateModal}>
-                                <FontAwesomeIcon icon={faPlusSquare} /> Dodaj nową notatkę
-                            </Button>
-                        </Card.Footer>
-                    </>
-                )}
-            </Card>
+            {childrenPropped}
             <Modal show={showNoteModal} onHide={() => setShowNoteModal(false)} size="lg" centered>
                 <Modal.Header>
                     <Modal.Title>{isUpdating ? "Edycja notatki" : "Nowa notatka"}</Modal.Title>
@@ -206,11 +171,10 @@ const CommissionNotesCard = ({ id, className, bg, border }) => {
     );
 };
 
-CommissionNotesCard.propTypes = {
+CommissionNotesProvider.propTypes = {
     id: PropTypes.string.isRequired,
     className: PropTypes.string,
-    bg: PropTypes.string,
-    border: PropTypes.string,
+    children: PropTypes.node.isRequired,
 };
 
-export default CommissionNotesCard;
+export default CommissionNotesProvider;

@@ -38,7 +38,7 @@ const VehicleModal = ({ id, show, onHide }) => {
     }
 
     return (
-        <Modal centered show={show} onHide={onHide}>
+        <Modal centered show={show} onHide={onHide} size="lg">
             {loading || vehicle === null ? (
                 <ContentLoading />
             ) : (

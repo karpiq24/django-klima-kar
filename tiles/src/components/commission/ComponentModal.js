@@ -34,7 +34,7 @@ const ComponentModal = ({ id, show, onHide }) => {
     }
 
     return (
-        <Modal centered show={show} onHide={onHide}>
+        <Modal centered show={show} onHide={onHide} size="lg">
             {loading || component === null ? (
                 <ContentLoading />
             ) : (

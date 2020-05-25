@@ -40,7 +40,7 @@ const ContractorModal = ({ id, show, onHide }) => {
     }
 
     return (
-        <Modal centered show={show} onHide={onHide}>
+        <Modal centered show={show} onHide={onHide} size="lg">
             {loading || contractor === null ? (
                 <ContentLoading />
             ) : (

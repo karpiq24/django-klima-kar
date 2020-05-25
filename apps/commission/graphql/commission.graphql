@@ -35,6 +35,7 @@ type Commission {
     notes: [CommissionNote]
     get_absolute_url: String!
     smsBody: String
+    has_notes: Boolean!
 }
 
 type CommissionPayload {

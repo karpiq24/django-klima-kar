@@ -20,6 +20,8 @@ import VehicleModal from "../commission/VehicleModal";
 import ComponentModal from "../commission/ComponentModal";
 import CommissionCard from "./CommissionCard";
 import { DONE, OPEN, READY, ON_HOLD, CANCELLED } from "./choices";
+import CommissionNotesModal from "./notes/CommissionNotesModal";
+import CommissionNotesProvider from "./notes/CommissionNotesProvider";
 
 const COMMISSIONS = gql`
     query getCommissions($pagination: PageInput, $filters: CommissionFilter) {
@@ -54,6 +56,7 @@ const COMMISSIONS = gql`
                     quantity
                     price
                 }
+                has_notes
             }
         }
     }
@@ -65,9 +68,11 @@ const CommissionList = (props) => {
     const [contractor, setContractor] = useState(null);
     const [vehicle, setVehicle] = useState(null);
     const [component, setComponent] = useState(null);
+    const [commission, setCommission] = useState(null);
     const [contractorModalShow, setContractorModalShow] = useState(false);
     const [vehicleModalShow, setVehicleModalShow] = useState(false);
     const [componentModalShow, setComponentModalShow] = useState(false);
+    const [notesModalShow, setNotesModalShow] = useState(false);
     const { loading, data, refetch } = useQuery(COMMISSIONS, {
         variables: {
             pagination: { pageSize: pageSize, page: 1 },
@@ -116,6 +121,11 @@ const CommissionList = (props) => {
         setComponentModalShow(true);
     };
 
+    const openNotesModal = (value) => {
+        setCommission(value);
+        setNotesModalShow(true);
+    };
+
     return (
         <Container fluid>
             {contractor ? (
@@ -130,6 +140,11 @@ const CommissionList = (props) => {
             ) : null}
             {component ? (
                 <ComponentModal id={component} show={componentModalShow} onHide={() => setComponentModalShow(false)} />
+            ) : null}
+            {commission ? (
+                <CommissionNotesProvider id={commission.id}>
+                    <CommissionNotesModal show={notesModalShow} onHide={() => setNotesModalShow(false)} />
+                </CommissionNotesProvider>
             ) : null}
             <div className="commission-status-buttons mt-4 mb-4">
                 <ToggleButtonGroup
@@ -176,6 +191,7 @@ const CommissionList = (props) => {
                                 openContractorModal={openContractorModal}
                                 openVehicleModal={openVehicleModal}
                                 openComponentModal={openComponentModal}
+                                openNotesModal={openNotesModal}
                             />
                         ))}
                     </Masonry>
