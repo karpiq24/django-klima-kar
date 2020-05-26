@@ -3,6 +3,7 @@
 ## 2020-05-26
 
 -   [TILES] Zmieniono przyciski na wypełnione kolorem
+-   [TILES] Zmieniono zapisywanie podczas edycji zlecenia na przycisk
 
 ## 2020-05-25
 

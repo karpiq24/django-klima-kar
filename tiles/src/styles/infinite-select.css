@@ -96,4 +96,5 @@
     max-width: 100%;
     width: 100%;
     transform: translateY(50px) !important;
+    margin-top: 0.75rem !important;
 }

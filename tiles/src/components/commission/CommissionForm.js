@@ -22,7 +22,6 @@ import DescriptionInput from "./form_steps/DescriptionInput";
 import ItemsInput from "./form_steps/ItemsInput";
 import CommissionSummary from "./form_steps/CommissionSummary";
 import { OPEN, VEHICLE } from "./choices";
-import useDebounce from "../common/useDebounce";
 
 const COMMISSION = gql`
     query getCommission($filters: CommissionFilter) {
@@ -189,6 +188,7 @@ const CommissionForm = (props) => {
                     toast: true,
                 });
                 setErrors({});
+                setIsSaved(true);
                 history.push(`/tiles/zlecenia/${data.addCommission.object.id}`);
             } else handleErrors(data.addCommission.errors);
         },
@@ -208,6 +208,7 @@ const CommissionForm = (props) => {
                     toast: true,
                 });
                 setErrors({});
+                setIsSaved(true);
             } else handleErrors(data.updateCommission.errors);
         },
     });
@@ -238,26 +239,7 @@ const CommissionForm = (props) => {
     });
     const [objectID, setObjectID] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [initialUpdate, setInitialUpdate] = useState(false);
-
-    const debouncedCommission = useDebounce(commission, initialUpdate ? 5000 : 5, () => {
-        if (id && !isLoading && !loading)
-            if (!initialUpdate) setInitialUpdate(true);
-            else
-                updateCommission({
-                    variables: {
-                        id: id,
-                        data: {
-                            ...commission,
-                            id: undefined,
-                            sent_sms: undefined,
-                            contractorLabel: undefined,
-                            __typename: undefined,
-                            items: commission.items.map((x) => ({ ...x, wareLabel: undefined, __typename: undefined })),
-                        },
-                    },
-                });
-    });
+    const [isSaved, setIsSaved] = useState(true);
 
     useEffect(() => {
         const id = props.match.params.id;
@@ -275,6 +257,7 @@ const CommissionForm = (props) => {
             ...commission,
             ...changes,
         });
+        setIsSaved(false);
         if (next) nextStep();
     };
 
@@ -290,6 +273,7 @@ const CommissionForm = (props) => {
                 ...commission.items.slice(index + 1),
             ],
         });
+        setIsSaved(false);
 
         if (errors.items && errors.items[index]) {
             setErrors({
@@ -307,6 +291,7 @@ const CommissionForm = (props) => {
             ...commission,
             items: [...commission.items, item],
         });
+        setIsSaved(false);
     };
 
     const handleRemoveItem = (index) => {
@@ -314,6 +299,7 @@ const CommissionForm = (props) => {
             ...commission,
             items: [...commission.items.slice(0, index), ...commission.items.slice(index + 1)],
         });
+        setIsSaved(false);
         setErrors({
             ...errors,
             items: undefined,
@@ -321,15 +307,31 @@ const CommissionForm = (props) => {
     };
 
     const handleSubmit = () => {
-        addCommission({
-            variables: {
-                data: {
-                    ...commission,
-                    contractorLabel: undefined,
-                    items: commission.items.map((x) => ({ ...x, wareLabel: undefined })),
+        if (objectID) {
+            updateCommission({
+                variables: {
+                    id: id,
+                    data: {
+                        ...commission,
+                        id: undefined,
+                        sent_sms: undefined,
+                        contractorLabel: undefined,
+                        __typename: undefined,
+                        items: commission.items.map((x) => ({ ...x, wareLabel: undefined, __typename: undefined })),
+                    },
                 },
-            },
-        });
+            });
+        } else {
+            addCommission({
+                variables: {
+                    data: {
+                        ...commission,
+                        contractorLabel: undefined,
+                        items: commission.items.map((x) => ({ ...x, wareLabel: undefined })),
+                    },
+                },
+            });
+        }
     };
 
     const nextStep = () => {
@@ -359,7 +361,7 @@ const CommissionForm = (props) => {
     };
 
     const handleBackButton = () => {
-        if (debouncedCommission !== commission || objectID === null)
+        if (!isSaved)
             Swal.fire({
                 icon: "warning",
                 showConfirmButton: true,
@@ -395,9 +397,11 @@ const CommissionForm = (props) => {
                     <div className="text-center">
                         <h1>
                             {id ? `Edycja zlecenia ${id}` : "Nowe zlecenie"}
-                            {id ? null : (
+                            {isSaved ? null : (
                                 <p className="new-alert d-flex align-items-baseline justify-content-center mb-0">
-                                    To zlecenie nie zostało jeszcze zapisane.
+                                    {objectID
+                                        ? "Zmiany nie zostały jeszcze zapisane."
+                                        : "To zlecenie nie zostało jeszcze zapisane."}
                                     <Button
                                         className="flex-align-end ml-3"
                                         variant="outline-success"
