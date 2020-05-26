@@ -16,9 +16,9 @@ const ModalForm = (props) => {
             <Modal.Body>{props.children}</Modal.Body>
             <Modal.Footer>
                 <Button variant="outline-dark" size="lg" onClick={props.onHide}>
-                    Zamknij
+                    Anuluj
                 </Button>
-                <Button variant="outline-primary" size="lg" type="submit" form={props.formId}>
+                <Button variant="success" size="lg" type="submit" form={props.formId}>
                     <FontAwesomeIcon icon={faSave} /> Zapisz
                 </Button>
             </Modal.Footer>

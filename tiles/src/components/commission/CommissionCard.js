@@ -67,7 +67,7 @@ const CommissionCard = ({ commission, openContractorModal, openVehicleModal, ope
             <Card.Footer className="commission-card-footer">
                 {commission.contractor ? (
                     <Button
-                        variant="outline-primary"
+                        variant="primary"
                         size="lg"
                         className="btn-footer"
                         onClick={(e) => {
@@ -81,7 +81,7 @@ const CommissionCard = ({ commission, openContractorModal, openVehicleModal, ope
                 ) : null}
                 {commission.vehicle ? (
                     <Button
-                        variant="outline-info"
+                        variant="info"
                         size="lg"
                         className="btn-footer"
                         onClick={(e) => {
@@ -95,7 +95,7 @@ const CommissionCard = ({ commission, openContractorModal, openVehicleModal, ope
                 ) : null}
                 {commission.component ? (
                     <Button
-                        variant="outline-info"
+                        variant="info"
                         size="lg"
                         className="btn-footer"
                         onClick={(e) => {
@@ -108,7 +108,7 @@ const CommissionCard = ({ commission, openContractorModal, openVehicleModal, ope
                     </Button>
                 ) : null}
                 <Button
-                    variant={commission.has_notes ? "outline-danger" : "outline-dark"}
+                    variant={commission.has_notes ? "danger" : "dark"}
                     size="lg"
                     className="btn-footer"
                     onClick={(e) => {

@@ -162,7 +162,7 @@ const CommissionNotesProvider = (props) => {
                     <Button size="lg" variant="outline-dark" onClick={() => setShowNoteModal(false)}>
                         Anuluj
                     </Button>
-                    <Button size="lg" variant="outline-success" onClick={handleSubmit}>
+                    <Button size="lg" variant="success" onClick={handleSubmit}>
                         <FontAwesomeIcon icon={faSave} /> Zapisz
                     </Button>
                 </Modal.Footer>

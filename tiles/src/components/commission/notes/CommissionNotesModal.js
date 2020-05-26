@@ -49,7 +49,7 @@ const CommissionNotesModal = (props) => {
                     <Button size="lg" variant="outline-dark" onClick={props.onHide}>
                         Zamknij
                     </Button>
-                    <Button size="lg" variant="outline-success" onClick={props.handleCreateModal}>
+                    <Button size="lg" variant="success" onClick={props.handleCreateModal}>
                         <FontAwesomeIcon icon={faPlusSquare} /> Dodaj nową notatkę
                     </Button>
                 </Modal.Footer>

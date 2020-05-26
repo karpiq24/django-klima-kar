@@ -138,7 +138,7 @@ const ComponentInput = ({ currentStep, commission, onChange, errors }) => {
                             />
                             {commission.component ? (
                                 <Button
-                                    variant="outline-warning"
+                                    variant="warning"
                                     size="lg"
                                     className="ml-2 d-flex align-items-center"
                                     onClick={() => setShowModal(true)}

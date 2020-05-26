@@ -121,7 +121,7 @@ const ContractorInput = ({ currentStep, commission, onChange, errors }) => {
                             />
                             {commission.contractor ? (
                                 <Button
-                                    variant="outline-warning"
+                                    variant="warning"
                                     size="lg"
                                     className="ml-2 d-flex align-items-center"
                                     onClick={() => setShowModal(true)}

@@ -175,7 +175,7 @@ const ItemsInput = ({ currentStep, onChange, addItem, removeItem, commission, er
                                 <td className="text-left border-right-0">
                                     <Button
                                         size="lg"
-                                        variant="outline-success"
+                                        variant="success"
                                         onClick={() =>
                                             addItem({
                                                 name: null,

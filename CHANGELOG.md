@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-05-26
+
+-   [TILES] Zmieniono przyciski na wypełnione kolorem
+
 ## 2020-05-25
 
 -   [TILES] Dodano wyświetlanie notatek w liście zleceń
