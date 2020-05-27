@@ -4,6 +4,7 @@ import { gql } from "apollo-boost";
 import { useLazyQuery } from "@apollo/react-hooks";
 
 import Button from "react-bootstrap/Button";
+import Swal from "sweetalert2";
 
 const GUS_ADDRESS = gql`
     query getGusAddress($nip: String!) {
@@ -19,7 +20,20 @@ const GUS_ADDRESS = gql`
 const GusButton = ({ nip, onCompleted }) => {
     const [getGusAddress, { loading, data }] = useLazyQuery(GUS_ADDRESS, {
         onCompleted: (data) => {
-            onCompleted(data.gusAddress);
+            if(data.gusAddress === null) {
+                Swal.fire({
+                    icon: "error",
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 5000,
+                    timerProgressBar: true,
+                    title: "Błąd!",
+                    text: "Coś poszło nie tak. Spróbuj ponownie.",
+                    toast: true,
+                });
+            } else {
+                onCompleted(data.gusAddress);
+            }
         },
     });
 
@@ -36,7 +50,7 @@ const GusButton = ({ nip, onCompleted }) => {
 };
 
 GusButton.propTypes = {
-    nip: PropTypes.string.isRequired,
+    nip: PropTypes.string,
     onCompleted: PropTypes.func.isRequired,
 };
 
