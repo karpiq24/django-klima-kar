@@ -68,14 +68,16 @@
 }
 
 .infinite-select-option,
-.infinite-select-create {
+.infinite-select-create,
+.infinite-select-empty {
     padding: 1rem 1rem;
     border-radius: 0.3rem;
     cursor: pointer;
 }
 
 .infinite-select-option:hover,
-.infinite-select-create:hover {
+.infinite-select-create:hover,
+.infinite-select-empty:hover {
     background-color: #007bff;
     color: #ffffff;
 }
@@ -86,6 +88,10 @@
 
 .infinite-select-create:hover {
     background-color: #28a745;
+}
+
+.infinite-select-empty:hover {
+    background-color: #343a40;
 }
 
 .infinite-select-search {

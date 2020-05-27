@@ -100,32 +100,36 @@ const InfiniteSelect = (props) => {
                                     loader={<ContentLoading key="loading" />}
                                 >
                                     {props.objects.length == 0 ? (
-                                        props.onCreate ? (
-                                            <div
-                                                key="create-option"
-                                                className="infinite-select-create"
-                                                onClick={() => {
-                                                    setShow(false);
-                                                    props.onCreate(search);
-                                                }}
-                                            >
-                                                <FontAwesomeIcon icon={faPlusSquare} />{" "}
-                                                {props.createLabel ? props.createLabel : "Dodaj nowy"}
-                                            </div>
-                                        ) : (
-                                            <div>Brak wyników</div>
-                                        )
+                                        <div key="no-options" className="infinite-select-empty">Brak wyników</div>
                                     ) : (
                                         props.objects.map((obj) => (
                                             <div
                                                 key={obj.id}
                                                 className="infinite-select-option"
-                                                onClick={() => selectOption(props.returnObject ? obj : obj.id, props.getObjectLabel(obj))}
+                                                onClick={() =>
+                                                    selectOption(
+                                                        props.returnObject ? obj : obj.id,
+                                                        props.getObjectLabel(obj)
+                                                    )
+                                                }
                                             >
                                                 {props.getObjectLabel(obj)}
                                             </div>
                                         ))
                                     )}
+                                    {props.onCreate ? (
+                                        <div
+                                            key="create-option"
+                                            className="infinite-select-create"
+                                            onClick={() => {
+                                                setShow(false);
+                                                props.onCreate(search);
+                                            }}
+                                        >
+                                            <FontAwesomeIcon icon={faPlusSquare} />{" "}
+                                            {props.createLabel ? props.createLabel : "Dodaj nowy"}
+                                        </div>
+                                    ) : null}
                                 </InfiniteScroll>
                             </div>
                         </div>

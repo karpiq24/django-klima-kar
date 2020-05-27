@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-05-27
+
+-   [TILES] Przycisk dodania nowego obiektu jest zawsze wyświetlany na końcu listy wyboru
+
 ## 2020-05-26
 
 -   [TILES] Zmieniono przyciski na wypełnione kolorem
