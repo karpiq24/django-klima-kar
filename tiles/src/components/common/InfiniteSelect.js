@@ -8,7 +8,9 @@ import Popover from "react-bootstrap/Popover";
 import Overlay from "react-bootstrap/Overlay";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusSquare, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faPlusSquare } from "@fortawesome/free-solid-svg-icons/faPlusSquare";
+import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes";
+
 
 import ContentLoading from "./ContentLoading";
 import "../../styles/infinite-select.css";

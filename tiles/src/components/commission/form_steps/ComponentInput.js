@@ -7,7 +7,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import faEdit from "@fortawesome/free-solid-svg-icons/faEdit";
+import { faEdit } from "@fortawesome/free-solid-svg-icons/faEdit";
 
 import ContentLoading from "../../common/ContentLoading";
 import InfiniteSelect from "../../common/InfiniteSelect";

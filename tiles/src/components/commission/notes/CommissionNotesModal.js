@@ -7,8 +7,8 @@ import Button from "react-bootstrap/Button";
 import ListGroup from "react-bootstrap/ListGroup";
 import moment from "moment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import faPlusSquare from "@fortawesome/free-solid-svg-icons/faPlusSquare";
-import faPencilAlt from "@fortawesome/free-solid-svg-icons/faPencilAlt";
+import { faPlusSquare } from "@fortawesome/free-solid-svg-icons/faPlusSquare";
+import { faPencilAlt } from "@fortawesome/free-solid-svg-icons/faPencilAlt";
 
 const CommissionNotesModal = (props) => {
     return (
