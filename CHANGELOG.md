@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2020-05-28
+
+-   Naprawiono pobieranie faktur GORDON
+-   [TILES] Zamieniono pole tekstowe do skanowania dowodu pojazdu na przycisk
+
 ## 2020-05-27
 
 -   [TILES] Przycisk dodania nowego obiektu jest zawsze wyświetlany na końcu listy wyboru

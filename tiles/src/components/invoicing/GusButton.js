@@ -4,7 +4,7 @@ import { gql } from "apollo-boost";
 import { useLazyQuery } from "@apollo/react-hooks";
 
 import Button from "react-bootstrap/Button";
-import Swal from "sweetalert2";
+import {genericError} from "../../utils";
 
 const GUS_ADDRESS = gql`
     query getGusAddress($nip: String!) {
@@ -21,16 +21,7 @@ const GusButton = ({ nip, onCompleted }) => {
     const [getGusAddress, { loading, data }] = useLazyQuery(GUS_ADDRESS, {
         onCompleted: (data) => {
             if(data.gusAddress === null) {
-                Swal.fire({
-                    icon: "error",
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 5000,
-                    timerProgressBar: true,
-                    title: "Błąd!",
-                    text: "Coś poszło nie tak. Spróbuj ponownie.",
-                    toast: true,
-                });
+                genericError();
             } else {
                 onCompleted(data.gusAddress);
             }

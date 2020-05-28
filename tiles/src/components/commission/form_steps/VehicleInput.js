@@ -1,20 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import { gql } from "apollo-boost";
 import { useQuery, useLazyQuery } from "@apollo/react-hooks";
 
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Alert from "react-bootstrap/Alert";
+import Modal from "react-bootstrap/Modal";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faQrcode } from "@fortawesome/free-solid-svg-icons/faQrcode";
+import { faEdit } from "@fortawesome/free-solid-svg-icons/faEdit";
 
 import ContentLoading from "../../common/ContentLoading";
 import InfiniteSelect from "../../common/InfiniteSelect";
 import useDebounce from "../../common/useDebounce";
 import ModalForm from "../../common/ModalForm";
 import VehicleForm from "../VehicleForm";
-import Alert from "react-bootstrap/Alert";
+import { genericError } from "../../../utils";
 
 const VehicleInput = ({ currentStep, commission, onChange, errors }) => {
     if (currentStep !== 2) return null;
@@ -58,8 +61,10 @@ const VehicleInput = ({ currentStep, commission, onChange, errors }) => {
 
     const [decodeScanned] = useLazyQuery(DECODE_SCANNDED, {
         onCompleted: (data) => {
-            if (data.decode === null) return;
-            if (data.decode.pk && data.decode.label) {
+            setShowScanModal(false);
+            if (data.decode === null) {
+                genericError();
+            } else if (data.decode.pk && data.decode.label) {
                 onChange(
                     {
                         vehicle: data.decode.pk,
@@ -72,9 +77,11 @@ const VehicleInput = ({ currentStep, commission, onChange, errors }) => {
     });
 
     const [createInitial, setCreateInitial] = useState(null);
-    const [showModal, setShowModal] = useState(false);
+    const [showFormModal, setShowFormModal] = useState(false);
+    const [showScanModal, setShowScanModal] = useState(false);
     const [code, setCode] = useState("");
     const debouncedCode = useDebounce(code, 300, () => decodeScanned({ variables: { code: code, create: true } }));
+    const scanRef = useRef(null);
 
     const loadVehicles = (page) => {
         fetchMore({
@@ -95,6 +102,13 @@ const VehicleInput = ({ currentStep, commission, onChange, errors }) => {
                 };
             },
         });
+    };
+
+    const hadnleScanCode = () => {
+        setShowScanModal(true);
+        setTimeout(() => {
+            scanRef.current.focus();
+        }, 100);
     };
 
     return (
@@ -119,7 +133,7 @@ const VehicleInput = ({ currentStep, commission, onChange, errors }) => {
                               ))
                             : null}
                     </div>
-                    <div className="d-flex justify-content-between align-items-end vehicle-container vehicle-select">
+                    <div className="d-flex justify-content-between vehicle-container vehicle-select">
                         <Form.Group className="w-100">
                             <h2>Wybierz pojazd:</h2>
                             <div className="d-flex">
@@ -151,7 +165,7 @@ const VehicleInput = ({ currentStep, commission, onChange, errors }) => {
                                     selectedLabel={commission.vc_name}
                                     onCreate={(value) => {
                                         setCreateInitial({ registration_plate: value });
-                                        setShowModal(true);
+                                        setShowFormModal(true);
                                     }}
                                     onChange={(value, label) =>
                                         onChange(
@@ -168,7 +182,7 @@ const VehicleInput = ({ currentStep, commission, onChange, errors }) => {
                                         variant="warning"
                                         size="lg"
                                         className="ml-2 d-flex align-items-center"
-                                        onClick={() => setShowModal(true)}
+                                        onClick={() => setShowFormModal(true)}
                                     >
                                         <FontAwesomeIcon className="mr-2" icon={faEdit} />
                                         Edytuj
@@ -176,20 +190,17 @@ const VehicleInput = ({ currentStep, commission, onChange, errors }) => {
                                 ) : null}
                             </div>
                         </Form.Group>
-                        <p>albo</p>
-                        <Form.Group className="w-100">
+                        <p></p>
+                        <Form.Group className="w-100 text-center">
                             <h2>Zeskanuj dowód rejestracyjny:</h2>
-                            <Form.Control
-                                size="lg"
-                                onChange={(e) => {
-                                    setCode(e.target.value);
-                                }}
-                            />
+                            <Button size="xxl" onClick={hadnleScanCode}>
+                                <FontAwesomeIcon icon={faQrcode} size="10x" />
+                            </Button>
                         </Form.Group>
                     </div>
                     <ModalForm
-                        show={showModal}
-                        onHide={() => setShowModal(false)}
+                        show={showFormModal}
+                        onHide={() => setShowFormModal(false)}
                         formId="vehicle-form"
                         title={createInitial ? "Dodaj nowy pojazd" : "Edycja pojazdu"}
                     >
@@ -214,6 +225,14 @@ const VehicleInput = ({ currentStep, commission, onChange, errors }) => {
                             }
                         />
                     </ModalForm>
+                    <Modal show={showScanModal} centered size="lg" onHide={() => setShowScanModal(false)}>
+                        <Modal.Header>
+                            <Modal.Title>Zeskanuj dowód rejestracyjny</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Form.Control ref={scanRef} size="lg" onChange={(event) => setCode(event.target.value)} />
+                        </Modal.Body>
+                    </Modal>
                 </>
             )}
         </>
