@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import moment from "moment";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlusSquare, faPencilAlt, faSave } from "@fortawesome/free-solid-svg-icons";
+import faPlusSquare from "@fortawesome/free-solid-svg-icons/faPlusSquare";
+import faPencilAlt from "@fortawesome/free-solid-svg-icons/faPencilAlt";
 
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";

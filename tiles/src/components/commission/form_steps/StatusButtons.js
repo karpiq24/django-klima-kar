@@ -8,7 +8,7 @@ import { gql } from "apollo-boost";
 import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import Alert from "react-bootstrap/Alert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import faInfoCircle from "@fortawesome/free-solid-svg-icons/faInfoCircle";
 
 const CONTRACTOR = gql`
     query getContractor($filters: ContractorFilter) {

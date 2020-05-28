@@ -12,7 +12,8 @@ import Container from "react-bootstrap/Container";
 import Masonry from "react-masonry-css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import faArrowLeft from "@fortawesome/free-solid-svg-icons/faArrowLeft";
+import faArrowRight from "@fortawesome/free-solid-svg-icons/faArrowRight";
 
 import "../../styles/commission.css";
 import ContractorModal from "../invoicing/ContractorModal";

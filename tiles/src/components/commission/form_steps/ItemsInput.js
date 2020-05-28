@@ -8,7 +8,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes, faPlusSquare } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faPlusSquare } from "@fortawesome/free-solid-svg-icons/";
 
 import { displayZloty } from "../../../utils";
 import "../../../styles/big-table.css";

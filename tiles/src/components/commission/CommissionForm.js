@@ -9,7 +9,9 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Container from "react-bootstrap/Container";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight, faSave, faCheck } from "@fortawesome/free-solid-svg-icons";
+import faArrowLeft from "@fortawesome/free-solid-svg-icons/faArrowLeft";
+import faArrowRight from "@fortawesome/free-solid-svg-icons/faArrowRight";
+import faSave from "@fortawesome/free-solid-svg-icons/faSave";
 
 import ContentLoading from "../common/ContentLoading";
 import TypeInput from "./form_steps/TypeInput";

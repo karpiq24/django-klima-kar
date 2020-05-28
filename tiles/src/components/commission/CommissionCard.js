@@ -7,7 +7,10 @@ import Alert from "react-bootstrap/Alert";
 import Table from "react-bootstrap/Table";
 import Card from "react-bootstrap/Card";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsers, faCar, faMicrochip, faStickyNote } from "@fortawesome/free-solid-svg-icons";
+import faUsers from "@fortawesome/free-solid-svg-icons/faUsers";
+import faCar from "@fortawesome/free-solid-svg-icons/faCar";
+import faMicrochip from "@fortawesome/free-solid-svg-icons/faMicrochip";
+import faStickyNote from "@fortawesome/free-solid-svg-icons/faStickyNote";
 import { displayZloty } from "../../utils";
 
 const CommissionCard = ({ commission, openContractorModal, openVehicleModal, openComponentModal, openNotesModal }) => {

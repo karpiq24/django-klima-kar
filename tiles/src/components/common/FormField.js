@@ -7,7 +7,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAsterisk } from "@fortawesome/free-solid-svg-icons";
+import faAsterisk from "@fortawesome/free-solid-svg-icons/faAsterisk";
 
 const FormField = (props) => {
     return (
