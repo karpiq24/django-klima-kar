@@ -126,7 +126,7 @@ class Command(BaseCommand):
         soup = BeautifulSoup(html_content, "html5lib")
 
         invoice = Invoice.objects.create(
-            number=number, date=issue_date, supplier=self.settings.DEKO_SUPPLIER
+            number=number, date=issue_date, supplier=self.settings.GORDON_SUPPLIER
         )
 
         new_wares = 0
