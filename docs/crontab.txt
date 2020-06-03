@@ -30,4 +30,4 @@
 15 08,17 * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py postgres_backup --dropbox
 00 08 * * 1 /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py send_report week $(date -d "-1 days" +\%Y-\%m-\%d)
 00 08 01 * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py send_report month $(date -d "-1 days" +\%Y-\%m-\%d)
-00 23 * * * /home/bartosz/klima-kar/suspend_until.sh 07:45
+0 0 * * * /home/bartosz/klima-kar/suspend_until.sh 07:39
