@@ -8,6 +8,7 @@ from urllib.parse import urlencode
 from smtplib import SMTPRecipientsRefused
 from io import BytesIO
 
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 from django.http import JsonResponse, HttpResponse, FileResponse
 from django.views.generic import DetailView, UpdateView, CreateView, View
@@ -27,7 +28,8 @@ from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
 from KlimaKar.mixins import AjaxFormMixin, SingleTableAjaxMixin
 from KlimaKar import settings
 from KlimaKar.templatetags.slugify import slugify
-from KlimaKar.functions import strip_accents, send_sms
+from KlimaKar.functions import strip_accents
+from apps.commission.mixins import CommissionAccessMixin
 from apps.settings.models import SiteSettings
 from apps.commission.models import (
     Vehicle,
@@ -435,7 +437,7 @@ class CommissionCreateView(CreateWithInlinesView):
         )
 
 
-class CommissionUpdateView(UpdateWithInlinesView):
+class CommissionUpdateView(CommissionAccessMixin, UpdateWithInlinesView):
     model = Commission
     form_class = CommissionModelForm
     inlines = [CommissionItemInline]
@@ -685,8 +687,10 @@ class DeleteTempFile(View):
 
 class DeleteCommissionFile(View):
     def post(self, request, *args, **kwargs):
-        get_object_or_404(Commission, pk=request.POST.get("object"))
+        commission = get_object_or_404(Commission, pk=request.POST.get("object"))
         commission_file = get_object_or_404(CommissionFile, pk=request.POST.get("file"))
+        if not (commission.is_editable or request.user.is_staff):
+            raise PermissionDenied
         commission_file.delete()
         return JsonResponse(
             {"status": "success", "message": "Plik został usunięty."}, status=200
@@ -701,6 +705,8 @@ class ChangeCommissionStatus(View):
             return JsonResponse({}, status=400)
         try:
             commission = Commission.objects.get(pk=pk)
+            if not (commission.is_editable or request.user.is_staff):
+                raise PermissionDenied
         except Commission.DoesNotExist:
             return JsonResponse({}, status=400)
         commission.status = status

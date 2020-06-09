@@ -24,13 +24,17 @@
                 <td>
                     {% csrf_token %}
                     <input type="hidden" id="sms" value="{{ sms }}">
-                    <div id="status-select" class="btn-group btn-group-toggle" data-toggle="buttons" data-url="{% url 'commission:change_status' %}" data-done="{{ object.DONE }}" data-ready="{{ object.READY }}" {% if object.contractor %} data-phone1="{{ object.contractor.phone_1 }}" data-phone2="{{ object.contractor.phone_2 }}"{% endif %}>
-                        {% for status in object.STATUS_CHOICES %}
-                            <label class="btn btn-outline-primary{% if object.status == status.0 %} active{% endif %}">
-                                <input type="radio" name="status" id="option_{{ status.0 }}" data-value="{{ status.0 }}" data-pk="{{ object.pk }}" autocomplete="off" {% if object.status == status.0 %}checked{% endif %}> {{ status.1 }}
-                            </label>
-                        {% endfor %}
-                    </div>
+                    {% if object.is_editable or request.user.is_staff %}
+                        <div id="status-select" class="btn-group btn-group-toggle" data-toggle="buttons" data-url="{% url 'commission:change_status' %}" data-done="{{ object.DONE }}" data-ready="{{ object.READY }}" {% if object.contractor %} data-phone1="{{ object.contractor.phone_1 }}" data-phone2="{{ object.contractor.phone_2 }}"{% endif %}>
+                            {% for status in object.STATUS_CHOICES %}
+                                <label class="btn btn-outline-primary{% if object.status == status.0 %} active{% endif %}">
+                                    <input type="radio" name="status" id="option_{{ status.0 }}" data-value="{{ status.0 }}" data-pk="{{ object.pk }}" autocomplete="off" {% if object.status == status.0 %}checked{% endif %}> {{ status.1 }}
+                                </label>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ object.get_status_display }}
+                    {% endif %}
                     {% if object.sent_sms %}
                         <div class="alert alert-info mt-3 mb-1 d-flex align-items-center">
                             <i class="fas fa-info-circle fa-2x mr-2"></i>
@@ -136,7 +140,9 @@
                     <button id="print-btn" class="btn btn-outline-primary btn-lg" data-url="{% url 'commission:commission_print_pdf' object|slugify object.pk %}"><i class="fas fa-print"></i> Drukuj</button>
                     <button class="btn btn-outline-primary btn-lg" id="pdf-btn" data-url="{% url 'commission:commission_pdf' object|slugify object.pk %}"><i class="far fa-file-pdf"></i> PDF</button>
                     <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#email_modal"><i class="far fa-envelope"></i> E-mail</button>
-                    <a class="btn btn-outline-warning btn-lg" href="{% url 'commission:commission_update' object|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
+                    {% if object.is_editable or request.user.is_staff %}
+                        <a class="btn btn-outline-warning btn-lg" href="{% url 'commission:commission_update' object|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
+                    {% endif %}
                     {% if request.user.is_staff %}
                         <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:commission_commission_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
                     {% endif %}

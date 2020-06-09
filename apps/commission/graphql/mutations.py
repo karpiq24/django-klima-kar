@@ -14,14 +14,6 @@ from apps.commission.graphql.types import mutation
 from apps.settings.models import SiteSettings
 
 
-@mutation.field("updateStatus")
-def resolve_update_status(_, info, pk, status):
-    c = Commission.objects.get(id=pk)
-    c.status = status.value
-    c.save()
-    return c
-
-
 class CommissionFormResolver(BaseModelFormResolver):
     form_class = CommissionModelForm
     inlines = {"items": CommissionItemModelForm}
@@ -36,6 +28,13 @@ def resolve_add_commission(_, info, data):
 @mutation.field("updateCommission")
 def resolve_update_commission(_, info, id, data):
     instance = Commission.objects.get(pk=id)
+    if not (instance.is_editable or info.context.user.is_staff):
+        return {
+            "status": False,
+            "errors": [{
+                "message": "Brak dostępu do wybranego zasobu!"
+            }]
+        }
     return CommissionFormResolver(data, instance).process()
 
 

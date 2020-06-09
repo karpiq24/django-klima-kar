@@ -1,5 +1,6 @@
 import django_tables2 as tables
 
+from KlimaKar.columns import RequestTemplateColumn
 from apps.commission.models import Vehicle, Component, Commission, CommissionItem
 
 
@@ -75,7 +76,7 @@ class CommissionTable(tables.Table):
     value = tables.Column(
         attrs={"th": {"width": "13%"}}, empty_values=(), verbose_name="Cena"
     )
-    actions = tables.TemplateColumn(
+    actions = RequestTemplateColumn(
         attrs={"th": {"width": "7%"}},
         verbose_name="Akcje",
         template_name="commission/commission/table_actions.html",

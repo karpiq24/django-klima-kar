@@ -47,6 +47,7 @@ const COMMISSION = gql`
                 description
                 start_date
                 end_date
+                is_editable
                 items {
                     id
                     name
@@ -122,6 +123,7 @@ const CommissionForm = (props) => {
                 description: obj.description,
                 start_date: obj.start_date,
                 end_date: obj.end_date,
+                is_editable: obj.is_editable,
                 items: obj.items.map((x) => ({
                     ...x,
                     ware: x.ware ? x.ware.id : null,
@@ -227,6 +229,7 @@ const CommissionForm = (props) => {
         description: "",
         start_date: new Date().toISOString().split("T")[0],
         end_date: null,
+        is_editable: true,
         items: [],
     });
     const [errors, setErrors] = useState({});
@@ -255,6 +258,7 @@ const CommissionForm = (props) => {
     if (isLoading || loading) return <ContentLoading />;
 
     const handleChanges = (changes, next) => {
+        if (!commission.is_editable) return;
         setCommission({
             ...commission,
             ...changes,
@@ -264,6 +268,7 @@ const CommissionForm = (props) => {
     };
 
     const handleItemChanges = (index, changes) => {
+        if (!commission.is_editable) return;
         setCommission({
             ...commission,
             items: [
@@ -289,6 +294,7 @@ const CommissionForm = (props) => {
     };
 
     const handleAddItem = (item) => {
+        if (!commission.is_editable) return;
         setCommission({
             ...commission,
             items: [...commission.items, item],
@@ -297,6 +303,7 @@ const CommissionForm = (props) => {
     };
 
     const handleRemoveItem = (index) => {
+        if (!commission.is_editable) return;
         setCommission({
             ...commission,
             items: [...commission.items.slice(0, index), ...commission.items.slice(index + 1)],
@@ -309,6 +316,7 @@ const CommissionForm = (props) => {
     };
 
     const handleSubmit = () => {
+        if (!commission.is_editable) return;
         if (objectID) {
             updateCommission({
                 variables: {
@@ -318,6 +326,7 @@ const CommissionForm = (props) => {
                         id: undefined,
                         sent_sms: undefined,
                         contractorLabel: undefined,
+                        is_editable: undefined,
                         __typename: undefined,
                         items: commission.items.map((x) => ({ ...x, wareLabel: undefined, __typename: undefined })),
                     },
@@ -329,6 +338,7 @@ const CommissionForm = (props) => {
                     data: {
                         ...commission,
                         contractorLabel: undefined,
+                        is_editable: undefined,
                         items: commission.items.map((x) => ({ ...x, wareLabel: undefined })),
                     },
                 },
@@ -399,6 +409,11 @@ const CommissionForm = (props) => {
                     <div className="text-center">
                         <h1>
                             {id ? `Edycja zlecenia ${id}` : "Nowe zlecenie"}
+                            {!commission.is_editable ? (
+                                <p className="new-alert d-flex align-items-baseline justify-content-center mb-0">
+                                    Zlecenie jest w trybie tylko do odczytu.
+                                </p>
+                            ) : null}
                             {isSaved ? null : (
                                 <p className="new-alert d-flex align-items-baseline justify-content-center mb-0">
                                     {objectID

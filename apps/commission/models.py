@@ -257,6 +257,10 @@ class Commission(models.Model):
     def has_notes(self):
         return self.commissionnote_set.exists()
 
+    @property
+    def is_editable(self):
+        return not (self.end_date and self.end_date < datetime.date.today())
+
     def generate_pdf(self, include_description=True):
         template = get_template("commission/pdf_commission.html")
         rendered_tpl = template.render(

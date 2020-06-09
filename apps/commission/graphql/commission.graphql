@@ -3,7 +3,6 @@ extend type Query {
 }
 
 extend type Mutation {
-    updateStatus(pk: ID!, status: String!): Commission!
     addCommission(data: CommissionInput!): CommissionPayload!
     updateCommission(id: ID!, data: CommissionInput!): CommissionPayload!
     addCommissionNote(commission: ID!, contents: String!): CommissionNote
@@ -36,6 +35,7 @@ type Commission {
     get_absolute_url: String!
     smsBody: String
     has_notes: Boolean!
+    is_editable: Boolean!
 }
 
 type CommissionPayload {

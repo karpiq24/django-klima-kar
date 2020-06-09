@@ -94,7 +94,7 @@ const StatusButtons = ({ onChange, commission, size }) => {
                         variant="outline-primary"
                         size={size || "xxl"}
                         onClick={() => {
-                            if (commission.id && phones.length > 0) {
+                            if (commission.is_editable && commission.id && phones.length > 0) {
                                 Swal.fire({
                                     icon: "question",
                                     showConfirmButton: true,
