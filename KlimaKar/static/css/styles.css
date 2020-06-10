@@ -360,7 +360,18 @@ small#gus-data:hover {
 .btn-table {
     width: 100%;
     margin: 2px 0px;
+    white-space: nowrap;
 }
+
+.btn-table i.fa {
+    margin-left: 0.25rem;
+    color: #dc3545;
+}
+
+.btn-table:hover i.fa {
+    color: white;
+}
+
 .pagination .cardinality {
     padding: 0 10px;
     display: inline-block;
