@@ -455,4 +455,34 @@ $(function () {
             });
         });
     });
+
+    $("#change-type").on('click', function () {
+        Swal.fire({
+            title: "Czy na pewno chcesz zmienić typ zlecenia?",
+            type: "question",
+            showCancelButton: true,
+            focusCancel: true,
+            focusConfirm: false,
+            confirmButtonText: "Tak",
+            cancelButtonText: "Nie",
+        }).then((change) => {
+            if (change.value) {
+                $.ajax({
+                    url: $("#change-type").data("url"),
+                    type: "POST",
+                    data: {
+                        csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                        pk: $("#change-type").data("pk"),
+                    },
+                    success: function (data) {
+                        window.location.reload();
+                    },
+                    error: function (data) {
+                        console.log(data)
+                        genericErrorAlert();
+                    },
+                });
+            }
+        });
+    })
 });

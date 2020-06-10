@@ -723,6 +723,25 @@ class ChangeCommissionStatus(View):
         )
 
 
+class ChangeCommissionType(View):
+    def post(self, request, *args, **kwargs):
+        pk = request.POST.get("pk")
+        try:
+            commission = Commission.objects.get(pk=pk)
+            if not (commission.is_editable or request.user.is_staff):
+                raise PermissionDenied
+        except Commission.DoesNotExist:
+            return JsonResponse({}, status=400)
+        if commission.commission_type == Commission.VEHICLE:
+            commission.commission_type = Commission.COMPONENT
+            commission.vehicle = None
+        else:
+            commission.commission_type = Commission.VEHICLE
+            commission.component = None
+        commission.save()
+        return JsonResponse({}, status=200)
+
+
 class PrepareInvoiceUrl(View):
     def post(self, request, *args, **kwargs):
         desc = " ".join(request.POST.getlist("desc"))

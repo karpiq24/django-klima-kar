@@ -108,6 +108,7 @@ urlpatterns = [
         name="commission_create_component",
     ),
     path("change_status", views.ChangeCommissionStatus.as_view(), name="change_status"),
+    path("change_type", views.ChangeCommissionType.as_view(), name="change_type"),
     path(
         "prepare_invoice_url",
         views.PrepareInvoiceUrl.as_view(),

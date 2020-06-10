@@ -142,6 +142,11 @@
                     <button type="button" class="btn btn-outline-primary btn-lg" data-toggle="modal" data-target="#email_modal"><i class="far fa-envelope"></i> E-mail</button>
                     {% if object.is_editable or request.user.is_staff %}
                         <a class="btn btn-outline-warning btn-lg" href="{% url 'commission:commission_update' object|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
+                        {% if object.commission_type == object.VEHICLE %}
+                            <button id="change-type" data-url="{% url 'commission:change_type' %}" data-pk="{{ object.pk }}" class="btn btn-lg btn-outline-info"><i class="fa fa-microchip"></i> Zamień na podzespół</button>
+                        {% else %}
+                            <button id="change-type" data-url="{% url 'commission:change_type' %}" data-pk="{{ object.pk }}" class="btn btn-lg btn-outline-info"><i class="fa fa-car"></i> Zamień na pojazd</button>
+                        {% endif %}
                     {% endif %}
                     {% if request.user.is_staff %}
                         <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:commission_commission_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
