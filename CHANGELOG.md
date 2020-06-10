@@ -1,5 +1,14 @@
 # Lista zmian
 
+## 2020-06-10
+
+-   Dodano ikonę informującą o notatkach w tabeli zleceń
+-   Dodano możliwość zmiany typu zlecenia
+
+## 2020-06-09
+
+-   Dodano blokowanie edycji starych zleceń dla nieuprawnionych kont
+
 ## 2020-05-28
 
 -   Naprawiono pobieranie faktur GORDON
