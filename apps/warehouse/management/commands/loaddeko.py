@@ -73,10 +73,10 @@ class Command(BaseCommand):
                 self.report_admins(message)
                 return
 
-            url = "http://sklep.dekoautoparts.pl/AjaxWS.svc/GetFilteredInvoices"
+            url = "http://sklep.dekoautoparts.pl/AjaxServices/Informations.svc/GetFilteredInvoices"
             data = {
-                "dateFrom": "-c46-".join(reversed(options["date_from"].split("-"))),
-                "dateTo": "-c46-".join(reversed(options["date_to"].split("-"))),
+                "dateFrom": options["date_from"],
+                "dateTo": options["date_to"],
                 "overdueOnly": False,
             }
             r = s.post(url, json=data, headers=headers)

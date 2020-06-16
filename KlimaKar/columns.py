@@ -16,7 +16,7 @@ class RequestTemplateColumn(TemplateColumn):
                 "record": record,
                 "value": value,
                 "row_counter": kwargs["bound_row"].row_counter,
-                "request": table.request
+                "request": table.request,
             }
         )
 

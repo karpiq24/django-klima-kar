@@ -31,9 +31,7 @@ def resolve_update_commission(_, info, id, data):
     if not (instance.is_editable or info.context.user.is_staff):
         return {
             "status": False,
-            "errors": [{
-                "message": "Brak dostępu do wybranego zasobu!"
-            }]
+            "errors": [{"message": "Brak dostępu do wybranego zasobu!"}],
         }
     return CommissionFormResolver(data, instance).process()
 
