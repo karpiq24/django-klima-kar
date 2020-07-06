@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2020-07-06
+
+-   Dodano aplikację "Baza wiedzy"
+-   Przerobiono obsługę wgrywanych plików
+
 ## 2020-06-16
 
 -   Naprawiono pobieranie faktur DEKO
