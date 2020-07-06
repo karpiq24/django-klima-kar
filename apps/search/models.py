@@ -8,6 +8,7 @@ from KlimaKar.functions import strip_accents
 from apps.warehouse import models as warehouse
 from apps.commission import models as commission
 from apps.invoicing import models as invoicing
+from apps.wiki import models as wiki
 
 
 class SearchDocument(models.Model):
@@ -20,6 +21,7 @@ class SearchDocument(models.Model):
         commission.Commission,
         invoicing.Contractor,
         invoicing.SaleInvoice,
+        wiki.Article,
     ]
 
     child_models = [

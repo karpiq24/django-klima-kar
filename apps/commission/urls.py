@@ -1,4 +1,3 @@
-# flake8: noqa
 from django.urls import path
 from apps.commission import views
 from apps.commission.models import Commission
@@ -125,17 +124,15 @@ urlpatterns = [
         name="fast_commission",
     ),
     path(
-        "commission_file_upload",
-        views.CommissionFileUplaodView.as_view(),
-        name="commission_file_upload",
-    ),
-    path("delete_temp_file", views.DeleteTempFile.as_view(), name="delete_temp_file"),
-    path(
         "delete_commission_file",
         views.DeleteCommissionFile.as_view(),
         name="delete_commission_file",
     ),
-    path("check_upload", views.CheckUploadFinishedView.as_view(), name="check_upload"),
+    path(
+        "check_upload",
+        views.CheckCommissionUploadFinishedView.as_view(),
+        name="check_upload",
+    ),
     path("assign_invoice", views.AssignInoiceView.as_view(), name="assign_invoice"),
     path(
         "unassign_invoice", views.UnassignInoiceView.as_view(), name="unassign_invoice"

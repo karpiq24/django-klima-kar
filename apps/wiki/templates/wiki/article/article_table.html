@@ -1,0 +1,33 @@
+{% load django_tables2 %}
+
+<div class="table-container" {% if table.table_id %}data-table_id="{{ table.table_id }}"{% endif %}>
+    {% include 'tables2/pagination.html' %}
+    <hr>
+    {% for row in table.page.object_list|default:table.rows %}
+        {% with row.record as article %}
+            <div class="d-flex">
+                <div class="article-thumbnail">
+                    <a href="{{ article.get_absolute_url }}">
+                        {% if article.main_image %}
+                            <img src="{{ article.main_image.get_download_url }}">
+                        {% else %}
+                            <i class="far fa-newspaper"></i>
+                        {% endif %}
+                    </a>
+                </div>
+                <div class="article-text">
+                    <header class="article-title"><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></header>
+                    {% include 'wiki/article/article_tags.html' with article=article %}
+                    <p class="article-description">{{ article.description }}</p>
+                </div>
+                <a href="{% url 'wiki:article_update' article|slugify article.pk %}" class="btn btn-outline-warning btn-lg edit-article-btn"><i class="fas fa-edit"></i> Edycja</a>
+            </div>
+            <hr>
+        {% endwith %}
+        {% empty %}
+            {% if table.empty_text %}
+                <tr><td colspan="{{ table.columns|length }}">{{ table.empty_text }}</td></tr>
+            {% endif %}
+    {% endfor %}
+    {% include 'tables2/pagination.html' %}
+</div>

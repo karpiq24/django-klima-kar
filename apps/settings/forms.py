@@ -123,5 +123,6 @@ class MyCloudHomeModelForm(forms.ModelForm):
             "DEVICE_EXTERNAL_URL": forms.TextInput(attrs={"readonly": "readonly"}),
             "APP_DIR_ID": forms.TextInput(attrs={"readonly": "readonly"}),
             "COMMISSION_DIR_ID": forms.TextInput(attrs={"readonly": "readonly"}),
+            "ARTICLE_DIR_ID": forms.TextInput(attrs={"readonly": "readonly"}),
             "BACKUP_DIR_ID": forms.TextInput(attrs={"readonly": "readonly"}),
         }

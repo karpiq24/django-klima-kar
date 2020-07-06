@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <div>
+        <h1 class="detail-header">{{ article.title }} <a class="btn btn-outline-dark" href="{{ back_url }}">Powrót</a></h1>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-lg-8">
+            {% include 'wiki/article/article_tags.html' with article=article %}
+            {% if article.get_images %}
+                <div id="articleGallery" class="carousel slide" data-ride="carousel" data-interval="5000">
+                    <ol class="carousel-indicators">
+                        {% for image in article.get_images %}
+                            <li data-target="#articleGallery" data-slide-to="{{ forloop.counter0 }}"></li>
+                        {% endfor %}
+                    </ol>
+                    <div class="carousel-inner">
+                        {% for image in article.get_images %}
+                            <div class="carousel-item {% if image.is_main_image %}active{% endif %}">
+                                <a href="{{ image.get_download_url }}" data-lightbox="gallery">
+                                    <img src="{{ image.get_download_url }}" class="d-block w-100">
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <a class="carousel-control-prev" href="#articleGallery" role="button" data-slide="prev">
+                        <i class="fas fa-2x fa-chevron-left"></i>
+                    </a>
+                    <a class="carousel-control-next" href="#articleGallery" role="button" data-slide="next">
+                        <i class="fas fa-2x fa-chevron-right"></i>
+                    </a>
+                </div>
+            {% endif %}
+            <p class="mt-4 text-justify">
+                {{ article.description }}
+            </p>
+            <div id="markdown" data-text="{{ article.contents }}"></div>
+        </div>
+        <div class="col-xs-12 col-lg-4">
+            <div class="card bg-light">
+                <h5 class="card-header text-center">
+                    Akcje
+                </h5>
+                <div class="card-body">
+                    <a class="btn btn-outline-warning btn-lg" href="{% url 'wiki:article_update' article|slugify article.pk %}"><i class="fas fa-edit"></i> Edycja</a>
+                    {% if request.user.is_staff %}
+                        <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:wiki_article_change' article.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card bg-light mt-4 d-none">
+                <h5 class="card-header text-center">
+                    Spis treści
+                </h5>
+                <div id="toc" class="card-body">
+                </div>
+            </div>
+
+            {% if article.externallink_set.exists %}
+                <div class="card bg-light mt-4">
+                    <h5 class="card-header text-center">
+                        Zewnętrzne linki
+                    </h5>
+                    <div id="article-links" class="card-body">
+                        {% for link in article.externallink_set.all %}
+                            <a href="{{ link.url }}" target="_blank">{{ link.name }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if object.upload or object.articlefile_set.all.exists %}
+                <div class="card bg-light mt-4">
+                    <h5 class="card-header text-center">
+                        Pliki
+                    </h5>
+                    <div id="file-data" data-upload="{{ object.upload }}" data-article="{{ object.pk }}" data-check-url="{% url 'wiki:check_upload' %}" class="card-body">
+                        {% if object.upload %}
+                            <div class="card bg-light">
+                                <div class="card-body d-flex align-items-center">
+                                    <i class="fas fa-info-circle fa-3x mr-2"></i>
+                                    <div>
+                                        Dodane pliki będą dostępne za chwilę.
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if object.articlefile_set.all.exists %}
+                            <ul class="simple-list">
+                                {% for file in object.articlefile_set.all %}
+                                    <li>
+                                        <a href="{% url 'wiki:article_file_download' object|slugify object.pk file.file_name %}" target="_blank">{{ file.file_name }} - {{ file.file_size|filesizeformat }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/showdown.min.js' %}"></script>
+<script src="{% static 'js/wiki/article-detail.js' %}"></script>
+{% endblock %}

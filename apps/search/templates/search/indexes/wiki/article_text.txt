@@ -1,0 +1,14 @@
+{% for tag in object.tags.all %}
+    {{ tag.name }}
+{% endfor %}
+{{ object.title }}
+{{ object.description }}
+{{ object.contents }}
+
+{% for link in object.externallink_set.all %}
+    {{ link.name }}
+{% endfor %}
+
+{% for link in object.get_files %}
+    {{ file.file_name }}
+{% endfor %}

@@ -18,8 +18,20 @@
                         <td class="bg-success">—</td>
                     {% endif %}
                     {% if record.action_type == CHANGE %}
-                        <td class="bg-danger">{{ value.0|default:"—" }}</td>
-                        <td class="bg-success">{{ value.1|default:"—" }}</td>
+                        <td class="bg-danger">
+                            {% if value.0|length > 512 %}
+                                <details><summary>Kliknij, żeby zobaczyć</summary><p>{{ value.0|default:"—" }}</p></details>
+                            {% else %}
+                                {{ value.0|default:"—" }}
+                            {% endif %}
+                        </td>
+                        <td class="bg-success">
+                            {% if value.1|length > 512 %}
+                                <details><summary>Kliknij, żeby zobaczyć</summary><p>{{ value.1|default:"—" }}</p></details>
+                            {% else %}
+                                {{ value.1|default:"—" }}
+                            {% endif %}
+                        </td>
                     {% endif %}
                 </tr>
             {% endfor %}

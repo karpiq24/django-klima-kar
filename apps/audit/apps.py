@@ -17,6 +17,7 @@ class AuditConfig(AppConfig):
         from apps.commission import models as commission
         from apps.invoicing import models as invoicing
         from apps.stats import models as stats
+        from apps.wiki import models as wiki
 
         models = [
             warehouse.Ware,
@@ -36,6 +37,10 @@ class AuditConfig(AppConfig):
             invoicing.SaleInvoiceItem,
             invoicing.CorrectiveSaleInvoice,
             stats.ReceiptPTU,
+            wiki.Article,
+            wiki.ExternalLink,
+            wiki.ArticleFile,
+            wiki.Tag,
         ]
 
         for model in models:

@@ -18,6 +18,8 @@ urlpatterns = [
     path("konta/", include("apps.accounts.urls")),
     path("audyt/", include("apps.audit.urls")),
     path("szukaj/", include("apps.search.urls")),
+    path("wiki/", include("apps.wiki.urls")),
+    path("mycloudhome/", include("apps.mycloudhome.urls")),
     path("tiles/", include("tiles.urls")),
     path("send_issue", SendIssueView.as_view(), name="send_issue"),
     path("lista-zmian", ChangeLogView.as_view(), name="changelog"),

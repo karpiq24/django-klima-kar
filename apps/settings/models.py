@@ -6,8 +6,10 @@ from django.conf import settings
 
 from KlimaKar.models import SingletonModel
 from KlimaKar.functions import encode_media_related
+from apps.commission.models import Commission, CommissionFile
 
 from apps.warehouse.models import Supplier
+from apps.wiki.models import Article, ArticleFile
 
 
 class SiteSettings(SingletonModel):
@@ -170,6 +172,7 @@ class MyCloudHome(SingletonModel):
     APP_DIR_NAME = models.CharField(max_length=255, null=True)
     BACKUP_DIR_NAME = models.CharField(max_length=255, null=True)
     COMMISSION_DIR_NAME = models.CharField(max_length=255, null=True)
+    ARTICLE_DIR_NAME = models.CharField(max_length=255, null=True)
     WD_CLIENT_ID = models.CharField(max_length=255, null=True)
     WD_CLIENT_SECRET = models.CharField(max_length=255, null=True)
     REFRESH_TOKEN = models.CharField(max_length=1024, blank=True, null=True)
@@ -181,7 +184,13 @@ class MyCloudHome(SingletonModel):
     DEVICE_EXTERNAL_URL = models.CharField(max_length=256, blank=True, null=True)
     APP_DIR_ID = models.CharField(max_length=128, blank=True, null=True)
     COMMISSION_DIR_ID = models.CharField(max_length=128, blank=True, null=True)
+    ARTICLE_DIR_ID = models.CharField(max_length=128, blank=True, null=True)
     BACKUP_DIR_ID = models.CharField(max_length=128, blank=True, null=True)
+
+    UPLOAD_MODELS = {
+        "commission": {"model": Commission, "file_model": CommissionFile,},
+        "article": {"model": Article, "file_model": ArticleFile,},
+    }
 
     class Meta:
         verbose_name = "Ustawienia MyCluod Home"
@@ -215,6 +224,8 @@ class MyCloudHome(SingletonModel):
             self._initialize_app_dir()
         if not self.COMMISSION_DIR_ID:
             self._initialize_commission_dir()
+        if not self.ARTICLE_DIR_ID:
+            self._initialize_article_dir()
         if not self.BACKUP_DIR_ID:
             self._initialize_backup_dir()
 
@@ -241,6 +252,19 @@ class MyCloudHome(SingletonModel):
             for f in files:
                 if f["name"] == self.COMMISSION_DIR_NAME:
                     self.COMMISSION_DIR_ID = f["id"]
+                    self.save()
+                    break
+
+    def _initialize_article_dir(self):
+        r = self.create_folder(self.ARTICLE_DIR_NAME, self.APP_DIR_ID)
+        if r.status_code == 201:
+            self.ARTICLE_DIR_ID = r.headers["Location"].split("/")[-1]
+            self.save()
+        else:
+            files = self.get_files(self.APP_DIR_ID)["files"]
+            for f in files:
+                if f["name"] == self.ARTICLE_DIR_NAME:
+                    self.ARTICLE_DIR_ID = f["id"]
                     self.save()
                     break
 

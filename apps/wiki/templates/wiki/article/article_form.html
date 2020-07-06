@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load static slugify %}
+{% block content %}
+<div>
+    <h1>{% if object %}Edycja artykułu{% else %}Nowy artykuł{% endif %}</h1>
+</div>
+<form action="" method="post">
+    {% csrf_token %}
+    <div class="row">
+        {% for hidden_field in form.hidden_fields %}
+            {{ hidden_field }}
+        {% endfor %}
+
+        {% if form.non_field_errors %}
+            <div class="col-sm-12">
+                <div class="alert alert-danger" role="alert">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+        <div class="col-sm-6">
+            {% include 'forms/field_large.html' with field=form.title %}
+        </div>
+        <div class="col-sm-6">
+            {% include 'forms/field_large.html' with field=form.tags %}
+        </div>
+        <div class="col-sm-12">
+            {% include 'forms/field_large.html' with field=form.description %}
+        </div>
+
+        <div class="col-sm-12 mb-4">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="source-tab" data-toggle="tab" href="#source" role="tab" aria-controls="source" aria-selected="true">Źródło</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="preview-tab" data-toggle="tab" href="#preview" role="tab" aria-controls="preview" aria-selected="false">Podgląd</a>
+                </li>
+            </ul>
+            <div class="tab-content p-4 border" id="myTabContent">
+                <div class="tab-pane fade show active" id="source" role="tabpanel" aria-labelledby="source-tab">
+                    {% include 'forms/field_large.html' with field=form.contents hide_label=True %}
+                </div>
+                <div class="tab-pane fade" id="preview" role="tabpanel" aria-labelledby="preview-tab">
+                    <div id="md-preview"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2>Zwenętrzne linki</h2>
+            {{ inlines.0.management_form }}
+            <div id="external-links" class="d-flex flex-wrap justify-content-between">
+                {% for external_form in inlines.0 %}
+                    <div class="col-sm-6 col-xs-12 external-link m-1 {% if not external_form.id.value and not forloop.first %}d-none{% endif %}">
+                        {{ external_form.id }}
+                        {% include 'forms/field.html' with field=external_form.name %}
+                        {% include 'forms/field.html' with field=external_form.url %}
+                        <div class="delete-external">
+                            <button type="button" class="btn btn-outline-danger"><i class="fa fa-trash"></i> Usuń</button>
+                            <div class="d-none">{{ external_form.DELETE }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <button id="add-external" type="button" class="btn btn-outline-success btn-lg mt-4"><i class="fa fa-link"></i> Dodaj link</button>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="form-group">
+                <div class="custom-file" data-url="{% url 'mycloudhome:temporary_file_upload' %}" data-delete-temp-url="{% url 'mycloudhome:delete_temp_file' %}" data-delete-previous-url="{% url 'wiki:delete_article_file' %}">
+                    <input type="file" class="custom-file-input" id="customFile" name="files[]" multiple lang="pl">
+                    <label class="custom-file-label" for="customFile" data-browse="Przeglądaj" data-label="Wybierz albo przeciągnij pliki">Wybierz albo przeciągnij pliki</label>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <ul id="file-list" class="simple-list">
+                    {% for file in temp_files %}
+                        <li>
+                            {{ file.name }} - {{ file.size|filesizeformat }} <i class="fa fa-times delete-file" data-file="{{ file.name }}" title="Usuń plik"></i>
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% if object %}
+                    <ul id="previous-file-list" class="simple-list">
+                        {% for file in object.articlefile_set.all %}
+                            <li>
+                                <label>
+                                {% if file.is_image %}
+                                    <input type="radio" name="main_image" class="main-image-radio" {% if file.is_main_image %}checked="checked"{% endif %} value="{{ file.pk }}">
+                                {% endif %}
+                                {{ file.file_name }} - {{ file.file_size|filesizeformat }} <i class="fa fa-times delete-previous-file" data-object="{{ object.pk }}" data-file="{{ file.pk }}" title="Usuń plik"></i>
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card-deck text-center">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">Akcje</h5>
+                <button class="btn btn-outline-primary btn-lg" type="submit"><i class="far fa-save"></i> Zapisz</button>
+                {% if object.pk %}
+                    <a class="btn btn-outline-dark btn-lg" href="{% url 'wiki:article_detail' object|slugify object.pk %}">Powrót</a>
+                {% else %}
+                    <a class="btn btn-outline-dark btn-lg" href="{% url 'wiki:article_list' %}">Powrót</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/showdown.min.js' %}"></script>
+<script>
+    $(function () {
+        $(".sidenav #nav-wiki").children(":first").addClass("active");
+        const converter = new showdown.Converter();
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            if (e.target.id === 'preview-tab') {
+                const html = converter.makeHtml($("#id_contents").val());
+                $("#md-preview").html(html);
+            }
+        })
+
+        $('#add-external').on('click', function () {
+            const newLink = $('#external-links').find('.external-link.d-none').first();
+            newLink.toggleClass('d-none');
+        });
+
+        $('.delete-external').on('click', function () {
+            $(this).find('input').attr('checked', true);
+            $(this).parent().addClass('d-none');
+        })
+
+        $('input[type=radio][name=main_image]').on('change', function () {
+            $("id_main_image").val(this.value);
+        })
+    });
+</script>
+{{ form.media.js }}
+<script src="{% static 'js/base/custom-file.js' %}"></script>
+{% endblock %}

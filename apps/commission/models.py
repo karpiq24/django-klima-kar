@@ -9,8 +9,8 @@ from django.urls import reverse
 
 from KlimaKar.templatetags.slugify import slugify
 from KlimaKar.models import TotalValueQuerySet
-from apps.settings.models import MyCloudHome
 from apps.invoicing.models import Contractor, SaleInvoice
+from apps.mycloudhome.models import MyCloudHomeFile, MyCloudHomeDirectoryModel
 from apps.warehouse.models import Ware
 
 
@@ -149,10 +149,11 @@ def change_component_commissions_name(sender, instance, **kwargs):
     instance.commission_set.update(vc_name=str(instance))
 
 
-class Commission(models.Model):
+class Commission(MyCloudHomeDirectoryModel):
     AUDIT_IGNORE = ["upload", "mch_id"]
     MODEL_COLOR = "#427BD2"
     MODEL_ICON = "fas fa-tasks"
+    DIRECTORY_ID_FIELD = "COMMISSION_DIR_ID"
 
     OPEN = "OP"
     READY = "RE"
@@ -208,8 +209,6 @@ class Commission(models.Model):
     sent_sms = models.BooleanField(
         verbose_name="Powiadomienie SMS zostało wysłane", default=False
     )
-    upload = models.BooleanField(verbose_name="Pliki są wgrywane", default=False)
-    mch_id = models.CharField(max_length=128, blank=True, null=True)
 
     objects = TotalValueQuerySet.as_manager()
     PRICE_FIELD = "commissionitem__price"
@@ -278,6 +277,9 @@ class Commission(models.Model):
                 all_pages.append(p)
         return documents[0].copy(all_pages).write_pdf()
 
+    def get_files(self):
+        return self.commissionfile_set.all()
+
 
 class CommissionItem(models.Model):
     commission = models.ForeignKey(
@@ -312,42 +314,23 @@ class CommissionItem(models.Model):
         return self.price * self.quantity
 
 
-class CommissionFile(models.Model):
+class CommissionFile(MyCloudHomeFile):
+    PARENT_FIELD = "commission"
+
     commission = models.ForeignKey(
         Commission, on_delete=models.CASCADE, verbose_name="Zlecenie"
     )
-    file_name = models.CharField(max_length=256, verbose_name="Nazwa pliku")
-    file_size = models.PositiveIntegerField(verbose_name="Rozmiar pliku")
-    mime_type = models.CharField(max_length=64, verbose_name="Typ pliku")
-    mch_id = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
         verbose_name = "Plik zlecenia"
         verbose_name_plural = "Pliki zleceń"
         ordering = ["commission", "pk"]
 
-    def __str__(self):
-        return self.file_name
-
     def get_absolute_url(self):
         return reverse(
             "commission:commission_detail",
             kwargs={"pk": self.commission.pk, "slug": slugify(self.commission)},
         )
-
-    @property
-    def file_contents(self):
-        if not self.mch_id:
-            return None
-        cloud = MyCloudHome.load()
-        return cloud.download_file(self.mch_id)
-
-
-@receiver(models.signals.pre_delete, sender=CommissionFile)
-def file_pre_delete(sender, instance, **kwargs):
-    if instance.mch_id:
-        cloud = MyCloudHome.load()
-        return cloud.delete_file(instance.mch_id)
 
 
 class CommissionNote(models.Model):

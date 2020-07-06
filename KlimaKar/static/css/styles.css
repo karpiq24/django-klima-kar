@@ -586,7 +586,7 @@ small#gus-data:hover {
     Files
 */
 
-ul#previous-file-list > li > i.delete-previous-file,
+ul#previous-file-list > li i.delete-previous-file,
 ul#file-list > li > i.delete-file,
 .unassign-invoice {
     color: red;
@@ -1025,4 +1025,108 @@ input:checked + .slider:before {
     .error-page i {
         font-size: 15rem;
     }
+}
+
+/*
+    WIKI
+*/
+
+#md-preview {
+    height: 360px;
+    overflow: auto;
+    text-align: justify;
+}
+
+#markdown {
+    text-align: justify;
+}
+
+.article-thumbnail {
+    width: 240px;
+    height: 240px;
+    background-color: #00a0df;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.article-thumbnail img {
+    height: 240px;
+    width: 240px;
+    object-fit: cover;
+}
+
+#articleGallery {
+    margin-top: 2rem;
+    height: 350px;
+    width: 100%;
+    background-color: #191c21;
+}
+
+#articleGallery img {
+    height: 350px;
+    object-fit: contain;
+}
+
+.article-thumbnail i {
+    font-size: 10rem;
+    color: #ffffff;
+}
+
+.article-text {
+    margin-left: 2rem;
+    margin-right: 2rem;
+    max-height: 240px;
+}
+
+.article-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.article-description {
+    margin-top: 1rem;
+    text-align: justify;
+    height: 7rem;
+    line-height: 1.4rem;
+    overflow: hidden;
+}
+
+.article-tags {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.article-tags a {
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-radius: 3rem;
+}
+
+.article-tags a:not(:last-child) {
+    margin-right: 0.5rem;
+}
+
+.edit-article-btn {
+    align-self: flex-start;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.delete-external {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.external-link {
+    border: 1px dashed #00a0df;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 0.5rem;
+}
+
+#article-links a{
+    display: block;
 }

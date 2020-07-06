@@ -14,7 +14,7 @@
                 <div class="result-detail">
                     <a href="{{ result.get_object.get_absolute_url }}">{{ result.get_object }}</a>
                     <div>
-                        {{ result.text|highlight:query }}
+                        {{ result.text|truncatechars:1024|highlight:query }}
                     </div>
                 </div>
             </div>

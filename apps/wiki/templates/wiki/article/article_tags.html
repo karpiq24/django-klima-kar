@@ -1,0 +1,5 @@
+<div class="article-tags">
+    {% for tag in article.tags.all %}
+        <a href="{% url 'wiki:article_list' %}?tags={{ tag.pk }}" class="btn btn-dark">#{{ tag.name }}</a>
+    {% endfor %}
+</div>
