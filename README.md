@@ -33,6 +33,11 @@ Django project used in my family buisness. It provides warehouse management, inv
     -   rich interactive charts and metrics
     -   detect purchased ware price changes
     -   weekly, monthly and yearly reports
+-   Wiki module
+    - articles with Markdown syntax
+    - hashtags
+    - file uploads using WD My Cloud Home API
+    - image gallery
 -   Other
     -   advanced filtering of all models
     -   filtering and paginating tables using ajax
