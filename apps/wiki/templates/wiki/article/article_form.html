@@ -4,6 +4,7 @@
 <div>
     <h1>{% if object %}Edycja artykułu{% else %}Nowy artykuł{% endif %}</h1>
 </div>
+{% include 'not_saved.html' %}
 <form action="" method="post">
     {% csrf_token %}
     <div class="row">

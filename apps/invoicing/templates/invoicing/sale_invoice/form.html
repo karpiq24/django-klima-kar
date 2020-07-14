@@ -7,9 +7,13 @@
 </div>
 {% if commission_alert %}
     <div class="alert alert-danger">
-        Tworzysz nową fakturę bez przypisanego zlecenia. Najlepiej otwórz odpowiednie zlecenie i tam wybierz funkcję dodawania faktury do zlecenia.
+        <div class="d-flex align-items-center">
+            <i class="fa fa-exclamation-triangle fa-2x mr-2"></i>
+            Tworzysz nową fakturę bez przypisanego zlecenia. Najlepiej otwórz odpowiednie zlecenie i tam wybierz funkcję dodawania faktury do zlecenia.
+        </div>
     </div>
 {% endif %}
+{% include 'not_saved.html' %}
 <form id="sale-invoice-form" action="" method="post">
     {% csrf_token %}
     <div class="row">

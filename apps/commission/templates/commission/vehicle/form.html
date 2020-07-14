@@ -4,6 +4,7 @@
 <div>
     <h1>{{ title }}</h1>
 </div>
+{% include 'not_saved.html' %}
 <form action="" method="post">
     {% csrf_token %}
 

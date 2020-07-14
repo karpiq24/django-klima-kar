@@ -5,6 +5,7 @@
 <div>
     <h1>{{ title }}</h1>
 </div>
+{% include 'not_saved.html' %}
 <form id="sale-invoice-form" action="" method="post">
     <input type="hidden" id="create_contractor_url" value="{% url 'invoicing:contractor_create_ajax' %}">
     <input type="hidden" id="update_contractor_url" value="{% url 'invoicing:contractor_update_ajax' 0 %}">
