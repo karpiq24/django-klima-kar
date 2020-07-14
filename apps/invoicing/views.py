@@ -152,7 +152,7 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
         return super().dispatch(*args, **kwargs)
 
     def forms_valid(self, form, inlines):
-        self.generate_pdf = "generate_pdf" in form.data
+        self.generate_pdf = form.cleaned_data.get("generate_pdf", False)
         if self.invoice_type != SaleInvoice.TYPE_CORRECTIVE:
             messages.add_message(
                 self.request,
@@ -246,7 +246,7 @@ class SaleInvoiceUpdateView(UpdateWithInlinesView):
         return context
 
     def forms_valid(self, form, inlines):
-        self.generate_pdf = "generate_pdf" in form.data
+        self.generate_pdf = form.cleaned_data.get("generate_pdf", False)
         messages.add_message(self.request, messages.SUCCESS, "Zapisano zmiany.")
         return super().forms_valid(form, inlines)
 

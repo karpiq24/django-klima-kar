@@ -9,7 +9,7 @@ function submitFastCommission(url) {
             window.location.href = data.url;
         },
         error: function(data) {
-            addAlert("Błąd!", "error", data.responseJSON.message + ".");
+            genericErrorAlert();
             $("#fast_commission_form").modal("show");
         }
     });

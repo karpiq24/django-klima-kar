@@ -31,7 +31,8 @@
                 }
             },
             error: function(data){
-                $("#modal-generic .modal-content").html(data.responseJSON.html_form);
+                if (data && data.responseJSON) $("#modal-generic .modal-content").html(data.responseJSON.html_form);
+                else genericErrorAlert();
             }
         });
     };

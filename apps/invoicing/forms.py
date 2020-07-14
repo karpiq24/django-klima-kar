@@ -33,6 +33,9 @@ class SaleInvoiceModelForm(forms.ModelForm):
             url="invoicing:contractor_autocomplete_create"
         ),
     )
+    generate_pdf = forms.BooleanField(
+        label="Wydruk po zapisie", widget=forms.HiddenInput(), required=False
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

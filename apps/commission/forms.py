@@ -101,6 +101,9 @@ class CommissionModelForm(forms.ModelForm):
     upload_key = forms.CharField(
         label="Klucz wysyłania plików", widget=forms.HiddenInput(), required=False
     )
+    generate_pdf = forms.BooleanField(
+        label="Wydruk po zapisie", widget=forms.HiddenInput(), required=False
+    )
 
     def __init__(self, *args, **kwargs):
         self.commission_type = kwargs.pop("commission_type", None)

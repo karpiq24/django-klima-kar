@@ -5,7 +5,7 @@ $(document).on("click", "#gus-button", function() {
         .parent();
     var url = $(this).attr("data-url");
 
-    if (nip.length < 10 || !$.isNumeric(nip)) {
+    if (nip.length != 10 || !$.isNumeric(nip)) {
         $("#id_nip").addClass("is-invalid");
         if ($(parent).find("div.invalid-feedback").length == 0) {
             $(parent).append('<div class="invalid-feedback">Wpisz poprawną wartość.</div>');

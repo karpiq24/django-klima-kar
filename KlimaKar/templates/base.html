@@ -99,6 +99,14 @@
                     }
                 });
             });
+
+            $(document).on("click", "button[type='submit']", function () {
+                const that = $(this);
+                $(that).attr('disabled', true);
+                    setTimeout(function () {
+                        $(that).attr('disabled', false);
+                    }, 1000);
+            })
         });
     </script>
 {% endcompress %}

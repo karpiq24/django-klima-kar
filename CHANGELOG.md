@@ -1,5 +1,11 @@
 # Lista zmian
 
+## 2020-07-14
+
+- Dodano czasowe blokowanie przycisku "Zapisz" po pierwszym wciśnięciu
+- Poprawiono dodawanie nowego kontrahenta w zleceniach i fakturach sprzedażowych
+
+
 ## 2020-07-06
 
 -   Dodano aplikację "Baza wiedzy"

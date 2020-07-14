@@ -123,12 +123,13 @@ $(function () {
         $(parent).append(`<div class="extra-feedback d-flex flex-column"></div>`);
         const feedback = $(parent).find("div.extra-feedback");
 
-        $.ajax({
-            url: "/graphql/",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({
-                query: `query {
+        if (contractor_pk) {
+            $.ajax({
+                url: "/graphql/",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    query: `query {
                     contractors(filters: {id: "${contractor_pk}"}) {
                         objects {
                             nip
@@ -137,39 +138,43 @@ $(function () {
                         }
                     }
                 }`,
-            }),
-            success: function ({ data }) {
-                const contractor = data.contractors.objects[0];
-                if (contractor.nip !== null) {
-                    $("#gus-data").data("nip", contractor.nip);
-                    $("#gus-data").show();
-                } else {
-                    $("#gus-data").hide();
-                }
-                if (contractor.phone_1 === null && contractor.phone_2 === null) {
-                    $("#id_contractor").addClass("is-invalid");
-                    $(parent).append(
-                        '<div class="invalid-feedback">Wybrany kontrahent nie ma podanego numeru telefonu.</div>'
-                    );
-                } else {
-                    contractor.phone_1
-                        ? $(feedback).append(`<small>Numer telefonu: ${contractor.phone_1}</small>`)
-                        : null;
-                    contractor.phone_2
-                        ? $(feedback).append(`<small>Numer telefonu: ${contractor.phone_2}</small>`)
-                        : null;
-                    if (contractor.phone_1.length !== 9 || contractor.phone_2.length !== 9) {
-                        $("#id_contractor").addClass("is-warning");
-                        $(parent).append(
-                            '<div class="warning-feedback">Sprawdź numer telefonu - podany posiada niestandardową liczbę cyfr.</div>'
-                        );
+                }),
+                success: function ({ data }) {
+                    const contractor = data.contractors.objects[0];
+                    if (contractor.nip !== null) {
+                        $("#gus-data").data("nip", contractor.nip);
+                        $("#gus-data").show();
+                    } else {
+                        $("#gus-data").hide();
                     }
-                }
-            },
-            error: function (data) {
-                addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
-            },
-        });
+                    if (contractor.phone_1 === null && contractor.phone_2 === null) {
+                        $("#id_contractor").addClass("is-invalid");
+                        $(parent).append(
+                            '<div class="invalid-feedback">Wybrany kontrahent nie ma podanego numeru telefonu.</div>'
+                        );
+                    } else {
+                        contractor.phone_1
+                            ? $(feedback).append(`<small>Numer telefonu: ${contractor.phone_1}</small>`)
+                            : null;
+                        contractor.phone_2
+                            ? $(feedback).append(`<small>Numer telefonu: ${contractor.phone_2}</small>`)
+                            : null;
+                        if (
+                            (contractor.phone_1 && contractor.phone_1.length !== 9) ||
+                            (contractor.phone_2 && contractor.phone_2.length !== 9)
+                        ) {
+                            $("#id_contractor").addClass("is-warning");
+                            $(parent).append(
+                                '<div class="warning-feedback">Sprawdź numer telefonu - podany posiada niestandardową liczbę cyfr.</div>'
+                            );
+                        }
+                    }
+                },
+                error: function (data) {
+                    addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
+                },
+            });
+        }
     });
 
     $("#contractor-edit").click(function () {
@@ -593,6 +598,10 @@ $(function () {
                 addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
             },
         });
+    });
+
+    $("#generate_pdf").on("click", function () {
+        $("#id_generate_pdf").val(true);
     });
 
     $("input[type=radio][name=status]").change(function () {

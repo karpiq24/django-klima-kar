@@ -167,7 +167,7 @@
         <div class="card bg-light">
             <div class="card-body">
                 <h5 class="card-title">Akcje</h5>
-                <button class="btn btn-outline-primary btn-lg" type="submit" name="generate_pdf"><i class="fas fa-print"></i> Zapisz i drukuj</button>
+                <button class="btn btn-outline-primary btn-lg" type="submit" id="generate_pdf"><i class="fas fa-print"></i> Zapisz i drukuj</button>
                 <button class="btn btn-outline-primary btn-lg" type="submit"><i class="far fa-save"></i> Zapisz</button>
                 {% if object.pk %}
                     <a class="btn btn-outline-dark btn-lg" href="{% url 'commission:commission_detail' object|slugify object.pk %}">Powrót</a>
