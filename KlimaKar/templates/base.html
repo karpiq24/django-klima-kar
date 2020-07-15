@@ -100,20 +100,20 @@
                 });
             });
 
-            $(document).on("click", "button[type='submit']", function () {
+            /*$(document).on("click", "button[type='submit']", function () {
                 const that = $(this);
                 $(that).attr('disabled', true);
                     setTimeout(function () {
                         $(that).attr('disabled', false);
                     }, 1000);
-            })
+            })*/
         });
     </script>
 {% endcompress %}
 {% compress js file page %}
     {% block scripts %}
     {% endblock %}
-    <script src="{% static 'js/base/alert-unsaved.js' %}"></script>
+    <!--<script src="{% static 'js/base/alert-unsaved.js' %}"></script>-->
 {% endcompress %}
 </body>
 </html>
