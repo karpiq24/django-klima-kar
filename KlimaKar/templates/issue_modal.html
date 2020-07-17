@@ -12,7 +12,7 @@
                     <a class="btn btn-outline-info" href="{{ issue_list_url }}" target="_blank" style="width: 100%;"><i class="fab fa-github"></i> Zobacz istniejące zgłoszenia</a>
                     <hr>
                     {% csrf_token %}
-                    {% include 'forms/form.html' with form=issue_form %}
+                    {% include 'forms/form.html' with form=issue_form hide_alert=True %}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Anuluj</button>

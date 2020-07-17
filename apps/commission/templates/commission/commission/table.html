@@ -58,7 +58,7 @@
                 </div>
                 <div class="modal-body">
                     {% csrf_token %}
-                    {% include 'forms/form.html' with form=fast_commission_form %}
+                    {% include 'forms/form.html' with form=fast_commission_form hide_alert=True %}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Anuluj</button>

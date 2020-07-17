@@ -1,9 +1,10 @@
 function blockUnload() {
-    if ($(".not-saved-alert").length > 0)
+    if ($(".not-saved-alert").length > 0) {
         $(".not-saved-alert").removeClass("d-none");
         $(window).bind("beforeunload", function () {
             return "Zmiany nie zostały zapisane. Czy na pewno chcesz opuścić tą stronę?";
         });
+    }
 }
 
 $(function () {
