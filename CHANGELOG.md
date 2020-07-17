@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-07-17
+
+- Naprawiono blokowanie podwójnego wciśnięcia przycisku "Zapisz" oraz alerty przy wychodzeniu z niezapisanego formularza na przeglądarce Chrome
+
 ## 2020-07-14
 
 - Dodano czasowe blokowanie przycisku "Zapisz" po pierwszym wciśnięciu

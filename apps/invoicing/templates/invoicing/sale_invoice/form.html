@@ -13,14 +13,16 @@
         </div>
     </div>
 {% endif %}
-{% include 'not_saved.html' %}
+
 <form id="sale-invoice-form" action="" method="post">
     {% csrf_token %}
     <div class="row">
         {% for hidden_field in form.hidden_fields %}
             {{ hidden_field }}
         {% endfor %}
-      
+
+        {% include 'forms/not_saved.html' %}
+
         {% if form.non_field_errors %}
             <div class="alert alert-danger" role="alert">
             {% for error in form.non_field_errors %}
@@ -63,7 +65,7 @@
         <div class="col-12">
             {% include 'invoicing/service_template/service_buttons.html' with services=services %}
             {{ inlines.1.management_form }}
-            {% include 'forms/form.html' with form=inlines.1.0 as_table=True %}
+            {% include 'forms/form.html' with form=inlines.1.0 as_table=True hide_alert=True %}
 
             {{ inlines.0.management_form }}
             <div class="table-responsive">

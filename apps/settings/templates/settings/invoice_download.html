@@ -6,6 +6,7 @@
             {% for hidden_field in form.hidden_fields %}
                 {{ hidden_field }}
             {% endfor %}
+            {% include 'forms/not_saved.html' %}
             {% for key, errors in form.errors.as_data.items %}
                 {% for error in errors %}
                     <input type="hidden" id="{{ error.code }}" value="{{ error.params }}">

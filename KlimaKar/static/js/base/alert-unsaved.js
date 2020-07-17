@@ -1,20 +1,18 @@
-$(function () {
-    let madeChanges = false;
-    $("input, select, textarea").on("change", function () {
-        $("#not-saved-alert").removeClass("d-none");
-        madeChanges = true;
+function blockUnload() {
+    if ($(".not-saved-alert").length > 0)
+        $(".not-saved-alert").removeClass("d-none");
+        $(window).bind("beforeunload", function () {
+            return "Zmiany nie zostały zapisane. Czy na pewno chcesz opuścić tą stronę?";
+        });
+}
 
-        if ($("#not-saved-alert").length > 0)
-            $(window).bind("beforeunload", function () {
-                if (madeChanges) {
-                    return "Zmiany nie zostały zapisane. Czy na pewno chcesz opuścić tą stronę?";
-                }
-            });
+$(function () {
+    $(document).on("change", "form input, form select, form textarea", function () {
+        blockUnload();
     });
 
-    $(".date-input").on("apply.daterangepicker", function () {
-        $("#not-saved-alert").removeClass("d-none");
-        madeChanges = true;
+    $(document).on("apply.daterangepicker", "form .date-input", function () {
+        blockUnload();
     });
 
     $(document).on("submit", "form", function (event) {

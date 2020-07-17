@@ -100,20 +100,23 @@
                 });
             });
 
-            /*$(document).on("click", "button[type='submit']", function () {
-                const that = $(this);
-                $(that).attr('disabled', true);
-                    setTimeout(function () {
-                        $(that).attr('disabled', false);
-                    }, 1000);
-            })*/
+            $(document).on("submit", "form", function () {
+                const buttons = $(this).find("button[type='submit']");
+                $(buttons).attr('disabled', true);
+                setTimeout(function () {
+                    $(buttons).attr('disabled', false);
+                }, 1000);
+            })
         });
     </script>
 {% endcompress %}
 {% compress js file page %}
     {% block scripts %}
     {% endblock %}
-    <!--<script src="{% static 'js/base/alert-unsaved.js' %}"></script>-->
+{% endcompress %}
+
+{% compress js file base_bottom %}
+    <script src="{% static 'js/base/alert-unsaved.js' %}"></script>
 {% endcompress %}
 </body>
 </html>
