@@ -1,14 +1,18 @@
 # Lista zmian
 
+#2020-07-27
+
+-   Umożliwiono wprowadzenie ułamków ilości w pozycjach zleceń i faktur sprzedażowych
+
 ## 2020-07-17
 
-- Naprawiono blokowanie podwójnego wciśnięcia przycisku "Zapisz" oraz alerty przy wychodzeniu z niezapisanego formularza na przeglądarce Chrome
+-   Naprawiono blokowanie podwójnego wciśnięcia przycisku "Zapisz" oraz alerty przy wychodzeniu z niezapisanego formularza na przeglądarce Chrome
 
 ## 2020-07-14
 
-- Dodano czasowe blokowanie przycisku "Zapisz" po pierwszym wciśnięciu
-- Poprawiono dodawanie nowego kontrahenta w zleceniach i fakturach sprzedażowych
-- Dodano informacje o niezapisanym formularzu oraz ostrzeżenie podczas wychodzenia z niezapisanego formularza
+-   Dodano czasowe blokowanie przycisku "Zapisz" po pierwszym wciśnięciu
+-   Poprawiono dodawanie nowego kontrahenta w zleceniach i fakturach sprzedażowych
+-   Dodano informacje o niezapisanym formularzu oraz ostrzeżenie podczas wychodzenia z niezapisanego formularza
 
 ## 2020-07-06
 

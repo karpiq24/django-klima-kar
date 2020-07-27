@@ -38,7 +38,7 @@ input SaleInvoiceFilter {
 type SaleInvoiceItem {
     name: String!
     description: String
-    quantity: Int!
+    quantity: Float!
     price_netto: Float!
     price_brutto: Float!
     ware: Ware

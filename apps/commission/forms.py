@@ -220,7 +220,7 @@ class CommissionItemModelForm(forms.ModelForm):
     class Meta:
         model = CommissionItem
         fields = ["name", "description", "quantity", "price", "ware"]
-        localized_fields = ["price"]
+        localized_fields = ["price", "quantity"]
 
 
 class CommissionItemInline(InlineFormSet):

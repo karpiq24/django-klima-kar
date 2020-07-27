@@ -271,7 +271,7 @@ class SaleInvoiceItemModelForm(forms.ModelForm):
             "price_brutto",
             "ware",
         ]
-        localized_fields = ["price_netto", "price_brutto"]
+        localized_fields = ["price_netto", "price_brutto", "quantity"]
 
 
 class SaleInvoiceItemsInline(InlineFormSet):
@@ -387,7 +387,7 @@ class ServiceTemplateModelForm(forms.ModelForm):
             "is_ware_service": ToggleInput,
             "is_group": ToggleInput,
         }
-        localized_fields = ["price_netto", "price_brutto"]
+        localized_fields = ["price_netto", "price_brutto", "quantity"]
 
 
 class EmailForm(forms.Form):

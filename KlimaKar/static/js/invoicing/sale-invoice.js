@@ -25,7 +25,7 @@ function calculateInvoiceTotals() {
                 if (isNaN(price_netto)) {
                     price_netto = 0;
                 }
-                var quantity = parseInt($(this).find(".item-quantity").val());
+                var quantity = parseFloat($(this).find(".item-quantity").val().replace(",", "."));
                 var total_netto = toCurrency(quantity * price_netto);
                 invoice_total_netto = toCurrency(invoice_total_netto + total_netto);
             }
@@ -181,7 +181,7 @@ $(function () {
         var tax_multiplier = parseFloat($("#id_tax_percent").val()) / 100;
         var price_netto = toCurrency($(item_form).find(".item-netto").val().replace(",", "."));
         var price_brutto = toCurrency(price_netto + price_netto * tax_multiplier);
-        var quantity = parseInt($(item_form).find(".item-quantity").val());
+        var quantity = parseFloat($(item_form).find(".item-quantity").val().replace(",", "."));
         var total_netto = toCurrency(price_netto * quantity);
         $(item_form).find(".item-brutto").val(String(price_brutto).replace(".", ","));
         $(item_form)
@@ -195,7 +195,7 @@ $(function () {
         var tax_multiplier = parseFloat($("#id_tax_percent").val()) / 100;
         var price_brutto = toCurrency($(item_form).find(".item-brutto").val().replace(",", "."));
         var price_netto = toCurrency(price_brutto / (1 + tax_multiplier));
-        var quantity = parseInt($(item_form).find(".item-quantity").val());
+        var quantity = parseFloat($(item_form).find(".item-quantity").val().replace(",", "."));
         var total_netto = toCurrency(price_netto * quantity);
         $(item_form).find(".item-netto").val(String(price_netto).replace(".", ","));
         $(item_form)
@@ -215,7 +215,7 @@ $(function () {
     $(".item-quantity").change(function () {
         var item_form = $(this).parents(".item-formset-row");
         var price_netto = toCurrency($(item_form).find(".item-netto").val().replace(",", "."));
-        var quantity = parseInt($(item_form).find(".item-quantity").val());
+        var quantity = parseFloat($(item_form).find(".item-quantity").val().replace(",", "."));
         var total_netto = toCurrency(price_netto * quantity);
         $(item_form)
             .find(".item-total-netto")

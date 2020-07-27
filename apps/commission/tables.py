@@ -137,6 +137,9 @@ class CommissionItemTable(tables.Table):
     def render_price(self, value):
         return "{0:.2f} zł".format(value).replace(".", ",")
 
+    def render_quantity(self, value):
+        return value.normalize()
+
     class Meta:
         model = CommissionItem
         attrs = {"class": "table table-striped table-hover table-bordered"}

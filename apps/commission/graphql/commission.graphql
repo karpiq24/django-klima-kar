@@ -64,7 +64,7 @@ type CommissionItem {
     id: ID!
     name: String!
     description: String
-    quantity: Int!
+    quantity: Float!
     price: Float!
     ware: Ware
 }
@@ -73,7 +73,7 @@ input CommissionItemInput {
     id: ID
     name: String
     description: String
-    quantity: Int
+    quantity: Float
     price: Float
     ware: ID
 }

@@ -32,7 +32,7 @@ function calculateInvoiceTotals() {
                 if (isNaN(price)) {
                     price = 0;
                 }
-                const quantity = parseInt($(this).find(".item-quantity").val());
+                const quantity = parseFloat($(this).find(".item-quantity").val().replace(",", "."));
                 const total_row = toCurrency(quantity * price);
                 invoice_total = toCurrency(invoice_total + total_row);
             }
@@ -474,7 +474,7 @@ $(function () {
     $(".item-price").change(function () {
         let item_form = $(this).parents(".item-formset-row");
         const price = toCurrency($(item_form).find(".item-price").val().replace(",", "."));
-        const quantity = parseInt($(item_form).find(".item-quantity").val());
+        const quantity = parseFloat($(item_form).find(".item-quantity").val().replace(",", "."));
         const total = toCurrency(price * quantity);
         $(item_form)
             .find(".item-total")
@@ -485,7 +485,7 @@ $(function () {
     $(".item-quantity").change(function () {
         let item_form = $(this).parents(".item-formset-row");
         const price = toCurrency($(item_form).find(".item-price").val());
-        const quantity = parseInt($(item_form).find(".item-quantity").val());
+        const quantity = parseFloat($(item_form).find(".item-quantity").val().replace(",", "."));
         const total = toCurrency(price * quantity);
         $(item_form)
             .find(".item-total")

@@ -137,6 +137,9 @@ class SaleInvoiceItemTable(tables.Table):
     def render_price_brutto(self, value):
         return "{0:.2f} zł".format(value).replace(".", ",")
 
+    def render_quantity(self, value):
+        return value.normalize()
+
     class Meta:
         model = SaleInvoiceItem
         attrs = {"class": "table table-striped table-hover table-bordered"}
@@ -174,6 +177,9 @@ class ServiceTemplateTable(tables.Table):
 
     def render_price_brutto(self, value):
         return "{0:.2f} zł".format(value).replace(".", ",")
+
+    def render_quantity(self, value):
+        return value.normalize()
 
     class Meta:
         model = ServiceTemplate

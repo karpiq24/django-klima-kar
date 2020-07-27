@@ -326,7 +326,14 @@ class ServiceTemplate(models.Model):
     description = models.CharField(
         max_length=255, verbose_name="Opis usługi/towaru", blank=True, null=True
     )
-    quantity = models.IntegerField(verbose_name="Ilość", blank=True, null=True)
+    quantity = models.DecimalField(
+        default=1,
+        max_digits=8,
+        decimal_places=3,
+        verbose_name="Ilość",
+        blank=True,
+        null=True,
+    )
     price_netto = models.DecimalField(
         max_digits=7, decimal_places=2, verbose_name="Cena netto", blank=True, null=True
     )
@@ -386,7 +393,9 @@ class SaleInvoiceItem(models.Model):
     description = models.CharField(
         max_length=255, verbose_name="Opis usługi/towaru", blank=True, null=True
     )
-    quantity = models.IntegerField(default=1, verbose_name="Ilość")
+    quantity = models.DecimalField(
+        default=1, max_digits=8, decimal_places=3, verbose_name="Ilość"
+    )
     price_netto = models.DecimalField(
         max_digits=7, decimal_places=2, verbose_name="Cena netto"
     )
