@@ -1,10 +1,8 @@
 <div class="form-group d-flex flex-wrap">
     {% for service in services %}
-        {% if not service.is_ware_service %}
-            <button type="button" class="btn btn-{{ service.button_color }} btn-lg ml-1 mr-1 mt-2 service-button" data-pk="{{ service.pk }}">{% if service.button_name %}{{ service.button_name }}{% else %}{{ service.name }}{% endif %}</button>
-            {% if service.is_group %}
-                {% include 'invoicing/service_template/select_modal.html' with service=service %}
-            {% endif %}
+        <button type="button" class="btn btn-{{ service.button_color }} btn-lg ml-1 mr-1 mt-2 service-button" data-pk="{{ service.pk }}">{% if service.button_name %}{{ service.button_name }}{% else %}{{ service.name }}{% endif %}</button>
+        {% if service.is_group %}
+            {% include 'invoicing/service_template/select_modal.html' with service=service %}
         {% endif %}
     {% endfor %}
 </div>

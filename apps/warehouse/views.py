@@ -315,10 +315,21 @@ class GetWareData(View):
 
 class WareAutocomplete(CustomSelect2QuerySetView):
     def get_queryset(self):
+        name = self.forwarded.get("name")
         qs = Ware.objects.all()
+        if name:
+            qs = qs.filter(name=name)
         if self.q:
             qs = qs.filter(Q(index__icontains=self.q) | Q(index_slug__icontains=self.q))
         return qs
+
+    def get_result_label(self, result):
+        if "name" in self.forwarded and result.retail_price:
+            return f"{result.index} - {str(result.retail_price).replace('.', ',')} zł"
+        return super().get_result_label(result)
+
+    def extend_result_data(self, data):
+        return {"retail": data.retail_price}
 
 
 class WareNameAutocomplete(View):

@@ -1,11 +1,7 @@
-import datetime
-import requests
-
 from urllib.parse import urlencode
 from django_tables2.export.views import ExportMixin
 from smtplib import SMTPRecipientsRefused
 from extra_views import CreateWithInlinesView, UpdateWithInlinesView
-from zeep import Client as ZeepClient
 
 from django.views.generic import DetailView, UpdateView, CreateView, View
 from django.forms.models import model_to_dict
@@ -61,6 +57,7 @@ from apps.invoicing.gus import GUS
 from apps.settings.models import SiteSettings
 from apps.commission.models import Commission
 from apps.commission.tables import CommissionTable
+from apps.warehouse.forms import WareSelectForm
 
 
 class SaleInvoiceTableView(ExportMixin, FilteredSingleTableView):
@@ -127,6 +124,7 @@ class SaleInvoiceCreateView(CreateWithInlinesView):
         )
         context["commission_alert"] = True
         context["services"] = ServiceTemplate.objects.filter(display_as_button=True)
+        context["ware_filter_form"] = WareSelectForm(prefix="service_ware")
         return context
 
     def get_initial(self):
@@ -243,6 +241,7 @@ class SaleInvoiceUpdateView(UpdateWithInlinesView):
             self.get_object().get_invoice_type_display()
         )
         context["services"] = ServiceTemplate.objects.filter(display_as_button=True)
+        context["ware_filter_form"] = WareSelectForm(prefix="service_ware")
         return context
 
     def forms_valid(self, form, inlines):

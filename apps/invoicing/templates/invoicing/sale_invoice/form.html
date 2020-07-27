@@ -64,6 +64,7 @@
     <div class="row">
         <div class="col-12">
             {% include 'invoicing/service_template/service_buttons.html' with services=services %}
+            {% include 'invoicing/service_template/ware_filer_modal.html' %}
             {{ inlines.1.management_form }}
             {% include 'forms/form.html' with form=inlines.1.0 as_table=True hide_alert=True %}
 

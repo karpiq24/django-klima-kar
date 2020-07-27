@@ -53,6 +53,7 @@ from apps.commission.forms import (
     CommissionFastModelForm,
 )
 from apps.invoicing.models import SaleInvoice, ServiceTemplate
+from apps.warehouse.forms import WareSelectForm
 
 
 class VehicleTableView(ExportMixin, FilteredSingleTableView):
@@ -386,6 +387,7 @@ class CommissionCreateView(CreateWithInlinesView):
             dict(Commission.COMMISSION_TYPES)[self.commission_type]
         )
         context["services"] = ServiceTemplate.objects.filter(display_as_button=True)
+        context["ware_filter_form"] = WareSelectForm(prefix="service_ware")
         return context
 
     def get_initial(self):
@@ -434,6 +436,7 @@ class CommissionUpdateView(CommissionAccessMixin, UpdateWithInlinesView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["services"] = ServiceTemplate.objects.filter(display_as_button=True)
+        context["ware_filter_form"] = WareSelectForm(prefix="service_ware")
         context["title"] = "Edycja zlecenia ({})".format(str(self.get_object()))
         upload_key = self.request.POST.get("upload_key")
         if upload_key:

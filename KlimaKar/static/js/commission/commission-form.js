@@ -567,6 +567,8 @@ $(function () {
                             quantity
                             price_brutto
                             is_group
+                            is_ware_service
+                            ware_filter
                         }
                     }
                 }`,
@@ -577,13 +579,21 @@ $(function () {
                 if (service.is_group) {
                     $(".modal").modal("hide");
                     $(`#serviceModal_${pk}`).modal("show");
+                } else if (service.is_ware_service) {
+                    localStorage.setItem("service", JSON.stringify(service));
+                    $("#id_service_ware-name").val(service.ware_filter);
+                    $("#wareFilterModal .modal-title").text(service.name);
+                    $("#wareFilterModal").modal("show");
+                    setTimeout(function () {
+                        $("#id_service_ware-ware").select2("open");
+                    }, 400);
                 } else {
                     const item_form = $(".item-formset-row.d-none").first();
                     $(item_form).find(".item-name").val(service.name);
                     $(item_form).find(".item-description").val(service.description);
                     if (service.ware) {
                         let $option = $("<option selected></option>").val(service.ware.id).text(service.ware.index);
-                        let $sel2 = $(item_form).find(".item-ware");
+                        let $sel2 = $(item_form).find("select.item-ware");
                         $sel2.append($option).trigger("change");
                     }
                     $(item_form).find(".item-price").val(service.price_brutto);
@@ -598,6 +608,37 @@ $(function () {
                 addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
             },
         });
+    });
+
+    $("#id_service_ware-ware").on("select2:selecting", function (e) {
+        if (localStorage.getItem("service") === null) {
+            genericErrorAlert();
+            return;
+        }
+        const data = e.params.args.data;
+        const service = JSON.parse(localStorage.getItem("service"));
+
+        $("#wareFilterModal").modal("hide");
+        setTimeout(function () {
+            $("#id_service_ware-ware").empty();
+        }, 500);
+
+        const item_form = $(".item-formset-row.d-none").first();
+        $(item_form).find(".item-name").val(service.name);
+        $(item_form).find(".item-description").val(service.description);
+
+        let $option = $("<option selected></option>").val(data.id).text(data.text);
+        let $sel2 = $(item_form).find("select.item-ware");
+        $sel2.append($option).trigger("change");
+
+        $(item_form).find(".item-price").val(data.retail);
+        $(item_form)
+            .find(".item-quantity")
+            .val(service.quantity || 1);
+        $(item_form).find(".item-DELETE").children("input").prop("checked", false);
+        $(item_form).removeClass("d-none");
+        $(item_form).find(".item-price").change();
+        $(item_form).insertAfter($("#item-rows tr:not('.d-none'):last"));
     });
 
     $("#generate_pdf").on("click", function () {

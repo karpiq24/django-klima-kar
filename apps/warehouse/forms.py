@@ -82,3 +82,19 @@ class InvoiceItemsInline(InlineFormSet):
     model = InvoiceItem
     form_class = InvoiceItemModelForm
     factory_kwargs = {"extra": 20}
+
+
+class WareSelectForm(forms.Form):
+    name = forms.CharField(widget=forms.HiddenInput, required=False)
+    ware = forms.ModelChoiceField(
+        label="",
+        required=False,
+        queryset=Ware.objects.all(),
+        widget=autocomplete.ModelSelect2(
+            url="warehouse:ware_autocomplete", forward=["name"],
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["ware"].widget.attrs.update({"data-placeholder": "Wybierz towar"})

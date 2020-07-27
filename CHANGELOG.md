@@ -3,6 +3,7 @@
 #2020-07-27
 
 -   Umożliwiono wprowadzenie ułamków ilości w pozycjach zleceń i faktur sprzedażowych
+-   Dodano obsługę usług z filtrem towaru w standardowym interfejsie
 
 ## 2020-07-17
 
