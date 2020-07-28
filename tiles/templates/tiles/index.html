@@ -10,8 +10,6 @@
     </head>
     <body>
         <div id="app"></div>
-        {% compress js file main %}
-            <script src="{% static 'tiles/main.js' %}"></script>
-        {% endcompress %}
+        <script src="{% static 'tiles/main.js.gz' %}"></script>
     </body>
 </html>
