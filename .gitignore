@@ -113,4 +113,4 @@ scripts/aztec
 temp/
 .idea/
 tiles/node_modules/
-tiles/static/tiles/main.js
+tiles/static/tiles/*
