@@ -17,7 +17,7 @@ gusregon==1.1.3
 openpyxl==3.0.4
 psycopg2==2.8.5
 PyGithub==1.52
-pyotp==2.3.0
+pyotp==2.4.0
 python-dateutil==2.8.1
 requests==2.24.0
 smsapi-client==2.4.2
