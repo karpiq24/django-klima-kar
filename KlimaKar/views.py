@@ -433,7 +433,7 @@ class FilteredSingleTableView(SingleTableView):
             self.request.GET.update(self.request.session[key])
         else:
             self.request.session[key] = self.request.GET
-        if self.request.is_ajax():
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
             table = self.get_table(**self.get_table_kwargs())
             return JsonResponse(
                 {

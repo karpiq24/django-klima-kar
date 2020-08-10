@@ -33,7 +33,7 @@ class AjaxSearchView(ListView):
 
     def get(self, *args, **kwargs):
         response = super().get(self.request, *args, **kwargs)
-        if self.request.is_ajax():
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
             return JsonResponse(
                 {
                     "html": render_to_string(

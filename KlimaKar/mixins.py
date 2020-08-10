@@ -31,7 +31,7 @@ class AjaxFormMixin(object):
         return context
 
     def get(self, *args, **kwargs):
-        if self.request.is_ajax():
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
             self.initial = self.request.GET.dict()
             super().get(self.request)
             html_form = render_to_string(
@@ -42,7 +42,7 @@ class AjaxFormMixin(object):
 
     def form_invalid(self, form):
         response = super().form_invalid(form)
-        if self.request.is_ajax():
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
             html_form = render_to_string(
                 "forms/modal_form.html", self.get_context_data(), request=self.request,
             )
@@ -52,7 +52,7 @@ class AjaxFormMixin(object):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        if self.request.is_ajax():
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
             data = dict(
                 {"pk": self.object.pk, "text": str(self.object)},
                 **self.extend_result_data(self.object)
@@ -73,7 +73,7 @@ class SingleTableAjaxMixin(SingleTableMixin):
 
     def get(self, request, *args, **kwargs):
         response = super().get(request, args, kwargs)
-        if self.request.is_ajax():
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
             table = self.get_table(**self.get_table_kwargs())
             return JsonResponse({"table": table.as_html(request)})
         else:
@@ -87,7 +87,7 @@ class MultiTableAjaxMixin(TableMixinBase):
     tables_context_key = "tables"
 
     def get(self, request, *args, **kwargs):
-        if self.request.is_ajax():
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
             table_id = request.GET.get("table_id")
             table = self.get_table(table_id, **self.get_table_kwargs(table_id))
             return JsonResponse({"table": table.as_html(request)})
