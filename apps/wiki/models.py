@@ -11,6 +11,7 @@ class Tag(models.Model):
     class Meta:
         verbose_name = "Tag"
         verbose_name_plural = "Tagi"
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -31,6 +32,7 @@ class Article(MyCloudHomeDirectoryModel):
     class Meta:
         verbose_name = "Artykuł"
         verbose_name_plural = "Artykuły"
+        ordering = ["-create_time"]
 
     def __str__(self):
         return self.title
