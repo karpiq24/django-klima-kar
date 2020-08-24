@@ -1,6 +1,5 @@
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const CompressionPlugin = require("compression-webpack-plugin");
 
 
 module.exports = {
@@ -20,9 +19,6 @@ module.exports = {
         ],
     },
     plugins: [
-        new CompressionPlugin({
-            test: /\.(js|css)/
-        }),
         new UglifyJsPlugin(),
     ],
     module: {
