@@ -2,6 +2,7 @@
 
 #2020-08-24
 -   Zmniejszono czas oczekiwania na odpowiedź z GUS z 300 do 5 sekund
+-   Dodano ignorowanie spacji przy wyszukiwaniu
 
 #2020-07-27
 

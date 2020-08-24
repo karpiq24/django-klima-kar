@@ -26,7 +26,11 @@ class AjaxSearchView(ListView):
         if models:
             model_names = [m.split(".")[1] for m in models]
             qs = qs.filter(content_type__model__in=model_names)
-        words = strip_accents(self.request.GET["q"]).split(" ")
+        words = [
+            word.strip()
+            for word in strip_accents(self.request.GET["q"]).split(" ")
+            if word.strip()
+        ]
         for word in words:
             qs = qs.filter(text_search__icontains=word)
         return qs
