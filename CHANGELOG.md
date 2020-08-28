@@ -1,6 +1,11 @@
 # Lista zmian
 
+## 2020-08-28
+
+-   Naprawiono sortowanie po typie obiektu w audycie zmian
+
 ## 2020-08-24
+
 -   Zmniejszono czas oczekiwania na odpowiedź z GUS z 300 do 5 sekund
 -   Dodano ignorowanie spacji przy wyszukiwaniu
 

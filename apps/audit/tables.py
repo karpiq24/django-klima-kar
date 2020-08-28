@@ -7,8 +7,7 @@ class AuditLogTable(tables.Table):
     user = tables.Column(attrs={"th": {"width": "5%"}})
     action_time = tables.Column(attrs={"th": {"width": "15%"}})
     content_type = tables.Column(
-        attrs={"th": {"width": "15%"}},
-        accessor="content_type.model_class._meta.verbose_name",
+        attrs={"th": {"width": "15%"}}, accessor="content_type.name",
     )
     object_repr = tables.Column(attrs={"th": {"width": "20%"}})
     diffrence = tables.TemplateColumn(
@@ -55,3 +54,10 @@ class AuditLogTable(tables.Table):
                 AuditLog.DELETION: "table-danger",
             }[record.action_type]
         }
+
+    def order_content_type(self, queryset, is_descending):
+        queryset = queryset.order_by(
+            ("-" if is_descending else "") + "content_type__app_label",
+            ("-" if is_descending else "") + "content_type__model",
+        )
+        return (queryset, True)
