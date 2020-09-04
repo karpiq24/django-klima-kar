@@ -1130,3 +1130,48 @@ input:checked + .slider:before {
 #article-links a{
     display: block;
 }
+
+/*
+    HOME
+*/
+
+.home-cards,
+.home-cards h6,
+.home-cards a:not(.btn) {
+    color: #ffffff;
+}
+
+.home-cards .commission-card {
+    background-color: #427BD2;
+}
+
+.home-cards .purchase-invoice-card {
+    background-color: #8355C5;
+}
+
+.home-cards .sale-invoice-card {
+    background-color: #89D23A;
+}
+
+.home-cards .article-card {
+    background-color: #0A3200;
+}
+
+.home-cards .card-header a {
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.home-cards .card {
+    height: 100%;
+}
+
+.home-cards h6 {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.home-cards .simple-list {
+    font-size: 1rem;
+}

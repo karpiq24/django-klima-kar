@@ -1,0 +1,25 @@
+<div class="col mb-4">
+    <div class="card article-card">
+        <div class="card-header">
+            <a class="d-flex align-items-center" href="{% url 'wiki:article_list' %}">
+                <i class="fas fa-book-open fa-lg mr-3"></i>
+                Artykuły
+            </a>
+        </div>
+        <div class="card-body">
+            <h6>
+                Najnowsze artykuły:
+            </h6>
+            <ul class="simple-list">
+                {% for article in articles %}
+                    <li><a href="{% url 'wiki:article_detail' article|slugify article.pk %}">{{ article }}</a></li>
+                {% empty %}
+                    <li>Brak artykułów.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="card-footer">
+            <a class="btn btn-light btn-lg" href="{% url 'wiki:article_create' %}"><i class="far fa-plus-square"></i> Artykuł</a>
+        </div>
+    </div>
+</div>

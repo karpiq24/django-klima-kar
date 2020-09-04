@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% load static slugify %}
+
+{% block content %}
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 home-cards">
+    {% include 'home_cards/commissions.html' %}
+    {% include 'home_cards/purchase_invoices.html' %}
+    {% include 'home_cards/sale_invoices.html' %}
+    {% include 'home_cards/articles.html' %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

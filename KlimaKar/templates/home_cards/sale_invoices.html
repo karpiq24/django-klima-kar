@@ -1,0 +1,26 @@
+<div class="col mb-4">
+    <div class="card sale-invoice-card">
+        <div class="card-header">
+            <a class="d-flex align-items-center" href="{% url 'invoicing:sale_invoices' %}">
+                <i class="fas fa-book fa-lg mr-3"></i>
+                Faktury sprzedażowe
+            </a>
+        </div>
+        <div class="card-body">
+            <h6>
+                Najnowsze faktury sprzedażowe:
+            </h6>
+            <ul class="simple-list">
+                {% for invoice in sale_invoices %}
+                    <li><a href="{% url 'invoicing:sale_invoice_detail' invoice|slugify invoice.pk %}">{{ invoice }}</a></li>
+                {% empty %}
+                    <li>Brak fakturz sprzedażowych.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="card-footer">
+            <a class="btn btn-light btn-lg" href="{% url 'invoicing:sale_invoice_create' 'faktura-vat' %}"><i class="far fa-plus-square"></i> VAT</a>
+            <a class="btn btn-light btn-lg" href="{% url 'invoicing:sale_invoice_create' 'faktura-vat-wdt' %}"><i class="far fa-plus-square"></i> WDT</a>
+        </div>
+    </div>
+</div>

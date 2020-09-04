@@ -1,0 +1,26 @@
+<div class="col mb-4">
+    <div class="card commission-card">
+        <div class="card-header">
+            <a class="d-flex align-items-center" href="{% url 'commission:commissions' %}">
+                <i class="fas fa-tasks fa-lg mr-3"></i>
+                Zlecenia
+            </a>
+        </div>
+        <div class="card-body">
+            <h6>
+                Otwarte zlecenia:
+            </h6>
+            <ul class="simple-list">
+                {% for commission in commissions %}
+                    <li><a href="{% url 'commission:commission_detail' commission|slugify commission.pk %}">{{ commission }}</a></li>
+                {% empty %}
+                    <li>Brak otwartych zleceń.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="card-footer">
+            <a class="btn btn-light btn-lg" href="{% url 'commission:commission_create_vehicle' %}"><i class="far fa-plus-square"></i> Pojazd</a>
+            <a class="btn btn-light btn-lg" href="{% url 'commission:commission_create_vehicle' %}"><i class="far fa-plus-square"></i> Podzespół</a>
+        </div>
+    </div>
+</div>

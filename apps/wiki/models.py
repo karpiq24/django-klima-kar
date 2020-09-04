@@ -27,7 +27,7 @@ class Article(MyCloudHomeDirectoryModel):
     description = models.TextField(verbose_name="Opis")
     contents = models.TextField(verbose_name="Treść")
     create_time = models.DateTimeField(auto_now_add=True, verbose_name="Czas dodania")
-    edit_time = models.DateTimeField(auto_now_add=True, verbose_name="Czas edycji")
+    edit_time = models.DateTimeField(auto_now=True, verbose_name="Czas edycji")
 
     class Meta:
         verbose_name = "Artykuł"

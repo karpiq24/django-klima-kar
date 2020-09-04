@@ -1,0 +1,25 @@
+<div class="col mb-4">
+    <div class="card purchase-invoice-card">
+        <div class="card-header">
+            <a class="d-flex align-items-center" href="{% url 'warehouse:invoices' %}">
+                <i class="fas fa-file-alt fa-lg mr-3"></i>
+                Faktury zakupowe
+            </a>
+        </div>
+        <div class="card-body">
+            <h6>
+               Najnowsze faktury zakupowe:
+            </h6>
+            <ul class="simple-list">
+                {% for invoice in purchase_invoices %}
+                    <li><a href="{% url 'warehouse:invoice_detail' invoice|slugify invoice.pk %}">{{ invoice }}</a></li>
+                {% empty %}
+                    <li>Brak faktur zakupowych.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="card-footer">
+            <a class="btn btn-light btn-lg" href="{% url 'warehouse:invoice_create' %}"><i class="far fa-plus-square"></i> Faktura</a>
+        </div>
+    </div>
+</div>

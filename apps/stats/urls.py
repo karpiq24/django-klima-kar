@@ -4,6 +4,7 @@ from apps.stats import views
 
 app_name = "stats"
 urlpatterns = [
+    path("", views.DashboardView.as_view(), name="dashboard"),
     path("metrics", views.Metrics.as_view(), name="metrics"),
     path("summary", views.GetSummary.as_view(), name="summary"),
     path(
