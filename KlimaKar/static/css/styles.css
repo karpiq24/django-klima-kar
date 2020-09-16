@@ -1157,7 +1157,8 @@ input:checked + .slider:before {
     background-color: #0A3200;
 }
 
-.home-cards .card-header a {
+.home-cards .card-header a,
+.tools-card .card-header {
     text-decoration: none;
     font-size: 1.5rem;
     font-weight: bold;

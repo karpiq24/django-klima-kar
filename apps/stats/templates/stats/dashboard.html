@@ -8,7 +8,7 @@
     <div class="nav nav-pills flex-column flex-sm-row nav-fill" id="nav-tab" role="tablist">
         <a class="flex-sm-fill nav-item nav-link active" id="nav-stats-purchase-tab" data-toggle="tab" href="#nav-stats-purchase" role="tab" aria-controls="nav-stats-purchase" aria-selected="true">Zakupy</a>
         <a class="flex-sm-fill nav-item nav-link" id="nav-stats-sale-tab" data-toggle="tab" href="#nav-stats-sale" role="tab" aria-controls="nav-stats-sale" aria-selected="false">Sprzedaż</a>
-        {% if has_permission %}
+        {% if request.user.is_staff %}
             <a class="flex-sm-fill nav-item nav-link" id="nav-stats-summary-tab" data-toggle="tab" href="#nav-stats-summary" role="tab" aria-controls="nav-stats-summary" aria-selected="false">Podsumowanie</a>
         {% endif %}
     </div>
@@ -22,7 +22,7 @@
         {% include 'stats/sale_tab.html' %}
     </div>
 
-    {% if has_permission %}
+    {% if request.user.is_staff %}
         <div class="tab-pane fade" id="nav-stats-summary" role="tabpanel" aria-labelledby="nav-stats-summary-tab">
             {% include 'stats/summary_tab.html' %}
         </div>

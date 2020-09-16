@@ -3,13 +3,24 @@
 {% load static slugify %}
 
 {% block content %}
-<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 home-cards">
-    {% include 'home_cards/commissions.html' %}
-    {% include 'home_cards/purchase_invoices.html' %}
-    {% include 'home_cards/sale_invoices.html' %}
-    {% include 'home_cards/articles.html' %}
-</div>
+    <div class="row mb-4">
+        {% csrf_token %}
+        <div class="col">
+            {% include 'home_cards/tools.html' %}
+        </div>
+    </div>
+    <hr>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 home-cards mt-4">
+        {% include 'home_cards/commissions.html' %}
+        {% include 'home_cards/purchase_invoices.html' %}
+        {% include 'home_cards/sale_invoices.html' %}
+        {% include 'home_cards/articles.html' %}
+    </div>
 {% endblock %}
 
 {% block scripts %}
+    <script src="{% static 'js/home/price-change.js' %}"></script>
+    <script src="{% static 'js/home/due-payments.js' %}"></script>
+    <script src="{% static 'js/home/ptu.js' %}"></script>
+    <script src="{% static 'js/home/deko.js' %}"></script>
 {% endblock %}

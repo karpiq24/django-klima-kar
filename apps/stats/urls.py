@@ -56,4 +56,5 @@ urlpatterns = [
     path("ptu_list", views.PTUList.as_view(), name="ptu_list"),
     path("ptu_value", views.GetPTUValue.as_view(), name="ptu_value"),
     path("save_ptu", views.SavePTU.as_view(), name="save_ptu"),
+    path("unpayed_deko", views.UnpayedDekoInvoicesView.as_view(), name="unpayed_deko"),
 ]

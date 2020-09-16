@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2020-09-16
+
+-   Przeniesiono część funkcji z widoku statystyk na stronę główną
+-   Dodano wyświetlanie nieopłaconych faktur DEKO
+
 ## 2020-09-04
 
 -   Dodano nową stronę główną

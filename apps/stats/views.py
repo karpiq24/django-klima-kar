@@ -1,4 +1,9 @@
+import requests
+
 from datetime import date, timedelta, datetime
+from decimal import Decimal
+
+from bs4 import BeautifulSoup
 from dateutil.relativedelta import relativedelta
 from dateutil import parser as date_parser
 
@@ -10,6 +15,7 @@ from django.template.defaultfilters import date as _date
 
 from KlimaKar.mixins import StaffOnlyMixin
 from KlimaKar.templatetags.slugify import slugify
+from apps.settings.models import InvoiceDownloadSettings
 from apps.warehouse.models import Invoice, Ware, WarePriceChange, Supplier
 from apps.invoicing.models import SaleInvoice, Contractor, RefrigerantWeights
 from apps.commission.models import Commission
@@ -24,29 +30,23 @@ class DashboardView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        has_permission = False
-        if self.request.user.is_staff:
-            has_permission = True
-
-        context["has_permission"] = has_permission
         context["stats"] = {
             "purchase": {
                 "group": "purchase",
-                "metrics": self._get_purchase_metrics(has_permission),
-                "charts": self._get_purchase_charts(has_permission),
-                "ware_price_changes_url": reverse("stats:ware_price_changes"),
+                "metrics": self._get_purchase_metrics(),
+                "charts": self._get_purchase_charts(),
             },
             "sale": {
                 "group": "sale",
-                "metrics": self._get_sale_metrics(has_permission),
-                "charts": self._get_sale_charts(has_permission),
+                "metrics": self._get_sale_metrics(),
+                "charts": self._get_sale_charts(),
             },
         }
         return context
 
-    def _get_purchase_charts(self, has_permission):
+    def _get_purchase_charts(self):
         charts = []
-        if has_permission:
+        if self.request.user.is_staff:
             charts.append(
                 {
                     "title": "Historia faktur zakupowych",
@@ -82,7 +82,7 @@ class DashboardView(TemplateView):
         )
         return charts
 
-    def _get_purchase_metrics(self, has_permission):
+    def _get_purchase_metrics(self):
         metrics = []
         metrics.append(
             {
@@ -108,7 +108,7 @@ class DashboardView(TemplateView):
                 "class": "invoice_count",
             }
         )
-        if has_permission:
+        if self.request.user.is_staff:
             metrics.append(
                 {
                     "icon": "fa-file-alt",
@@ -119,9 +119,9 @@ class DashboardView(TemplateView):
             )
         return metrics
 
-    def _get_sale_charts(self, has_permission):
+    def _get_sale_charts(self):
         charts = []
-        if has_permission:
+        if self.request.user.is_staff:
             charts.append(
                 {
                     "title": "Historia faktur sprzedażowych",
@@ -166,7 +166,7 @@ class DashboardView(TemplateView):
         )
         return charts
 
-    def _get_sale_metrics(self, has_permission):
+    def _get_sale_metrics(self):
         metrics = []
         metrics.append(
             {
@@ -176,7 +176,7 @@ class DashboardView(TemplateView):
                 "class": "sale_invoice_count",
             }
         )
-        if has_permission:
+        if self.request.user.is_staff:
             metrics.append(
                 {
                     "icon": "fa-book",
@@ -234,7 +234,7 @@ class DashboardView(TemplateView):
                 "class": "commission_count",
             }
         )
-        if has_permission:
+        if self.request.user.is_staff:
             metrics.append(
                 {
                     "icon": "fa-tasks",
@@ -602,10 +602,6 @@ class Metrics(View):
     ptus = None
 
     def get(self, *args, **kwargs):
-        self.has_permission = False
-        if self.request.user.is_staff:
-            self.has_permission = True
-
         group = self.request.GET.get("group")
         self.date_from = date_parser.parse(self.request.GET.get("date_from")).date()
         self.date_to = date_parser.parse(self.request.GET.get("date_to")).date()
@@ -624,7 +620,7 @@ class Metrics(View):
             "supplier_count": self.get_suppliers().count(),
             "invoice_count": self.get_purchase_invoices().count(),
         }
-        if self.has_permission:
+        if self.request.user.is_staff:
             response.update(self._get_purchase_secret_metrics())
         return response
 
@@ -655,7 +651,7 @@ class Metrics(View):
         response["r12_sum"] = "{} g".format(r12)
         response["r404_sum"] = "{} g".format(r404)
 
-        if self.has_permission:
+        if self.request.user.is_staff:
             response.update(self._get_sale_secret_metrics())
         return response
 
@@ -961,3 +957,86 @@ class GetSummary(StaffOnlyMixin, View):
             }
             for invoice in invoices
         ]
+
+
+class UnpayedDekoInvoicesView(StaffOnlyMixin, View):
+    def get(self, *args, **kwargs):
+        self.settings = InvoiceDownloadSettings.load()
+        with requests.Session() as s:
+            url = "http://sklep.dekoautoparts.pl/pl"
+            headers = {
+                "User-Agent": (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)"
+                    " Chrome/75.0.3770.80 Safari/537.36"
+                )
+            }
+            r = s.get(url, headers=headers)
+            if r.status_code != 200:
+                return JsonResponse({}, status=500)
+
+            soup = BeautifulSoup(r.content, "html5lib")
+            data = {
+                "__EVENTTARGET": "ctl00$ctl00$BodyContentPlaceHolder$LoginForm$LoginButton",
+                "__EVENTARGUMENT": "",
+                "__VIEWSTATE": soup.find("input", attrs={"name": "__VIEWSTATE"})[
+                    "value"
+                ],
+                "__VIEWSTATEGENERATOR": soup.find(
+                    "input", attrs={"name": "__VIEWSTATEGENERATOR"}
+                )["value"],
+                "__EVENTVALIDATION": soup.find(
+                    "input", attrs={"name": "__EVENTVALIDATION"}
+                )["value"],
+                "ctl00$ctl00$BodyContentPlaceHolder$LoginForm$Username": self.settings.DEKO_LOGIN,
+                "ctl00$ctl00$BodyContentPlaceHolder$LoginForm$Password": self.settings.DEKO_PASSWORD,
+            }
+            r = s.post(url, data=data, headers=headers)
+            if r.status_code != 200:
+                return JsonResponse({}, status=500)
+
+            url = "http://sklep.dekoautoparts.pl/AjaxServices/Informations.svc/GetFilteredInvoices"
+            data = {
+                "dateFrom": (date.today() - timedelta(60)).strftime("%Y-%m-%d"),
+                "dateTo": (date.today() + timedelta(1)).strftime("%Y-%m-%d"),
+                "overdueOnly": False,
+            }
+            r = s.post(url, json=data, headers=headers)
+            if r.status_code != 200:
+                return JsonResponse({}, status=500)
+
+            invoices = []
+            sum_to_pay = 0
+            soup = BeautifulSoup(r.json()["d"], "html5lib")
+            for row in soup.find("table").find_all("tr", attrs={"class": None})[1:]:
+                to_pay = row.find(
+                    "td", attrs={"class": "flex-price-to-pay"}
+                ).text.strip()
+                if to_pay == "0 PLN":
+                    continue
+                to_pay = Decimal(
+                    to_pay.rstrip(" PLN").replace(" ", "").replace(",", ".")
+                )
+                sum_to_pay += to_pay
+                number = row.find("td").text.strip()
+                invoice = {
+                    "number": number,
+                    "date": _date(
+                        date_parser.parse(
+                            row.find("td", attrs={"attr-text": "Wydane:"}).text.strip(),
+                            dayfirst=True,
+                        ).date()
+                    ),
+                    "to_pay": to_pay,
+                }
+                try:
+                    obj = Invoice.objects.get(
+                        number=number, supplier=self.settings.DEKO_SUPPLIER
+                    )
+                    invoice["url"] = reverse(
+                        "warehouse:invoice_detail",
+                        kwargs={"slug": slugify(obj), "pk": obj.pk},
+                    )
+                except Invoice.DoesNotExist:
+                    pass
+                invoices.append(invoice)
+            return JsonResponse({"invoices": invoices, "to_pay": sum_to_pay})

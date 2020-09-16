@@ -188,8 +188,8 @@ class MyCloudHome(SingletonModel):
     BACKUP_DIR_ID = models.CharField(max_length=128, blank=True, null=True)
 
     UPLOAD_MODELS = {
-        "commission": {"model": Commission, "file_model": CommissionFile,},
-        "article": {"model": Article, "file_model": ArticleFile,},
+        "commission": {"model": Commission, "file_model": CommissionFile},
+        "article": {"model": Article, "file_model": ArticleFile},
     }
 
     class Meta:

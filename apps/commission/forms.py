@@ -9,7 +9,7 @@ from django.utils.crypto import get_random_string
 from KlimaKar.forms import ToggleInput
 from KlimaKar.widgets import PrettySelect
 from apps.commission.models import Vehicle, Component, Commission, CommissionItem
-from apps.invoicing.models import Contractor, ServiceTemplate
+from apps.invoicing.models import Contractor
 from apps.warehouse.models import Ware
 
 
