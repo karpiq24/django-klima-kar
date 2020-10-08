@@ -120,6 +120,27 @@ class Contractor(models.Model):
         )
 
 
+class SaleInvoiceQuerySet(TotalValueQuerySet):
+    def generate_pdf(self):
+        documents = []
+        all_pages = []
+        for invoice in self:
+            if invoice.invoice_type == SaleInvoice.TYPE_CORRECTIVE:
+                template = get_template("invoicing/corrective_invoice.html")
+            else:
+                template = get_template("invoicing/invoice.html")
+            rendered_tpl = template.render({"invoice": invoice}).encode()
+            documents.append(
+                HTML(string=rendered_tpl).render(
+                    stylesheets=[CSS(filename="KlimaKar/static/css/invoice.css")]
+                )
+            )
+        for doc in documents:
+            for page in doc.pages:
+                all_pages.append(page)
+        return documents[0].copy(all_pages).write_pdf()
+
+
 class SaleInvoice(models.Model):
     AUDIT_IGNORE = ["number_year", "number_value"]
     MODEL_COLOR = "#89D23A"
@@ -183,7 +204,7 @@ class SaleInvoice(models.Model):
     legacy = models.BooleanField(default=False, verbose_name="Faktura archiwalna")
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Data dodania")
 
-    objects = TotalValueQuerySet.as_manager()
+    objects = SaleInvoiceQuerySet.as_manager()
     PRICE_FIELD = "saleinvoiceitem__price"
     QUANTITY_FIELD = "saleinvoiceitem__quantity"
 
@@ -258,12 +279,11 @@ class SaleInvoice(models.Model):
         else:
             template = get_template("invoicing/invoice.html")
         rendered_tpl = template.render({"invoice": self}).encode()
-        documents = []
-        documents.append(
+        documents = [
             HTML(string=rendered_tpl).render(
                 stylesheets=[CSS(filename="KlimaKar/static/css/invoice.css")]
             )
-        )
+        ]
         if print_version:
             documents.append(
                 HTML(string=rendered_tpl).render(
