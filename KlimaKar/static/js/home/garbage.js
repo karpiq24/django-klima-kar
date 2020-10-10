@@ -1,6 +1,7 @@
 $(function () {
     $("#garbage-tab").on("show.bs.tab", function (e) {
         $("#garbageCollectionDates tbody").empty();
+        $("#garbageCollectionDates thead tr").empty();
         $("#garbageCollectionDates tbody").html(`<tr>
                        <td colspan="3" class="text-center">
                            <i class="fas fa-spinner fa-spin fa-8x text-primary m-4"></i>
