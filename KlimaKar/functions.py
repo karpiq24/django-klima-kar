@@ -61,8 +61,8 @@ def get_garbage_collection_dates():
     url = "https://ekosystem.wroc.pl/admin/admin-ajax.php"
     data = {
         "action": "harmonogram_nowy_step_direct",
-        "id_numeru": "3467",
-        "id_ulicy": "594",
+        "id_numeru": settings.EKOSYSTEM_NUMBER,
+        "id_ulicy": settings.EKOSYSTEM_STREET,
     }
     r = requests.post(url, data)
     rows = BeautifulSoup(r.json()["wiadomosc"], "html5lib").find_all("tr")
