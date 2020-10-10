@@ -9,6 +9,7 @@ from github import Github
 from KlimaKar import settings
 from KlimaKar.forms import IssueForm
 from KlimaKar.email import get_email_message
+from KlimaKar.functions import get_garbage_collection_dates
 from apps.commission.models import Commission
 from apps.invoicing.models import SaleInvoice
 from apps.warehouse.models import Invoice
@@ -199,3 +200,8 @@ class ChangeLogView(TemplateView):
         with open("CHANGELOG.md") as f:
             context["changelog"] = f.read()
         return context
+
+
+class GarbageCollectionView(View):
+    def get(self, *args, **kwargs):
+        return JsonResponse(get_garbage_collection_dates())

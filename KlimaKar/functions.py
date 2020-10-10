@@ -1,9 +1,11 @@
 import json
 import unicodedata
+import requests
 
 from urllib3.filepost import encode_multipart_formdata, choose_boundary
 from urllib3.fields import RequestField
 from smsapi.client import SmsApiPlClient
+from bs4 import BeautifulSoup
 
 from django.conf import settings
 
@@ -53,3 +55,22 @@ def send_sms(phone, message):
         mail_admins("SMSAPI low balance", str(client.account.balance()))
     client.sms.send(to=phone, message=message)
     return True
+
+
+def get_garbage_collection_dates():
+    url = "https://ekosystem.wroc.pl/admin/admin-ajax.php"
+    data = {
+        "action": "harmonogram_nowy_step_direct",
+        "id_numeru": "3467",
+        "id_ulicy": "594",
+    }
+    r = requests.post(url, data)
+    rows = BeautifulSoup(r.json()["wiadomosc"], "html5lib").find_all("tr")
+    headers = [
+        header.text.strip().capitalize() for header in rows.pop(0).find_all("td")
+    ]
+    data = {"headers": headers, "rows": []}
+
+    for row in rows:
+        data["rows"].append([value.text.strip() for value in row.find_all("td")])
+    return data

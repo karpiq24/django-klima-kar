@@ -10,6 +10,9 @@
             <li class="nav-item">
                 <a class="nav-link active" id="prices-tab" data-toggle="tab" href="#prices" role="tab">Zmiany cen towarów</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" id="garbage-tab" data-toggle="tab" href="#garbage" role="tab">Wywóz odpadów</a>
+            </li>
             {% if request.user.is_staff %}
                 <li class="nav-item">
                     <a class="nav-link" id="payments-tab" data-toggle="tab" href="#payments" role="tab">Zaległe płatności</a>
@@ -25,6 +28,9 @@
         <div class="tab-content">
             <div class="tab-pane fade show active" id="prices" role="tabpanel">
                 {% include 'home_cards/price_changes.html' %}
+            </div>
+            <div class="tab-pane fade" id="garbage" role="tabpanel">
+                {% include 'home_cards/garbage.html' %}
             </div>
             {% if request.user.is_staff %}
                 <div class="tab-pane fade" id="payments" role="tabpanel">
