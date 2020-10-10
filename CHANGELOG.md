@@ -1,5 +1,13 @@
 # Lista zmian
 
+## 2020-10-10
+
+-   Dodano narzędzie wyświetlające daty odbioru odpadów
+
+## 2020-10-08
+
+-   Dodano możliwość wygenerowania zbiorczego pliku z fakturami sprzedażowymi
+
 ## 2020-09-16
 
 -   Przeniesiono część funkcji z widoku statystyk na stronę główną
