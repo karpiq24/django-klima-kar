@@ -1,5 +1,12 @@
 # Lista zmian
 
+## 2020-10-19
+
+-   Dodano cachowanie dat wywozu odpadów oraz nieopłaconych faktur DEKO
+-   Dane kontrahenta są zapisywane w fakturze niezależnie od głównego obiektu
+-   Uniemożliwono edycje starszych faktur sprzedażowych
+-   Uniemożliwiono edycje numeru NIP kontrahentów posiadających faktury
+
 ## 2020-10-10
 
 -   Dodano narzędzie wyświetlające daty odbioru odpadów
