@@ -2,9 +2,11 @@ from django.urls import include, path
 from django.contrib import admin
 
 from ariadne.contrib.django.views import GraphQLView
+from django.views.decorators.cache import cache_page
 
 from KlimaKar.views import HomeView, SendIssueView, ChangeLogView, GarbageCollectionView
 from KlimaKar.graphql import schema
+
 
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
@@ -22,7 +24,11 @@ urlpatterns = [
     path("mycloudhome/", include("apps.mycloudhome.urls")),
     path("tiles/", include("tiles.urls")),
     path("send_issue", SendIssueView.as_view(), name="send_issue"),
-    path("garbage", GarbageCollectionView.as_view(), name="garbage"),
+    path(
+        "garbage",
+        cache_page(8 * 60 * 60)(GarbageCollectionView.as_view()),
+        name="garbage",
+    ),
     path("lista-zmian", ChangeLogView.as_view(), name="changelog"),
     path("django-rq/", include("django_rq.urls")),
     path(

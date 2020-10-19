@@ -1,5 +1,7 @@
 # flake8: noqa
 from django.urls import path
+from django.views.decorators.cache import cache_page
+
 from apps.stats import views
 
 app_name = "stats"
@@ -56,5 +58,9 @@ urlpatterns = [
     path("ptu_list", views.PTUList.as_view(), name="ptu_list"),
     path("ptu_value", views.GetPTUValue.as_view(), name="ptu_value"),
     path("save_ptu", views.SavePTU.as_view(), name="save_ptu"),
-    path("unpayed_deko", views.UnpayedDekoInvoicesView.as_view(), name="unpayed_deko"),
+    path(
+        "unpayed_deko",
+        cache_page(2 * 60 * 60)(views.UnpayedDekoInvoicesView.as_view()),
+        name="unpayed_deko",
+    ),
 ]
