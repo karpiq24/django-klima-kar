@@ -11,6 +11,7 @@ function customSuccessCreate(data, identifier) {
         var $option = $("<option selected></option>").val(data["pk"]).text(data["text"]);
         $("#id_contractor").append($option).trigger("change");
         $("#contractor-edit").prop("disabled", false);
+        $("#id_contractor_modified").val(true);
     }
 }
 
@@ -43,10 +44,12 @@ $(function () {
     $(".sidenav #nav-invoicing").collapse("show");
 
     $("#id_contractor").on("select2:selecting", function (e) {
-        var data = e.params.args.data;
+        const data = e.params.args.data;
+        console.log("TEST")
 
         if (data.create_id !== true) {
             $("#contractor-edit").prop("disabled", false);
+            $("#id_contractor_modified").val(true);
             return;
         }
         $("#contractor-edit").prop("disabled", true);

@@ -36,6 +36,7 @@ class SaleInvoiceModelForm(forms.ModelForm):
     generate_pdf = forms.BooleanField(
         label="Wydruk po zapisie", widget=forms.HiddenInput(), required=False
     )
+    contractor_modified = forms.BooleanField(widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -165,6 +166,12 @@ class ContractorModelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if self.instance and self.instance.is_locked:
+            self.fields["nip"].disabled = True
+            self.fields[
+                "nip"
+            ].help_text = "Ten kontrahent ma przypisaną fakturę, zamiast edytować numer NIP, dodaj nowego kontrahenta."
+
         self.fields["name"].widget.attrs.update({"placeholder": "Podaj nazwę"})
         if self.instance and self.instance.nip_prefix:
             nip_prefix = self.instance.nip_prefix

@@ -63,6 +63,10 @@
     </table>
     </div>
     <div class="card-footer">
-        <a href="{% url 'invoicing:contractor_detail' contractor|slugify contractor.pk %}" class="btn btn-outline-primary"><i class="fa fa-users"></i> Szczegóły</a>
+        {% if contractor_object %}
+            <a href="{% url 'invoicing:contractor_detail' contractor_object|slugify contractor_object.pk %}" class="btn btn-outline-primary"><i class="fa fa-users"></i> Szczegóły</a>
+        {% else %}
+            <a href="{% url 'invoicing:contractor_detail' contractor|slugify contractor.pk %}" class="btn btn-outline-primary"><i class="fa fa-users"></i> Szczegóły</a>
+        {% endif %}
     </div>
 </div>

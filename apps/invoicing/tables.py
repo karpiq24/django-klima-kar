@@ -47,7 +47,9 @@ class ContractorTable(tables.Table):
 
 class SaleInvoiceTable(tables.Table):
     number = tables.Column(attrs={"th": {"width": "22%"}}, verbose_name="Numer faktury")
-    contractor = tables.Column(attrs={"th": {"width": "36%"}})
+    contractor = tables.Column(
+        attrs={"th": {"width": "36%"}}, accessor="contractor_json__name"
+    )
     issue_date = tables.Column(
         attrs={"th": {"width": "15%"}}, verbose_name="Data wystawienia"
     )

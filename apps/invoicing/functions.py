@@ -1,9 +1,18 @@
 import datetime
 import io
 
+from django.forms import model_to_dict
+from django.db.models.signals import pre_save, post_save
+
+from tqdm import tqdm
 from xlsxwriter import Workbook
 
-from apps.invoicing.models import SaleInvoice
+from apps.invoicing.models import SaleInvoice, Contractor
+from apps.audit.functions import (
+    post_save_handler as audit_post,
+    pre_save_handler as audit_pre,
+)
+from apps.search.utils import post_save_handler as search_post
 
 
 def get_next_invoice_number(invoice_type):
@@ -115,3 +124,19 @@ def generate_refrigerant_weights_report(queryset):
     workbook.close()
     output.seek(0)
     return output
+
+
+def initialize_contractor_json():
+    pre_save.disconnect(audit_pre, sender=SaleInvoice)
+    post_save.disconnect(audit_post, sender=SaleInvoice)
+    post_save.disconnect(search_post, sender=SaleInvoice)
+
+    for invoice in tqdm(SaleInvoice.objects.all()):
+        invoice.contractor_json = model_to_dict(
+            invoice.contractor, fields=Contractor.INVOICE_FIELDS
+        )
+        invoice.save()
+
+    pre_save.connect(audit_pre, sender=SaleInvoice)
+    post_save.connect(audit_post, sender=SaleInvoice)
+    post_save.connect(search_post, sender=SaleInvoice)

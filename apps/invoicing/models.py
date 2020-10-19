@@ -8,6 +8,8 @@ from django.core.validators import RegexValidator
 from django.template.loader import get_template
 from django.urls import reverse
 from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.postgres.fields import JSONField
+from django.forms import model_to_dict
 
 from KlimaKar.templatetags.slugify import slugify
 from KlimaKar.models import TotalValueQuerySet
@@ -21,6 +23,17 @@ class Contractor(models.Model):
     ]
     MODEL_COLOR = "#00A0DF"
     MODEL_ICON = "fas fa-users"
+
+    INVOICE_FIELDS = [
+        "name",
+        "nip",
+        "nip_prefix",
+        "address_1",
+        "address_2",
+        "city",
+        "postal_code",
+        "bdo_number",
+    ]
 
     name = models.CharField(max_length=512, verbose_name="Nazwa")
     nip = models.CharField(max_length=32, verbose_name="NIP", blank=True, null=True)
@@ -55,6 +68,12 @@ class Contractor(models.Model):
         verbose_name = "Kontrahent"
         verbose_name_plural = "Kontrahenci"
         ordering = ["name"]
+
+    @property
+    def is_locked(self):
+        return self.saleinvoice_set.filter(
+            created_date__date__lte=datetime.date.today()
+        ).exists()
 
     @property
     def phone_1_formatted(self):
@@ -189,6 +208,7 @@ class SaleInvoice(models.Model):
     contractor = models.ForeignKey(
         Contractor, on_delete=models.PROTECT, verbose_name="Kontrahent"
     )
+    contractor_json = JSONField(verbose_name="Dane kontrahenta", null=True, blank=True)
     payment_type = models.CharField(
         max_length=1, verbose_name="Forma płatności", choices=PAYMENT_TYPES
     )
@@ -221,6 +241,14 @@ class SaleInvoice(models.Model):
             "invoicing:sale_invoice_detail",
             kwargs={"pk": self.pk, "slug": slugify(self)},
         )
+
+    @property
+    def is_editable(self):
+        return self.created_date.date() == datetime.date.today()
+
+    @property
+    def contractor_data(self):
+        return self.contractor_json
 
     @property
     def total_value_netto(self):
@@ -271,7 +299,15 @@ class SaleInvoice(models.Model):
         self.number_year = int(number_data[1])
         if not self.pk and self.payment_date:
             self.payed = False
+
+        if not self.contractor_json:
+            self.load_contractor_data()
         super().save(*args, **kwargs)
+
+    def load_contractor_data(self):
+        self.contractor_json = model_to_dict(
+            self.contractor, fields=Contractor.INVOICE_FIELDS
+        )
 
     def generate_pdf(self, print_version=False):
         if self.invoice_type == self.TYPE_CORRECTIVE:

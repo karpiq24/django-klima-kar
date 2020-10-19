@@ -21,6 +21,7 @@ from KlimaKar.mixins import (
     MultiTableAjaxMixin,
 )
 from KlimaKar.templatetags.slugify import slugify
+from apps.invoicing.mixins import SaleInvoiceAccessMixin
 from apps.invoicing.models import (
     SaleInvoice,
     Contractor,
@@ -220,7 +221,7 @@ class SaleInvoiceCommissionCreateView(SaleInvoiceCreateView):
         return response
 
 
-class SaleInvoiceUpdateView(UpdateWithInlinesView):
+class SaleInvoiceUpdateView(SaleInvoiceAccessMixin, UpdateWithInlinesView):
     model = SaleInvoice
     form_class = SaleInvoiceModelForm
     inlines = [SaleInvoiceItemsInline, RefrigerantWeightsInline]
@@ -246,6 +247,8 @@ class SaleInvoiceUpdateView(UpdateWithInlinesView):
 
     def forms_valid(self, form, inlines):
         self.generate_pdf = form.cleaned_data.get("generate_pdf", False)
+        if form.cleaned_data.get("contractor_modified", False):
+            self.object.load_contractor_data()
         messages.add_message(self.request, messages.SUCCESS, "Zapisano zmiany.")
         return super().forms_valid(form, inlines)
 

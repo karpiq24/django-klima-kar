@@ -2,9 +2,11 @@
 <a class="btn btn-outline-primary btn-sm btn-table" href="{% url 'invoicing:sale_invoice_detail' record|slugify record.pk %}" title="Szczegóły">
     Szczegóły
 </a>
-<a class="btn btn-outline-warning btn-sm btn-table" href="{% url 'invoicing:sale_invoice_update' record|slugify record.pk %}" title="Edycja">
-    Edycja
-</a>
+{% if record.is_editable or request.user.is_staff %}
+    <a class="btn btn-outline-warning btn-sm btn-table" href="{% url 'invoicing:sale_invoice_update' record|slugify record.pk %}" title="Edycja">
+        Edycja
+    </a>
+{% endif %}
 {% if record.corrected_invoice %}
     <a class="btn btn-outline-secondary btn-sm btn-table" href="{% url 'invoicing:sale_invoice_detail' record.corrected_invoice|slugify record.corrected_invoice.pk %}" title="Korekta">
         Korekta

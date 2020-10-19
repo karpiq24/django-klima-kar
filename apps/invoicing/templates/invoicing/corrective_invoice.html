@@ -25,18 +25,18 @@
       <div id="details" class="clearfix">
         <div id="client">
           <div class="to">Nabywca</div>
-          {% if invoice.contractor.nip %}
-            <div class="nip">NIP {{ invoice.contractor.nip_prefix|default_if_none:"" }}{{ invoice.contractor.nip }}</div> 
+          {% if invoice.contractor_json.nip %}
+            <div class="nip">NIP {{ invoice.contractor_json.nip_prefix|default_if_none:"" }}{{ invoice.contractor_json.nip }}</div> 
           {% endif %}
-          {% if invoice.contractor.bdo_number %}
-            <div class="bdo">BDO {{ invoice.contractor.bdo_number }}</div> 
+          {% if invoice.contractor_json.bdo_number %}
+            <div class="bdo">BDO {{ invoice.contractor_json.bdo_number }}</div> 
           {% endif %}
-          <h2 class="name">{{ invoice.contractor.name }}</h2>
-          {% if invoice.contractor.address_1 or invoice.contractor.postal_code or invoice.contractor.city %}
-		        <div class="address">{{ invoice.contractor.postal_code|default_if_none:"" }} {{ invoice.contractor.city|default_if_none:"" }} {{ invoice.contractor.address_1|default_if_none:"" }}</div>    
+          <h2 class="name">{{ invoice.contractor_json.name }}</h2>
+          {% if invoice.contractor_json.address_1 or invoice.contractor_json.postal_code or invoice.contractor_json.city %}
+		        <div class="address">{{ invoice.contractor_json.postal_code|default_if_none:"" }} {{ invoice.contractor_json.city|default_if_none:"" }} {{ invoice.contractor_json.address_1|default_if_none:"" }}</div>    
           {% endif %}
-          {% if invoice.contractor.address_2 %}
-		        <div class="address">{{ invoice.contractor.address_2|default_if_none:"" }}</div>    
+          {% if invoice.contractor_json.address_2 %}
+		        <div class="address">{{ invoice.contractor_json.address_2|default_if_none:"" }}</div>    
           {% endif %}
         </div>
         <div id="invoice">
