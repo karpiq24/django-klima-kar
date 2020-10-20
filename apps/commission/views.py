@@ -19,10 +19,13 @@ from extra_views import CreateWithInlinesView, UpdateWithInlinesView
 
 from KlimaKar.email import get_email_message
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
-from KlimaKar.mixins import AjaxFormMixin, SingleTableAjaxMixin
+from KlimaKar.mixins import (
+    AjaxFormMixin,
+    SingleTableAjaxMixin,
+    ObjectEditableAccessMixin,
+)
 from KlimaKar.templatetags.slugify import slugify
 from KlimaKar.functions import strip_accents
-from apps.commission.mixins import CommissionAccessMixin
 from apps.mycloudhome.utils import check_and_enqueue_file_upload, get_temporary_files
 from apps.mycloudhome.views import (
     FileDownloadView,
@@ -427,7 +430,7 @@ class CommissionCreateView(CreateWithInlinesView):
         )
 
 
-class CommissionUpdateView(CommissionAccessMixin, UpdateWithInlinesView):
+class CommissionUpdateView(ObjectEditableAccessMixin, UpdateWithInlinesView):
     model = Commission
     form_class = CommissionModelForm
     inlines = [CommissionItemInline]

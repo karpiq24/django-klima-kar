@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
@@ -108,6 +110,10 @@ class Invoice(models.Model):
         return reverse(
             "warehouse:invoice_detail", kwargs={"pk": self.pk, "slug": slugify(self)}
         )
+
+    @property
+    def is_editable(self):
+        return self.created_date.date() == datetime.date.today()
 
     @property
     def total_value(self):

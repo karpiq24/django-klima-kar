@@ -27,21 +27,23 @@
             </tr>
         </table>
     </div>
-    <div class="col-xs-12 col-lg-4">
-        <div class="card-deck text-center">
-            <div class="card bg-light">
-                <h5 class="card-header">
-                    Akcje
-                </h5>
-                <div class="card-body">
-                    <a class="btn btn-outline-warning btn-lg" href="{% url 'warehouse:invoice_update' object|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
-                    {% if request.user.is_staff %}
-                        <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:warehouse_invoice_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
-                    {% endif %}
+    {% if object.is_editable or request.user.is_staff %}
+        <div class="col-xs-12 col-lg-4">
+            <div class="card-deck text-center">
+                <div class="card bg-light">
+                    <h5 class="card-header">
+                        Akcje
+                    </h5>
+                    <div class="card-body">
+                        <a class="btn btn-outline-warning btn-lg" href="{% url 'warehouse:invoice_update' object|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
+                        {% if request.user.is_staff %}
+                            <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:warehouse_invoice_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    {% endif %}
 </div>
 
 <div class="row">

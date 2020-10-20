@@ -1,6 +1,6 @@
 from django.template.loader import render_to_string
 from django.http import JsonResponse
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.contrib.auth.mixins import UserPassesTestMixin
 
 from django_tables2 import SingleTableMixin
@@ -133,3 +133,13 @@ class MultiTableAjaxMixin(TableMixinBase):
             )
         context[self.tables_context_key] = tables
         return context
+
+
+class ObjectEditableAccessMixin(object):
+    def dispatch(self, *args, **kwargs):
+        object = self.get_object()
+        if self.request.user.is_staff:
+            return super().dispatch(*args, **kwargs)
+        if not object.is_editable:
+            raise PermissionDenied
+        return super().dispatch(*args, **kwargs)

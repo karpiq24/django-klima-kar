@@ -10,7 +10,11 @@ from django_tables2.export.views import ExportMixin
 from extra_views import CreateWithInlinesView, UpdateWithInlinesView
 
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
-from KlimaKar.mixins import AjaxFormMixin, SingleTableAjaxMixin
+from KlimaKar.mixins import (
+    AjaxFormMixin,
+    SingleTableAjaxMixin,
+    ObjectEditableAccessMixin,
+)
 from KlimaKar.templatetags.slugify import slugify
 from apps.warehouse.models import Ware, Invoice, Supplier, InvoiceItem
 from apps.warehouse.tables import (
@@ -177,7 +181,7 @@ class InvoiceCreateView(CreateWithInlinesView):
         )
 
 
-class InvoiceUpdateView(UpdateWithInlinesView):
+class InvoiceUpdateView(ObjectEditableAccessMixin, UpdateWithInlinesView):
     model = Invoice
     form_class = InvoiceModelForm
     inlines = [InvoiceItemsInline]

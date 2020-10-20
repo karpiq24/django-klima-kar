@@ -204,7 +204,7 @@ class BigChartHistoryMixin(ChartDataMixin, View):
             year_objects = self._annotate(year_objects)
             year_objects = year_objects.values_list("month", "total").order_by("month")
             values = list(year_objects.values_list("total", flat=True))
-            values = [val for val in values if val]
+            values = [val if val else 0 for val in values]
             for j in range(1, 13):
                 if j not in year_objects.values_list("month", flat=True):
                     values.insert(j - 1, 0)

@@ -24,7 +24,7 @@ from apps.stats.mixins import ChartDataMixin, BigChartHistoryMixin
 from apps.stats.dictionaries import COLORS
 
 
-class DashboardView(TemplateView):
+class DashboardView(StaffOnlyMixin, TemplateView):
     template_name = "stats/dashboard.html"
 
     def get_context_data(self, **kwargs):
@@ -361,7 +361,7 @@ class SupplierPurchaseHistory(StaffOnlyMixin, ChartDataMixin, View):
             return self.invoices.annotate(total=Count("id"))
 
 
-class WarePurchaseHistory(ChartDataMixin, View):
+class WarePurchaseHistory(StaffOnlyMixin, ChartDataMixin, View):
     max_positions = 8
 
     def get(self, *args, **kwargs):
@@ -469,7 +469,7 @@ class CommissionHistory(StaffOnlyMixin, BigChartHistoryMixin):
         )
 
 
-class RefrigerantWeightsHistory(BigChartHistoryMixin):
+class RefrigerantWeightsHistory(StaffOnlyMixin, BigChartHistoryMixin):
     model = SaleInvoice
     date_field = "issue_date"
     values_appendix = " g"
@@ -478,7 +478,7 @@ class RefrigerantWeightsHistory(BigChartHistoryMixin):
         return qs.annotate(total=Sum("refrigerantweights__" + self.metric))
 
 
-class WarePurchaseCost(ChartDataMixin, View):
+class WarePurchaseCost(StaffOnlyMixin, ChartDataMixin, View):
     min_count = 3
 
     def get(self, *args, **kwargs):
@@ -591,7 +591,7 @@ class DuePayments(StaffOnlyMixin, View):
         }
 
 
-class Metrics(View):
+class Metrics(StaffOnlyMixin, View):
     wares = None
     suppliers = None
     purchase_invoices = None

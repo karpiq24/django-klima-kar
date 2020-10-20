@@ -1,9 +1,11 @@
 <ul class="sidenav">
-    <li id="nav-dashboard" class="main-nav">
-        <a href="{% url 'stats:dashboard' %}">
-            <span class="fa fa-tachometer-alt"></span> Statystyki
-        </a>
-    </li>
+    {% if request.user.is_staff %}
+        <li id="nav-dashboard" class="main-nav">
+            <a href="{% url 'stats:dashboard' %}">
+                <span class="fa fa-tachometer-alt"></span> Statystyki
+            </a>
+        </li>
+    {% endif %}
     <li id="nav-wiki" class="main-nav">
         <a href="{% url 'wiki:article_list' %}">
             <span class="fa fa-book-open"></span> Baza wiedzy

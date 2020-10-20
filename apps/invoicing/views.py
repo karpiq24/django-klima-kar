@@ -19,9 +19,9 @@ from KlimaKar.mixins import (
     StaffOnlyMixin,
     SingleTableAjaxMixin,
     MultiTableAjaxMixin,
+    ObjectEditableAccessMixin,
 )
 from KlimaKar.templatetags.slugify import slugify
-from apps.invoicing.mixins import SaleInvoiceAccessMixin
 from apps.invoicing.models import (
     SaleInvoice,
     Contractor,
@@ -221,7 +221,7 @@ class SaleInvoiceCommissionCreateView(SaleInvoiceCreateView):
         return response
 
 
-class SaleInvoiceUpdateView(SaleInvoiceAccessMixin, UpdateWithInlinesView):
+class SaleInvoiceUpdateView(ObjectEditableAccessMixin, UpdateWithInlinesView):
     model = SaleInvoice
     form_class = SaleInvoiceModelForm
     inlines = [SaleInvoiceItemsInline, RefrigerantWeightsInline]

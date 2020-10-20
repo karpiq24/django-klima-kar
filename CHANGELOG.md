@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2020-10-20
+
+-   Ukryto widok statystyk dla nieuprawionych kont
+-   Uniemożliwiono edycję starszych faktur zakupowych
+
 ## 2020-10-19
 
 -   Dodano cachowanie dat wywozu odpadów oraz nieopłaconych faktur DEKO
