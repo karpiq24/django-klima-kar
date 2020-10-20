@@ -45,6 +45,7 @@ const FormField = (props) => {
                     size="lg"
                     isValid={props.errors === undefined}
                     isInvalid={props.errors !== undefined && props.errors.length > 0 ? true : false}
+                    disabled={props.disabled || false}
                 >
                     <option key="null" value="">
                         ----------
@@ -67,6 +68,7 @@ const FormField = (props) => {
                     isValid={props.errors === undefined}
                     isInvalid={props.errors !== undefined && props.errors.length > 0 ? true : false}
                     placeholder={props.placeholder}
+                    disabled={props.disabled || false}
                 />
             )}
 
@@ -92,7 +94,8 @@ FormField.propTypes = {
     options: PropTypes.array,
     placeholder: PropTypes.string,
     className: PropTypes.string,
-    step: PropTypes.string
+    step: PropTypes.string,
+    disabled: PropTypes.bool,
 };
 
 export default FormField;

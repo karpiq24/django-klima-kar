@@ -25,6 +25,7 @@ const CONTRACTOR = gql`
                 bdo_number
                 phone_1
                 phone_2
+                is_locked
             }
         }
     }
@@ -91,12 +92,14 @@ const ContractorForm = (props) => {
         phone_2: [],
     });
     const [isLoading, setIsLoading] = useState(true);
+    const [isLocked, setIsLocked] = useState(false);
 
     const [getContractor, { loading }] = useLazyQuery(CONTRACTOR, {
         variables: { filters: { id: props.contractorId } },
         fetchPolicy: "no-cache",
         onCompleted: (data) => {
             const object = data.contractors.objects[0];
+            setIsLocked(object.is_locked);
             setContractor({
                 name: object.name,
                 nip: object.nip,
@@ -171,6 +174,7 @@ const ContractorForm = (props) => {
                         value={contractor.nip_prefix}
                         onChange={handleChanges}
                         errors={errors.nip_prefix}
+                        disabled={isLocked}
                     />
                 </Form.Group>
                 <Form.Group as={Col} controlId="formNip">
@@ -182,6 +186,7 @@ const ContractorForm = (props) => {
                                 value={contractor.nip}
                                 onChange={handleChanges}
                                 errors={errors.nip}
+                                disabled={isLocked}
                             />
                         </div>
                         <div className="ml-2">
@@ -196,6 +201,7 @@ const ContractorForm = (props) => {
                                         address_1: data.street_address,
                                     })
                                 }
+                                disabled={isLocked}
                             />
                         </div>
                     </div>

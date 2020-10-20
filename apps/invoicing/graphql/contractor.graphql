@@ -26,6 +26,7 @@ type Contractor {
     saleInvoices: [SaleInvoice]
     commissions: [Commission]
     vatStatus: VatStatus
+    is_locked: Boolean
 }
 
 type ContractorConnection {

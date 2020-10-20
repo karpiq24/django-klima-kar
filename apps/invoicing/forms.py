@@ -166,6 +166,7 @@ class ContractorModelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        print(self.instance)
         if self.instance and self.instance.is_locked:
             self.fields["nip"].disabled = True
             self.fields[
@@ -216,6 +217,14 @@ class ContractorModelForm(forms.ModelForm):
 
     class Media:
         js = ("js/invoicing/contractor-form.js",)
+
+    def clean_nip(self):
+        if self.instance and self.instance.is_locked:
+            return self.instance.nip
+
+    def clean_nip_prefix(self):
+        if self.instance and self.instance.is_locked:
+            return self.instance.nip_prefix
 
     def clean_phone_1(self):
         data = self.cleaned_data["phone_1"]

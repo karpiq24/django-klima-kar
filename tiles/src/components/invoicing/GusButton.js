@@ -17,7 +17,7 @@ const GUS_ADDRESS = gql`
     }
 `;
 
-const GusButton = ({ nip, onCompleted }) => {
+const GusButton = ({ nip, onCompleted, disabled }) => {
     const [getGusAddress, { loading, data }] = useLazyQuery(GUS_ADDRESS, {
         onCompleted: (data) => {
             if(data.gusAddress === null) {
@@ -30,7 +30,7 @@ const GusButton = ({ nip, onCompleted }) => {
 
     return (
         <Button
-            disabled={nip && nip.length === 10 ? false : true}
+            disabled={disabled || (nip && nip.length === 10 ? false : true)}
             variant="outline-info"
             size="lg"
             onClick={() => getGusAddress({ variables: { nip: nip } })}
@@ -43,6 +43,7 @@ const GusButton = ({ nip, onCompleted }) => {
 GusButton.propTypes = {
     nip: PropTypes.string,
     onCompleted: PropTypes.func.isRequired,
+    disabled: PropTypes.bool,
 };
 
 export default GusButton;
