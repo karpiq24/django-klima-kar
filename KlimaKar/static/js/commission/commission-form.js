@@ -659,6 +659,10 @@ $(function () {
     if ($("#id_component").val() !== "") {
         $("#id_component").change();
     }
-    $("#vehicle-select .select2-selection").append($("#scan-icon-template").html());
+
+    setTimeout(function () {
+        $("#vehicle-select .select2-selection").append($("#scan-icon-template").html());
+    }, 100);
+
     bsCustomFileInput.init();
 });
