@@ -219,12 +219,16 @@ class ContractorModelForm(forms.ModelForm):
         js = ("js/invoicing/contractor-form.js",)
 
     def clean_nip(self):
+        nip = self.cleaned_data["nip"]
         if self.instance and self.instance.is_locked:
             return self.instance.nip
+        return nip
 
     def clean_nip_prefix(self):
+        nip_prefix = self.cleaned_data["nip_prefix"]
         if self.instance and self.instance.is_locked:
             return self.instance.nip_prefix
+        return nip_prefix
 
     def clean_phone_1(self):
         data = self.cleaned_data["phone_1"]
