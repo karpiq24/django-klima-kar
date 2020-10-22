@@ -257,13 +257,13 @@ const CommissionForm = (props) => {
 
     if (isLoading || loading) return <ContentLoading />;
 
-    const handleChanges = (changes, next) => {
+    const handleChanges = (changes, next, requireSave = true) => {
         if (!commission.is_editable) return;
         setCommission({
             ...commission,
             ...changes,
         });
-        setIsSaved(false);
+        if (requireSave) setIsSaved(false);
         if (next) nextStep();
     };
 

@@ -26,12 +26,12 @@ const CommissionSummary = ({ currentStep, commission, onChange }) => {
     return (
         <>
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <div className="text-left">
+                <div className="text-left align-self-start">
                     <header className="font-weight-bold">Data przyjęcia</header>
                     <div>{commission.start_date}</div>
                 </div>
                 <StatusButtons commission={commission} onChange={onChange} size="xl" />
-                <div className="text-right">
+                <div className="text-right align-self-start">
                     <header className="font-weight-bold">Data zamknięcia</header>
                     <div>{commission.end_date ? commission.end_date : "—"}</div>
                 </div>

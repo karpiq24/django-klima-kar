@@ -9,6 +9,8 @@ import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import Alert from "react-bootstrap/Alert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons/faInfoCircle";
+import Button from "react-bootstrap/Button";
+import { faSms } from "@fortawesome/free-solid-svg-icons/faSms";
 
 const CONTRACTOR = gql`
     query getContractor($filters: ContractorFilter) {
@@ -51,6 +53,7 @@ const StatusButtons = ({ onChange, commission, size }) => {
     const [sendSMS] = useMutation(SEND_SMS, {
         onCompleted: (data) => {
             if (data.sendCommissionNotification.status === true) {
+                onChange({ sent_sms: true }, false, false);
                 Swal.fire({
                     icon: "success",
                     position: "top-end",
@@ -76,6 +79,27 @@ const StatusButtons = ({ onChange, commission, size }) => {
         },
     });
 
+    const handleSmsClick = () => {
+        Swal.fire({
+            icon: "question",
+            showConfirmButton: true,
+            showCancelButton: true,
+            title: "Czy chcesz wysłać powiadomienie SMS do klienta?",
+            cancelButtonText: "Nie",
+            confirmButtonText: "Tak",
+            input: "radio",
+            inputOptions: phones.reduce((obj, phone) => {
+                obj[phone] = phone;
+                return obj;
+            }, {}),
+            inputValue: phones[0],
+        }).then(({ value }) => {
+            if (value) {
+                sendSMS({ variables: { pk: commission.id, phone: value } });
+            }
+        });
+    };
+
     return (
         <div>
             <div className="commission-status-buttons">
@@ -94,28 +118,9 @@ const StatusButtons = ({ onChange, commission, size }) => {
                         variant="outline-primary"
                         size={size || "xxl"}
                         onClick={() => {
-                            if (commission.is_editable && commission.id && phones.length > 0) {
-                                Swal.fire({
-                                    icon: "question",
-                                    showConfirmButton: true,
-                                    showCancelButton: true,
-                                    title: "Czy chcesz wysłać powiadomienie SMS do klienta?",
-                                    cancelButtonText: "Nie",
-                                    confirmButtonText: "Tak",
-                                    input: "radio",
-                                    inputOptions: phones.reduce((obj, phone) => {
-                                        obj[phone] = phone;
-                                        return obj;
-                                    }, {}),
-                                    inputValue: phones[0],
-                                }).then(({ value }) => {
-                                    if (value) {
-                                        sendSMS({ variables: { pk: commission.id, phone: value } });
-                                    }
-                                    onChange({ status: READY, end_date: null }, true);
-                                });
-                            } else {
+                            if (commission.status !== READY) {
                                 onChange({ status: READY, end_date: null }, true);
+                                if (!commission.sent_sms) handleSmsClick();
                             }
                         }}
                     >
@@ -166,6 +171,12 @@ const StatusButtons = ({ onChange, commission, size }) => {
                         Powiadomienie SMS zostało już wysłane.
                     </div>
                 </Alert>
+            ) : commission.status === READY ? (
+                <div className="mt-3 text-center">
+                    <Button variant="outline-primary" size="xxl" onClick={() => handleSmsClick()}>
+                        <FontAwesomeIcon icon={faSms}></FontAwesomeIcon> Wyślij powiadomienie
+                    </Button>
+                </div>
             ) : null}
         </div>
     );
