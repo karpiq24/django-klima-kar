@@ -81,6 +81,70 @@ function print_pdf() {
     });
 }
 
+function sendSmsNotification() {
+    if ($("#status-select").data("sent") === "True") return;
+    const phone1 = $("#status-select").data("phone1");
+    const phone2 = $("#status-select").data("phone2");
+    let options = {};
+    if (phone2 !== undefined && phone2 !== "None") {
+        options[phone2] = phone2;
+    }
+    if (phone1 !== undefined && phone1 !== "None") {
+        options[phone1] = phone1;
+    }
+    if (!$.isEmptyObject(options)) {
+        Swal.fire({
+            title: "Czy chcesz wysłać powiadomienie SMS do klienta?",
+            text: $("#sms").val(),
+            type: "question",
+            input: "radio",
+            inputOptions: options,
+            inputValue: phone1 !== undefined && phone1 !== "None" ? phone1 : phone2,
+            inputValidator: (value) => {
+                if (!value) {
+                    return "Wybierz numer telefonu.";
+                }
+            },
+            showCancelButton: true,
+            focusCancel: false,
+            focusConfirm: true,
+            confirmButtonText: "Tak",
+            cancelButtonText: "Nie",
+        }).then((send_sms) => {
+            if (send_sms.value) {
+                $.ajax({
+                    url: "/graphql/",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        query: `mutation {
+                            sendCommissionNotification(pk: "${$("#status-select input").data("pk")}", phone: "${
+                            send_sms.value
+                        }") {
+                                status
+                                message
+                            }
+                        }`,
+                    }),
+                    success: function ({ data }) {
+                        addAlert(
+                            data.sendCommissionNotification.status ? "Sukces!" : "Błąd!",
+                            data.sendCommissionNotification.status ? "success" : "error",
+                            data.sendCommissionNotification.message
+                        );
+                        $("#sendSmsBtn").addClass("d-none");
+                        $("#status-select").data("sent", "True");
+                        $("#smsSentAlert").removeClass("d-none").addClass("d-flex");
+                    },
+                    error: function () {
+                        genericErrorAlert();
+                    },
+                });
+            }
+        });
+    }
+}
+
 $(function () {
     $(".sidenav #nav-commissions").children(":first").addClass("active");
     $(".sidenav #nav-commission").collapse("show");
@@ -173,6 +237,7 @@ $(function () {
                         $("#end_date").text(data.end_date);
                         if (status === $("#status-select").data("done")) {
                             $("#commission_done").hide();
+                            $("#sendSmsBtn").addClass("d-none");
                             Swal.fire({
                                 title: "Czy chcesz wystawić fakturę?",
                                 type: "question",
@@ -188,65 +253,11 @@ $(function () {
                             });
                         } else if (status === $("#status-select").data("ready")) {
                             $("#commission_done").show();
-                            const phone1 = $("#status-select").data("phone1");
-                            const phone2 = $("#status-select").data("phone2");
-                            let options = {};
-                            if (phone2 !== undefined && phone2 !== "None") {
-                                options[phone2] = phone2;
-                            }
-                            if (phone1 !== undefined && phone1 !== "None") {
-                                options[phone1] = phone1;
-                            }
-                            if (!$.isEmptyObject(options)) {
-                                Swal.fire({
-                                    title: "Czy chcesz wysłać powiadomienie SMS do klienta?",
-                                    text: $("#sms").val(),
-                                    type: "question",
-                                    input: "radio",
-                                    inputOptions: options,
-                                    inputValue: phone1 !== undefined && phone1 !== "None" ? phone1 : phone2,
-                                    inputValidator: (value) => {
-                                        if (!value) {
-                                            return "Wybierz numer telefonu.";
-                                        }
-                                    },
-                                    showCancelButton: true,
-                                    focusCancel: false,
-                                    focusConfirm: true,
-                                    confirmButtonText: "Tak",
-                                    cancelButtonText: "Nie",
-                                }).then((send_sms) => {
-                                    if (send_sms.value) {
-                                        $.ajax({
-                                            url: "/graphql/",
-                                            type: "POST",
-                                            contentType: "application/json",
-                                            data: JSON.stringify({
-                                                query: `mutation {
-                                                    sendCommissionNotification(pk: "${$(that).data("pk")}", phone: "${
-                                                    send_sms.value
-                                                }") {
-                                                        status
-                                                        message
-                                                    }
-                                                }`,
-                                            }),
-                                            success: function ({ data }) {
-                                                addAlert(
-                                                    data.sendCommissionNotification.status ? "Sukces!" : "Błąd!",
-                                                    data.sendCommissionNotification.status ? "success" : "error",
-                                                    data.sendCommissionNotification.message
-                                                );
-                                            },
-                                            error: function () {
-                                                genericErrorAlert();
-                                            },
-                                        });
-                                    }
-                                });
-                            }
+                            if ($("#status-select").data("sent") === "False") $("#sendSmsBtn").removeClass("d-none");
+                            sendSmsNotification();
                         } else {
                             $("#commission_done").show();
+                            $("#sendSmsBtn").addClass("d-none");
                         }
                     },
                 });
@@ -255,6 +266,10 @@ $(function () {
                 $(last_status).parent().addClass("active");
             }
         });
+    });
+
+    $("#sendSmsBtn").on("click", function () {
+        sendSmsNotification();
     });
 
     $("#assign_invoice").on("click", function () {
@@ -456,7 +471,7 @@ $(function () {
         });
     });
 
-    $("#change-type").on('click', function () {
+    $("#change-type").on("click", function () {
         Swal.fire({
             title: "Czy na pewno chcesz zmienić typ zlecenia?",
             type: "question",
@@ -478,11 +493,10 @@ $(function () {
                         window.location.reload();
                     },
                     error: function (data) {
-                        console.log(data)
                         genericErrorAlert();
                     },
                 });
             }
         });
-    })
+    });
 });

@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2020-10-22
+
+-   Dodano przycisk "Wyślij powiadomienie", jeśli nie zostało jeszcze wysłane a zlecenie ma status "Gotowe"
+-   Informacja o wysłanym powiadomieniu wyświetla się od razu, bez potrzeby przeładowania strony
+
 ## 2020-10-20
 
 -   Ukryto widok statystyk dla nieuprawionych kont
