@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-11-03
+
+-   Naprawiono błąd powodujący niezamierzone nadpisanie danych kontrahenta
+
 ## 2020-10-22
 
 -   Dodano przycisk "Wyślij powiadomienie", jeśli nie zostało jeszcze wysłane a zlecenie ma status "Gotowe"

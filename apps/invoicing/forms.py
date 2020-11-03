@@ -100,12 +100,17 @@ class SaleInvoiceModelForm(forms.ModelForm):
 
     class Meta:
         model = SaleInvoice
-        exclude = [
-            "refrigerant_weidghts",
-            "number_value",
-            "number_year",
-            "payed",
-            "legacy",
+        fields = [
+            "issue_date",
+            "completion_date",
+            "invoice_type",
+            "number",
+            "contractor",
+            "payment_type",
+            "payment_date",
+            "payment_type_other",
+            "comment",
+            "tax_percent",
         ]
         widgets = {
             "comment": forms.Textarea(attrs={"rows": 2}),
@@ -124,12 +129,19 @@ class CorrectiveSaleInvoiceModelForm(SaleInvoiceModelForm):
 
     class Meta:
         model = CorrectiveSaleInvoice
-        exclude = [
-            "refrigerant_weidghts",
-            "number_value",
-            "number_year",
-            "payed",
-            "legacy",
+        fields = [
+            "issue_date",
+            "completion_date",
+            "invoice_type",
+            "number",
+            "contractor",
+            "payment_type",
+            "payment_date",
+            "payment_type_other",
+            "comment",
+            "tax_percent",
+            "original_invoice",
+            "reason",
         ]
         widgets = {
             "comment": forms.Textarea(attrs={"rows": 2}),
@@ -166,7 +178,6 @@ class ContractorModelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        print(self.instance)
         if self.instance and self.instance.is_locked:
             self.fields["nip"].disabled = True
             self.fields[

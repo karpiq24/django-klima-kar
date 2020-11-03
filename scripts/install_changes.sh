@@ -1,5 +1,6 @@
 git fetch origin
 git rebase origin/master
+pip install --upgrade pip
 pip install -r docs/requirements.pip
 ./manage.py makemigrations
 ./manage.py migrate

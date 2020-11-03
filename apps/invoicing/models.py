@@ -8,7 +8,6 @@ from django.core.validators import RegexValidator
 from django.template.loader import get_template
 from django.urls import reverse
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.postgres.fields import JSONField
 from django.forms import model_to_dict
 
 from KlimaKar.templatetags.slugify import slugify
@@ -208,7 +207,9 @@ class SaleInvoice(models.Model):
     contractor = models.ForeignKey(
         Contractor, on_delete=models.PROTECT, verbose_name="Kontrahent"
     )
-    contractor_json = JSONField(verbose_name="Dane kontrahenta", null=True, blank=True)
+    contractor_json = models.JSONField(
+        verbose_name="Dane kontrahenta", null=True, blank=True
+    )
     payment_type = models.CharField(
         max_length=1, verbose_name="Forma płatności", choices=PAYMENT_TYPES
     )
@@ -245,10 +246,6 @@ class SaleInvoice(models.Model):
     @property
     def is_editable(self):
         return self.created_date.date() == datetime.date.today()
-
-    @property
-    def contractor_data(self):
-        return self.contractor_json
 
     @property
     def total_value_netto(self):
