@@ -20,7 +20,7 @@ PyGithub==1.53
 pyotp==2.4.1
 python-dateutil==2.8.1
 requests==2.24.0
-smsapi-client==2.4.2
+smsapi-client==2.4.3
 tablib[ods,xlsx,xls]==2.0.0
 tqdm==4.50.2
 WeasyPrint==52.1
