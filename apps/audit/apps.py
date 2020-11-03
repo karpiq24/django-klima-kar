@@ -18,6 +18,7 @@ class AuditConfig(AppConfig):
         from apps.invoicing import models as invoicing
         from apps.stats import models as stats
         from apps.wiki import models as wiki
+        from apps.employees import models as empployees
 
         models = [
             warehouse.Ware,
@@ -41,6 +42,8 @@ class AuditConfig(AppConfig):
             wiki.ExternalLink,
             wiki.ArticleFile,
             wiki.Tag,
+            empployees.Employee,
+            empployees.WorkAbsence,
         ]
 
         for model in models:
