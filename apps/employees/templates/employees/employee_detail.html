@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+{% load static slugify %}
+
+{% block content %}
+<div>
+    <h1 class="detail-header">Szczegóły pracownika <a class="btn btn-outline-dark" href="{{ back_url }}">Powrót</a></h1>
+    {% csrf_token %}
+</div>
+<div class="row">
+    <div class="col-xs-12 col-lg-8">
+        <table class="table table-bordered">
+            <tr>
+                <td class="detail-label">Imię</td>
+                <td>{{ object.first_name }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Nazwisko</td>
+                <td>{{ object.last_name }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Adres email</td>
+                <td>{{ object.email|default:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Numer telefonu</td>
+                <td>{{ object.formatted_phone|default:"—" }}</td>
+            </tr>
+            <tr>
+                <td class="detail-label">Użytkownik</td>
+                <td>{{ object.user|default_if_none:"—" }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-xs-12 col-lg-4">
+        <div class="card-deck text-center">
+            <div class="card bg-light">
+                <h5 class="card-header">
+                    Akcje
+                </h5>
+                <div class="card-body">
+                    <button class="btn btn-lg btn-outline-success" id="addAbsence" data-employee="{{ object.pk }}" data-url="{% url 'employees:absence_create_ajax' %}"><i class="fa fa-plus-square"></i> Dodaj nieobecność</button>
+                    <a class="btn btn-outline-warning btn-lg" href="{% url 'employees:employee_update' object|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
+                    {% if request.user.is_staff %}
+                        <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:employees_employee_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h2>Nieobecności</h2>
+        {% render_table table %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/employees/employee_detail.js' %}"></script>
+{% endblock %}

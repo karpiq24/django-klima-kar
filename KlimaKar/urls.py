@@ -21,6 +21,7 @@ urlpatterns = [
     path("audyt/", include("apps.audit.urls")),
     path("szukaj/", include("apps.search.urls")),
     path("wiki/", include("apps.wiki.urls")),
+    path("pracownicy/", include("apps.employees.urls")),
     path("mycloudhome/", include("apps.mycloudhome.urls")),
     path("tiles/", include("tiles.urls")),
     path("send_issue", SendIssueView.as_view(), name="send_issue"),

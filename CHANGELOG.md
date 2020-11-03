@@ -3,6 +3,7 @@
 ## 2020-11-03
 
 -   Naprawiono błąd powodujący niezamierzone nadpisanie danych kontrahenta
+-   Dodano aplikację do zarządzania pracownikami i nieobecnościami
 
 ## 2020-10-22
 

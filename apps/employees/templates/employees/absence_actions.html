@@ -1,0 +1,7 @@
+{% load slugify %}
+<button class="btn btn-outline-warning btn-sm btn-table update-abscence" data-url="{% url 'employees:absence_update_ajax' record.pk %}" title="Edycja">
+    Edycja
+</button>
+<button class="btn btn-outline-danger btn-sm btn-table remove-absence" data-url="{% url 'employees:absence_remove' record.pk %}" title="Usuń">
+    Usuń
+</button>

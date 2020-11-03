@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load render_table export_url from django_tables2 %}
+
+{% block content %}
+<div>
+    <h1>Pracownicy</h1>
+</div>
+{% include "filter_panel.html" %}
+
+<div class="card-deck margin-tb-20 text-center">
+    <div class="card bg-light">
+        <div class="card-body">
+            <h5 class="card-title">Dodaj nowego pracownika</h5>
+            <a class="btn btn-outline-success btn-lg" href="{% url 'employees:employee_create' %}"><i class="far fa-plus-square"></i> Nowy pracownik</a>
+        </div>
+    </div>
+    <div class="card bg-light">
+        <div class="card-body">
+            <h5 class="card-title">Eksport pracowników</h5>
+            <button class="btn btn-outline-info btn-lg dropdown-toggle" type="button" data-toggle="dropdown">
+                <i class="far fa-file-archive"></i> Eksport
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% export_url 'xlsx' %}">.xlsx</a>
+                <a class="dropdown-item" href="{% export_url 'xls' %}">.xls</a>
+                <a class="dropdown-item" href="{% export_url 'csv' %}">.csv</a>
+                <a class="dropdown-item" href="{% export_url 'json' %}">.json</a>
+                <a class="dropdown-item" href="{% export_url 'ods' %}">.ods</a>
+                <a class="dropdown-item" href="{% export_url 'latex' %}">.latex</a>
+                <a class="dropdown-item" href="{% export_url 'tsv' %}">.tsv</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% render_table table %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function() {
+        $('.sidenav #nav-employees').children(':first').addClass('active');
+        $('.sidenav #nav-management').collapse('show');
+    });
+</script>
+{% endblock %}

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "apps.search.apps.SearchConfig",
     "apps.wiki.apps.WikiConfig",
     "apps.mycloudhome.apps.MycloudhomeConfig",
+    "apps.employees.apps.EmployeesConfig",
     "tiles.apps.TilesConfig",
 ]
 

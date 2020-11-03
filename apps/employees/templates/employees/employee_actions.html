@@ -1,0 +1,7 @@
+{% load slugify %}
+<a class="btn btn-outline-primary btn-sm btn-table" href="{% url 'employees:employee_detail' record|slugify record.pk %}" title="Szczegóły">
+    Szczegóły
+</a>
+<a class="btn btn-outline-warning btn-sm btn-table" href="{% url 'employees:employee_update' record|slugify record.pk %}" title="Edycja">
+    Edycja
+</a>
