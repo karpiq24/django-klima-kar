@@ -1,6 +1,7 @@
 import json
 import datetime
 
+from tqdm import tqdm
 from weasyprint import HTML, CSS
 
 from django.db import models
@@ -142,7 +143,7 @@ class SaleInvoiceQuerySet(TotalValueQuerySet):
     def generate_pdf(self):
         documents = []
         all_pages = []
-        for invoice in self:
+        for invoice in tqdm(self):
             if invoice.invoice_type == SaleInvoice.TYPE_CORRECTIVE:
                 template = get_template("invoicing/corrective_invoice.html")
             else:
@@ -157,6 +158,14 @@ class SaleInvoiceQuerySet(TotalValueQuerySet):
             for page in doc.pages:
                 all_pages.append(page)
         return documents[0].copy(all_pages).write_pdf()
+
+    def taxed(self):
+        return self.exclude(
+            invoice_type__in=[
+                SaleInvoice.TYPE_PRO_FORMA,
+                SaleInvoice.TYPE_WDT_PRO_FORMA,
+            ]
+        )
 
 
 class SaleInvoice(models.Model):

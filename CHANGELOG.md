@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-11-16
+
+-   Dodano comiesięczne wysyłanie listy faktur
+
 ## 2020-11-03
 
 -   Naprawiono błąd powodujący niezamierzone nadpisanie danych kontrahenta

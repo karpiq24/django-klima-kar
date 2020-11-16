@@ -30,7 +30,7 @@ def get_email_message(subject, body, to):
         return EmailMessage(subject=subject, body=body, to=to)
 
 
-def mail_admins(subject, message, fail_silently=False):
+def mail_admins(subject, message, fail_silently=False, attachment=None):
     """Send a message to the admins, as defined by the ADMINS setting."""
     if not settings.ADMINS:
         return
@@ -39,10 +39,12 @@ def mail_admins(subject, message, fail_silently=False):
         message,
         [a[1] for a in settings.ADMINS],
     )
+    if attachment:
+        mail.attach(attachment["filename"], attachment["file"], attachment["mime"])
     mail.send(fail_silently=fail_silently)
 
 
-def mail_managers(subject, message, fail_silently=False):
+def mail_managers(subject, message, fail_silently=False, attachment=None):
     """Send a message to the managers, as defined by the MANAGERS setting."""
     if not settings.MANAGERS:
         return
@@ -51,4 +53,6 @@ def mail_managers(subject, message, fail_silently=False):
         message,
         [a[1] for a in settings.MANAGERS],
     )
+    if attachment:
+        mail.attach(attachment["filename"], attachment["file"], attachment["mime"])
     mail.send(fail_silently=fail_silently)
