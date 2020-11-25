@@ -630,8 +630,9 @@ ul.sidenav {
     color: #abb;
     position: fixed;
     z-index: 998;
-    height: 100%;
-    overflow: auto;
+    height: calc(100% - 49px);
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 ul.sidenav li a {
