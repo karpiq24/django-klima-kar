@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-11-25
+
+-   Dodano ustawienia comiesięcznego wysyłania faktur
+
 ## 2020-11-16
 
 -   Dodano comiesięczne wysyłanie listy faktur

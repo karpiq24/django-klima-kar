@@ -52,6 +52,18 @@ class SiteSettings(SingletonModel):
         blank=True,
         null=True,
     )
+    SEND_SALE_INVOICE = models.BooleanField(
+        verbose_name="Wysyłaj faktury co miesiąc", default=False
+    )
+    SEND_SALE_INVOICE_EMAILS = models.TextField(
+        verbose_name="Adresy email do comiesięcznej wysyłki faktur", blank=True,
+    )
+    SEND_SALE_INVOICE_TITLE = models.CharField(
+        max_length=255, verbose_name="Tytuł comiesięcznej wiadomości", blank=True,
+    )
+    SEND_SALE_INVOICE_BODY = models.TextField(
+        verbose_name="Treść comiesięcznej wiadomości", blank=True,
+    )
     COMMISSION_EMAIL_TITLE = models.CharField(
         max_length=255,
         verbose_name="Tytuł wiadomości ze zleceniem",

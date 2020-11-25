@@ -1,5 +1,6 @@
 from django import forms
 from dal import autocomplete
+from django.core.validators import validate_email
 
 from KlimaKar.forms import ToggleInput
 from apps.settings.models import SiteSettings, MyCloudHome, InvoiceDownloadSettings
@@ -33,11 +34,34 @@ class InvoicingSettingsModelForm(forms.ModelForm):
             "SALE_INVOICE_TAX_PERCENT_WDT",
             "SALE_INVOICE_EMAIL_TITLE",
             "SALE_INVOICE_EMAIL_BODY",
+            "SEND_SALE_INVOICE",
+            "SEND_SALE_INVOICE_TITLE",
+            "SEND_SALE_INVOICE_BODY",
+            "SEND_SALE_INVOICE_EMAILS",
         ]
         help_texts = {
             "SALE_INVOICE_EMAIL_TITLE": "Zawiera dostęp do kontekstu faktury np. {{ invoice.number }}",
             "SALE_INVOICE_EMAIL_BODY": "Zawiera dostęp do kontekstu faktury np. {{ invoice.contractor }}",
+            "SEND_SALE_INVOICE_EMAILS": "Odzielone przecinkami",
+            "SEND_SALE_INVOICE_TITLE": "Zawiera dostęp do miesiąca i roku np. {month}, {month_name}, {year}",
+            "SEND_SALE_INVOICE_BODY": "Zawiera dostęp do miesiąca i roku np. {month}, {month_name}, {year}",
         }
+        widgets = {
+            "SEND_SALE_INVOICE": ToggleInput,
+        }
+
+    def clean_SEND_SALE_INVOICE_EMAILS(self):
+        data = self.cleaned_data["SEND_SALE_INVOICE_EMAILS"].strip()
+        result = ""
+        for email in data.split(","):
+            clean_email = email.strip()
+            if clean_email:
+                validate_email(clean_email)
+                if result:
+                    result = f"{result},{clean_email}"
+                else:
+                    result = clean_email
+        return result
 
 
 class CommissionSettingsModelForm(forms.ModelForm):

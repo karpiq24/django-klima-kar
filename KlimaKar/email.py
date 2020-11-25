@@ -5,7 +5,7 @@ from django.conf import settings
 from apps.settings.models import SiteSettings
 
 
-def get_email_message(subject, body, to):
+def get_email_message(subject, body, to, bcc=False):
     config = SiteSettings.load()
 
     if config.EMAIL_HOST and config.EMAIL_HOST_USER and config.EMAIL_HOST_PASSWORD:
@@ -24,7 +24,12 @@ def get_email_message(subject, body, to):
             or settings.DEFAULT_FROM_EMAIL
         )
         return EmailMessage(
-            subject=subject, body=body, from_email=from_email, to=to, connection=backend
+            subject=subject,
+            body=body,
+            from_email=from_email,
+            to=to if not bcc else [],
+            bcc=to if bcc else [],
+            connection=backend,
         )
     else:
         return EmailMessage(subject=subject, body=body, to=to)
