@@ -7,6 +7,7 @@ from smtplib import SMTPRecipientsRefused
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 from django.http import JsonResponse, HttpResponse
+from django.utils.crypto import get_random_string
 from django.views.generic import DetailView, UpdateView, CreateView, View
 from django.template import Template, Context
 from django.template.defaultfilters import date as str_date
@@ -371,6 +372,7 @@ class CommissionDetailView(SingleTableAjaxMixin, DetailView):
                 Context({"commission": self.object})
             )
         context["sms"] = strip_accents(sms)
+        context["upload_key"] = get_random_string(length=32)
         return context
 
     def get_table_data(self):
@@ -530,6 +532,15 @@ class CommissionPDFView(View):
 class CommissionFileDownloadView(FileDownloadView):
     model = Commission
     file_model = CommissionFile
+
+
+class CommissionEnqueueFilesView(View):
+    def post(self, request, *args, **kwargs):
+        commission = get_object_or_404(Commission, pk=request.POST.get("commission"))
+        check_and_enqueue_file_upload(
+            request.POST.get("key"), commission, CommissionFile
+        )
+        return JsonResponse({}, status=200,)
 
 
 class CommissionSendEmailView(View):

@@ -2,11 +2,9 @@ from dateutil import parser as date_parser
 from dateutil.relativedelta import relativedelta
 
 from django.core.management.base import BaseCommand
-from django.utils import timezone
-from django.conf import settings
 from django.utils.formats import date_format
 
-from KlimaKar.email import mail_managers, get_email_message
+from KlimaKar.email import get_email_message
 from apps.invoicing.models import SaleInvoice
 from apps.settings.models import SiteSettings
 

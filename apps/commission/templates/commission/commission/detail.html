@@ -85,32 +85,34 @@
             </tr>
             <tr>
                 <td class="detail-label">Pliki</td>
-                <td id="file-data" data-upload="{{ object.upload }}" data-commission="{{ object.pk }}" data-check-url="{% url 'commission:check_upload' %}">
-                    {% if object.upload %}
-                        <div class="card bg-light">
-                            <div class="card-body">
-                                <i class="fas fa-info-circle fa-4x"></i>
-                                <div>
-                                    Dodane pliki są jeszcze przetwarzane. Będą dostępne za chwilę.
-                                    <div class="progress">
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
-                                    </div>
+                <td>
+                    <div class="card bg-light {% if not object.upload %}hidden{% endif %}" id="uploadAlert">
+                        <div class="card-body">
+                            <i class="fas fa-info-circle fa-4x"></i>
+                            <div>
+                                Dodane pliki są jeszcze przetwarzane. Będą dostępne za chwilę.
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
                                 </div>
                             </div>
                         </div>
-                    {% endif %}
-                    {% if object.commissionfile_set.all.exists %}
-                        <ul class="simple-list">
-                            {% for file in object.commissionfile_set.all %}
-                                <li>
-                                    <a href="{% url 'commission:commission_file_download' object|slugify object.pk file.file_name %}" target="_blank">{{ file.file_name }} - {{ file.file_size|filesizeformat }}</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                    {% if not object.upload and not object.commissionfile_set.all.exists %}
-                        —
-                    {% endif %}
+                    </div>
+                    <div id="file-data" data-upload="{{ object.upload }}" data-commission="{{ object.pk }}" data-check-url="{% url 'commission:check_upload' %}">
+                        {% if object.commissionfile_set.all.exists %}
+                            <ul class="simple-list">
+                                {% for file in object.commissionfile_set.all %}
+                                    <li>
+                                        <a href="{% url 'commission:commission_file_download' object|slugify object.pk file.file_name %}" target="_blank">{{ file.file_name }} - {{ file.file_size|filesizeformat }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% if not object.upload and not object.commissionfile_set.all.exists %}
+                            —
+                        {% endif %}
+                    </div>
+                    <hr>
+                    <button type="button" id="upload_file" class="btn btn-outline-success" data-toggle="modal" data-target="#upload_modal"><i class="fa fa-upload"></i> Wgraj nowe pliki</button>
                 </td>
             </tr>
         </table>
@@ -236,8 +238,35 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="upload_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Wgraj nowe pliki</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input id="id_upload_key" type="hidden" value="{{ upload_key }}">
+                <div class="custom-file" data-url="{% url 'mycloudhome:temporary_file_upload' %}" data-enqueue="{% url 'commission:enqueue_files' %}">
+                    <input type="file" class="custom-file-input" id="customFile" name="files[]" multiple lang="pl">
+                    <label class="custom-file-label" for="customFile" data-browse="Przeglądaj" data-label="Wybierz albo przeciągnij pliki">Wybierz albo przeciągnij pliki</label>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-dismiss="modal">Anuluj</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script src="{% static 'js/commission/commission-detail.js' %}"></script>
+<script src="{% static 'js/base/custom-file.js' %}"></script>
 {% endblock %}

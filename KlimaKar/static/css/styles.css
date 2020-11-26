@@ -303,6 +303,10 @@ span.required {
     MISC
 */
 
+.hidden {
+    display: none;
+}
+
 .no-left-border {
     border-left: none !important;
 }
@@ -603,16 +607,16 @@ ul#file-list > li > i.delete-file,
     display: none;
 }
 
-#file-data .card-body {
+#uploadAlert .card-body {
     display: flex;
     align-items: center;
 }
 
-#file-data .card-body i {
+#uploadAlert .card-body i {
     color: #007bff;
 }
 
-#file-data .card-body > div {
+#uploadAlert .card-body > div {
     width: 100%;
     margin-left: 1rem;
 }

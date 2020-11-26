@@ -133,6 +133,11 @@ urlpatterns = [
         views.CheckCommissionUploadFinishedView.as_view(),
         name="check_upload",
     ),
+    path(
+        "enqueue-files",
+        views.CommissionEnqueueFilesView.as_view(),
+        name="enqueue_files",
+    ),
     path("assign_invoice", views.AssignInoiceView.as_view(), name="assign_invoice"),
     path(
         "unassign_invoice", views.UnassignInoiceView.as_view(), name="unassign_invoice"

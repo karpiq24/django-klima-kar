@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-11-26
+
+-   Dodano możliwość załączania plików do zamkniętych zleceń
+
 ## 2020-11-25
 
 -   Dodano ustawienia comiesięcznego wysyłania faktur

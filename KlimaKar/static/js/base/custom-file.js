@@ -47,13 +47,15 @@ function uploadFiles(files) {
             }
             $(".custom-file-input").val("");
             $(".custom-file-label").text($(".custom-file-label").data("label"));
+            $(".custom-file").trigger("custom-upload-success");
             setTimeout(function () {
                 $(".custom-file .progress").css("display", "none");
                 $(".custom-file .progress-bar").css("width", "0%");
-                $("#file-list").empty();
-                data.files.forEach((file) => {
-                    $("#file-list").append(
-                        "<li>" +
+                if ($("#file-list")) {
+                    $("#file-list").empty();
+                    data.files.forEach((file) => {
+                        $("#file-list").append(
+                            "<li>" +
                             '<span class="file-name">' +
                             file.name +
                             '</span> - <span class="file-size">' +
@@ -62,8 +64,9 @@ function uploadFiles(files) {
                             file.name +
                             '" title="Usuń plik"></i>' +
                             "</li>"
-                    );
-                });
+                        );
+                    });
+                }
             }, 800);
         },
         error: function () {
