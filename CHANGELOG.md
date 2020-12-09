@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-12-09
+
+-   Naprawiono pobieranie harmonogramu wywozu odpadów
+
 ## 2020-11-26
 
 -   Dodano możliwość załączania plików do zamkniętych zleceń

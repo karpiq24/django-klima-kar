@@ -58,14 +58,12 @@ def send_sms(phone, message):
 
 
 def get_garbage_collection_dates():
-    url = "https://ekosystem.wroc.pl/admin/admin-ajax.php"
     data = {
-        "action": "harmonogram_nowy_step_direct",
+        "action": "waste_disposal_form_get_schedule",
         "id_numeru": settings.EKOSYSTEM_NUMBER,
-        "id_ulicy": settings.EKOSYSTEM_STREET,
     }
-    r = requests.post(url, data)
-    rows = BeautifulSoup(r.json()["wiadomosc"], "html5lib").find_all("tr")
+    r = requests.post(settings.EKOSYSTEM_ENDPOINT, data)
+    rows = BeautifulSoup(r.json()["wiadomoscRWD"], "html5lib").find_all("tr")
     headers = [
         header.text.strip().capitalize() for header in rows.pop(0).find_all("td")
     ]

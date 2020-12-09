@@ -60,7 +60,7 @@ urlpatterns = [
     path("save_ptu", views.SavePTU.as_view(), name="save_ptu"),
     path(
         "unpayed_deko",
-        cache_page(2 * 60 * 60)(views.UnpayedDekoInvoicesView.as_view()),
+        cache_page(12 * 60 * 60)(views.UnpayedDekoInvoicesView.as_view()),
         name="unpayed_deko",
     ),
 ]
