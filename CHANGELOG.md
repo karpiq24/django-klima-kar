@@ -20,7 +20,7 @@
 
 ## 2020-10-22
 
--   Dodano przycisk "Wyślij powiadomienie", jeśli nie zostało jeszcze wysłane a zlecenie ma status "Gotowe"
+-   Dodano przycisk „Wyślij powiadomienie”, jeśli nie zostało jeszcze wysłane, a zlecenie ma status "Gotowe"
 -   Informacja o wysłanym powiadomieniu wyświetla się od razu, bez potrzeby przeładowania strony
 
 ## 2020-10-20
@@ -32,7 +32,7 @@
 
 -   Dodano cachowanie dat wywozu odpadów oraz nieopłaconych faktur DEKO
 -   Dane kontrahenta są zapisywane w fakturze niezależnie od głównego obiektu
--   Uniemożliwono edycje starszych faktur sprzedażowych
+-   Uniemożliwiono edycje starszych faktur sprzedażowych
 -   Uniemożliwiono edycje numeru NIP kontrahentów posiadających faktury
 
 ## 2020-10-10
@@ -149,7 +149,7 @@
 ## 2020-05-05
 
 -   Dodano ostrzeżenie o tworzeniu nowej faktury bez przypisanego zlecenia
--   Dodano wybór czy opis zlecenia powienien być załączony w wydruku lub pliku PDF
+-   Dodano wybór, czy opis zlecenia powinien być załączony w wydruku lub pliku PDF
 -   Dodano wyświetlanie sum faktur i zleceń w stopce tabel pozycji
 
 ## 2020-05-04
@@ -180,23 +180,23 @@
 
 ## 2020-04-26
 
--   Dodano możliwosć edycji pojazdów, podzespołów i kontrahentów poprzez API GraphQL
+-   Dodano możliwość edycji pojazdów, podzespołów i kontrahentów poprzez API GraphQL
 -   [TILES] Dodano możliwość dodawania nowych oraz edycji pojazdów, podzespołów i kontrahentów
 
 ## 2020-04-24
 
--   [TILES] Dodano możliwosć odznaczenia wybranego obiektu w niewymaganych polach wyboru
+-   [TILES] Dodano możliwość odznaczenia wybranego obiektu w niewymaganych polach wyboru
 -   [TILES] Poprawiono wygląd pól wyboru
 
 ## 2020-04-23
 
 -   zamiast wyświetlać formularz po skanowaniu dowodu rejestracyjnego, pojazd jest zapisywany w tle
--   dodano możliwosć ustawienia nazwy przycisku usług
+-   dodano możliwość ustawienia nazwy przycisku usług
 
 ## 2020-04-21
 
 -   przywrócono towar do pozycji faktur i zleceń
--   dodano wybór towaru w pozycji zlecenia w iterfejsie kafelkowym
+-   dodano wybór towaru w pozycji zlecenia w interfejsie kafelkowym
 
 ## 2020-04-18
 
@@ -239,8 +239,8 @@
 
 ## 2020-04-08
 
--   dodano możlwiość dodawania i edycji notatek do zleceń
--   kalendarz przy wyborze daty może pokazać się na górze kontrolki jeśli z dołu nie ma miejsca
+-   dodano możliwość dodawania i edycji notatek do zleceń
+-   kalendarz przy wyborze daty może pokazać się na górze kontrolki, jeśli z dołu nie ma miejsca
 
 ## 2020-04-07
 
@@ -251,7 +251,7 @@
 ## 2020-04-04
 
 -   ignorowanie spacji przy wyszukiwaniu kontrahenta podając numer telefonu
--   ignorowanie znaków nie alfanumerycznych przy wyszukiwaniu pojazdu
+-   ignorowanie znaków niealfanumerycznych przy wyszukiwaniu pojazdu
 -   dodano pola data pierwszej rejestracji oraz rodzaj paliwa pojazdu
 -   zapisywanie nowych pól podczas skanowania dowodów rejestracyjnych
 
@@ -273,7 +273,7 @@
 
 ## 2020-03-19
 
--   przycisk wyszukiwania nie wyświetla się już dla nie zalogowanych użytkowników
+-   przycisk wyszukiwania nie wyświetla się już dla niezalogowanych użytkowników
 
 ## 2020-03-15
 
@@ -301,7 +301,7 @@
 
 ## 2020-02-27
 
--   naprawiono błąd powodujący nie wykonywanie się zaplanowanych komend z poziomu cron (zmieniono ścieżki schematów GraphQL z relatywnych na absolutne)
+-   naprawiono błąd powodujący niewykonywanie się zaplanowanych komend z poziomu cron (zmieniono ścieżki schematów GraphQL z relatywnych na absolutne)
 
 ## 2020-02-22
 
@@ -349,7 +349,7 @@
 
 ## 2020-02-05
 
--   dodano wykrywanie potencjalnych duplikatów kontrahentów jeśli numer telefonu się powtórzy
+-   dodano wykrywanie potencjalnych duplikatów kontrahentów, jeśli numer telefonu się powtórzy
 -   naprawiono duplikowanie towarów podczas wczytywanie faktur Inter Cars
 
 ## 2020-02-04
@@ -364,8 +364,8 @@
 
 ## 2020-01-24
 
--   dodano ostrzeżenie o potencjalnie nie poprawnym numerze telefonu kontrahenta
--   dodano ustawianie kontrahenta zlecenia jeśli nie był ustawiony, a faktura została wystawiona
+-   dodano ostrzeżenie o potencjalnie niepoprawnym numerze telefonu kontrahenta
+-   dodano ustawianie kontrahenta zlecenia, jeśli nie był ustawiony, a faktura została wystawiona
 -   zmieniono etykietę pola rodzaj płatności na forma płatności
 -   numer VIN i numer rejestracyjny zapisywane są teraz jako pisane wielką literą
 -   naprawiono pobieranie plików zawierających w nazwie polskie znaki
@@ -380,7 +380,7 @@
 
 ## 2020-01-02
 
--   dodano aktualizowanie nazwy zlecenia jeśli nazwa pojazdu lub podzespołu uległa zmianie
+-   dodano aktualizowanie nazwy zlecenia, jeśli nazwa pojazdu lub podzespołu uległa zmianie
 
 ## przed 2020-01-01
 
