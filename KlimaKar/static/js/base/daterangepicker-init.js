@@ -85,7 +85,10 @@ $(function () {
         $(".date-inline").data("daterangepicker").show();
     }
 
-    $(".date-input, .date-range-input").on("show.daterangepicker", function (ev, picker) {
+    $(".date-input:not(.always-down), .date-range-input:not(.always-down)").on("show.daterangepicker", function (ev, picker) {
+        if ($(window).width() < 700 && $(window).height() < 1100) {
+            $(".daterangepicker:not(.single)").addClass("scrollable-date");
+        }
         if (picker.element.offset().top - $(window).scrollTop() + picker.container.outerHeight() > $(window).height()) {
             picker.drops = "up";
         } else {

@@ -3,6 +3,7 @@
 ## 2020-12-09
 
 -   Naprawiono pobieranie harmonogramu wywozu odpadów
+-   Poprawiono widoczność kontrolki z wyborem zakresu dat na mniejszych ekranach
 
 ## 2020-11-26
 

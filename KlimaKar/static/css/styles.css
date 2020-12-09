@@ -133,6 +133,11 @@ span.required {
     margin: 2px 0px;
 }
 
+.scrollable-date {
+    height: 300px;
+    overflow-y: auto;
+}
+
 .date-input.form-control[readonly],
 .date-range-input.form-control[readonly] {
     background-color: #fff;
