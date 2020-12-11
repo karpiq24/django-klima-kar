@@ -24,7 +24,7 @@
 30 * * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py cleanfiles
 00 8-20 * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py loadinvoices
 02 8 * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py cleanup_django_defender
-03 8 * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py cleanup_audit_logs
+# 03 8 * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py cleanup_audit_logs
 10 8-20 * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py postgres_backup --mycloud
 15 08,17 * * * /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py postgres_backup --dropbox
 00 08 * * 1 /home/bartosz/klima-kar/venv-klima-kar/bin/python /home/bartosz/klima-kar/django-klima-kar/manage.py send_report week $(date -d "-1 days" +\%Y-\%m-\%d)

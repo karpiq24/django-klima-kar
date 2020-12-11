@@ -1,6 +1,6 @@
 import os
 import tempfile
-import zipfile
+import pyzipper
 import datetime
 import shutil
 import dropbox
@@ -70,7 +70,9 @@ class Command(BaseCommand):
                 datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
             )
             zip_path = os.path.join(temp_dir, zip_name)
-            with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as temp_zip_file:
+            with pyzipper.AESZipFile(zip_path, "w", pyzipper.ZIP_LZMA) as temp_zip_file:
+                temp_zip_file.setpassword(str.encode(settings.BACKUP_PASSWORD))
+                temp_zip_file.setencryption(pyzipper.WZ_AES, nbits=256)
                 temp_zip_file.write(write_path, file_name)
             if options["mycloud"]:
                 self.upload_to_mycloud(zip_name, zip_path)

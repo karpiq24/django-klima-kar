@@ -49,6 +49,7 @@ COMPRESS_ENABLED = True
 # tr -dc A-Za-z0-9 < /dev/urandom | head -c 50 | xargs
 SECRET_KEY = ""
 SECRET_SALT = ""
+BACKUP_PASSWORD = ""
 TWO_STEP_LOGIN_ENABLED = True
 
 AUTH_PASSWORD_VALIDATORS = []
