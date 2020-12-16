@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-12-16
+
+-   Naprawiono pobieranie faktur DEKO
+
 ## 2020-12-09
 
 -   Naprawiono pobieranie harmonogramu wywozu odpadów

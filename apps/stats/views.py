@@ -996,7 +996,7 @@ class UnpayedDekoInvoicesView(StaffOnlyMixin, View):
 
             url = "http://sklep.dekoautoparts.pl/AjaxServices/Informations.svc/GetFilteredInvoices"
             data = {
-                "dateFrom": (date.today() - timedelta(60)).strftime("%Y-%m-%d"),
+                "dateFrom": (date.today() - timedelta(90)).strftime("%Y-%m-%d"),
                 "dateTo": (date.today() + timedelta(1)).strftime("%Y-%m-%d"),
                 "overdueOnly": False,
             }
@@ -1007,7 +1007,11 @@ class UnpayedDekoInvoicesView(StaffOnlyMixin, View):
             invoices = []
             sum_to_pay = 0
             soup = BeautifulSoup(r.json()["d"], "html5lib")
-            for row in soup.find("table").find_all("tr", attrs={"class": None})[1:]:
+            for row in soup.find("table").find_all("tr")[1:]:
+                if row.attrs.get("class") and "row-separator" in row.attrs.get("class"):
+                    continue
+                if row.find("td", {"class": "flex-note"}):
+                    continue
                 to_pay = row.find(
                     "td", attrs={"class": "flex-price-to-pay"}
                 ).text.strip()

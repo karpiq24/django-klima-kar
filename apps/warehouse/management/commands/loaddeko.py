@@ -89,7 +89,11 @@ class Command(BaseCommand):
             soup = BeautifulSoup(r.json()["d"], "html5lib")
             new_invoices = 0
             new_wares = 0
-            for row in soup.find("table").find_all("tr", attrs={"class": None})[1:]:
+            for row in soup.find("table").find_all("tr")[1:]:
+                if row.attrs.get("class") and "row-separator" in row.attrs.get("class"):
+                    continue
+                if row.find("td", {"class": "flex-note"}):
+                    continue
                 number = row.find("td").text.strip()
                 invoice_id = row.find("a")["href"].strip().split("/")[-1]
                 if (
