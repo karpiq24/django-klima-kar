@@ -228,7 +228,7 @@ class SaleInvoice(models.Model):
     payment_type_other = models.CharField(
         max_length=128, verbose_name="Inna forma płatności", null=True, blank=True
     )
-    payed = models.BooleanField(verbose_name="Zapłacono", default=True)
+    payed = models.BooleanField(verbose_name="Zapłacono", null=True, default=None)
     tax_percent = models.FloatField(verbose_name="Procent podatku VAT", default=23)
     comment = models.TextField(verbose_name="Uwagi", blank=True)
     legacy = models.BooleanField(default=False, verbose_name="Faktura archiwalna")
@@ -303,8 +303,10 @@ class SaleInvoice(models.Model):
         number_data = self.number.split("/")
         self.number_value = int(number_data[0])
         self.number_year = int(number_data[1])
-        if not self.pk and self.payment_date:
+        if self.payed is None and self.payment_date:
             self.payed = False
+        elif self.payed is False and not self.payment_date:
+            self.payed = None
 
         if not self.contractor_json:
             self.load_contractor_data()

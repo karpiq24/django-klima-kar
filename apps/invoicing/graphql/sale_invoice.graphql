@@ -17,7 +17,7 @@ type SaleInvoice {
     payment_type: String!
     payment_date: String
     payment_type_other: String
-    payed: Boolean!
+    payed: Boolean
     tax_percent: Float!
     comment: String
     legacy: Boolean!

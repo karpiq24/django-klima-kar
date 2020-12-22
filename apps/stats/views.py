@@ -557,7 +557,7 @@ class DuePayments(StaffOnlyMixin, View):
         response = {"invoices": []}
         for invoice in invoices:
             if not invoice.payment_date:
-                invoice.payed = True
+                invoice.payed = None
                 invoice.save()
                 continue
             response["invoices"].append(self.get_invoice_dict(invoice))

@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2020-12-22
+
+-   Jeśli dodano termin płatności dopiero podczas edycji, faktura teraz też będzie się pojawiała w zaległych płatnościach.
+
 ## 2020-12-16
 
 -   Naprawiono pobieranie faktur DEKO
