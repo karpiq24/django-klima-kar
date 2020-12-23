@@ -53,7 +53,7 @@
     </div>
 
     <div class="col-xs-12 col-lg-4">
-        <div class="card-deck text-center">
+        <div class="card-deck text-center mb-4">
             <div class="card bg-light">
                 <h5 class="card-header">
                     Akcje
@@ -69,6 +69,8 @@
                 </div>
             </div>
         </div>
+
+        {% include 'annotations/annotations_card.html' with object=object app_name="invoicing" model_name="contractor" %}
     </div>
 </div>
 
@@ -98,4 +100,5 @@
     });
 </script>
 <script src="{% static 'js/invoicing/contractor-gus-allinfo.js' %}"></script>
+<script src="{% static 'js/annotations/annotations_card.js' %}"></script>
 {% endblock %}

@@ -1,6 +1,7 @@
 import json
 import datetime
 
+from django.contrib.contenttypes.fields import GenericRelation
 from tqdm import tqdm
 from weasyprint import HTML, CSS
 
@@ -13,6 +14,7 @@ from django.forms import model_to_dict
 
 from KlimaKar.templatetags.slugify import slugify
 from KlimaKar.models import TotalValueQuerySet
+from apps.annotations.models import Annotation
 from apps.warehouse.models import Ware
 
 
@@ -63,6 +65,7 @@ class Contractor(models.Model):
         max_length=16, verbose_name="Numer telefonu 2", blank=True, null=True
     )
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Data dodania")
+    annotations = GenericRelation(Annotation, related_query_name="contractor")
 
     class Meta:
         verbose_name = "Kontrahent"

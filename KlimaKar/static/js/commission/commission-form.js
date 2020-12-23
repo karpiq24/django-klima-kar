@@ -122,6 +122,7 @@ $(function () {
         $(parent).find("div.extra-feedback").remove();
         $(parent).append(`<div class="extra-feedback d-flex flex-column"></div>`);
         const feedback = $(parent).find("div.extra-feedback");
+        $(".open-annotation-modal").data("pk", contractor_pk);
 
         if (contractor_pk) {
             $.ajax({

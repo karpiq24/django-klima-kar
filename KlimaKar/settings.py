@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "KlimaKar",
     "apps.settings",
     "apps.warehouse",
-    "apps.invoicing",
+    "apps.invoicing.apps.InvoicingConfig",
     "apps.commission",
     "apps.stats",
     "apps.accounts",
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "apps.wiki.apps.WikiConfig",
     "apps.mycloudhome.apps.MycloudhomeConfig",
     "apps.employees.apps.EmployeesConfig",
+    "apps.annotations.apps.AnnotationsConfig",
     "tiles.apps.TilesConfig",
 ]
 

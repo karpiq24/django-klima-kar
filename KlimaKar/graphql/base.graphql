@@ -17,6 +17,7 @@ type PageInfo {
 input PageInput {
     page: Int
     pageSize: Int
+    forceAll: Boolean
 }
 
 type Error {

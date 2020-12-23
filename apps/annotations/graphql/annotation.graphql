@@ -1,0 +1,31 @@
+extend type Query {
+    annotations(pagination: PageInput, filters: AnnotationFilter): AnnotationConnection!
+}
+
+extend type Mutation {
+    addAnnotation(app_name: String!, model_name:String!, object_id: ID!, contents: String!): Annotation
+    updateAnnotation(pk: ID!, contents: String!, is_active: Boolean!): Annotation!
+}
+
+type AnnotationConnection {
+    pageInfo: PageInfo!
+    objects: [Annotation]
+}
+
+input AnnotationFilter {
+    id: ID
+    content_type__app_label: String
+    content_type__model: String
+    object_id: ID
+}
+
+type Annotation {
+    id: ID!
+    content_type: ID!
+    object_id: ID!
+    contents: String!
+    created: String!
+    last_edited: String!
+    is_active: Boolean!
+    was_edited: Boolean!
+}

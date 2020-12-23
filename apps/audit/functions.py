@@ -1,6 +1,7 @@
 import inspect
 import json
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db.utils import ProgrammingError
 from django.contrib.contenttypes.models import ContentType
 from django.core.serializers.json import DjangoJSONEncoder
@@ -31,6 +32,8 @@ def get_object_json(obj):
     data = {}
     for field in obj._meta.get_fields():
         try:
+            if type(field) is GenericRelation:
+                continue
             if type(field) is ManyToManyField:
                 val = [f.pk for f in getattr(obj, field.attname).all()]
             else:

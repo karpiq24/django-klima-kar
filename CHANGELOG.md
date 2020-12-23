@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2020-12-23
+
+-   Dodano ogólną aplikację notatek do obiektów
+-   Dodano notatki do kontrahentów
+
 ## 2020-12-22
 
 -   Jeśli dodano termin płatności dopiero podczas edycji, faktura teraz też będzie się pojawiała w zaległych płatnościach.

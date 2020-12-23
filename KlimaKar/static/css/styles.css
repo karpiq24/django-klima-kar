@@ -304,6 +304,24 @@ span.required {
     display: none !important;
 }
 
+.annotations .close {
+    font-size: 1rem;
+}
+
+.annotations .not-active {
+    color: #6c757d;
+    text-decoration: line-through;
+}
+
+.annotations ul {
+    max-height: 700px;
+    overflow: auto;
+}
+
+.annotations li.empty-notes:not(:first-child) {
+    display: none !important;
+}
+
 /*
     MISC
 */

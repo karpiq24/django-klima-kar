@@ -45,15 +45,18 @@
         <div class="col-sm-6">
             {% include 'forms/field.html' with field=form.vc_name %}
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-6 d-flex flex-wrap">
             <div style="display:flex;width:100%;">
                 <div style="width:calc(100% - 105px);">
                     {% include 'forms/field.html' with field=form.contractor %}
                 </div>
                 <button disabled id="contractor-edit" class="btn btn-outline-warning" style="margin-left:5px;margin-top:29px;height:38px;width:100px;" type="button"><i class="fas fa-edit"></i> Edytuj</button>
             </div>
-            <small data-url="{% url 'invoicing:contractor_gus' %}" id="gus-data" style="margin-top: -16px;{% if not object.contractor %}display:none;{% endif %}">Pokaż wszystkie dane z GUS</small>
-            {% include 'invoicing/contractor/gus_modal.html' %}
+            <div style="margin-left:auto;margin-top: -1rem;{% if not object.contractor %}display:none;{% endif %}">
+                <button  type="button" class="btn btn-sm btn-outline-info open-annotation-modal" data-app-name="invoicing" data-model-name="contractor">Notatki</button>
+                <button type="button" class="btn btn-sm btn-outline-info" data-url="{% url 'invoicing:contractor_gus' %}" id="gus-data">GUS</button>
+            </div>
+           {% include 'invoicing/contractor/gus_modal.html' %}
         </div>
         <div class="col-sm-6">
             {% include 'forms/field.html' with field=form.status pretty_select=True %}
@@ -181,10 +184,12 @@
         </div>
     </div>
 </form>
+{% include 'annotations/annotations_modal.html' %}
 {% endblock %}
 
 {% block scripts %}
 <script src="{% static 'js/commission/commission-form.js' %}"></script>
 <script src="{% static 'js/invoicing/contractor-gus-allinfo.js' %}"></script>
 <script src="{% static 'js/base/custom-file.js' %}"></script>
+<script src="{% static 'js/annotations/annotations_modal.js' %}"></script>
 {% endblock %}
