@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2021-01-04
+
+-   Dodano pole kod kreskowy do towarów
+
 ## 2020-12-23
 
 -   Dodano ogólną aplikację notatek do obiektów

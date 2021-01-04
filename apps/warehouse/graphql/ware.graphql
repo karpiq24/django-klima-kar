@@ -10,6 +10,7 @@ type Ware {
     stock: Int!
     retail_price: Float
     last_price: Float
+    barcode: String
     purchaseInvoices: [PurchaseInvoice]
 }
 

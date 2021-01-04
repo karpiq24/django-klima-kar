@@ -4,4 +4,5 @@
     {{ item.ware.index }}
     {{ item.ware.index_slug }}
     {{ item.ware.name }}
+    {{ item.ware.barcode }}
 {% endfor %}

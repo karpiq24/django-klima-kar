@@ -15,6 +15,7 @@ class WareFilter(django_filters.FilterSet):
 
     index = django_filters.CharFilter(method="index_filter", widget=forms.TextInput())
     name = django_filters.CharFilter(lookup_expr="icontains", widget=forms.TextInput())
+    barcode = django_filters.CharFilter(lookup_expr="exact", widget=forms.TextInput())
     description = django_filters.CharFilter(
         lookup_expr="icontains", widget=forms.TextInput()
     )
@@ -44,7 +45,7 @@ class WareFilter(django_filters.FilterSet):
 
     class Meta:
         model = Ware
-        fields = ["index", "name", "description", "stock"]
+        fields = ["index", "name", "barcode", "description", "stock"]
 
     def index_filter(self, queryset, name, value):
         return queryset.filter(

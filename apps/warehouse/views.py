@@ -324,7 +324,11 @@ class WareAutocomplete(CustomSelect2QuerySetView):
         if name:
             qs = qs.filter(name=name)
         if self.q:
-            qs = qs.filter(Q(index__icontains=self.q) | Q(index_slug__icontains=self.q))
+            qs = qs.filter(
+                Q(index__icontains=self.q)
+                | Q(index_slug__icontains=self.q)
+                | Q(barcode=self.q)
+            )
         return qs
 
     def get_result_label(self, result):

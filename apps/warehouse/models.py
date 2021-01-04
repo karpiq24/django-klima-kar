@@ -25,6 +25,7 @@ class Ware(models.Model):
         null=True,
         verbose_name="Cena detaliczna",
     )
+    barcode = models.CharField(max_length=32, blank=True, verbose_name="Kod kreskowy")
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Data dodania")
 
     class Meta:
