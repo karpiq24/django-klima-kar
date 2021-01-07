@@ -254,10 +254,6 @@ class Commission(MyCloudHomeDirectoryModel):
         return self._meta.model.objects.filter(pk=self.pk).total()
 
     @property
-    def notes(self):
-        return self.commissionnote_set.all()
-
-    @property
     def has_notes(self):
         return self.annotations.exists()
 
@@ -343,33 +339,3 @@ class CommissionFile(MyCloudHomeFile):
             "commission:commission_detail",
             kwargs={"pk": self.commission.pk, "slug": slugify(self.commission)},
         )
-
-
-class CommissionNote(models.Model):
-    PARENT_FIELD = "commission"
-
-    commission = models.ForeignKey(
-        Commission, on_delete=models.CASCADE, verbose_name="Zlecenie"
-    )
-    contents = models.TextField(verbose_name="Treść")
-    created = models.DateTimeField(auto_now_add=True, verbose_name="Czas utworzenia")
-    is_active = models.BooleanField(default=True, verbose_name="Aktywna")
-    last_edited = models.DateTimeField(auto_now=True, verbose_name="Czas edycji")
-
-    class Meta:
-        verbose_name = "Notatka zlecenia"
-        verbose_name_plural = "Notatki zleceń"
-        ordering = ["commission", "-created"]
-
-    def __str__(self):
-        return f"Notatka do zlecenia {self.commission.number}: {self.contents[:20]}"
-
-    def get_absolute_url(self):
-        return reverse(
-            "commission:commission_detail",
-            kwargs={"pk": self.commission.pk, "slug": slugify(self.commission)},
-        )
-
-    @property
-    def was_edited(self):
-        return (self.last_edited - self.created).total_seconds() > 1
