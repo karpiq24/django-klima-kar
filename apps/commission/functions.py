@@ -1,6 +1,7 @@
 import subprocess
 
-from apps.commission.models import Vehicle
+from apps.annotations.models import Annotation
+from apps.commission.models import Vehicle, CommissionNote
 
 
 def decode_aztec_code(code, create=True):
@@ -64,3 +65,13 @@ def decode_mpojazd(csv_data, create=True):
         data["label"] = str(vehicle)
         data["url"] = vehicle.get_absolute_url()
     return data
+
+
+def convert_notes_to_annotations():
+    for note in CommissionNote.objects.all():
+        anno = note.commission.annotations.create(
+            contents=note.contents, is_active=note.is_active,
+        )
+        Annotation.objects.filter(pk=anno.pk).update(
+            created=note.created, last_edited=note.last_edited
+        )

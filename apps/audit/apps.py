@@ -31,7 +31,7 @@ class AuditConfig(AppConfig):
             commission.Commission,
             commission.CommissionItem,
             commission.CommissionFile,
-            commission.CommissionNote,
+            # commission.CommissionNote,
             invoicing.Contractor,
             invoicing.SaleInvoice,
             invoicing.RefrigerantWeights,
@@ -45,7 +45,7 @@ class AuditConfig(AppConfig):
             wiki.Tag,
             employees.Employee,
             employees.WorkAbsence,
-            annotations.Annotation,
+            # annotations.Annotation,
         ]
 
         for model in models:

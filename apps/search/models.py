@@ -24,9 +24,7 @@ class SearchDocument(models.Model):
         wiki.Article,
     ]
 
-    child_models = [
-        commission.CommissionNote,
-    ]
+    child_models = []
 
     content_type = models.ForeignKey(
         ContentType, models.CASCADE, verbose_name="Typ obiektu"

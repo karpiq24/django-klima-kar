@@ -14,33 +14,31 @@ import ToggleButton from "react-bootstrap/ToggleButton";
 import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 
 const NOTES = gql`
-    query getCommissionNotes($filters: CommissionFilter) {
-        commissions(filters: $filters) {
+    query getAnnotations($pagination: PageInput, $filters: AnnotationFilter) {
+        annotations(pagination: $pagination, filters: $filters) {
             objects {
-                notes {
-                    id
-                    contents
-                    created
-                    last_edited
-                    is_active
-                    was_edited
-                }
+                id
+                contents
+                created
+                last_edited
+                is_active
+                was_edited
             }
         }
     }
 `;
 
 const ADD_NOTE = gql`
-    mutation AddCommissionNote($commission: ID!, $contents: String!) {
-        addCommissionNote(commission: $commission, contents: $contents) {
+    mutation AddAnnotation($app_name: String!, $model_name: String!, $object_id: ID!, $contents: String!) {
+        addAnnotation(app_name: $app_name, model_name: $model_name, object_id: $object_id, contents: $contents) {
             id
         }
     }
 `;
 
 const UPDATE_NOTE = gql`
-    mutation UpdateCommissionNote($pk: ID!, $contents: String!, $isActive: Boolean!) {
-        updateCommissionNote(pk: $pk, contents: $contents, isActive: $isActive) {
+    mutation UpdateAnnotation($pk: ID!, $contents: String!, $is_active: Boolean!) {
+        updateAnnotation(pk: $pk, contents: $contents, is_active: $is_active) {
             id
         }
     }
@@ -49,11 +47,13 @@ const UPDATE_NOTE = gql`
 const CommissionNotesProvider = (props) => {
     const { loading, data, refetch } = useQuery(NOTES, {
         fetchPolicy: "no-cache",
-        variables: { filters: { id: props.id } },
+        variables: {
+            filters: { object_id: props.id, content_type__app_label: "commission", content_type__model: "commission" },
+        },
     });
     let notes = [];
     if (!loading) {
-        notes = data.commissions.objects[0].notes || [];
+        notes = data.annotations.objects || [];
     }
 
     const [showNoteModal, setShowNoteModal] = useState(false);
@@ -83,13 +83,15 @@ const CommissionNotesProvider = (props) => {
                 variables: {
                     pk: currentNote.id,
                     contents: currentNote.contents,
-                    isActive: currentNote.is_active,
+                    is_active: currentNote.is_active,
                 },
             });
         else
             addNote({
                 variables: {
-                    commission: props.id,
+                    app_name: "commission",
+                    model_name: "commission",
+                    object_id: props.id,
                     contents: currentNote.contents,
                 },
             });
@@ -98,13 +100,25 @@ const CommissionNotesProvider = (props) => {
 
     const [addNote] = useMutation(ADD_NOTE, {
         onCompleted: (data) => {
-            refetch({ filters: { id: props.id } });
+            refetch({
+                filters: {
+                    object_id: props.id,
+                    content_type__app_label: "commission",
+                    content_type__model: "commission",
+                },
+            });
         },
     });
 
     const [updateNote] = useMutation(UPDATE_NOTE, {
         onCompleted: (data) => {
-            refetch({ filters: { id: props.id } });
+            refetch({
+                filters: {
+                    object_id: props.id,
+                    content_type__app_label: "commission",
+                    content_type__model: "commission",
+                },
+            });
         },
     });
 

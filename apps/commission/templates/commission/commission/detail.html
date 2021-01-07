@@ -158,31 +158,7 @@
             </div>
         </div>
 
-        <div class="card bg-light notes">
-            <h5 class="card-header text-center">
-                Notatki
-            </h5>
-            <ul class="list-group list-group-flush">
-                {% for note in object.commissionnote_set.all %}
-                    <li class="list-group-item d-flex justify-content-between align-items-start{% if not note.is_active %} not-active{% endif %}" data-contents="{{ note.contents }}" data-active="{{ note.is_active }}">
-                        <div>
-                            <small class="font-weight-bold">{{ note.created }}{% if note.was_edited %} (edytowano {{ note.last_edited }}){% endif%}</small>
-                            <div>{{ note.contents|linebreaksbr }}</div>
-                        </div>
-                        <button type="button" class="btn p-0 border-0 shadow-none close edit-note" data-pk="{{ note.pk }}">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                    </li>
-                {% empty %}
-                    <li class="list-group-item d-flex justify-content-between align-items-start empty-notes">
-                    Brak notatek.
-                    </li>
-                {% endfor %}
-            </ul>
-            <div class="card-footer">
-                <button data-pk="{{ object.pk }}" type="button" class="btn btn-outline-success" id="addNote"><i class="far fa-plus-square"></i> Dodaj nową notatkę</button>
-            </div>
-        </div>
+        {% include 'annotations/annotations_card.html' with object=object app_name="commission" model_name="commission" %}
     </div>
 </div>
 
@@ -268,5 +244,6 @@
 
 {% block scripts %}
 <script src="{% static 'js/commission/commission-detail.js' %}"></script>
+<script src="{% static 'js/annotations/annotations_card.js' %}"></script>
 <script src="{% static 'js/base/custom-file.js' %}"></script>
 {% endblock %}

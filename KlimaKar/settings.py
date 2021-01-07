@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "apps.settings",
     "apps.warehouse",
     "apps.invoicing.apps.InvoicingConfig",
-    "apps.commission",
+    "apps.commission.apps.CommissionConfig",
     "apps.stats",
     "apps.accounts",
     "apps.audit.apps.AuditConfig",

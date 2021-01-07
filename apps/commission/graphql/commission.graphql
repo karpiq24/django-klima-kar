@@ -5,8 +5,6 @@ extend type Query {
 extend type Mutation {
     addCommission(data: CommissionInput!): CommissionPayload!
     updateCommission(id: ID!, data: CommissionInput!): CommissionPayload!
-    addCommissionNote(commission: ID!, contents: String!): CommissionNote
-    updateCommissionNote(pk: ID!, contents: String!, isActive: Boolean!): CommissionNote!
     sendCommissionNotification(pk: ID!, phone: String!): Response!
 }
 
@@ -31,7 +29,6 @@ type Commission {
     upload: Boolean!
     value: Float!
     items: [CommissionItem]
-    notes: [CommissionNote]
     get_absolute_url: String!
     smsBody: String
     has_notes: Boolean!
@@ -49,15 +46,6 @@ input CommissionFilter {
     status: String
     vc_name__icontains: String
     end_date: String
-}
-
-type CommissionNote {
-    id: ID!
-    contents: String!
-    created: String!
-    last_edited: String!
-    is_active: Boolean!
-    was_edited: Boolean!
 }
 
 type CommissionItem {

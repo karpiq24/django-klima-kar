@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib.contenttypes.fields import GenericRelation
 from weasyprint import HTML, CSS
 
 from django.db import models
@@ -9,6 +10,7 @@ from django.urls import reverse
 
 from KlimaKar.templatetags.slugify import slugify
 from KlimaKar.models import TotalValueQuerySet
+from apps.annotations.models import Annotation
 from apps.invoicing.models import Contractor, SaleInvoice
 from apps.mycloudhome.models import MyCloudHomeFile, MyCloudHomeDirectoryModel
 from apps.warehouse.models import Ware
@@ -74,6 +76,7 @@ class Vehicle(models.Model):
     registration_date = models.DateField(
         verbose_name="Data pierwszej rejestracji", null=True, blank=True
     )
+    annotations = GenericRelation(Annotation, related_query_name="vehicle")
 
     class Meta:
         verbose_name = "Pojazd"
@@ -122,6 +125,7 @@ class Component(models.Model):
     catalog_number = models.CharField(
         max_length=64, blank=True, null=True, verbose_name="Numer katalogowy"
     )
+    annotations = GenericRelation(Annotation, related_query_name="component")
 
     class Meta:
         verbose_name = "Podzespół"
@@ -209,6 +213,7 @@ class Commission(MyCloudHomeDirectoryModel):
     sent_sms = models.BooleanField(
         verbose_name="Powiadomienie SMS zostało wysłane", default=False
     )
+    annotations = GenericRelation(Annotation, related_query_name="commission")
 
     objects = TotalValueQuerySet.as_manager()
     PRICE_FIELD = "commissionitem__price"
@@ -254,7 +259,7 @@ class Commission(MyCloudHomeDirectoryModel):
 
     @property
     def has_notes(self):
-        return self.commissionnote_set.exists()
+        return self.annotations.exists()
 
     @property
     def is_editable(self):

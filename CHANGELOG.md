@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2021-01-07
+
+-   Przeniesiono notatki zleceń do nowego systemu notatek
+
 ## 2021-01-04
 
 -   Dodano pole kod kreskowy do towarów
