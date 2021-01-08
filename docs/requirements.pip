@@ -19,7 +19,7 @@ psycopg2==2.8.6
 PyGithub==1.54.1
 pyotp==2.4.1
 python-dateutil==2.8.1
-pyzipper==0.3.3
+pyzipper==0.3.4
 requests==2.24.0
 smsapi-client==2.4.3
 tablib[ods,xls,xlsx]==3.0.0
