@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load render_table from django_tables2 %}
-{% load slugify %}
+{% load slugify static %}
 
 {% block content %}
 <div>
@@ -29,7 +29,7 @@
     </div>
 
     <div class="col-xs-12 col-lg-4">
-        <div class="card-deck text-center">
+        <div class="card-deck text-center mb-4">
             <div class="card bg-light">
                 <h5 class="card-header">
                     Akcje
@@ -42,6 +42,8 @@
                 </div>
             </div>
         </div>
+
+        {% include 'annotations/annotations_card.html' with object=object app_name="commission" model_name="component" %}
     </div>
 </div>
 
@@ -61,4 +63,5 @@
         $('.sidenav #nav-commission').collapse('show');
     });
 </script>
+<script src="{% static 'js/annotations/annotations_card.js' %}"></script>
 {% endblock %}

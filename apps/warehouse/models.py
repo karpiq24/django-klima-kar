@@ -1,11 +1,13 @@
 import datetime
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
 
 from KlimaKar.templatetags.slugify import slugify
 from KlimaKar.models import TotalValueQuerySet
+from apps.annotations.models import Annotation
 
 
 class Ware(models.Model):
@@ -27,6 +29,7 @@ class Ware(models.Model):
     )
     barcode = models.CharField(max_length=32, blank=True, verbose_name="Kod kreskowy")
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Data dodania")
+    annotations = GenericRelation(Annotation, related_query_name="ware")
 
     class Meta:
         verbose_name = "Towar"
@@ -65,6 +68,7 @@ class Supplier(models.Model):
 
     name = models.CharField(max_length=255, unique=True, verbose_name="Nazwa")
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Data dodania")
+    annotations = GenericRelation(Annotation, related_query_name="supplier")
 
     class Meta:
         verbose_name = "Dostawca"
@@ -98,6 +102,7 @@ class Invoice(models.Model):
         Supplier, on_delete=models.PROTECT, verbose_name="Dostawca"
     )
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Data dodania")
+    annotations = GenericRelation(Annotation, related_query_name="invoice")
 
     class Meta:
         verbose_name = "Faktura zakupowa"

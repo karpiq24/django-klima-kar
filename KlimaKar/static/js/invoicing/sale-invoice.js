@@ -45,7 +45,6 @@ $(function () {
 
     $("#id_contractor").on("select2:selecting", function (e) {
         const data = e.params.args.data;
-        console.log("TEST")
 
         if (data.create_id !== true) {
             $("#contractor-edit").prop("disabled", false);
@@ -92,8 +91,10 @@ $(function () {
         $(parent).append(
             '<small id="loding-contractor" class="form-text text-muted"><i class="fas fa-spinner fa-spin"></i> Sprawdzam kontrahenta..</small>'
         );
-
+        console.log(contractor_pk)
         if (contractor_pk) {
+            $(".contractor-notes").data("pk", contractor_pk);
+            $(".contractor-notes").parent().show();
             $.ajax({
                 url: "/graphql/",
                 type: "POST",
@@ -154,6 +155,8 @@ $(function () {
                     addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
                 },
             });
+        } else {
+            $(".contractor-notes").parent().hide();
         }
     });
 

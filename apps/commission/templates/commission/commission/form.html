@@ -3,7 +3,12 @@
 
 {% block content %}
 <div>
-    <h1>{{ title }}</h1>
+    <h1 class="d-flex justify-content-between flex-wrap">
+        {{ title }}
+        {% if object %}
+            <button  type="button" class="btn btn-outline-info open-annotation-modal" data-app-name="commission" data-model-name="commission" data-pk="{{ object.pk }}"><i class="fa fa-sticky-note"></i> Notatki</button>
+        {% endif %}
+    </h1>
 </div>
 <form id="sale-invoice-form" action="" method="post">
     <input type="hidden" id="create_contractor_url" value="{% url 'invoicing:contractor_create_ajax' %}">
@@ -27,7 +32,7 @@
             {% endfor %}
             </div>
         {% endif %}
-        <div class="col-sm-6 form-group"{% if form.vehicle %} id="vehicle-select"{% endif %}>
+        <div class="col-sm-6 d-flex flex-wrap"{% if form.vehicle %} id="vehicle-select"{% endif %}>
             <template id="scan-icon-template">
                 <i class="fa fa-qrcode scan-vehicle"></i>
             </template>
@@ -41,6 +46,13 @@
                 </div>
                 <button disabled id="vehicle-component-edit" class="btn btn-outline-warning" style="margin-left:5px;margin-top:29px;height:38px;width:100px;" type="button"><i class="fas fa-edit"></i> Edytuj</button>
             </div>
+            <div style="margin-left:auto;{% if not object.vehicle and not object.component %}display:none;{% endif %}">
+                {% if form.vehicle %}
+                    <button  type="button" class="btn btn-sm btn-outline-info open-annotation-modal vehicle-notes" data-app-name="commission" data-model-name="vehicle"><i class="fa fa-sticky-note"></i> Notatki</button>
+                {% else %}
+                    <button  type="button" class="btn btn-sm btn-outline-info open-annotation-modal component-notes" data-app-name="commission" data-model-name="component"><i class="fa fa-sticky-note"></i> Notatki</button>
+                {% endif %}
+            </div>
         </div>
         <div class="col-sm-6">
             {% include 'forms/field.html' with field=form.vc_name %}
@@ -53,7 +65,7 @@
                 <button disabled id="contractor-edit" class="btn btn-outline-warning" style="margin-left:5px;margin-top:29px;height:38px;width:100px;" type="button"><i class="fas fa-edit"></i> Edytuj</button>
             </div>
             <div style="margin-left:auto;margin-top: -1rem;{% if not object.contractor %}display:none;{% endif %}">
-                <button  type="button" class="btn btn-sm btn-outline-info open-annotation-modal" data-app-name="invoicing" data-model-name="contractor">Notatki</button>
+                <button  type="button" class="btn btn-sm btn-outline-info open-annotation-modal contractor-notes" data-app-name="invoicing" data-model-name="contractor"><i class="fa fa-sticky-note"></i> Notatki</button>
                 <button type="button" class="btn btn-sm btn-outline-info" data-url="{% url 'invoicing:contractor_gus' %}" id="gus-data">GUS</button>
             </div>
            {% include 'invoicing/contractor/gus_modal.html' %}

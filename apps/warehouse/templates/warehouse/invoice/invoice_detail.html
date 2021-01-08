@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load slugify %}
+{% load slugify static %}
 {% load render_table from django_tables2 %}
 
 {% block content %}
@@ -27,9 +27,9 @@
             </tr>
         </table>
     </div>
-    {% if object.is_editable or request.user.is_staff %}
-        <div class="col-xs-12 col-lg-4">
-            <div class="card-deck text-center">
+    <div class="col-xs-12 col-lg-4">
+        {% if object.is_editable or request.user.is_staff %}
+            <div class="card-deck text-center mb-4">
                 <div class="card bg-light">
                     <h5 class="card-header">
                         Akcje
@@ -42,8 +42,9 @@
                     </div>
                 </div>
             </div>
-        </div>
-    {% endif %}
+        {% endif %}
+        {% include 'annotations/annotations_card.html' with object=object app_name="warehouse" model_name="invoice" %}
+    </div>
 </div>
 
 <div class="row">
@@ -62,4 +63,5 @@
         $('.sidenav #nav-warehouse').collapse('show');
     });
 </script>
+<script src="{% static 'js/annotations/annotations_card.js' %}"></script>
 {% endblock %}

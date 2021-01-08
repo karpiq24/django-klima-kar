@@ -134,6 +134,7 @@
             </div>
         </div>
         {% include 'invoicing/contractor/contractor_card.html' with contractor=object.contractor_json contractor_object=object.contractor %}
+        {% include 'annotations/annotations_card.html' with object=object app_name="invoicing" model_name="saleinvoice" %}
     </div>
 </div>
 
@@ -170,4 +171,5 @@
 
 {% block scripts %}
 <script src="{% static 'js/invoicing/sale_invoice_detail.js' %}"></script>
+<script src="{% static 'js/annotations/annotations_card.js' %}"></script>
 {% endblock %}

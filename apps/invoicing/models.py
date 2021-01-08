@@ -236,6 +236,7 @@ class SaleInvoice(models.Model):
     comment = models.TextField(verbose_name="Uwagi", blank=True)
     legacy = models.BooleanField(default=False, verbose_name="Faktura archiwalna")
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Data dodania")
+    annotations = GenericRelation(Annotation, related_query_name="saleinvoice")
 
     objects = SaleInvoiceQuerySet.as_manager()
     PRICE_FIELD = "saleinvoiceitem__price"

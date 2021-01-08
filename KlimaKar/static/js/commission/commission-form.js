@@ -122,9 +122,10 @@ $(function () {
         $(parent).find("div.extra-feedback").remove();
         $(parent).append(`<div class="extra-feedback d-flex flex-column"></div>`);
         const feedback = $(parent).find("div.extra-feedback");
-        $(".open-annotation-modal").data("pk", contractor_pk);
 
         if (contractor_pk) {
+            $(".contractor-notes").data("pk", contractor_pk);
+            $(".contractor-notes").parent().show();
             $.ajax({
                 url: "/graphql/",
                 type: "POST",
@@ -175,6 +176,8 @@ $(function () {
                     addAlert("Błąd!", "error", "Coś poszło nie tak. Spróbuj ponownie.");
                 },
             });
+        } else {
+            $(".contractor-notes").parent().hide();
         }
     });
 
@@ -241,9 +244,14 @@ $(function () {
             $("#id_vc_name").val("");
             $("#vehicle-component-edit").prop("disabled", true);
             $("#id_vc_name").prop("readonly", false);
+            $(".vehicle-notes").parent().hide();
+            const parent = $("#id_vehicle").parent().parent().parent().parent();
+            $(parent).find("div.extra-feedback").remove();
         } else {
             getVehicleData(vehicle_pk);
             $("#id_vc_name").prop("readonly", true);
+            $(".vehicle-notes").data("pk", vehicle_pk);
+            $(".vehicle-notes").parent().show();
         }
     });
 
@@ -284,7 +292,7 @@ $(function () {
                 }`,
             }),
             success: function ({ data }) {
-                const parent = $("#id_vehicle").parent().parent().parent().parent();
+                const parent = $("#id_vehicle").parent();
                 $(parent).find("div.extra-feedback").remove();
                 $(parent).append(`<div class="extra-feedback d-flex justify-content-between flex-wrap"></div>`);
                 const feedback = $(parent).find("div.extra-feedback");
@@ -346,7 +354,7 @@ $(function () {
                 }`,
             }),
             success: function ({ data }) {
-                const parent = $("#id_component").parent().parent().parent().parent();
+                const parent = $("#id_component").parent();
                 $(parent).find("div.extra-feedback").remove();
                 $(parent).append(`<div class="extra-feedback d-flex justify-content-between flex-wrap"></div>`);
                 const feedback = $(parent).find("div.extra-feedback");
@@ -416,9 +424,14 @@ $(function () {
             $("#id_vc_name").val("");
             $("#vehicle-component-edit").prop("disabled", true);
             $("#id_vc_name").prop("readonly", false);
+            $(".component-notes").parent().hide();
+            const parent = $("#id_component").parent().parent().parent().parent();
+            $(parent).find("div.extra-feedback").remove();
         } else {
             getComponentData(component_pk);
             $("#id_vc_name").prop("readonly", true);
+            $(".component-notes").data("pk", component_pk);
+            $(".component-notes").parent().show();
         }
     });
 

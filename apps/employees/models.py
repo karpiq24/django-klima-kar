@@ -1,6 +1,10 @@
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.urls import reverse
 
+from KlimaKar.templatetags.slugify import slugify
+from apps.annotations.models import Annotation
 from apps.invoicing.models import Contractor
 
 
@@ -16,6 +20,7 @@ class Employee(models.Model):
     last_name = models.CharField("Nazwisko", max_length=150)
     email = models.EmailField("Adres email", blank=True)
     phone = models.CharField(max_length=16, verbose_name="Numer telefonu", blank=True)
+    annotations = GenericRelation(Annotation, related_query_name="employee")
 
     class Meta:
         verbose_name = "Pracownik"
@@ -28,6 +33,11 @@ class Employee(models.Model):
     @property
     def formatted_phone(self):
         return Contractor.format_phone_number(self.phone)
+
+    def get_absolute_url(self):
+        return reverse(
+            "employees:employee_detail", kwargs={"pk": self.pk, "slug": slugify(self)},
+        )
 
 
 class WorkAbsence(models.Model):
@@ -58,3 +68,9 @@ class WorkAbsence(models.Model):
 
     def __str__(self):
         return f"{self.employee}: {self.date_from} - {self.date_to}"
+
+    def get_absolute_url(self):
+        return reverse(
+            "employees:employee_detail",
+            kwargs={"pk": self.employee.pk, "slug": slugify(self.employee)},
+        )

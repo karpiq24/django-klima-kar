@@ -6,6 +6,7 @@ class InvoicingConfig(AppConfig):
 
     def ready(self):
         from apps.annotations.registry import annotations
-        from apps.invoicing.models import Contractor
+        from apps.invoicing.models import Contractor, SaleInvoice
 
         annotations.register(Contractor)
+        annotations.register(SaleInvoice)

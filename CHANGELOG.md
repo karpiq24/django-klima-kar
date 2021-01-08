@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2021-01-08
+
+-   Dodano notatki dla faktur, towarów, dostawców, faktur sprzedażowych, pojazdów, podzespołów i pracowników
+
 ## 2021-01-07
 
 -   Przeniesiono notatki zleceń do nowego systemu notatek

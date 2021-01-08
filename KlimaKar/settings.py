@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "ariadne.contrib.django",
     "KlimaKar",
     "apps.settings",
-    "apps.warehouse",
+    "apps.warehouse.apps.WarehousesConfig",
     "apps.invoicing.apps.InvoicingConfig",
     "apps.commission.apps.CommissionConfig",
     "apps.stats",
