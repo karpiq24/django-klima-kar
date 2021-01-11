@@ -2,15 +2,17 @@ import inspect
 import json
 
 from django.contrib.contenttypes.fields import GenericRelation
+from django.db.models import Q
 from django.db.utils import ProgrammingError
 from django.contrib.contenttypes.models import ContentType
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models.fields.related import ManyToManyField
 
+from apps.annotations.models import Annotation
 from apps.audit.models import AuditLog
 
 
-def get_object_diffrence(old_obj, new_obj):
+def get_object_difference(old_obj, new_obj):
     if old_obj._meta.model != new_obj._meta.model:
         raise ProgrammingError("Objects model mismatch.")
     ignore_fields = getattr(old_obj._meta.model, "AUDIT_IGNORE", [])
@@ -25,7 +27,7 @@ def get_object_diffrence(old_obj, new_obj):
             continue
         if old_val != new_val:
             diff[field.name] = [old_val, new_val]
-    return json.dumps(diff, cls=DjangoJSONEncoder) if diff else None
+    return json.loads(json.dumps(diff, cls=DjangoJSONEncoder)) if diff else None
 
 
 def get_object_json(obj):
@@ -41,7 +43,7 @@ def get_object_json(obj):
         except AttributeError:
             continue
         data[field.name] = val
-    return json.dumps(data, cls=DjangoJSONEncoder) if data else None
+    return json.loads(json.dumps(data, cls=DjangoJSONEncoder)) if data else None
 
 
 def inspect_user():
@@ -60,7 +62,7 @@ def pre_save_handler(sender, instance, **kwargs):
         old_instance = model.objects.get(pk=instance.pk)
     except model.DoesNotExist:
         return
-    diff = get_object_diffrence(old_instance, instance)
+    diff = get_object_difference(old_instance, instance)
     if not diff:
         return
     AuditLog.objects.log_action(
@@ -68,7 +70,7 @@ def pre_save_handler(sender, instance, **kwargs):
         object_id=str(instance.pk),
         object_repr=str(instance),
         action_type=AuditLog.CHANGE,
-        diffrence=diff,
+        difference=diff,
     )
 
 
@@ -91,7 +93,7 @@ def pre_delete_handler(sender, instance, **kwargs):
         object_id=str(instance.pk),
         object_repr=str(instance),
         action_type=AuditLog.DELETION,
-        diffrence=get_object_json(instance),
+        difference=get_object_json(instance),
     )
 
 
@@ -122,5 +124,24 @@ def m2m_changed_handler(sender, instance, action, pk_set, **kwargs):
         object_id=str(instance.pk),
         object_repr=str(instance),
         action_type=AuditLog.CHANGE,
-        diffrence=json.dumps(diff, cls=DjangoJSONEncoder),
+        difference=diff,
     )
+
+
+def get_audit_logs(obj, has_annotations=True, m2one=[], extra=AuditLog.objects.none()):
+    logs = AuditLog.objects.filter(
+        content_type=ContentType.objects.get_for_model(obj._meta.model),
+        object_id=obj.pk,
+    )
+    if has_annotations:
+        logs = logs | AuditLog.objects.filter(
+            content_type=ContentType.objects.get_for_model(Annotation),
+            object_id__in=map(str, obj.annotations.all().values_list("pk", flat=True)),
+        )
+    for rel in m2one:
+        logs = logs | AuditLog.objects.filter(
+            Q(**{f"difference__{rel['key']}": obj.pk})
+            | Q(object_id__in=map(str, rel["objects"].values_list("pk", flat=True))),
+            content_type=ContentType.objects.get_for_model(rel["model"]),
+        )
+    return (logs | extra).distinct().order_by("-action_time")

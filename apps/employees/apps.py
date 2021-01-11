@@ -6,6 +6,9 @@ class EmployeesConfig(AppConfig):
 
     def ready(self):
         from apps.annotations.registry import annotations
-        from apps.employees.models import Employee
+        from apps.audit.registry import audit
+        from apps.employees.models import Employee, WorkAbsence
 
         annotations.register(Employee)
+        audit.register(Employee)
+        audit.register(WorkAbsence)

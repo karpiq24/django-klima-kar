@@ -149,17 +149,17 @@
           <tr>
             <td colspan="2"></td>
             <td colspan="2">RÓŻNICA NETTO</td>
-            <td>{{ invoice.correctivesaleinvoice.diffrence_netto|floatformat:2 }} zł</td>
+            <td>{{ invoice.correctivesaleinvoice.difference_netto|floatformat:2 }} zł</td>
           </tr>
           <tr>
             <td colspan="2"></td>
             <td colspan="2">RÓŻNICA VAT {{ invoice.tax_percent|floatformat:0 }}%</td>
-            <td>{{ invoice.correctivesaleinvoice.diffrence_tax|floatformat:2 }} zł</td>
+            <td>{{ invoice.correctivesaleinvoice.difference_tax|floatformat:2 }} zł</td>
           </tr>
           <tr>
             <td colspan="2"></td>
             <td colspan="2">RÓŻNICA {% if invoice.invoice_type != invoice.TYPE_WDT and invoice.invoice_type != invoice.TYPE_WDT_PRO_FORMA %}BRUTTO{% endif %}</td>
-            <td>{{ invoice.correctivesaleinvoice.diffrence_brutto|floatformat:2 }} zł</td>
+            <td>{{ invoice.correctivesaleinvoice.difference_brutto|floatformat:2 }} zł</td>
           </tr>
         </tfoot>
       </table>

@@ -1,6 +1,6 @@
 from django import forms
 
-from apps.search.models import SearchDocument
+from apps.search.registry import search
 
 
 class SearchForm(forms.Form):
@@ -10,7 +10,7 @@ class SearchForm(forms.Form):
                 f"{model._meta.app_label}.{model._meta.model_name}",
                 model._meta.verbose_name_plural,
             )
-            for model in SearchDocument.indexed_models
+            for model in search.registered_models()
         ],
         widget=forms.CheckboxSelectMultiple,
     )

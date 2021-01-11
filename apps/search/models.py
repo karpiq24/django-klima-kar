@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
@@ -5,31 +6,14 @@ from django.db import models
 from django.template.loader import get_template
 
 from KlimaKar.functions import strip_accents
-from apps.warehouse import models as warehouse
-from apps.commission import models as commission
-from apps.invoicing import models as invoicing
-from apps.wiki import models as wiki
 
 
 class SearchDocument(models.Model):
-    indexed_models = [
-        warehouse.Ware,
-        warehouse.Supplier,
-        warehouse.Invoice,
-        commission.Vehicle,
-        commission.Component,
-        commission.Commission,
-        invoicing.Contractor,
-        invoicing.SaleInvoice,
-        wiki.Article,
-    ]
-
-    child_models = []
-
     content_type = models.ForeignKey(
         ContentType, models.CASCADE, verbose_name="Typ obiektu"
     )
     object_id = models.TextField(verbose_name="ID obiektu")
+    content_object = GenericForeignKey()
     object_repr = models.CharField("Etykieta obiektu", max_length=200)
     text = models.TextField(verbose_name="Tekstowa treść obiektu")
     text_search = SearchVectorField(null=True, verbose_name="Wektor wyszukiwania")
@@ -41,9 +25,6 @@ class SearchDocument(models.Model):
 
     def __str__(self):
         return f"Dokument: {self.object_repr}"
-
-    def get_object(self):
-        return self.content_type.get_object_for_this_type(pk=self.object_id)
 
     @staticmethod
     def reindex(instance):

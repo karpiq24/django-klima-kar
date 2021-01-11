@@ -20,6 +20,7 @@ class AuditLogFilter(django_filters.FilterSet):
     action_type = django_filters.ChoiceFilter(choices=AuditLog.ACTION_TYPES)
     content_type = django_filters.ChoiceFilter()
     object_repr = django_filters.CharFilter(lookup_expr="icontains")
+    object_id = django_filters.NumberFilter()
 
     class Meta:
         model = AuditLog

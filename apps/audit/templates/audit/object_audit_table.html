@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load render_table export_url from django_tables2 %}
+{% load static %}
+
+{% block content %}
+<div>
+    <h1 class="detail-header">Audyt zmian dla: {{ object }} <a class="btn btn-outline-dark" href="{{ object.get_absolute_url }}">Powrót</a></h1>
+</div>
+
+<div class="table-legend">
+    <div class="alert alert-success">
+        Dodanie
+    </div>
+    <div class="alert alert-warning">
+        Zmiana
+    </div>
+    <div class="alert alert-danger">
+        Usunięcie
+    </div>
+</div>
+{% render_table table %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(function() {
+        $('.sidenav #nav-audit').children(':first').addClass('active');
+        $('.sidenav #nav-management').collapse('show');
+    });
+</script>
+{% endblock %}

@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from KlimaKar.templatetags.slugify import slugify
 from apps.annotations.models import Annotation
+from apps.audit.functions import get_audit_logs
 from apps.invoicing.models import Contractor
 
 
@@ -20,6 +21,7 @@ class Employee(models.Model):
     last_name = models.CharField("Nazwisko", max_length=150)
     email = models.EmailField("Adres email", blank=True)
     phone = models.CharField(max_length=16, verbose_name="Numer telefonu", blank=True)
+
     annotations = GenericRelation(Annotation, related_query_name="employee")
 
     class Meta:
@@ -37,6 +39,18 @@ class Employee(models.Model):
     def get_absolute_url(self):
         return reverse(
             "employees:employee_detail", kwargs={"pk": self.pk, "slug": slugify(self)},
+        )
+
+    def get_logs(self):
+        return get_audit_logs(
+            self,
+            m2one=[
+                {
+                    "key": "employee",
+                    "objects": self.workabsence_set.all(),
+                    "model": WorkAbsence,
+                }
+            ],
         )
 
 

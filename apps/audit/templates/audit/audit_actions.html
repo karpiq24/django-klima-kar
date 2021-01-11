@@ -1,5 +1,5 @@
-{% if record.action_type != record.DELETION %}
-    <a class="btn btn-outline-primary btn-sm btn-table" href="{{ record.get_edited_object.get_absolute_url }}" target="_blank" title="Szczegóły">
+{% if record.action_type != record.DELETION and record.content_object %}
+    <a class="btn btn-outline-primary btn-sm btn-table" href="{{ record.content_object.get_absolute_url }}" target="_blank" title="Szczegóły">
         Szczegóły
     </a>
 {% endif %}

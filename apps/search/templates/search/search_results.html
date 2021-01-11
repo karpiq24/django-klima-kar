@@ -7,12 +7,12 @@
             <div class="search-result">
                 <div class="result-icon">
                     <span class="search-result-icon fa-stack fa-2x">
-                        <i class="fas fa-circle fa-stack-2x" style="color:{{ result.get_object.MODEL_COLOR }}"></i>
-                        <i class="fa-inverse {{ result.get_object.MODEL_ICON }} fa-stack-1x" data-fa-transform="shrink-8"></i>
+                        <i class="fas fa-circle fa-stack-2x" style="color:{{ result.content_object.MODEL_COLOR }}"></i>
+                        <i class="fa-inverse {{ result.content_object.MODEL_ICON }} fa-stack-1x" data-fa-transform="shrink-8"></i>
                     </span>
                 </div>
                 <div class="result-detail">
-                    <a href="{{ result.get_object.get_absolute_url }}">{{ result.get_object }}</a>
+                    <a href="{{ result.content_object.get_absolute_url }}">{{ result.content_object }}</a>
                     <div>
                         {{ result.text|truncatechars:1024|highlight:query }}
                     </div>

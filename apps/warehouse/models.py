@@ -8,6 +8,8 @@ from django.urls import reverse
 from KlimaKar.templatetags.slugify import slugify
 from KlimaKar.models import TotalValueQuerySet
 from apps.annotations.models import Annotation
+from apps.audit.functions import get_audit_logs
+from apps.search.models import SearchDocument
 
 
 class Ware(models.Model):
@@ -60,6 +62,9 @@ class Ware(models.Model):
         self.index_slug = self.slugify(self.index)
         super(Ware, self).save(*args, **kwargs)
 
+    def get_logs(self):
+        return get_audit_logs(self)
+
 
 class Supplier(models.Model):
     RELATED_MODELS = [("warehouse.Invoice", "supplier")]
@@ -68,7 +73,9 @@ class Supplier(models.Model):
 
     name = models.CharField(max_length=255, unique=True, verbose_name="Nazwa")
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Data dodania")
+
     annotations = GenericRelation(Annotation, related_query_name="supplier")
+    search = GenericRelation(SearchDocument, related_query_name="supplier")
 
     class Meta:
         verbose_name = "Dostawca"
@@ -87,6 +94,9 @@ class Supplier(models.Model):
     def all_invoices_value(self):
         return self.invoice_set.total()
 
+    def get_logs(self):
+        return get_audit_logs(self)
+
 
 class Invoice(models.Model):
     PRICE_FIELD = "invoiceitem__price"
@@ -102,7 +112,9 @@ class Invoice(models.Model):
         Supplier, on_delete=models.PROTECT, verbose_name="Dostawca"
     )
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Data dodania")
+
     annotations = GenericRelation(Annotation, related_query_name="invoice")
+    search = GenericRelation(SearchDocument, related_query_name="invoice")
 
     class Meta:
         verbose_name = "Faktura zakupowa"
@@ -153,6 +165,18 @@ class Invoice(models.Model):
                     last_price=last_price,
                     new_price=item.price,
                 )
+
+    def get_logs(self):
+        return get_audit_logs(
+            self,
+            m2one=[
+                {
+                    "key": "invoice",
+                    "objects": self.invoiceitem_set.all(),
+                    "model": InvoiceItem,
+                },
+            ],
+        )
 
 
 class InvoiceItem(models.Model):

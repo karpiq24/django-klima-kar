@@ -15,6 +15,8 @@ from django.forms import model_to_dict
 from KlimaKar.templatetags.slugify import slugify
 from KlimaKar.models import TotalValueQuerySet
 from apps.annotations.models import Annotation
+from apps.audit.functions import get_audit_logs
+from apps.search.models import SearchDocument
 from apps.warehouse.models import Ware
 
 
@@ -65,7 +67,9 @@ class Contractor(models.Model):
         max_length=16, verbose_name="Numer telefonu 2", blank=True, null=True
     )
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Data dodania")
+
     annotations = GenericRelation(Annotation, related_query_name="contractor")
+    search = GenericRelation(SearchDocument, related_query_name="contractor")
 
     class Meta:
         verbose_name = "Kontrahent"
@@ -140,6 +144,9 @@ class Contractor(models.Model):
         return reverse(
             "invoicing:contractor_detail", kwargs={"pk": self.pk, "slug": slugify(self)}
         )
+
+    def get_logs(self):
+        return get_audit_logs(self)
 
 
 class SaleInvoiceQuerySet(TotalValueQuerySet):
@@ -236,7 +243,9 @@ class SaleInvoice(models.Model):
     comment = models.TextField(verbose_name="Uwagi", blank=True)
     legacy = models.BooleanField(default=False, verbose_name="Faktura archiwalna")
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Data dodania")
+
     annotations = GenericRelation(Annotation, related_query_name="saleinvoice")
+    search = GenericRelation(SearchDocument, related_query_name="saleinvoice")
 
     objects = SaleInvoiceQuerySet.as_manager()
     PRICE_FIELD = "saleinvoiceitem__price"
@@ -343,6 +352,30 @@ class SaleInvoice(models.Model):
             for p in doc.pages:
                 all_pages.append(p)
         return documents[0].copy(all_pages).write_pdf()
+
+    def get_logs(self):
+        return get_audit_logs(
+            self,
+            m2one=[
+                {
+                    "key": "sale_invoice",
+                    "objects": self.saleinvoiceitem_set.all(),
+                    "model": SaleInvoiceItem,
+                },
+                {
+                    "key": "sale_invoice",
+                    "objects": RefrigerantWeights.objects.filter(
+                        pk=self.refrigerantweights.pk
+                    ),
+                    "model": RefrigerantWeights,
+                },
+                {
+                    "key": "original_invoice",
+                    "objects": self.correctivesaleinvoice_original_invoice.all(),
+                    "model": CorrectiveSaleInvoice,
+                },
+            ],
+        )
 
 
 class RefrigerantWeights(models.Model):
@@ -452,6 +485,9 @@ class ServiceTemplate(models.Model):
             kwargs={"pk": self.pk, "slug": slugify(self)},
         )
 
+    def get_logs(self):
+        return get_audit_logs(self, has_annotations=False)
+
 
 class SaleInvoiceItem(models.Model):
     sale_invoice = models.ForeignKey(
@@ -518,13 +554,13 @@ class CorrectiveSaleInvoice(SaleInvoice):
         )
 
     @property
-    def diffrence_netto(self):
+    def difference_netto(self):
         return self.total_value_netto - self.original_invoice.total_value_netto
 
     @property
-    def diffrence_brutto(self):
+    def difference_brutto(self):
         return self.total_value_brutto - self.original_invoice.total_value_brutto
 
     @property
-    def diffrence_tax(self):
+    def difference_tax(self):
         return self.total_value_tax - self.original_invoice.total_value_tax

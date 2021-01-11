@@ -10,7 +10,7 @@
             </tr>
         </thead>
         <tbody id="diff-body">
-            {% for key, value in record.get_diffrence_verbose.items %}
+            {% for key, value in record.get_difference_verbose.items %}
                 <tr>
                     <td class="bg-info">{{ key }}</td>
                     {% if record.action_type == DELETION %}

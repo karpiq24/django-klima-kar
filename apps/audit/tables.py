@@ -10,9 +10,9 @@ class AuditLogTable(tables.Table):
         attrs={"th": {"width": "15%"}}, accessor="content_type.name",
     )
     object_repr = tables.Column(attrs={"th": {"width": "20%"}})
-    diffrence = tables.TemplateColumn(
+    difference = tables.TemplateColumn(
         attrs={"th": {"width": "38%"}},
-        template_name="audit/audit_diffrence.html",
+        template_name="audit/audit_difference.html",
         extra_context={
             "ADDITION": AuditLog.ADDITION,
             "CHANGE": AuditLog.CHANGE,
@@ -42,7 +42,7 @@ class AuditLogTable(tables.Table):
             "action_time",
             "content_type",
             "object_repr",
-            "diffrence",
+            "difference",
             "actions",
         ]
         order_by = "-action_time"
@@ -61,3 +61,16 @@ class AuditLogTable(tables.Table):
             ("-" if is_descending else "") + "content_type__model",
         )
         return (queryset, True)
+
+
+class ObjectAuditLogTable(AuditLogTable):
+    actions = None
+
+    class Meta(AuditLogTable.Meta):
+        fields = [
+            "user",
+            "action_time",
+            "content_type",
+            "object_repr",
+            "difference",
+        ]

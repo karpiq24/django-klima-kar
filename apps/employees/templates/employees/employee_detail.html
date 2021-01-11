@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load render_table from django_tables2 %}
-{% load static slugify %}
+{% load static slugify contenttypes %}
 
 {% block content %}
 <div>
@@ -42,6 +42,7 @@
                     <button class="btn btn-lg btn-outline-success" id="addAbsence" data-employee="{{ object.pk }}" data-url="{% url 'employees:absence_create_ajax' %}"><i class="fa fa-plus-square"></i> Dodaj nieobecność</button>
                     <a class="btn btn-outline-warning btn-lg" href="{% url 'employees:employee_update' object|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
                     {% if request.user.is_staff %}
+                        <a class="btn btn-outline-primary btn-lg" href="{% url 'audit:object_audit_logs' object|slugify object|content_type object.pk %}"><i class="fa fa-history"></i> Audyt</a>
                         <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:employees_employee_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
                     {% endif %}
                 </div>

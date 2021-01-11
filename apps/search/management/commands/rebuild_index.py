@@ -4,6 +4,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from apps.search.models import SearchDocument
+from apps.search.registry import search
 
 
 class Command(BaseCommand):
@@ -11,7 +12,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         SearchDocument.objects.all().delete()
-        for model in SearchDocument.indexed_models:
+        for model in search.registered_models():
             print(f"Indexing {model._meta.verbose_name_plural}")
             self.create_documents(model.objects.all())
 

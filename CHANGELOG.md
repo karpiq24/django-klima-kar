@@ -1,5 +1,10 @@
 # Lista zmian
 
+## 2021-01-11
+
+-   Dodano widok audytu zmian dla konkretnych obiektów
+-   Zaktualizowano system rejestracji modeli do wyszukiwania i auduty zmian
+
 ## 2021-01-08
 
 -   Dodano notatki dla faktur, towarów, dostawców, faktur sprzedażowych, pojazdów, podzespołów i pracowników

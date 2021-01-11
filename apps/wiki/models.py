@@ -1,8 +1,11 @@
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
 
 from KlimaKar.templatetags.slugify import slugify
+from apps.audit.functions import get_audit_logs
 from apps.mycloudhome.models import MyCloudHomeFile, MyCloudHomeDirectoryModel
+from apps.search.models import SearchDocument
 
 
 class Tag(models.Model):
@@ -28,6 +31,8 @@ class Article(MyCloudHomeDirectoryModel):
     contents = models.TextField(verbose_name="Treść")
     create_time = models.DateTimeField(auto_now_add=True, verbose_name="Czas dodania")
     edit_time = models.DateTimeField(auto_now=True, verbose_name="Czas edycji")
+
+    search = GenericRelation(SearchDocument, related_query_name="article")
 
     class Meta:
         verbose_name = "Artykuł"
@@ -62,6 +67,24 @@ class Article(MyCloudHomeDirectoryModel):
                 "image/tiff",
                 "image/webp",
             ]
+        )
+
+    def get_logs(self):
+        return get_audit_logs(
+            self,
+            has_annotations=False,
+            m2one=[
+                {
+                    "key": "article",
+                    "objects": self.externallink_set.all(),
+                    "model": ExternalLink,
+                },
+                {
+                    "key": "article",
+                    "objects": self.articlefile_set.all(),
+                    "model": ArticleFile,
+                },
+            ],
         )
 
 

@@ -11,8 +11,10 @@ from django.urls import reverse
 from KlimaKar.templatetags.slugify import slugify
 from KlimaKar.models import TotalValueQuerySet
 from apps.annotations.models import Annotation
+from apps.audit.functions import get_audit_logs
 from apps.invoicing.models import Contractor, SaleInvoice
 from apps.mycloudhome.models import MyCloudHomeFile, MyCloudHomeDirectoryModel
+from apps.search.models import SearchDocument
 from apps.warehouse.models import Ware
 
 
@@ -76,7 +78,9 @@ class Vehicle(models.Model):
     registration_date = models.DateField(
         verbose_name="Data pierwszej rejestracji", null=True, blank=True
     )
+
     annotations = GenericRelation(Annotation, related_query_name="vehicle")
+    search = GenericRelation(SearchDocument, related_query_name="vehicle")
 
     class Meta:
         verbose_name = "Pojazd"
@@ -95,6 +99,9 @@ class Vehicle(models.Model):
         return reverse(
             "commission:vehicle_detail", kwargs={"pk": self.pk, "slug": slugify(self)}
         )
+
+    def get_logs(self):
+        return get_audit_logs(self)
 
 
 @receiver(models.signals.post_save, sender=Vehicle)
@@ -125,7 +132,9 @@ class Component(models.Model):
     catalog_number = models.CharField(
         max_length=64, blank=True, null=True, verbose_name="Numer katalogowy"
     )
+
     annotations = GenericRelation(Annotation, related_query_name="component")
+    search = GenericRelation(SearchDocument, related_query_name="component")
 
     class Meta:
         verbose_name = "Podzespół"
@@ -146,6 +155,9 @@ class Component(models.Model):
         return reverse(
             "commission:component_detail", kwargs={"pk": self.pk, "slug": slugify(self)}
         )
+
+    def get_logs(self):
+        return get_audit_logs(self)
 
 
 @receiver(models.signals.post_save, sender=Component)
@@ -213,7 +225,9 @@ class Commission(MyCloudHomeDirectoryModel):
     sent_sms = models.BooleanField(
         verbose_name="Powiadomienie SMS zostało wysłane", default=False
     )
+
     annotations = GenericRelation(Annotation, related_query_name="commission")
+    search = GenericRelation(SearchDocument, related_query_name="commission")
 
     objects = TotalValueQuerySet.as_manager()
     PRICE_FIELD = "commissionitem__price"
@@ -280,6 +294,23 @@ class Commission(MyCloudHomeDirectoryModel):
 
     def get_files(self):
         return self.commissionfile_set.all()
+
+    def get_logs(self):
+        return get_audit_logs(
+            self,
+            m2one=[
+                {
+                    "key": "commission",
+                    "objects": self.commissionitem_set.all(),
+                    "model": CommissionItem,
+                },
+                {
+                    "key": "commission",
+                    "objects": self.commissionfile_set.all(),
+                    "model": CommissionFile,
+                },
+            ],
+        )
 
 
 class CommissionItem(models.Model):

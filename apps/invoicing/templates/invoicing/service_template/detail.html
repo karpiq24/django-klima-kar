@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load render_table from django_tables2 %}
-{% load slugify %}
+{% load slugify contenttypes %}
 
 {% block content %}
 <div>
@@ -105,6 +105,7 @@
                 <div class="card-body">
                     <a class="btn btn-outline-warning btn-lg" href="{% url 'invoicing:service_template_update' object|slugify object.pk %}"><i class="fas fa-edit"></i> Edycja</a>
                     {% if request.user.is_staff %}
+                        <a class="btn btn-outline-primary btn-lg" href="{% url 'audit:object_audit_logs' object|slugify object|content_type object.pk %}"><i class="fa fa-history"></i> Audyt</a>
                         <a class="btn btn-outline-danger btn-lg" href="{% url 'admin:invoicing_servicetemplate_change' object.pk %}"><i class="fas fa-toolbox"></i> Admin</a>
                     {% endif %}
                 </div>
