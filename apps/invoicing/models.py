@@ -1,6 +1,8 @@
 import json
 import datetime
+import os
 
+from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from tqdm import tqdm
 from weasyprint import HTML, CSS
@@ -161,7 +163,13 @@ class SaleInvoiceQuerySet(TotalValueQuerySet):
             rendered_tpl = template.render({"invoice": invoice}).encode()
             documents.append(
                 HTML(string=rendered_tpl).render(
-                    stylesheets=[CSS(filename="KlimaKar/static/css/invoice.css")]
+                    stylesheets=[
+                        CSS(
+                            filename=os.path.join(
+                                settings.BASE_DIR, "KlimaKar/static/css/invoice.css"
+                            )
+                        )
+                    ]
                 )
             )
         for doc in documents:
