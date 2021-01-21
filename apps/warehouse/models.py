@@ -120,6 +120,7 @@ class Invoice(models.Model):
         verbose_name = "Faktura zakupowa"
         verbose_name_plural = "Faktury zakupowe"
         ordering = ["-date"]
+        unique_together = ["supplier", "number"]
 
     def __str__(self):
         return "{}: {}".format(str(self.supplier), self.number)
@@ -199,7 +200,7 @@ class InvoiceItem(models.Model):
         ordering = ["invoice", "pk"]
 
     def __str__(self):
-        return f"{self.invoice}: {self.ware.index}"
+        return f"{self.invoice}: {self.ware.index if self.ware else '-'}"
 
     def get_absolute_url(self):
         return reverse(

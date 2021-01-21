@@ -4,6 +4,7 @@ import dateutil.parser
 import xml.dom.minidom
 
 from django.core.management.base import BaseCommand
+from django.db.models import Q
 from django.urls import reverse
 
 from apps.warehouse.models import Invoice, InvoiceItem, Ware
@@ -128,7 +129,10 @@ class Command(BaseCommand):
                 )
                 continue
             try:
-                ware_obj = Ware.objects.get(index=getData(ware, "indeks"))
+                ware_obj = Ware.objects.get(
+                    Q(index=getData(ware, "indeks"))
+                    | Q(index_slug=Ware.slugify(getData(ware, "indeks")))
+                )
             except Ware.DoesNotExist:
                 ware_obj = Ware.objects.filter(
                     index_slug=getData(ware, "indeks")

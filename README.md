@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/karpiq24/django-klima-kar/blob/master/LICENSE)
 
-Django project used in my family buisness. It provides warehouse management, invoicing and commission tracking with advanced statistics.
+Django project used in my family business. It provides warehouse management, invoicing and commission tracking with advanced statistics.
 
 ## Features
 
@@ -11,6 +11,7 @@ Django project used in my family buisness. It provides warehouse management, inv
     -   export data to multiple formats
     -   generate inventory report
     -   automatically load data from suppliers using APIs or web scraping
+    -   load invoices from scanned ``pdf files
 -   Invoicing
     -   contractors, sale invoices and default services
     -   multiple invoice forms (VAT, WDT, Pro forma, Corrective)
@@ -34,23 +35,24 @@ Django project used in my family buisness. It provides warehouse management, inv
     -   detect purchased ware price changes
     -   weekly, monthly and yearly reports
 -   Wiki module
-    - articles with Markdown syntax
-    - hashtags
-    - file uploads using WD My Cloud Home API
-    - image gallery
+    -   articles with Markdown syntax
+    -   hashtags
+    -   file uploads using WD My Cloud Home API
+    -   image gallery
 -   Other
     -   advanced filtering of all models
     -   filtering and paginating tables using ajax
     -   JSON dump and SQL dump backup with upload to dropbox and WD My Cloud Home
     -   2-step email authentication
     -   login from remote location only for managers and admins
-    -   create audit logs for creating, modyfing and deleteing objects
-    -   Full text search using Solr and django-haystack
+    -   create audit logs for creating, modifying and deleteing objects
+    -   Full text search using Postgres
     -   GraphQL API
+    -   Object annotations
 
 ## Installation
 
-1. Install system dependecies
+1. Install system dependencies
     ```
     sudo apt-get install build-essential python3-dev python3-pip python3-setuptools python3-wheel python3-cffi libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info virtualenv libpq-dev postgresql postgresql-contrib redis-server poppler-utils
     ```
@@ -75,7 +77,7 @@ Django project used in my family buisness. It provides warehouse management, inv
     ```
     sudo systemctl enable redis-server.service
     ```
-4. Create and activate virtual envoirment
+4. Create and activate virtual environment
     ```
     virtualenv -p python3 venv
     source venv/bin/activate

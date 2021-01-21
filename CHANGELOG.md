@@ -3,6 +3,7 @@
 ## 2021-01-21
 
 -   Dodano wczytywanie faktur Eberspacher z plików pdf
+-   Uniemożliwiono dodawanie faktur ze zduplikowanym dostawcą i numerem faktury
 
 ## 2021-01-11
 
