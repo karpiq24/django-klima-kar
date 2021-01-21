@@ -1,0 +1,25 @@
+# -*- coding: utf-8 -*-
+issuer: Eberspacher
+keywords:
+    - Eberspaecher Sp. z o.o.
+    - 779-10-12-663
+fields:
+    amount: Razem:\s+(\d[\d\s]*\,\d{2})
+tables:
+    - start: Numer
+      end: Nasz nr dostawcy
+      body: (?P<invoice_number>\d+)\s+[\d+\-]+\s+[\d\-]+\s+[\w\d\-]+\s+(?P<date>\d{2}.\d{2}.\d{4})\s+\d\/\s\d
+lines:
+    start: \s+L\.p\.\s+Nazwa\s+towaru\/usługi\s+J\.m\.\s+Ilość\s+bez\s+rabatu\s+%\s+z\s+rabatem\s+z\s+rabatem\s+staw\.\s+%\s+kwota\s+z\s+VAT\s+
+    end: \s+Razem
+    first_line: \s+\d+\s+(?P<index>.+)\sSZT\s(?P<quantity>\d+,\d+)\s+\d+,\d{2}\s+\d+\s+(?P<price>\d+,\d{2}).+
+    line: (?P<name>^((?!Kraj pochodzenia|Waga netto|________________________________________________________________________).)*$)
+    last_line: \s+Kraj pochodzenia
+types:
+    quantity: float
+    price: float
+options:
+    currency: PLN
+    date_formats:
+        - "%d.%m.%Y"
+    decimal_separator: ","

@@ -1,13 +1,21 @@
+import os
+import shutil
+from datetime import datetime
 from urllib.parse import urlencode
 
+from django.conf import settings
+from django.core.files.storage import default_storage
 from django.urls import reverse
 from django.http import JsonResponse, HttpResponse
+from django.utils.crypto import get_random_string
 from django.views.generic import DetailView, UpdateView, CreateView, View
 from django.db.models import Q, F
 from django.contrib import messages
 
 from django_tables2.export.views import ExportMixin
 from extra_views import CreateWithInlinesView, UpdateWithInlinesView
+from invoice2data import extract_data
+from invoice2data.extract.loader import read_templates
 
 from KlimaKar.views import CustomSelect2QuerySetView, FilteredSingleTableView
 from KlimaKar.mixins import (
@@ -364,3 +372,62 @@ class SupplierAutocomplete(CustomSelect2QuerySetView):
         if self.q:
             qs = qs.filter(name__icontains=self.q)
         return qs
+
+
+class ScannedToInvoiceView(View):
+    def post(self, request, *args, **kwargs):
+        upload_key = get_random_string(length=32)
+        directory = os.path.join(settings.TEMPORARY_UPLOAD_DIRECTORY, upload_key)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        with open(os.path.join(directory, "timestamp"), "w") as timefile:
+            timefile.write(str(datetime.now()))
+        filename, file_data = next(request.FILES.items())
+        file_path = "{}/{}".format(directory, filename)
+        with default_storage.open(file_path, "wb+") as destination:
+            for chunk in file_data.chunks():
+                destination.write(chunk)
+        templates = read_templates("apps/warehouse/invoice2data")
+        result = extract_data(file_path, templates=templates)
+        shutil.rmtree(directory)
+        if not result:
+            return JsonResponse(
+                {"message": "Nieobsługiwany dostawca. Wprowadź fakturę ręcznie."},
+                status=400,
+            )
+        try:
+            supplier = Supplier.objects.get(name=result["issuer"])
+        except Supplier.DoesNotExist:
+            return JsonResponse(
+                {"message": f"Nieznaleziono dostawcy o nazwie {result['issuer']}."},
+                status=400,
+            )
+        invoice, created = Invoice.objects.get_or_create(
+            supplier=supplier, number=result["invoice_number"], date=result["date"]
+        )
+        if not created:
+            return JsonResponse(
+                {"message": "Ta faktura została już wcześniej zapisana."}, status=400,
+            )
+        for item in result["lines"]:
+            try:
+                ware = Ware.objects.get(
+                    Q(index=item["index"]) | Q(index_slug=Ware.slugify(item["index"]))
+                )
+            except Ware.DoesNotExist:
+                ware = Ware.objects.create(index=item["index"], name=item["name"],)
+            InvoiceItem.objects.create(
+                invoice=invoice,
+                ware=ware,
+                quantity=float(item["quantity"].replace(",", ".")),
+                price=float(item["price"].replace(",", ".")),
+            )
+        return JsonResponse(
+            {
+                "url": reverse(
+                    "warehouse:invoice_detail",
+                    kwargs={"pk": invoice.pk, "slug": slugify(invoice)},
+                )
+            },
+            status=200,
+        )

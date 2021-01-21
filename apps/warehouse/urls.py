@@ -69,4 +69,9 @@ urlpatterns = [
         views.SupplierAutocomplete.as_view(create_field="name"),
         name="supplier_autocomplete_create",
     ),
+    path(
+        "scannded_to_invoice",
+        views.ScannedToInvoiceView.as_view(),
+        name="scannded_to_invoice",
+    ),
 ]

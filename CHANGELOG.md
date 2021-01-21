@@ -1,9 +1,13 @@
 # Lista zmian
 
+## 2021-01-21
+
+-   Dodano wczytywanie faktur Eberspacher z plików pdf
+
 ## 2021-01-11
 
 -   Dodano widok audytu zmian dla konkretnych obiektów
--   Zaktualizowano system rejestracji modeli do wyszukiwania i auduty zmian
+-   Zaktualizowano system rejestracji modeli do wyszukiwania i audytu zmian
 
 ## 2021-01-08
 
