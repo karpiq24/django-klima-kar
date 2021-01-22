@@ -410,6 +410,8 @@ class ScannedToInvoiceView(View):
                 {"message": "Ta faktura została już wcześniej zapisana."}, status=400,
             )
         for item in result["lines"]:
+            if not all(key in item for key in ["index", "name", "quantity", "price"]):
+                continue
             try:
                 ware = Ware.objects.get(
                     Q(index=item["index"]) | Q(index_slug=Ware.slugify(item["index"]))

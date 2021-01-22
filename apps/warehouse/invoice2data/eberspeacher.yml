@@ -4,7 +4,7 @@ keywords:
     - Eberspaecher Sp. z o.o.
     - 779-10-12-663
 fields:
-    amount: Razem:\s+(\d[\d\s]*\,\d{2})
+    amount: Razem:\s+(\d[\d\s\.]*\,\d{2})
 tables:
     - start: Numer
       end: Nasz nr dostawcy
@@ -12,7 +12,7 @@ tables:
 lines:
     start: \s+L\.p\.\s+Nazwa\s+towaru\/usługi\s+J\.m\.\s+Ilość\s+bez\s+rabatu\s+%\s+z\s+rabatem\s+z\s+rabatem\s+staw\.\s+%\s+kwota\s+z\s+VAT\s+
     end: \s+Razem
-    first_line: \s+\d+\s+((?P<index>.+?)(\.0Z)*)\s+SZT\s(?P<quantity>\d+,\d+)\s+\d+,\d{2}\s+\d+\s+(?P<price>\d+,\d{2}).+
+    first_line: \s*\d+\s+((?P<index>.+?)(\.\dZ)*)\s+SZT\s(?P<quantity>\d+,\d+)\s+\d+,\d{2}\s+\d+\s+(?P<price>\d+,\d{2}).+
     line: (?P<name>^((?!Kraj pochodzenia|Waga netto|________________________________________________________________________).)*$)
     last_line: \s+Kraj pochodzenia
 types:
