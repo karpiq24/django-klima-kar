@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2021-01-25
+
+-   Dodano pobieranie kodów kreskowych dla towarów z Inter Cars
+
 ## 2021-01-21
 
 -   Dodano wczytywanie faktur Eberspacher z plików pdf

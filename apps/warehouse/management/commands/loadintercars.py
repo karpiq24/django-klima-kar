@@ -128,22 +128,29 @@ class Command(BaseCommand):
                     )
                 )
                 continue
+            barcode_list = getData(ware, "kod_kre")
+            barcode = ""
+            if barcode_list:
+                ean_list = [
+                    code for code in barcode_list if len(code) == 13 and code.isdigit()
+                ]
+                barcode = ean_list[0] if ean_list else ""
             try:
                 ware_obj = Ware.objects.get(
                     Q(index=getData(ware, "indeks"))
                     | Q(index_slug=Ware.slugify(getData(ware, "indeks")))
                 )
+                if not ware_obj.barcode and barcode:
+                    ware_obj.barcode = barcode
+                    ware_obj.save()
             except Ware.DoesNotExist:
-                ware_obj = Ware.objects.filter(
-                    index_slug=getData(ware, "indeks")
-                ).first()
-                if not ware_obj:
-                    ware_obj = Ware.objects.create(
-                        index=getData(ware, "indeks"),
-                        name=getData(ware, "nazwa"),
-                        description=getData(ware, "opis"),
-                    )
-                    new_wares += 1
+                ware_obj = Ware.objects.create(
+                    index=getData(ware, "indeks"),
+                    name=getData(ware, "nazwa"),
+                    description=getData(ware, "opis"),
+                    barcode=barcode,
+                )
+                new_wares += 1
             InvoiceItem.objects.create(
                 invoice=invoice_obj,
                 ware=ware_obj,
