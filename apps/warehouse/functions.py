@@ -1,7 +1,22 @@
 import io
 import datetime
+import requests
+import xml.dom.minidom
 
+from django.db.models import Count, Q
+from django.conf import settings
+from django.db.models.signals import pre_save, post_save
 from xlsxwriter import Workbook
+from tqdm import tqdm
+
+from apps.settings.models import InvoiceDownloadSettings
+from apps.warehouse.models import Invoice, Ware
+from apps.warehouse.management.commands.loadintercars import getData
+from apps.audit.functions import (
+    post_save_handler as audit_post,
+    pre_save_handler as audit_pre,
+)
+from apps.search.utils import post_save_handler as search_post
 
 
 def generate_ware_inventory(queryset):
@@ -60,3 +75,101 @@ def generate_ware_inventory(queryset):
     workbook.close()
     output.seek(0)
     return output
+
+
+def get_inter_cars_barcodes():
+    pre_save.disconnect(audit_pre, sender=Invoice)
+    post_save.disconnect(audit_post, sender=Invoice)
+    post_save.disconnect(search_post, sender=Invoice)
+    pre_save.disconnect(audit_pre, sender=Ware)
+    post_save.disconnect(audit_post, sender=Ware)
+    post_save.disconnect(search_post, sender=Ware)
+
+    config = InvoiceDownloadSettings.load()
+    invoices = (
+        Invoice.objects.filter(supplier=config.INTER_CARS_SUPPLIER)
+        .annotate(item_count=Count("invoiceitem"))
+        .order_by("-item_count")
+    )
+    checked_wares = []
+
+    url = settings.IC_API_URL + "GetInvoices"
+    url_detail = settings.IC_API_URL + "GetInvoice"
+    headers = {
+        "kh_kod": config.INTER_CARS_CLIENT_NUMBER,
+        "token": config.INTER_CARS_TOKEN,
+    }
+
+    for invoice in tqdm(invoices):
+        wares = (
+            Ware.objects.filter(invoiceitem__invoice=invoice, barcode="")
+            .exclude(pk__in=checked_wares)
+            .distinct()
+        )
+        if not wares:
+            continue
+
+        if not invoice.remote_id:
+            r = requests.get(
+                url,
+                params={
+                    "from": invoice.date.strftime("%Y%m%d"),
+                    "to": invoice.date.strftime("%Y%m%d"),
+                },
+                headers=headers,
+            )
+            if r.status_code != 200:
+                print(f"Invoice {invoice} failed fetching")
+                continue
+            DOMTree = xml.dom.minidom.parseString(r.text)
+            collection = DOMTree.documentElement
+            xml_invoices = collection.getElementsByTagName("nag")
+            xml_invoice = [
+                i for i in xml_invoices if getData(i, "numer") == invoice.number
+            ]
+            if not xml_invoice:
+                continue
+            xml_invoice = xml_invoice[0]
+            if not invoice.remote_id:
+                invoice.remote_id = getData(xml_invoice, "id")
+                invoice.save()
+
+        r = requests.get(url_detail, params={"id": invoice.remote_id}, headers=headers)
+        if r.status_code != 200:
+            print(f"Invoice {invoice} failed fetching")
+            continue
+
+        DOMTree = xml.dom.minidom.parseString(r.text)
+        collection = DOMTree.documentElement
+        xml_wares = collection.getElementsByTagName("poz")
+        for xml_ware in xml_wares:
+            barcode_list = getData(xml_ware, "kod_kre")
+            if not barcode_list:
+                continue
+            ean_list = [
+                code.strip()
+                for code in barcode_list.split(",")
+                if len(code.strip()) == 13 and code.strip().isdigit()
+            ]
+            barcode = ean_list[0] if ean_list else ""
+            if not barcode:
+                continue
+            try:
+                ware = wares.get(
+                    Q(index=getData(xml_ware, "indeks"))
+                    | Q(index_slug=Ware.slugify(getData(xml_ware, "indeks")))
+                )
+                checked_wares.append(ware.pk)
+                ware.barcode = barcode
+                ware.save()
+            except Ware.DoesNotExist:
+                continue
+            except Ware.MultipleObjectsReturned:
+                print(f"Multiple wares with same index: {getData(xml_ware, 'indeks')}")
+
+    pre_save.connect(audit_pre, sender=Invoice)
+    post_save.connect(audit_post, sender=Invoice)
+    post_save.connect(search_post, sender=Invoice)
+    pre_save.connect(audit_pre, sender=Ware)
+    post_save.connect(audit_post, sender=Ware)
+    post_save.connect(search_post, sender=Ware)

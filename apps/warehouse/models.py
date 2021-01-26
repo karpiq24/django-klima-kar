@@ -111,6 +111,9 @@ class Invoice(models.Model):
     supplier = models.ForeignKey(
         Supplier, on_delete=models.PROTECT, verbose_name="Dostawca"
     )
+    remote_id = models.CharField(
+        max_length=256, verbose_name="ID u dostawcy", blank=True
+    )
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Data dodania")
 
     annotations = GenericRelation(Annotation, related_query_name="invoice")

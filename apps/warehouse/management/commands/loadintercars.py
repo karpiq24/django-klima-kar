@@ -132,7 +132,9 @@ class Command(BaseCommand):
             barcode = ""
             if barcode_list:
                 ean_list = [
-                    code for code in barcode_list if len(code) == 13 and code.isdigit()
+                    code.strip()
+                    for code in barcode_list.split(",")
+                    if len(code.strip()) == 13 and code.strip().isdigit()
                 ]
                 barcode = ean_list[0] if ean_list else ""
             try:
