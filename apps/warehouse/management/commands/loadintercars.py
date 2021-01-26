@@ -95,15 +95,16 @@ class Command(BaseCommand):
                     date=invoice_date.date(),
                     number=invoice_number,
                     supplier=self.settings.INTER_CARS_SUPPLIER,
+                    remote_id=invoice_id,
                 )
-                new_wares += self.get_invoice_detail(invoice_obj, invoice_id)
+                new_wares += self.get_invoice_detail(invoice_obj)
                 self.check_total_price(invoice_obj, invoice_total)
                 invoice_obj.check_ware_price_changes()
         return (new_invoices, new_wares)
 
-    def get_invoice_detail(self, invoice_obj, invoice_id):
+    def get_invoice_detail(self, invoice_obj):
         url = IC_API_URL + "GetInvoice"
-        params = {"id": invoice_id}
+        params = {"id": invoice_obj.remote_id}
         headers = {
             "kh_kod": self.settings.INTER_CARS_CLIENT_NUMBER,
             "token": self.settings.INTER_CARS_TOKEN,
