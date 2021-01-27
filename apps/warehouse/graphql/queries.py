@@ -10,7 +10,11 @@ def resolve_wares(_, info, pagination=None, filters=None, search=None):
     def search_filter(qs):
         if not search:
             return qs
-        return qs.filter(Q(index__icontains=search) | Q(index_slug__icontains=search))
+        return qs.filter(
+            Q(index__icontains=search)
+            | Q(index_slug__icontains=search)
+            | Q(barcode=search)
+        )
 
     return get_paginated_results(
         Ware.objects.all(), pagination, filters, custom_filter=search_filter
