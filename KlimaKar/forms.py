@@ -82,7 +82,7 @@ class ScannerForm(forms.Form):
     def get_convert_command(self):
         data = self.cleaned_data
         return (
-            f"convert document-p*.tiff compress jpeg -quality 70 {data['file_name']}.{data['file_type'].lower()}",
+            f"convert document-p*.tiff -compress jpeg -quality 70 {data['file_name']}.{data['file_type'].lower()}",
         )
 
     def get_filename(self):
