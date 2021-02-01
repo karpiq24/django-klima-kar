@@ -378,6 +378,9 @@ class CommissionDetailView(SingleTableAjaxMixin, DetailView):
         context["content_type"] = ContentType.objects.get(
             app_label="commission", model="commission"
         ).pk
+        context["file_content_type"] = ContentType.objects.get(
+            app_label="commission", model="commissionfile"
+        ).pk
         return context
 
     def get_table_data(self):

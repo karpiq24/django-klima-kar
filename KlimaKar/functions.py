@@ -135,4 +135,8 @@ def scan_document(data):
         )
     obj.scanning = False
     obj.save()
-    check_and_enqueue_file_upload(cd["upload_key"], obj, model)
+    check_and_enqueue_file_upload(
+        cd["upload_key"],
+        obj,
+        ContentType.objects.get_for_id(cd["file_content_type"]).model_class(),
+    )

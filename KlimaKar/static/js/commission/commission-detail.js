@@ -448,7 +448,8 @@ $(function () {
     $("#scanFile").on("click", function () {
         const data = {
             object_pk: $(this).data("pk"),
-            content_type: $(this).data("content-type")
+            content_type: $(this).data("content-type"),
+            file_content_type: $(this).data("content-type-file")
         }
         $.ajax({
             url: "/scanner_form",

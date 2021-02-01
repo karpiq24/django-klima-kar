@@ -62,6 +62,7 @@ class ScannerForm(forms.Form):
         required=False,
         initial=get_random_string(length=32),
     )
+    file_content_type = forms.CharField(widget=forms.HiddenInput())
     content_type = forms.CharField(widget=forms.HiddenInput())
     object_pk = forms.CharField(widget=forms.HiddenInput())
 

@@ -219,6 +219,8 @@ class ScannerFormView(AjaxFormMixin, FormView):
 
     def form_valid(self, form):
         response = super(ScannerFormView, self).form_valid(form)
+        print(form.cleaned_data)
+        return response
         model = ContentType.objects.get_for_id(
             form.cleaned_data["content_type"]
         ).model_class()
