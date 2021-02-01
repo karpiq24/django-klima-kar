@@ -55,7 +55,7 @@ Django project used in my family business. It provides warehouse management, inv
 
 1. Install system dependencies
     ```
-    sudo apt-get install build-essential python3-dev python3-pip python3-setuptools python3-wheel python3-cffi libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info virtualenv libpq-dev postgresql postgresql-contrib redis-server poppler-utils
+    sudo apt-get install build-essential python3-dev python3-pip python3-setuptools python3-wheel python3-cffi libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info virtualenv libpq-dev postgresql postgresql-contrib redis-server poppler-utils imagemagick
     ```
 2. Enable and configure Postgres
     ```
@@ -120,4 +120,9 @@ Django project used in my family business. It provides warehouse management, inv
     ./manage.py rebuild_index
     ./manage.py createsuperuser
     ./manage.py runserver
+    ```
+12. Enable converting to pdf files with ImageMagick
+    In `/etc/ImageMagick-7/policy.xml` comment out the line:
+    ```
+    <policy domain="coder" rights="none" pattern="PDF" />
     ```
