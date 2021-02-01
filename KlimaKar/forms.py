@@ -35,22 +35,12 @@ class ScannerForm(forms.Form):
     ADF = "ADF"
     SCANNER_TYPE = [(FLATBEAD, "Bezpośrednie"), (ADF, "Podajnik dokumentów")]
 
-    RES_300 = "300"
-    RESOLUTIONS = [
-        ("150", 150),
-        ("300", 300),
-        ("600", 600),
-    ]
-
     JPG = "JPG"
     PDF = "PDF"
     FILE_TYPES = [(JPG, "JPG"), (PDF, "PDF")]
 
     scanner_type = forms.ChoiceField(
         widget=PrettySelect, choices=SCANNER_TYPE, label="Typ skanowania", initial=ADF
-    )
-    resolution = forms.ChoiceField(
-        widget=PrettySelect, choices=RESOLUTIONS, label="Rozdzielczość", initial=RES_300
     )
     file_type = forms.ChoiceField(
         widget=PrettySelect, choices=FILE_TYPES, label="Format pliku", initial=PDF
@@ -74,7 +64,7 @@ class ScannerForm(forms.Form):
 
     def get_scan_command(self):
         data = self.cleaned_data
-        command = f"scanimage --format tiff --resolution {data['resolution']}"
+        command = f"scanimage --format tiff --resolution 150"
         if data["scanner_type"] == self.ADF:
             command = f"{command} --batch=document-p%d.tiff"
         return command
