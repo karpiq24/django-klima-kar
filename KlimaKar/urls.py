@@ -4,7 +4,13 @@ from django.contrib import admin
 from ariadne.contrib.django.views import GraphQLView
 from django.views.decorators.cache import cache_page
 
-from KlimaKar.views import HomeView, SendIssueView, ChangeLogView, GarbageCollectionView
+from KlimaKar.views import (
+    HomeView,
+    SendIssueView,
+    ChangeLogView,
+    GarbageCollectionView,
+    ScannerFormView,
+)
 from KlimaKar.graphql import schema
 
 
@@ -25,6 +31,7 @@ urlpatterns = [
     path("mycloudhome/", include("apps.mycloudhome.urls")),
     path("tiles/", include("tiles.urls")),
     path("send_issue", SendIssueView.as_view(), name="send_issue"),
+    path("scanner_form", ScannerFormView.as_view(), name="scanner_form"),
     path(
         "garbage",
         cache_page(8 * 60 * 60)(GarbageCollectionView.as_view()),

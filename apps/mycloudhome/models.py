@@ -7,6 +7,7 @@ class MyCloudHomeDirectoryModel(models.Model):
     DIRECTORY_ID_FIELD = None
 
     upload = models.BooleanField(verbose_name="Pliki są wgrywane", default=False)
+    scanning = models.BooleanField(verbose_name="Trwa skanowanie", default=False)
     mch_id = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:

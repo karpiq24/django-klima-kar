@@ -145,6 +145,27 @@ function sendSmsNotification() {
     }
 }
 
+function checkScanningStatus() {
+    let check = setInterval(function () {
+        $.ajax({
+            url: $("#scanFile").data("check-url"),
+            type: "get",
+            data: {
+                pk: $("#scanFile").data("pk"),
+            },
+            dataType: "json",
+            success: function (data) {
+                if (data.status == "success") {
+                    clearInterval(check);
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 1000)
+                }
+            },
+        });
+    }, 2000);
+}
+
 function checkFileUpload() {
     let check = setInterval(function () {
         $.ajax({
@@ -175,6 +196,17 @@ function checkFileUpload() {
             },
         });
     }, 2000);
+}
+
+function customSuccessCreate(data, identifier) {
+    Swal.fire({
+        title: "Uruchomiono skanowanie dokumentów",
+        html: '<i class="fas fa-spinner fa-spin fa-8x" style="margin: 26px;color: #00a0df;"></i>',
+        showConfirmButton: false,
+    });
+    setTimeout(function () {
+        checkScanningStatus();
+    }, 5000)
 }
 
 $(function () {
@@ -412,4 +444,23 @@ $(function () {
        $("#uploadAlert").removeClass("hidden");
        checkFileUpload();
     });
+
+    $("#scanFile").on("click", function () {
+        const data = {
+            object_pk: $(this).data("pk"),
+            content_type: $(this).data("content-type")
+        }
+        $.ajax({
+            url: "/scanner_form",
+            type: "get",
+            dataType: "json",
+            data: data,
+            beforeSend: function () {
+                $("#modal-generic").modal("show");
+            },
+            success: function (data) {
+                $("#modal-generic .modal-content").html(data.html_form);
+            },
+        });
+    })
 });

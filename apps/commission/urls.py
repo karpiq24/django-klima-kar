@@ -134,6 +134,11 @@ urlpatterns = [
         name="check_upload",
     ),
     path(
+        "check_scanning",
+        views.CheckCommissionScanningFinishedView.as_view(),
+        name="check_scanning",
+    ),
+    path(
         "enqueue-files",
         views.CommissionEnqueueFilesView.as_view(),
         name="enqueue_files",

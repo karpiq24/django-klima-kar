@@ -1,15 +1,19 @@
+import django_rq
+from django.contrib.contenttypes.models import ContentType
 from django.views.generic import TemplateView, View
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.core.exceptions import ImproperlyConfigured
+from django.views.generic.edit import FormView
 
 from django_tables2 import SingleTableView
 from dal import autocomplete
 from github import Github
 
 from KlimaKar import settings
-from KlimaKar.forms import IssueForm
+from KlimaKar.forms import IssueForm, ScannerForm
 from KlimaKar.email import get_email_message
-from KlimaKar.functions import get_garbage_collection_dates
+from KlimaKar.functions import get_garbage_collection_dates, scan_document
+from KlimaKar.mixins import AjaxFormMixin
 from apps.commission.models import Commission
 from apps.invoicing.models import SaleInvoice
 from apps.warehouse.models import Invoice
@@ -205,3 +209,21 @@ class ChangeLogView(TemplateView):
 class GarbageCollectionView(View):
     def get(self, *args, **kwargs):
         return JsonResponse(get_garbage_collection_dates())
+
+
+class ScannerFormView(AjaxFormMixin, FormView):
+    model = Commission
+    form_class = ScannerForm
+    title = "Skanuj dokumenty"
+    template_name = "forms/form.html"
+
+    def form_valid(self, form):
+        response = super(ScannerFormView, self).form_valid(form)
+        model = ContentType.objects.get_for_id(
+            form.cleaned_data["content_type"]
+        ).model_class()
+        obj = model.objects.get(pk=form.cleaned_data["object_pk"])
+        obj.scanning = True
+        obj.save()
+        django_rq.enqueue(scan_document, form.cleaned_data)
+        return response

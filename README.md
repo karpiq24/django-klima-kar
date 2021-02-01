@@ -49,6 +49,7 @@ Django project used in my family business. It provides warehouse management, inv
     -   Full text search using Postgres
     -   GraphQL API
     -   Object annotations
+    -   Scanning documents with network attached scanner
 
 ## Installation
 

@@ -4,6 +4,7 @@ import re
 from urllib.parse import urlencode
 from smtplib import SMTPRecipientsRefused
 
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse
 from django.http import JsonResponse, HttpResponse
@@ -32,6 +33,7 @@ from apps.mycloudhome.views import (
     FileDownloadView,
     CheckUploadFinishedView,
     DeleteSavedFile,
+    CheckScanningFinishedView,
 )
 from apps.settings.models import SiteSettings
 from apps.commission.models import (
@@ -373,6 +375,9 @@ class CommissionDetailView(SingleTableAjaxMixin, DetailView):
             )
         context["sms"] = strip_accents(sms)
         context["upload_key"] = get_random_string(length=32)
+        context["content_type"] = ContentType.objects.get(
+            app_label="commission", model="commission"
+        ).pk
         return context
 
     def get_table_data(self):
@@ -589,6 +594,10 @@ class CommissionSendEmailView(View):
 class CheckCommissionUploadFinishedView(CheckUploadFinishedView):
     model = Commission
     file_download_url = "commission:commission_file_download"
+
+
+class CheckCommissionScanningFinishedView(CheckScanningFinishedView):
+    model = Commission
 
 
 class DeleteCommissionFile(DeleteSavedFile):

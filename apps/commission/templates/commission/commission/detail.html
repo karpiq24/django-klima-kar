@@ -113,6 +113,7 @@
                     </div>
                     <hr>
                     <button type="button" id="upload_file" class="btn btn-outline-success" data-toggle="modal" data-target="#upload_modal"><i class="fa fa-upload"></i> Wgraj nowe pliki</button>
+                    <button type="button" id="scanFile" class="btn btn-outline-success" data-check-url="{% url 'commission:check_scanning' %}" data-pk="{{ object.pk }}" data-content-type="{{ content_type }}"><i class="fa fa-camera"></i> Skanuj dokumenty</button>
                 </td>
             </tr>
         </table>

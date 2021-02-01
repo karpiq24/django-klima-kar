@@ -107,6 +107,16 @@ class CheckUploadFinishedView(View):
         )
 
 
+class CheckScanningFinishedView(View):
+    model = None
+
+    def get(self, request, *args, **kwargs):
+        obj = get_object_or_404(self.model, pk=request.GET.get("pk"))
+        if obj.scanning:
+            return JsonResponse({"status": "progress"}, status=200)
+        return JsonResponse({"status": "success"}, status=200,)
+
+
 class DeleteTemporaryFile(View):
     def post(self, request, *args, **kwargs):
         upload_key = request.POST.get("key")

@@ -1,5 +1,9 @@
 # Lista zmian
 
+## 2021-02-01
+
+-   Dodano obsługę skanera do wczytywania plików w zleceniach
+
 ## 2021-01-25
 
 -   Dodano pobieranie kodów kreskowych dla towarów z Inter Cars

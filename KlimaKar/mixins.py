@@ -53,9 +53,13 @@ class AjaxFormMixin(object):
     def form_valid(self, form):
         response = super().form_valid(form)
         if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
-            data = dict(
-                {"pk": self.object.pk, "text": str(self.object)},
-                **self.extend_result_data(self.object)
+            data = (
+                dict(
+                    {"pk": self.object.pk, "text": str(self.object)},
+                    **self.extend_result_data(self.object)
+                )
+                if hasattr(self, "object")
+                else {}
             )
             return JsonResponse(data)
         else:
