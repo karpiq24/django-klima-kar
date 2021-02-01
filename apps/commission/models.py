@@ -166,7 +166,7 @@ def change_component_commissions_name(sender, instance, **kwargs):
 
 
 class Commission(MyCloudHomeDirectoryModel):
-    AUDIT_IGNORE = ["upload", "mch_id"]
+    AUDIT_IGNORE = ["upload", "mch_id", "scanning"]
     MODEL_COLOR = "#427BD2"
     MODEL_ICON = "fas fa-tasks"
     DIRECTORY_ID_FIELD = "COMMISSION_DIR_ID"

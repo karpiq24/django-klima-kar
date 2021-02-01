@@ -21,6 +21,7 @@ class Tag(models.Model):
 
 
 class Article(MyCloudHomeDirectoryModel):
+    AUDIT_IGNORE = ["upload", "mch_id", "scanning"]
     DIRECTORY_ID_FIELD = "ARTICLE_DIR_ID"
     MODEL_COLOR = "#0A3200"
     MODEL_ICON = "fa fa-book-open"
