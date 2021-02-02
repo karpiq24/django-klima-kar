@@ -40,10 +40,13 @@ class ScannerForm(forms.Form):
     FILE_TYPES = [(JPG, "JPG"), (PDF, "PDF")]
 
     scanner_type = forms.ChoiceField(
-        widget=PrettySelect, choices=SCANNER_TYPE, label="Typ skanowania", initial=ADF
+        widget=PrettySelect,
+        choices=SCANNER_TYPE,
+        label="Typ skanowania",
+        initial=FLATBEAD,
     )
     file_type = forms.ChoiceField(
-        widget=PrettySelect, choices=FILE_TYPES, label="Format pliku", initial=PDF
+        widget=PrettySelect, choices=FILE_TYPES, label="Format pliku", initial=JPG
     )
     file_name = forms.CharField(label="Nazwa pliku")
     upload_key = forms.CharField(
