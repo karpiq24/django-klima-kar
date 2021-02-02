@@ -5,6 +5,10 @@ from KlimaKar.templatetags.slugify import slugify
 from KlimaKar.widgets import PrettySelect
 
 
+class ToggleInput(forms.CheckboxInput):
+    template_name = "forms/toggle.html"
+
+
 class IssueForm(forms.Form):
     BUG = "bug"
     LABELS = [
@@ -48,6 +52,9 @@ class ScannerForm(forms.Form):
     file_type = forms.ChoiceField(
         widget=PrettySelect, choices=FILE_TYPES, label="Format pliku", initial=JPG
     )
+    trim_image = forms.BooleanField(
+        widget=ToggleInput, label="Przytnij obraz", required=False
+    )
     file_name = forms.CharField(label="Nazwa pliku")
     upload_key = forms.CharField(
         label="Klucz wysyłania plików",
@@ -74,15 +81,13 @@ class ScannerForm(forms.Form):
 
     def get_convert_command(self):
         data = self.cleaned_data
-        return (
-            f"convert document-p*.tiff -compress jpeg -quality 70 {data['file_name']}.{data['file_type'].lower()}",
-        )
+        command = f"convert document-p*.tiff -compress jpeg -quality 70"
+        if data["trim_image"]:
+            command = f"{command} -fuzz 35% -trim +repage"
+        command = f"{command} {data['file_name']}.{data['file_type'].lower()}"
+        return command
 
     def get_filename(self):
         return (
             f"{self.cleaned_data['file_name']}.{self.cleaned_data['file_type'].lower()}"
         )
-
-
-class ToggleInput(forms.CheckboxInput):
-    template_name = "forms/toggle.html"
