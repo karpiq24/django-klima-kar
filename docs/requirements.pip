@@ -1,6 +1,6 @@
 ariadne==0.12.0
 beautifulsoup4==4.9.3
-django-autocomplete-light==3.8.1
+django-autocomplete-light==3.8.2
 django-defender==0.8.0
 django-extra-views==0.13.0
 django-filter==2.4.0
