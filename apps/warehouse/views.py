@@ -421,8 +421,8 @@ class ScannedToInvoiceView(View):
             InvoiceItem.objects.create(
                 invoice=invoice,
                 ware=ware,
-                quantity=float(item["quantity"].replace(",", ".")),
-                price=float(item["price"].replace(",", ".")),
+                quantity=float(item["quantity"].replace(".", "").replace(",", ".")),
+                price=float(item["price"].replace(".", "").replace(",", ".")),
             )
         return JsonResponse(
             {
