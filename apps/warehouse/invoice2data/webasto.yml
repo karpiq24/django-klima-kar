@@ -1,0 +1,23 @@
+# -*- coding: utf-8 -*-
+issuer: Webasto
+keywords:
+    - Webasto Petemar Sp. z o.o.
+    - PL1180741938
+fields:
+    amount: Wartość netto\.*:\s*(\d[\d\s\.]*\,\d{2})\s*
+    invoice_number: Numer\.*:\s*([\w\d]+)\s*
+    date: Data wystawienia\.*:\s*(\d{2}.\d{2}.\d{4})\s*
+lines:
+    start: \s*Poz\s*Nazwa\s*J\.m\.\s*Ilość\s*Cena\s*netto\s*Kwota\s*netto\s*Stawka\s*Kwota\s*podatku\s*Kwota\s*brutto\s*
+    end: \s*Podatek\s*łącznie\s*w\s*walucie\s*krajowej\s*
+    first_line: \s*\d+\s*(?P<index>.+)\s*szt\.\s*(?P<quantity>\d[\d\s\.]*\,\d{2})\s*(?P<price>\d[\d\s\.]*\,\d{2}).+
+    line: \s*(?P<name>.+)\s*
+    last_line: \s*Numer\s*Intrastat:\s*\d+\s*
+types:
+    quantity: float
+    price: float
+options:
+    currency: PLN
+    date_formats:
+        - "%d.%m.%Y"
+    decimal_separator: ","
