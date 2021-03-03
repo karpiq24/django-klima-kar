@@ -10,7 +10,7 @@ fields:
 lines:
     start: \s*Poz\s*Nazwa\s*J\.m\.\s*Ilość\s*Cena\s*netto\s*Kwota\s*netto\s*Stawka\s*Kwota\s*podatku\s*Kwota\s*brutto\s*
     end: \s*Podatek\s*łącznie\s*w\s*walucie\s*krajowej\s*
-    first_line: \s*\d+\s*(?P<index>.+)\s*szt\.\s*(?P<quantity>\d[\d\s\.]*\,\d{2})\s*(?P<price>\d[\d\s\.]*\,\d{2}).+
+    first_line: \s*\d+\s*(?P<index>.+)\s*(?:szt\.|m)\s*(?P<quantity>\d[\d\s\.]*\,\d{2})\s*(?P<price>\d[\d\s\.]*\,\d{2}).+
     line: \s*(?P<name>.+)\s*
     last_line: \s*Numer\s*Intrastat:\s*\d+\s*
 types:
