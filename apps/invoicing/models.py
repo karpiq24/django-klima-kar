@@ -124,7 +124,7 @@ class Contractor(models.Model):
             return " ".join([number[:3], number[3:6], number[6:8], number[8:10]])
         return " ".join([number[i : i + 3] for i in range(0, len(number), 3)])
 
-    def as_json(self, ignore=["created_date", "annotations"]):
+    def as_json(self, ignore=["created_date", "annotations", "search"]):
         data = {}
         for field in Contractor._meta.get_fields():
             try:
