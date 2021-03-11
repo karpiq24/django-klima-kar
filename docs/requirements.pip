@@ -22,7 +22,7 @@ pyotp==2.6.0
 python-dateutil==2.8.1
 pyzipper==0.3.4
 requests==2.25.1
-smsapi-client==2.4.4
+smsapi-client==2.4.5
 tablib[ods,xls,xlsx]==3.0.0
 tqdm==4.57.0
 WeasyPrint==52.2
